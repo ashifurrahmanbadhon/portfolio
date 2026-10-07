@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import crypto from "crypto";
 import { DatabaseSync } from "node:sqlite";
 
@@ -6,7 +7,20 @@ let dbInstance = null;
 
 export function getDb() {
   if (!dbInstance) {
-    const dbPath = path.join(process.cwd(), "portfolio.db");
+    let dbPath = path.join(process.cwd(), "portfolio.db");
+    if (process.env.VERCEL) {
+      const tmpPath = path.join("/tmp", "portfolio.db");
+      if (!fs.existsSync(tmpPath) && fs.existsSync(dbPath)) {
+        try {
+          fs.copyFileSync(dbPath, tmpPath);
+        } catch (e) {
+          console.warn("Could not copy db to /tmp:", e);
+        }
+      }
+      if (fs.existsSync(tmpPath)) {
+        dbPath = tmpPath;
+      }
+    }
     dbInstance = new DatabaseSync(dbPath);
   }
   return dbInstance;
