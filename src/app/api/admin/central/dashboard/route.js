@@ -8,7 +8,7 @@ export async function GET(req) {
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
-    const data = getCentralDashboard();
+    const data = await getCentralDashboard();
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

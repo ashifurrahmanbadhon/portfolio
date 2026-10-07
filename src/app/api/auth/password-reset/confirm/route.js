@@ -13,7 +13,7 @@ export async function POST(req) {
     const db = getDb();
     const now = new Date().toISOString();
 
-    const record = db.prepare("SELECT * FROM password_resets WHERE token_hash = ? AND used = 0 LIMIT 1").get(tokenHash);
+    const record = await db.prepare("SELECT * FROM password_resets WHERE token_hash = ? AND used = 0 LIMIT 1").get(tokenHash);
     if (!record) {
       return NextResponse.json({ success: false, error: "Invalid or already used password reset token." }, { status: 400 });
     }
@@ -23,10 +23,10 @@ export async function POST(req) {
     }
 
     const { hash, salt } = hashPassword(new_password);
-    db.prepare("UPDATE admins SET password_hash = ?, salt = ?, updated_at = ? WHERE id = ?").run(hash, salt, now, record.admin_id);
-    db.prepare("UPDATE password_resets SET used = 1 WHERE id = ?").run(record.id);
+    await db.prepare("UPDATE admins SET password_hash = ?, salt = ?, updated_at = ? WHERE id = ?").run(hash, salt, now, record.admin_id);
+    await db.prepare("UPDATE password_resets SET used = 1 WHERE id = ?").run(record.id);
 
-    addActivityLog("Password Reset Completed", "Admin password changed via verified reset token.", "Central CMS", record.identifier);
+    await addActivityLog("Password Reset Completed", "Admin password changed via verified reset token.", "Central CMS", record.identifier);
 
     return NextResponse.json({ success: true, message: "Password updated successfully. You can now login." });
   } catch (error) {

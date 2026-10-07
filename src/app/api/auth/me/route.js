@@ -8,7 +8,7 @@ export async function GET(req) {
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
-    const admin = getAdminById(user.uid);
+    const admin = await getAdminById(user.uid);
     if (!admin) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
@@ -36,7 +36,7 @@ export async function PUT(req) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
-    updateAdminProfile(user.uid, {
+    await updateAdminProfile(user.uid, {
       fullName: body.full_name,
       email: body.email,
       avatar: body.avatar,

@@ -15,7 +15,7 @@ export async function POST(req) {
     }
 
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "";
-    const result = addContactMessage(name, email, subject, message, ip);
+    await addContactMessage(name, email, subject, message, ip);
     return NextResponse.json({ success: true, message: "Inquiry saved successfully" });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -28,7 +28,7 @@ export async function GET(req) {
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
-    const messages = getContactMessages();
+    const messages = await getContactMessages();
     return NextResponse.json({ success: true, messages });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

@@ -10,7 +10,7 @@ export async function PUT(req, { params }) {
     }
     const resolvedParams = await params;
     const body = await req.json();
-    const result = saveWebsite(resolvedParams.id, body, user.sub);
+    const result = await saveWebsite(resolvedParams.id, body, user.sub);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -24,7 +24,7 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
     const resolvedParams = await params;
-    const result = deleteWebsite(resolvedParams.id, user.sub);
+    const result = await deleteWebsite(resolvedParams.id, user.sub);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

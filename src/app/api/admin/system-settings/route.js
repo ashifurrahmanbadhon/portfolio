@@ -8,7 +8,7 @@ export async function GET(req) {
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
-    const data = getSystemSettings();
+    const data = await getSystemSettings();
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -25,7 +25,7 @@ export async function PUT(req) {
     if (!category) {
       return NextResponse.json({ success: false, error: "Missing category" }, { status: 400 });
     }
-    const result = saveSystemSettings(category, data, user.sub);
+    const result = await saveSystemSettings(category, data, user.sub);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

@@ -9,16 +9,16 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    const admin = getAdminById(user.uid);
+    const admin = await getAdminById(user.uid);
     if (!admin) {
       return NextResponse.json({ success: false, error: "Admin not found" }, { status: 404 });
     }
 
     const db = getDb();
-    const remainingCodes =
-      db
-        .prepare("SELECT COUNT(*) as c FROM admin_recovery_codes WHERE admin_id = ? AND used = 0")
-        .get(admin.id)?.c || 0;
+    const recRow = await db
+      .prepare("SELECT COUNT(*) as c FROM admin_recovery_codes WHERE admin_id = ? AND used = 0")
+      .get(admin.id);
+    const remainingCodes = Number(recRow?.c || 0);
 
     return NextResponse.json({
       success: true,

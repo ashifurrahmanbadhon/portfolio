@@ -1,12 +1,31 @@
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
+import { neon } from "@neondatabase/serverless";
 import { DatabaseSync } from "node:sqlite";
 
-let dbInstance = null;
+// ==========================================
+// Database Connection Strategy
+// Neon PostgreSQL (Preferred / Cloud) with SQLite Fallback (Local offline)
+// ==========================================
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL_UNPOOLED ||
+  process.env.POSTGRES_URL_NON_POOLING;
 
-export function getDb() {
-  if (!dbInstance) {
+let neonSql = null;
+if (databaseUrl) {
+  try {
+    neonSql = neon(databaseUrl);
+  } catch (err) {
+    console.error("Failed to initialize Neon client:", err);
+  }
+}
+
+let sqliteInstance = null;
+function getSqliteDb() {
+  if (!sqliteInstance) {
     let dbPath = path.join(process.cwd(), "portfolio.db");
     if (process.env.VERCEL) {
       const tmpPath = path.join("/tmp", "portfolio.db");
@@ -21,9 +40,58 @@ export function getDb() {
         dbPath = tmpPath;
       }
     }
-    dbInstance = new DatabaseSync(dbPath);
+    sqliteInstance = new DatabaseSync(dbPath);
   }
-  return dbInstance;
+  return sqliteInstance;
+}
+
+// Convert SQLite '?' positional placeholders to PostgreSQL '$1, $2, ...'
+function convertPlaceholders(sql) {
+  let idx = 1;
+  return sql.replace(/\?/g, () => `$${idx++}`);
+}
+
+export async function queryAll(sqlText, params = []) {
+  if (neonSql) {
+    const pgSql = convertPlaceholders(sqlText);
+    const rows = await neonSql.query(pgSql, params);
+    return rows || [];
+  } else {
+    const db = getSqliteDb();
+    return db.prepare(sqlText).all(...params) || [];
+  }
+}
+
+export async function queryOne(sqlText, params = []) {
+  if (neonSql) {
+    const pgSql = convertPlaceholders(sqlText);
+    const rows = await neonSql.query(pgSql, params);
+    return rows && rows.length > 0 ? rows[0] : null;
+  } else {
+    const db = getSqliteDb();
+    return db.prepare(sqlText).get(...params) || null;
+  }
+}
+
+export async function execute(sqlText, params = []) {
+  if (neonSql) {
+    const pgSql = convertPlaceholders(sqlText);
+    return await neonSql.query(pgSql, params);
+  } else {
+    const db = getSqliteDb();
+    return db.prepare(sqlText).run(...params);
+  }
+}
+
+// Universal getDb() interface for backward compatibility
+export function getDb() {
+  return {
+    prepare: (sql) => ({
+      get: (...params) => queryOne(sql, params),
+      all: (...params) => queryAll(sql, params),
+      run: (...params) => execute(sql, params),
+    }),
+  };
 }
 
 // ==========================================
@@ -51,15 +119,13 @@ export function verifyPassword(password, storedHash, salt) {
 // ==========================================
 // Activity Logging Helper
 // ==========================================
-export function addActivityLog(action, details = "", websiteName = "Central CMS", user = "admin", websiteId = null) {
+export async function addActivityLog(action, details = "", websiteName = "Central CMS", user = "admin", websiteId = null) {
   try {
-    const db = getDb();
     const now = new Date().toISOString();
-    const stmt = db.prepare(`
-      INSERT INTO activity_logs (website_id, website_name, action, details, user, created_at)
+    await execute(`
+      INSERT INTO activity_logs (website_id, website_name, action, details, "user", created_at)
       VALUES (?, ?, ?, ?, ?, ?)
-    `);
-    stmt.run(websiteId, websiteName, action, details, user, now);
+    `, [websiteId, websiteName, action, details, user, now]);
   } catch (err) {
     console.error("Failed to log activity:", err);
   }
@@ -68,23 +134,19 @@ export function addActivityLog(action, details = "", websiteName = "Central CMS"
 // ==========================================
 // Admin & Auth Helpers
 // ==========================================
-export function getAdminByIdentifier(identifier) {
+export async function getAdminByIdentifier(identifier) {
   if (!identifier) return null;
-  const db = getDb();
   const clean = identifier.trim().toLowerCase();
-  const stmt = db.prepare(`
+  return await queryOne(`
     SELECT * FROM admins
     WHERE LOWER(username) = ? OR LOWER(email) = ?
     LIMIT 1
-  `);
-  return stmt.get(clean, clean) || null;
+  `, [clean, clean]);
 }
 
-export function getAdminById(id) {
+export async function getAdminById(id) {
   if (!id) return null;
-  const db = getDb();
-  const stmt = db.prepare(`SELECT * FROM admins WHERE id = ? LIMIT 1`);
-  return stmt.get(id) || null;
+  return await queryOne(`SELECT * FROM admins WHERE id = ? LIMIT 1`, [id]);
 }
 
 export function checkAdminLockout(admin, maxAttempts = 5) {
@@ -105,9 +167,8 @@ export function checkAdminLockout(admin, maxAttempts = 5) {
   return { isLocked: false, message: "" };
 }
 
-export function recordFailedLogin(adminId, maxAttempts = 5, lockoutMinutes = 15) {
-  const db = getDb();
-  const admin = getAdminById(adminId);
+export async function recordFailedLogin(adminId, maxAttempts = 5, lockoutMinutes = 15) {
+  const admin = await getAdminById(adminId);
   if (!admin) return 1;
 
   const currentAttempts = (admin.failed_login_attempts || 0) + 1;
@@ -118,37 +179,36 @@ export function recordFailedLogin(adminId, maxAttempts = 5, lockoutMinutes = 15)
     lockedUntil = new Date(now.getTime() + lockoutMinutes * 60000).toISOString();
   }
 
-  const stmt = db.prepare(`
+  await execute(`
     UPDATE admins
     SET failed_login_attempts = ?, locked_until = ?, updated_at = ?
     WHERE id = ?
-  `);
-  stmt.run(currentAttempts, lockedUntil, now.toISOString(), adminId);
+  `, [currentAttempts, lockedUntil, now.toISOString(), adminId]);
+
   return currentAttempts;
 }
 
-export function recordSuccessfulLogin(adminId) {
-  const db = getDb();
+export async function recordSuccessfulLogin(adminId) {
   const now = new Date().toISOString();
-  const stmt = db.prepare(`
+  await execute(`
     UPDATE admins
     SET failed_login_attempts = 0, locked_until = NULL, last_login_at = ?, updated_at = ?
     WHERE id = ?
-  `);
-  stmt.run(now, now, adminId);
+  `, [now, now, adminId]);
 }
 
-export function updateAdminProfile(adminId, { fullName, email, avatar, currentPassword, newPassword }) {
-  const db = getDb();
-  const admin = getAdminById(adminId);
+export async function updateAdminProfile(adminId, { fullName, email, avatar, currentPassword, newPassword }) {
+  const admin = await getAdminById(adminId);
   if (!admin) throw new Error("Admin not found");
+
+  const now = new Date().toISOString();
 
   if (newPassword) {
     if (!currentPassword || !verifyPassword(currentPassword, admin.password_hash, admin.salt)) {
       throw new Error("Current password verification failed");
     }
     const { hash, salt } = hashPassword(newPassword);
-    const stmt = db.prepare(`
+    await execute(`
       UPDATE admins
       SET full_name = COALESCE(?, full_name),
           email = COALESCE(?, email),
@@ -156,37 +216,33 @@ export function updateAdminProfile(adminId, { fullName, email, avatar, currentPa
           salt = ?,
           updated_at = ?
       WHERE id = ?
-    `);
-    stmt.run(fullName || null, email || null, hash, salt, new Date().toISOString(), adminId);
+    `, [fullName || null, email || null, hash, salt, now, adminId]);
   } else {
-    const stmt = db.prepare(`
+    await execute(`
       UPDATE admins
       SET full_name = COALESCE(?, full_name),
           email = COALESCE(?, email),
           updated_at = ?
       WHERE id = ?
-    `);
-    stmt.run(fullName || null, email || null, new Date().toISOString(), adminId);
+    `, [fullName || null, email || null, now, adminId]);
   }
 }
 
 // ==========================================
 // Portfolio Content Query (Full Structured Object)
 // ==========================================
-export function getPortfolioContent() {
-  const db = getDb();
-
+export async function getPortfolioContent() {
   // 1. Hero
-  const hero = db.prepare("SELECT * FROM hero WHERE id = 1").get() || {};
+  const hero = (await queryOne("SELECT * FROM hero WHERE id = 1")) || {};
 
   // 2. About
-  const about = db.prepare("SELECT * FROM about WHERE id = 1").get() || {};
+  const about = (await queryOne("SELECT * FROM about WHERE id = 1")) || {};
 
   // 3. Highlights
-  const highlights = db.prepare("SELECT * FROM highlights ORDER BY sort_order ASC, id ASC").all() || [];
+  const highlights = (await queryAll("SELECT * FROM highlights ORDER BY sort_order ASC, id ASC")) || [];
 
   // 4. Experiences
-  const expRows = db.prepare("SELECT * FROM experiences ORDER BY sort_order ASC, id ASC").all() || [];
+  const expRows = (await queryAll("SELECT * FROM experiences ORDER BY sort_order ASC, id ASC")) || [];
   const experiences = expRows.map((r) => {
     let points = [];
     try {
@@ -198,10 +254,10 @@ export function getPortfolioContent() {
   });
 
   // 5. Educations
-  const educations = db.prepare("SELECT * FROM educations ORDER BY sort_order ASC, id ASC").all() || [];
+  const educations = (await queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC")) || [];
 
   // 6. Skills
-  const skills = db.prepare("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC").all() || [];
+  const skills = (await queryAll("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC")) || [];
   const grouped_skills = {};
   for (const s of skills) {
     if (!grouped_skills[s.category]) {
@@ -211,10 +267,10 @@ export function getPortfolioContent() {
   }
 
   // 7. Skill Badges
-  const skill_badges = db.prepare("SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC").all() || [];
+  const skill_badges = (await queryAll("SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC")) || [];
 
   // 8. Projects
-  const projRows = db.prepare("SELECT * FROM projects WHERE is_published = 1 ORDER BY sort_order ASC, id ASC").all() || [];
+  const projRows = (await queryAll("SELECT * FROM projects WHERE is_published = 1 ORDER BY sort_order ASC, id ASC")) || [];
   const projects = projRows.map((p) => {
     let tags = [];
     let additionalImages = [];
@@ -232,16 +288,16 @@ export function getPortfolioContent() {
   });
 
   // 9. Services
-  const services = db.prepare("SELECT * FROM services ORDER BY sort_order ASC, id ASC").all() || [];
+  const services = (await queryAll("SELECT * FROM services ORDER BY sort_order ASC, id ASC")) || [];
 
   // 10. Social Links
-  const social_links = db.prepare("SELECT * FROM social_links WHERE id = 1").get() || {};
+  const social_links = (await queryOne("SELECT * FROM social_links WHERE id = 1")) || {};
 
   // 11. Resume
-  const resume = db.prepare("SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1").get() || {};
+  const resume = (await queryOne("SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1")) || {};
 
   // 12. Site Settings
-  const site_settings = db.prepare("SELECT * FROM site_settings WHERE id = 1").get() || {};
+  const site_settings = (await queryOne("SELECT * FROM site_settings WHERE id = 1")) || {};
 
   return {
     success: true,
@@ -264,13 +320,12 @@ export function getPortfolioContent() {
 // ==========================================
 // Portfolio Section Updates
 // ==========================================
-export function updatePortfolioSection(section, data, user = "admin") {
-  const db = getDb();
+export async function updatePortfolioSection(section, data, user = "admin") {
   const now = new Date().toISOString();
 
   switch (section) {
     case "hero": {
-      const stmt = db.prepare(`
+      await execute(`
         UPDATE hero SET
           name = COALESCE(?, name),
           title = COALESCE(?, title),
@@ -285,8 +340,7 @@ export function updatePortfolioSection(section, data, user = "admin") {
           spec_badge_title = COALESCE(?, spec_badge_title),
           updated_at = ?
         WHERE id = 1
-      `);
-      stmt.run(
+      `, [
         data.name ?? null,
         data.title ?? null,
         data.badge_text ?? null,
@@ -298,14 +352,14 @@ export function updatePortfolioSection(section, data, user = "admin") {
         data.secondary_btn_link ?? null,
         data.spec_badge_label ?? null,
         data.spec_badge_title ?? null,
-        now
-      );
-      addActivityLog("Updated Hero Section", "Modified Hero headline, bio, or profile photo.", "Portfolio", user, 1);
+        now,
+      ]);
+      await addActivityLog("Updated Hero Section", "Modified Hero headline, bio, or profile photo.", "Portfolio", user, 1);
       break;
     }
 
     case "about": {
-      const stmt = db.prepare(`
+      await execute(`
         UPDATE about SET
           subtitle = COALESCE(?, subtitle),
           title = COALESCE(?, title),
@@ -318,8 +372,7 @@ export function updatePortfolioSection(section, data, user = "admin") {
           focus2_text = COALESCE(?, focus2_text),
           updated_at = ?
         WHERE id = 1
-      `);
-      stmt.run(
+      `, [
         data.subtitle ?? null,
         data.title ?? null,
         data.description1 ?? null,
@@ -329,39 +382,39 @@ export function updatePortfolioSection(section, data, user = "admin") {
         data.focus1_text ?? null,
         data.focus2_title ?? null,
         data.focus2_text ?? null,
-        now
-      );
-      addActivityLog("Updated About Section", "Modified bio descriptions and engineering focus badges.", "Portfolio", user, 1);
+        now,
+      ]);
+      await addActivityLog("Updated About Section", "Modified bio descriptions and engineering focus badges.", "Portfolio", user, 1);
       break;
     }
 
     case "highlights": {
       if (Array.isArray(data.items)) {
-        db.prepare("DELETE FROM highlights").run();
-        const insertStmt = db.prepare(`
-          INSERT INTO highlights (metric_value, metric_label, metric_subtext, sort_order)
-          VALUES (?, ?, ?, ?)
-        `);
-        data.items.forEach((item, idx) => {
-          insertStmt.run(item.metric_value || "", item.metric_label || "", item.metric_subtext || "", idx + 1);
-        });
-        addActivityLog("Updated Highlights Bar", `Saved ${data.items.length} metrics.`, "Portfolio", user, 1);
+        await execute("DELETE FROM highlights");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          await execute(`
+            INSERT INTO highlights (metric_value, metric_label, metric_subtext, sort_order)
+            VALUES (?, ?, ?, ?)
+          `, [item.metric_value || "", item.metric_label || "", item.metric_subtext || "", idx + 1]);
+        }
+        await addActivityLog("Updated Highlights Bar", `Saved ${data.items.length} metrics.`, "Portfolio", user, 1);
       }
       break;
     }
 
     case "experiences": {
       if (Array.isArray(data.items)) {
-        db.prepare("DELETE FROM experiences").run();
-        const insertStmt = db.prepare(`
-          INSERT INTO experiences (
-            role, organization, period, start_date, end_date, is_current,
-            description_points, location, website, sort_order, created_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-        data.items.forEach((item, idx) => {
+        await execute("DELETE FROM experiences");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
           const pointsJson = JSON.stringify(item.description_points || item.points || []);
-          insertStmt.run(
+          await execute(`
+            INSERT INTO experiences (
+              role, organization, period, start_date, end_date, is_current,
+              description_points, location, website, sort_order, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
             item.role || "",
             item.organization || "",
             item.period || "",
@@ -372,23 +425,23 @@ export function updatePortfolioSection(section, data, user = "admin") {
             item.location || "",
             item.website || "",
             idx + 1,
-            now
-          );
-        });
-        addActivityLog("Updated Experience Timeline", `Saved ${data.items.length} work positions.`, "Portfolio", user, 1);
+            now,
+          ]);
+        }
+        await addActivityLog("Updated Experience Timeline", `Saved ${data.items.length} work positions.`, "Portfolio", user, 1);
       }
       break;
     }
 
     case "educations": {
       if (Array.isArray(data.items)) {
-        db.prepare("DELETE FROM educations").run();
-        const insertStmt = db.prepare(`
-          INSERT INTO educations (degree, institution, subject, start_year, end_year, result, badge_text, description, sort_order, created_at)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-        data.items.forEach((item, idx) => {
-          insertStmt.run(
+        await execute("DELETE FROM educations");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          await execute(`
+            INSERT INTO educations (degree, institution, subject, start_year, end_year, result, badge_text, description, sort_order, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
             item.degree || "",
             item.institution || "",
             item.subject || "",
@@ -398,43 +451,43 @@ export function updatePortfolioSection(section, data, user = "admin") {
             item.badge_text || "",
             item.description || "",
             idx + 1,
-            now
-          );
-        });
-        addActivityLog("Updated Education Entries", `Saved ${data.items.length} degrees/certifications.`, "Portfolio", user, 1);
+            now,
+          ]);
+        }
+        await addActivityLog("Updated Education Entries", `Saved ${data.items.length} degrees/certifications.`, "Portfolio", user, 1);
       }
       break;
     }
 
     case "skills": {
       if (Array.isArray(data.items)) {
-        db.prepare("DELETE FROM skills").run();
-        const insertStmt = db.prepare(`
-          INSERT INTO skills (category, name, level, icon, sort_order)
-          VALUES (?, ?, ?, ?, ?)
-        `);
-        data.items.forEach((item, idx) => {
-          insertStmt.run(item.category || "General", item.name || "", item.level || 80, item.icon || "", idx + 1);
-        });
-        addActivityLog("Updated Skills Matrix", `Saved ${data.items.length} technical skills.`, "Portfolio", user, 1);
+        await execute("DELETE FROM skills");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          await execute(`
+            INSERT INTO skills (category, name, level, icon, sort_order)
+            VALUES (?, ?, ?, ?, ?)
+          `, [item.category || "General", item.name || "", item.level || 80, item.icon || "", idx + 1]);
+        }
+        await addActivityLog("Updated Skills Matrix", `Saved ${data.items.length} technical skills.`, "Portfolio", user, 1);
       }
       break;
     }
 
     case "projects": {
       if (Array.isArray(data.items)) {
-        db.prepare("DELETE FROM projects").run();
-        const insertStmt = db.prepare(`
-          INSERT INTO projects (
-            project_number, title, short_description, full_description, image_url,
-            additional_images_json, tags_json, category, live_url, github_url,
-            project_date, is_featured, is_published, sort_order, created_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-        data.items.forEach((item, idx) => {
+        await execute("DELETE FROM projects");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
           const tagsJson = JSON.stringify(item.tags || []);
           const addImagesJson = JSON.stringify(item.additional_images || []);
-          insertStmt.run(
+          await execute(`
+            INSERT INTO projects (
+              project_number, title, short_description, full_description, image_url,
+              additional_images_json, tags_json, category, live_url, github_url,
+              project_date, is_featured, is_published, sort_order, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `, [
             item.project_number || String(idx + 1).padStart(2, "0"),
             item.title || "",
             item.short_description || "",
@@ -449,17 +502,17 @@ export function updatePortfolioSection(section, data, user = "admin") {
             item.is_featured ? 1 : 0,
             item.is_published !== undefined ? (item.is_published ? 1 : 0) : 1,
             idx + 1,
-            now
-          );
-        });
-        addActivityLog("Updated Projects Portfolio", `Saved ${data.items.length} projects.`, "Portfolio", user, 1);
+            now,
+          ]);
+        }
+        await addActivityLog("Updated Projects Portfolio", `Saved ${data.items.length} projects.`, "Portfolio", user, 1);
       }
       break;
     }
 
     case "social_links":
     case "social": {
-      const stmt = db.prepare(`
+      await execute(`
         UPDATE social_links SET
           email = COALESCE(?, email),
           phone = COALESCE(?, phone),
@@ -471,8 +524,7 @@ export function updatePortfolioSection(section, data, user = "admin") {
           maps_url = COALESCE(?, maps_url),
           updated_at = ?
         WHERE id = 1
-      `);
-      stmt.run(
+      `, [
         data.email ?? null,
         data.phone ?? null,
         data.whatsapp ?? null,
@@ -481,15 +533,15 @@ export function updatePortfolioSection(section, data, user = "admin") {
         data.facebook ?? null,
         data.location ?? null,
         data.maps_url ?? null,
-        now
-      );
-      addActivityLog("Updated Contact & Social Details", "Modified phone, email, WhatsApp, or location.", "Portfolio", user, 1);
+        now,
+      ]);
+      await addActivityLog("Updated Contact & Social Details", "Modified phone, email, WhatsApp, or location.", "Portfolio", user, 1);
       break;
     }
 
     case "site_settings":
     case "settings": {
-      const stmt = db.prepare(`
+      await execute(`
         UPDATE site_settings SET
           site_title = COALESCE(?, site_title),
           brand_logo = COALESCE(?, brand_logo),
@@ -500,8 +552,7 @@ export function updatePortfolioSection(section, data, user = "admin") {
           footer_copyright = COALESCE(?, footer_copyright),
           updated_at = ?
         WHERE id = 1
-      `);
-      stmt.run(
+      `, [
         data.site_title ?? null,
         data.brand_logo ?? null,
         data.favicon_url ?? null,
@@ -509,9 +560,9 @@ export function updatePortfolioSection(section, data, user = "admin") {
         data.og_image_url ?? null,
         data.footer_brand ?? null,
         data.footer_copyright ?? null,
-        now
-      );
-      addActivityLog("Updated Site Brand & Settings", "Modified site title, brand logo, or meta description.", "Portfolio", user, 1);
+        now,
+      ]);
+      await addActivityLog("Updated Site Brand & Settings", "Modified site title, brand logo, or meta description.", "Portfolio", user, 1);
       break;
     }
 
@@ -525,11 +576,10 @@ export function updatePortfolioSection(section, data, user = "admin") {
 // ==========================================
 // ToolGhor Hub
 // ==========================================
-export function getToolGhorContent() {
-  const db = getDb();
-  const categories = db.prepare("SELECT * FROM toolghor_categories ORDER BY sort_order ASC, id ASC").all() || [];
-  const tools = db.prepare("SELECT * FROM toolghor_tools ORDER BY sort_order ASC, id ASC").all() || [];
-  const settings = db.prepare("SELECT * FROM toolghor_settings WHERE id = 1").get() || {};
+export async function getToolGhorContent() {
+  const categories = (await queryAll("SELECT * FROM toolghor_categories ORDER BY sort_order ASC, id ASC")) || [];
+  const tools = (await queryAll("SELECT * FROM toolghor_tools ORDER BY sort_order ASC, id ASC")) || [];
+  const settings = (await queryOne("SELECT * FROM toolghor_settings WHERE id = 1")) || {};
 
   return {
     success: true,
@@ -539,12 +589,11 @@ export function getToolGhorContent() {
   };
 }
 
-export function saveToolGhorTool(id, data, user = "admin") {
-  const db = getDb();
+export async function saveToolGhorTool(id, data, user = "admin") {
   const now = new Date().toISOString();
 
   if (id) {
-    const stmt = db.prepare(`
+    await execute(`
       UPDATE toolghor_tools SET
         name = COALESCE(?, name),
         slug = COALESCE(?, slug),
@@ -560,8 +609,7 @@ export function saveToolGhorTool(id, data, user = "admin") {
         sort_order = COALESCE(?, sort_order),
         updated_at = ?
       WHERE id = ?
-    `);
-    stmt.run(
+    `, [
       data.name ?? null,
       data.slug ?? null,
       data.category_id ?? null,
@@ -575,17 +623,16 @@ export function saveToolGhorTool(id, data, user = "admin") {
       data.is_active !== undefined ? (data.is_active ? 1 : 0) : null,
       data.sort_order ?? null,
       now,
-      id
-    );
-    addActivityLog("Updated ToolGhor Tool", `Modified tool: ${data.name || id}`, "ToolGhor", user, 2);
+      id,
+    ]);
+    await addActivityLog("Updated ToolGhor Tool", `Modified tool: ${data.name || id}`, "ToolGhor", user, 2);
   } else {
-    const stmt = db.prepare(`
+    await execute(`
       INSERT INTO toolghor_tools (
         category_id, category_name, name, slug, short_description, full_description,
         icon, url, badge, is_featured, is_active, sort_order, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    stmt.run(
+    `, [
       data.category_id || 1,
       data.category_name || "General",
       data.name || "New Tool",
@@ -599,25 +646,23 @@ export function saveToolGhorTool(id, data, user = "admin") {
       data.is_active !== undefined ? (data.is_active ? 1 : 0) : 1,
       data.sort_order || 99,
       now,
-      now
-    );
-    addActivityLog("Created ToolGhor Tool", `Added new tool: ${data.name}`, "ToolGhor", user, 2);
+      now,
+    ]);
+    await addActivityLog("Created ToolGhor Tool", `Added new tool: ${data.name}`, "ToolGhor", user, 2);
   }
   return { success: true };
 }
 
-export function deleteToolGhorTool(id, user = "admin") {
-  const db = getDb();
-  db.prepare("DELETE FROM toolghor_tools WHERE id = ?").run(id);
-  addActivityLog("Deleted ToolGhor Tool", `Removed tool ID: ${id}`, "ToolGhor", user, 2);
+export async function deleteToolGhorTool(id, user = "admin") {
+  await execute("DELETE FROM toolghor_tools WHERE id = ?", [id]);
+  await addActivityLog("Deleted ToolGhor Tool", `Removed tool ID: ${id}`, "ToolGhor", user, 2);
   return { success: true };
 }
 
-export function saveToolGhorCategory(id, data, user = "admin") {
-  const db = getDb();
+export async function saveToolGhorCategory(id, data, user = "admin") {
   const now = new Date().toISOString();
   if (id) {
-    db.prepare(`
+    await execute(`
       UPDATE toolghor_categories SET
         name = COALESCE(?, name),
         slug = COALESCE(?, slug),
@@ -625,28 +670,26 @@ export function saveToolGhorCategory(id, data, user = "admin") {
         icon = COALESCE(?, icon),
         sort_order = COALESCE(?, sort_order)
       WHERE id = ?
-    `).run(data.name ?? null, data.slug ?? null, data.description ?? null, data.icon ?? null, data.sort_order ?? null, id);
+    `, [data.name ?? null, data.slug ?? null, data.description ?? null, data.icon ?? null, data.sort_order ?? null, id]);
   } else {
-    db.prepare(`
+    await execute(`
       INSERT INTO toolghor_categories (name, slug, description, icon, sort_order, created_at)
       VALUES (?, ?, ?, ?, ?, ?)
-    `).run(data.name, data.slug, data.description || "", data.icon || "folder", data.sort_order || 99, now);
+    `, [data.name, data.slug, data.description || "", data.icon || "folder", data.sort_order || 99, now]);
   }
-  addActivityLog("Saved ToolGhor Category", `Category: ${data.name}`, "ToolGhor", user, 2);
+  await addActivityLog("Saved ToolGhor Category", `Category: ${data.name}`, "ToolGhor", user, 2);
   return { success: true };
 }
 
-export function deleteToolGhorCategory(id, user = "admin") {
-  const db = getDb();
-  db.prepare("DELETE FROM toolghor_categories WHERE id = ?").run(id);
-  addActivityLog("Deleted ToolGhor Category", `Removed category ID: ${id}`, "ToolGhor", user, 2);
+export async function deleteToolGhorCategory(id, user = "admin") {
+  await execute("DELETE FROM toolghor_categories WHERE id = ?", [id]);
+  await addActivityLog("Deleted ToolGhor Category", `Removed category ID: ${id}`, "ToolGhor", user, 2);
   return { success: true };
 }
 
-export function saveToolGhorSettings(data, user = "admin") {
-  const db = getDb();
+export async function saveToolGhorSettings(data, user = "admin") {
   const now = new Date().toISOString();
-  db.prepare(`
+  await execute(`
     UPDATE toolghor_settings SET
       site_title = COALESCE(?, site_title),
       tagline = COALESCE(?, tagline),
@@ -656,33 +699,31 @@ export function saveToolGhorSettings(data, user = "admin") {
       footer_text = COALESCE(?, footer_text),
       updated_at = ?
     WHERE id = 1
-  `).run(
+  `, [
     data.site_title ?? null,
     data.tagline ?? null,
     data.hero_headline ?? null,
     data.hero_subheadline ?? null,
     data.announcement_banner ?? null,
     data.footer_text ?? null,
-    now
-  );
-  addActivityLog("Updated ToolGhor Settings", "Saved global headlines and banners.", "ToolGhor", user, 2);
+    now,
+  ]);
+  await addActivityLog("Updated ToolGhor Settings", "Saved global headlines and banners.", "ToolGhor", user, 2);
   return { success: true };
 }
 
 // ==========================================
 // Central Websites & Multi-Site Directory
 // ==========================================
-export function getWebsites() {
-  const db = getDb();
-  return db.prepare("SELECT * FROM websites ORDER BY id ASC").all() || [];
+export async function getWebsites() {
+  return (await queryAll("SELECT * FROM websites ORDER BY id ASC")) || [];
 }
 
-export function saveWebsite(id, data, user = "admin") {
-  const db = getDb();
+export async function saveWebsite(id, data, user = "admin") {
   const now = new Date().toISOString();
 
   if (id) {
-    db.prepare(`
+    await execute(`
       UPDATE websites SET
         name = COALESCE(?, name),
         slug = COALESCE(?, slug),
@@ -697,7 +738,7 @@ export function saveWebsite(id, data, user = "admin") {
         api_key = COALESCE(?, api_key),
         updated_at = ?
       WHERE id = ?
-    `).run(
+    `, [
       data.name ?? null,
       data.slug ?? null,
       data.url ?? null,
@@ -710,16 +751,16 @@ export function saveWebsite(id, data, user = "admin") {
       data.logo ?? null,
       data.api_key ?? null,
       now,
-      id
-    );
-    addActivityLog("Updated Website Registration", `Modified website: ${data.name || id}`, data.name || "Websites", user, id);
+      id,
+    ]);
+    await addActivityLog("Updated Website Registration", `Modified website: ${data.name || id}`, data.name || "Websites", user, id);
   } else {
-    db.prepare(`
+    await execute(`
       INSERT INTO websites (
         name, slug, url, cms_url, description, website_type, cms_type,
         status, connection_status, logo, api_key, settings_json, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', ?, ?)
-    `).run(
+    `, [
       data.name || "New Website",
       data.slug || `site-${Date.now()}`,
       data.url || "https://example.com",
@@ -732,45 +773,41 @@ export function saveWebsite(id, data, user = "admin") {
       data.logo || "/globe.svg",
       data.api_key || `key_${Date.now()}`,
       now,
-      now
-    );
-    addActivityLog("Registered New Website", `Connected website: ${data.name}`, data.name, user);
+      now,
+    ]);
+    await addActivityLog("Registered New Website", `Connected website: ${data.name}`, data.name, user);
   }
   return { success: true };
 }
 
-export function deleteWebsite(id, user = "admin") {
-  const db = getDb();
-  const site = db.prepare("SELECT name FROM websites WHERE id = ?").get(id);
-  db.prepare("DELETE FROM websites WHERE id = ?").run(id);
-  addActivityLog("Disconnected Website", `Removed site: ${site?.name || id}`, "Websites", user, id);
+export async function deleteWebsite(id, user = "admin") {
+  const site = await queryOne("SELECT name FROM websites WHERE id = ?", [id]);
+  await execute("DELETE FROM websites WHERE id = ?", [id]);
+  await addActivityLog("Disconnected Website", `Removed site: ${site?.name || id}`, "Websites", user, id);
   return { success: true };
 }
 
 // ==========================================
 // Contact Inbox
 // ==========================================
-export function addContactMessage(name, email, subject, message, ip = "") {
-  const db = getDb();
+export async function addContactMessage(name, email, subject, message, ip = "") {
   const now = new Date().toISOString();
-  db.prepare(`
+  await execute(`
     INSERT INTO contact_messages (name, email, subject, message, is_read, ip_address, created_at)
     VALUES (?, ?, ?, ?, 0, ?, ?)
-  `).run(name, email, subject || "", message, ip, now);
-  addActivityLog("New Contact Inquiry", `Message received from ${name} (${email})`, "Portfolio", "Visitor", 1);
+  `, [name, email, subject || "", message, ip, now]);
+  await addActivityLog("New Contact Inquiry", `Message received from ${name} (${email})`, "Portfolio", "Visitor", 1);
   return { success: true };
 }
 
-export function getContactMessages() {
-  const db = getDb();
-  return db.prepare("SELECT * FROM contact_messages ORDER BY id DESC").all() || [];
+export async function getContactMessages() {
+  return (await queryAll("SELECT * FROM contact_messages ORDER BY id DESC")) || [];
 }
 
 // ==========================================
 // Activity & Audit Logs
 // ==========================================
-export function getActivityLogs({ limit = 50, category = "all", search = "" } = {}) {
-  const db = getDb();
+export async function getActivityLogs({ limit = 50, category = "all", search = "" } = {}) {
   let query = "SELECT * FROM activity_logs";
   const params = [];
   const where = [];
@@ -780,7 +817,7 @@ export function getActivityLogs({ limit = 50, category = "all", search = "" } = 
     params.push(`%${category}%`);
   }
   if (search) {
-    where.push("(action LIKE ? OR details LIKE ? OR user LIKE ?)");
+    where.push(`(action LIKE ? OR details LIKE ? OR "user" LIKE ?)`);
     params.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
 
@@ -790,21 +827,27 @@ export function getActivityLogs({ limit = 50, category = "all", search = "" } = 
   query += " ORDER BY id DESC LIMIT ?";
   params.push(Number(limit) || 50);
 
-  return db.prepare(query).all(...params) || [];
+  return (await queryAll(query, params)) || [];
 }
 
 // ==========================================
 // Central Dashboard Overview & Metrics
 // ==========================================
-export function getCentralDashboard() {
-  const db = getDb();
-  const totalProjects = db.prepare("SELECT COUNT(*) as count FROM projects").get()?.count || 0;
-  const totalSkills = db.prepare("SELECT COUNT(*) as count FROM skills").get()?.count || 0;
-  const totalTools = db.prepare("SELECT COUNT(*) as count FROM toolghor_tools").get()?.count || 0;
-  const totalWebsites = db.prepare("SELECT COUNT(*) as count FROM websites").get()?.count || 0;
-  const unreadMessages = db.prepare("SELECT COUNT(*) as count FROM contact_messages WHERE is_read = 0").get()?.count || 0;
-  const recentLogs = db.prepare("SELECT * FROM activity_logs ORDER BY id DESC LIMIT 5").all() || [];
-  const websites = db.prepare("SELECT * FROM websites ORDER BY id ASC").all() || [];
+export async function getCentralDashboard() {
+  const projRow = await queryOne("SELECT COUNT(*) as count FROM projects");
+  const skillsRow = await queryOne("SELECT COUNT(*) as count FROM skills");
+  const toolsRow = await queryOne("SELECT COUNT(*) as count FROM toolghor_tools");
+  const sitesRow = await queryOne("SELECT COUNT(*) as count FROM websites");
+  const unreadRow = await queryOne("SELECT COUNT(*) as count FROM contact_messages WHERE is_read = 0");
+
+  const totalProjects = Number(projRow?.count || 0);
+  const totalSkills = Number(skillsRow?.count || 0);
+  const totalTools = Number(toolsRow?.count || 0);
+  const totalWebsites = Number(sitesRow?.count || 0);
+  const unreadMessages = Number(unreadRow?.count || 0);
+
+  const recentLogs = (await queryAll("SELECT * FROM activity_logs ORDER BY id DESC LIMIT 5")) || [];
+  const websites = (await queryAll("SELECT * FROM websites ORDER BY id ASC")) || [];
 
   return {
     success: true,
@@ -823,9 +866,8 @@ export function getCentralDashboard() {
 // ==========================================
 // System Settings
 // ==========================================
-export function getSystemSettings() {
-  const db = getDb();
-  const rows = db.prepare("SELECT * FROM central_system_settings").all() || [];
+export async function getSystemSettings() {
+  const rows = (await queryAll("SELECT * FROM central_system_settings")) || [];
   const result = {};
   for (const r of rows) {
     try {
@@ -837,27 +879,28 @@ export function getSystemSettings() {
   return { success: true, settings: result };
 }
 
-export function saveSystemSettings(category, data, user = "admin") {
-  const db = getDb();
+export async function saveSystemSettings(category, data, user = "admin") {
   const now = new Date().toISOString();
   const jsonStr = JSON.stringify(data);
-  db.prepare(`
+  await execute(`
     INSERT INTO central_system_settings (category, settings_json, updated_at)
     VALUES (?, ?, ?)
     ON CONFLICT(category) DO UPDATE SET
       settings_json = excluded.settings_json,
       updated_at = excluded.updated_at
-  `).run(category, jsonStr, now);
-  addActivityLog("Updated System Settings", `Modified category: ${category}`, "Central CMS", user);
+  `, [category, jsonStr, now]);
+  await addActivityLog("Updated System Settings", `Modified category: ${category}`, "Central CMS", user);
   return { success: true };
 }
 
 // ==========================================
 // User Accounts & Roles
 // ==========================================
-export function getUsers() {
-  const db = getDb();
-  const rows = db.prepare("SELECT id, username, email, full_name, role, is_active, last_login_at, permissions_json, assigned_websites_json, two_factor_enabled, created_at FROM admins").all() || [];
+export async function getUsers() {
+  const rows =
+    (await queryAll(
+      "SELECT id, username, email, full_name, role, is_active, last_login_at, permissions_json, assigned_websites_json, two_factor_enabled, created_at FROM admins"
+    )) || [];
   return {
     success: true,
     users: rows.map((u) => {

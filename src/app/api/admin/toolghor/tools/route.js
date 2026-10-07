@@ -9,7 +9,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
-    const result = saveToolGhorTool(null, body, user.sub);
+    const result = await saveToolGhorTool(null, body, user.sub);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

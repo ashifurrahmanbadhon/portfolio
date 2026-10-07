@@ -9,7 +9,7 @@ export async function POST(req, { params }) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
     const resolvedParams = await params;
-    const websites = getWebsites();
+    const websites = await getWebsites();
     const site = websites.find((w) => String(w.id) === String(resolvedParams.id));
 
     if (!site) {

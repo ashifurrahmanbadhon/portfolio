@@ -23,7 +23,7 @@ export async function POST(req) {
       );
     }
 
-    const admin = getAdminByIdentifier(identifier);
+    const admin = await getAdminByIdentifier(identifier);
     if (!admin) {
       return NextResponse.json(
         { success: false, error: "Invalid username or password." },
@@ -40,8 +40,8 @@ export async function POST(req) {
     // Check Password
     const isValid = verifyPassword(password, admin.password_hash, admin.salt);
     if (!isValid) {
-      const attempts = recordFailedLogin(admin.id);
-      addActivityLog(
+      const attempts = await recordFailedLogin(admin.id);
+      await addActivityLog(
         "Failed Login Attempt",
         `Invalid password for user: ${admin.username} (Attempt ${attempts})`,
         "Central CMS",
@@ -73,9 +73,9 @@ export async function POST(req) {
     }
 
     // Direct Login Success
-    recordSuccessfulLogin(admin.id);
+    await recordSuccessfulLogin(admin.id);
     const { token, exp } = signToken(admin, rememberMe);
-    addActivityLog("Super Admin Login", "Authenticated successfully into Central CMS.", "Central CMS", admin.username);
+    await addActivityLog("Super Admin Login", "Authenticated successfully into Central CMS.", "Central CMS", admin.username);
 
     return NextResponse.json({
       success: true,

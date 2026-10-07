@@ -5,7 +5,7 @@ import { getAdminByIdentifier, getDb } from "@/lib/db";
 export async function POST(req) {
   try {
     const { identifier } = await req.json();
-    const admin = getAdminByIdentifier(identifier);
+    const admin = await getAdminByIdentifier(identifier);
     if (!admin) {
       // Return success to prevent username enumeration
       return NextResponse.json({
@@ -20,7 +20,7 @@ export async function POST(req) {
     const now = new Date().toISOString();
 
     const db = getDb();
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO password_resets (admin_id, identifier, token_hash, expires_at, used, created_at)
       VALUES (?, ?, ?, ?, 0, ?)
     `).run(admin.id, identifier, tokenHash, expiresAt, now);
