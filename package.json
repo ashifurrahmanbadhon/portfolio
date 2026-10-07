@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:migrate": "node migrate_to_neon.cjs"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.52.0",
     "motion": "^14.0.0",

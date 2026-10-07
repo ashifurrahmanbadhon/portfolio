@@ -12,7 +12,7 @@ export async function PUT(req, { params }) {
     const section = resolvedParams.section;
     const data = await req.json();
 
-    const result = updatePortfolioSection(section, data, user.sub);
+    const result = await updatePortfolioSection(section, data, user.sub);
     return NextResponse.json(result);
   } catch (error) {
     console.error(`PUT /api/admin/${params?.section} error:`, error);

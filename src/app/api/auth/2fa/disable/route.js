@@ -12,7 +12,7 @@ export async function POST(req) {
 
     const { password, code } = await req.json();
     const db = getDb();
-    const admin = getAdminById(user.uid);
+    const admin = await getAdminById(user.uid);
 
     if (!admin) {
       return NextResponse.json({ success: false, error: "Admin not found" }, { status: 404 });
@@ -32,14 +32,14 @@ export async function POST(req) {
     }
 
     const now = new Date().toISOString();
-    db.prepare(`
+    await db.prepare(`
       UPDATE admins
       SET two_factor_enabled = 0, totp_secret = NULL, totp_created_at = NULL, updated_at = ?
       WHERE id = ?
     `).run(now, user.uid);
 
-    db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
-    addActivityLog("Disabled Two-Factor Authentication", "2FA was disabled for admin account.", "Central CMS", user.sub);
+    await db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
+    await addActivityLog("Disabled Two-Factor Authentication", "2FA was disabled for admin account.", "Central CMS", user.sub);
 
     return NextResponse.json({ success: true, message: "Two-Factor Authentication disabled" });
   } catch (error) {

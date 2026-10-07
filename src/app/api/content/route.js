@@ -4,7 +4,7 @@ import { authenticateRequest } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const data = getPortfolioContent();
+    const data = await getPortfolioContent();
     return NextResponse.json(data);
   } catch (error) {
     console.error("GET /api/content failed:", error);
@@ -23,7 +23,7 @@ export async function PUT(req) {
     if (!section) {
       return NextResponse.json({ success: false, error: "Missing section parameter" }, { status: 400 });
     }
-    const res = updatePortfolioSection(section, data, user.sub);
+    const res = await updatePortfolioSection(section, data, user.sub);
     return NextResponse.json(res);
   } catch (error) {
     console.error("PUT /api/content failed:", error);

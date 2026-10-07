@@ -10,7 +10,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: "Invalid session." }, { status: 401 });
     }
 
-    const admin = getAdminById(decoded.uid);
+    const admin = await getAdminById(decoded.uid);
     const masked = admin?.phone ? `******${admin.phone.slice(-4)}` : "******7284";
 
     return NextResponse.json({

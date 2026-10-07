@@ -13,7 +13,7 @@ export async function POST(req) {
 
     const { password } = await req.json();
     const db = getDb();
-    const admin = getAdminById(user.uid);
+    const admin = await getAdminById(user.uid);
 
     if (!admin || !verifyPassword(password, admin.password_hash, admin.salt)) {
       return NextResponse.json({ success: false, error: "Invalid administrative password" }, { status: 401 });
@@ -22,17 +22,17 @@ export async function POST(req) {
     const recoveryCodes = generateRecoveryCodes(8);
     const now = new Date().toISOString();
 
-    db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
+    await db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
     const insertCode = db.prepare(`
       INSERT INTO admin_recovery_codes (admin_id, code_hash, used, created_at)
       VALUES (?, ?, 0, ?)
     `);
     for (const rc of recoveryCodes) {
       const hash = crypto.createHash("sha256").update(rc.replace("-", "").toLowerCase()).digest("hex");
-      insertCode.run(user.uid, hash, now);
+      await insertCode.run(user.uid, hash, now);
     }
 
-    addActivityLog("Regenerated 2FA Recovery Codes", "New backup codes generated.", "Central CMS", user.sub);
+    await addActivityLog("Regenerated 2FA Recovery Codes", "New backup codes generated.", "Central CMS", user.sub);
 
     return NextResponse.json({ success: true, recovery_codes: recoveryCodes });
   } catch (error) {

@@ -13,7 +13,7 @@ export async function GET(req) {
     const search = searchParams.get("search") || "";
     const limit = searchParams.get("limit") || 50;
 
-    const logs = getActivityLogs({ category, search, limit });
+    const logs = await getActivityLogs({ category, search, limit });
     return NextResponse.json({ success: true, logs });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

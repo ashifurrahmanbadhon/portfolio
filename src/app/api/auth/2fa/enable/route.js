@@ -25,24 +25,24 @@ export async function POST(req) {
     const recoveryCodes = generateRecoveryCodes(8);
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE admins
       SET two_factor_enabled = 1, totp_secret = ?, totp_created_at = ?, updated_at = ?
       WHERE id = ?
     `).run(setup_token, now, now, user.uid);
 
     // Save hashed recovery codes
-    db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
+    await db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
     const insertCode = db.prepare(`
       INSERT INTO admin_recovery_codes (admin_id, code_hash, used, created_at)
       VALUES (?, ?, 0, ?)
     `);
     for (const rc of recoveryCodes) {
       const hash = crypto.createHash("sha256").update(rc.replace("-", "").toLowerCase()).digest("hex");
-      insertCode.run(user.uid, hash, now);
+      await insertCode.run(user.uid, hash, now);
     }
 
-    addActivityLog("Enabled Two-Factor Authentication", "2FA activated with Google Authenticator.", "Central CMS", user.sub);
+    await addActivityLog("Enabled Two-Factor Authentication", "2FA activated with Google Authenticator.", "Central CMS", user.sub);
 
     return NextResponse.json({
       success: true,

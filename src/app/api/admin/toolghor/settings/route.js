@@ -9,7 +9,7 @@ export async function PUT(req) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
     const body = await req.json();
-    const result = saveToolGhorSettings(body, user.sub);
+    const result = await saveToolGhorSettings(body, user.sub);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
