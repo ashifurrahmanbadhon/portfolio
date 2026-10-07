@@ -40,7 +40,7 @@ const INITIAL_WEBSITES = [
     name: "Portfolio",
     subId: null,
     slug: "portfolio",
-    url: "https://ashifurrahman.netlify.app",
+    url: "/",
     description: "Ashifur Rahman official engineering portfolio & interactive showcase.",
     status: "active",
     cmsPath: "/portfolio",

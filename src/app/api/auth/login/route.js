@@ -11,16 +11,19 @@ import { signToken, signChallengeToken } from "@/lib/auth";
 
 export async function POST(req) {
   try {
-    const { username, password, remember_me } = await req.json();
+    const body = await req.json();
+    const identifier = (body.identifier || body.username || body.email || "").trim();
+    const password = (body.password || "").trim();
+    const rememberMe = body.remember ?? body.remember_me ?? false;
 
-    if (!username || !password) {
+    if (!identifier || !password) {
       return NextResponse.json(
         { success: false, error: "Username and password are required." },
         { status: 400 }
       );
     }
 
-    const admin = getAdminByIdentifier(username);
+    const admin = getAdminByIdentifier(identifier);
     if (!admin) {
       return NextResponse.json(
         { success: false, error: "Invalid username or password." },
