@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "@/context/AuthContext";
 import AnimatedLogo from "./AnimatedLogo";
 
 import { ToastProvider } from "./Toast";
+import { PortfolioProvider } from "@/context/PortfolioContext";
 
 function ShellContent({ children }) {
   const pathname = usePathname();
@@ -16,9 +17,12 @@ function ShellContent({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // If public homepage, render content directly
-  if (pathname === "/") {
-    return <>{children}</>;
+  // Public portfolio routes that do not require admin CMS authentication
+  const publicRoutes = ["/", "/about", "/experience", "/projects", "/skills", "/education", "/contact"];
+  const isPublicRoute = publicRoutes.some((route) => pathname === route || (route !== "/" && pathname.startsWith(route + "/")));
+
+  if (isPublicRoute) {
+    return <PortfolioProvider>{children}</PortfolioProvider>;
   }
 
   // 1. Loading state while checking token

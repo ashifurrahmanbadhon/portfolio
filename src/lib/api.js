@@ -277,6 +277,12 @@ export const api = {
     return res.json();
   },
 
+  async getContactMessages() {
+    return cachedFetch(`${API_BASE}/api/contact`, {
+      headers: getAuthHeaders(),
+    }, 5000);
+  },
+
   // Roles & Users
   async getUsers() {
     return cachedFetch(`${API_BASE}/api/admin/users`, {
