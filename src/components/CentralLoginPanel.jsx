@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   User,
   Lock,
@@ -27,6 +29,7 @@ import { useAuth } from "@/context/AuthContext";
 import { API_BASE } from "@/lib/api";
 
 export default function CentralLoginPanel() {
+  const router = useRouter();
   const { login, verify2FA, sendSmsOtp } = useAuth();
 
   // Active view: 'login' | '2fa' | 'forgot' | 'reset'
@@ -110,6 +113,9 @@ export default function CentralLoginPanel() {
     if (!res.success) {
       setLoginError(res.error || "Invalid username/email or password.");
       setSubmitting(false);
+    } else {
+      setSubmitting(false);
+      router.push("/admin");
     }
   };
 
@@ -129,6 +135,9 @@ export default function CentralLoginPanel() {
     if (!res.success) {
       setTwoFactorError(res.error || "Verification failed. Please try again.");
       setTwoFactorSubmitting(false);
+    } else {
+      setTwoFactorSubmitting(false);
+      router.push("/admin");
     }
   };
 
@@ -784,15 +793,13 @@ export default function CentralLoginPanel() {
 
         {/* Minimal Public Link */}
         <div className="pt-4 border-t border-[#1E2638] flex flex-col items-center gap-2 text-center">
-          <a
-            href="https://ashifurrahman.netlify.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-slate-400 hover:text-[#10B981] transition inline-flex items-center gap-1.5 font-mono"
+          <Link
+            href="/"
+            className="text-xs text-slate-400 hover:text-[#10B981] transition inline-flex items-center gap-1.5 font-mono cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Public Website</span>
-          </a>
+          </Link>
           <span className="text-[10px] text-slate-500 font-mono">
             🔒 Secure Multi-Website Session Protection
           </span>

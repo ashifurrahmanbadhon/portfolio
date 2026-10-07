@@ -24,7 +24,7 @@ const INITIAL_SITES = [
   {
     id: "site-1",
     name: "Ashifur Rahman Portfolio",
-    url: "https://ashifurrahman.netlify.app/",
+    url: "/",
     type: "Personal Brand & Showcase",
     status: "active",
     cmsPath: "/portfolio",

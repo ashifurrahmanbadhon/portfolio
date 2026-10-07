@@ -299,35 +299,33 @@ export default function PortfolioCMS() {
                 Live Connected
               </span>
             </div>
-            <a
-              href="https://ashifurrahman.netlify.app/"
+            <Link
+              href="/"
               target="_blank"
-              rel="noopener noreferrer"
               className="text-xs text-slate-400 hover:text-white font-mono flex items-center gap-1 transition-colors"
             >
-              ashifurrahman.netlify.app <ExternalLink className="w-3 h-3 text-slate-500" />
-            </a>
+              Live Website (/) <ExternalLink className="w-3 h-3 text-slate-500" />
+            </Link>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2.5">
           <Link
-            href="/"
+            href="/admin"
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#111622] hover:bg-[#161E30] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono interactive-btn cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-slate-400" />
             <span>← Central Hub</span>
           </Link>
-          <a
-            href="https://ashifurrahman.netlify.app/"
+          <Link
+            href="/"
             target="_blank"
-            rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-medium interactive-btn cursor-pointer"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             <span>Open Live Site</span>
-          </a>
+          </Link>
         </div>
       </div>
 
