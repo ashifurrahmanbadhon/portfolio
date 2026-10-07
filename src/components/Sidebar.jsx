@@ -20,7 +20,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   const pathname = usePathname();
 
   const primaryNavItems = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard, badge: null },
+    { name: "Dashboard", href: "/admin", icon: LayoutDashboard, badge: null },
     { name: "Website Directory", href: "/websites", icon: Globe, badge: "3" },
     { name: "Central Analytics", href: "/analytics", icon: BarChart2, badge: null },
     { name: "Roles Access", href: "/roles", icon: ShieldCheck, badge: null },
