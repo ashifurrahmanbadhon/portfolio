@@ -57,7 +57,7 @@ export async function POST(req) {
 
     // Check if 2FA is active
     if (admin.two_factor_enabled) {
-      const challengeToken = signChallengeToken(admin, remember_me);
+      const challengeToken = signChallengeToken(admin, rememberMe);
       return NextResponse.json({
         success: true,
         requires_2fa: true,
@@ -74,7 +74,7 @@ export async function POST(req) {
 
     // Direct Login Success
     recordSuccessfulLogin(admin.id);
-    const { token, exp } = signToken(admin, remember_me);
+    const { token, exp } = signToken(admin, rememberMe);
     addActivityLog("Super Admin Login", "Authenticated successfully into Central CMS.", "Central CMS", admin.username);
 
     return NextResponse.json({
