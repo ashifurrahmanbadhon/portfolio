@@ -566,6 +566,23 @@ export async function updatePortfolioSection(section, data, user = "admin") {
       break;
     }
 
+    case "resume":
+    case "resumes": {
+      await execute(`
+        UPDATE resumes SET
+          file_name = COALESCE(?, file_name),
+          file_url = COALESCE(?, file_url),
+          upload_date = ?
+        WHERE id = 1 OR is_active = 1
+      `, [
+        data.file_name ?? null,
+        data.file_url ?? data.resume_url ?? null,
+        now,
+      ]);
+      await addActivityLog("Updated Resume Link", "Modified CV file link or download name.", "Portfolio", user, 1);
+      break;
+    }
+
     default:
       break;
   }
