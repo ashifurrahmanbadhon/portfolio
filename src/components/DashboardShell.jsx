@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import CentralLoginPanel from "./CentralLoginPanel";
@@ -10,9 +11,15 @@ import AnimatedLogo from "./AnimatedLogo";
 import { ToastProvider } from "./Toast";
 
 function ShellContent({ children }) {
+  const pathname = usePathname();
   const { isAuthenticated, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // If public homepage, render content directly
+  if (pathname === "/") {
+    return <>{children}</>;
+  }
 
   // 1. Loading state while checking token
   if (loading) {

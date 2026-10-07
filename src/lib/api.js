@@ -4,7 +4,7 @@ const getApiBase = () => {
     const custom = localStorage.getItem("cms_api_base");
     if (custom && custom.trim()) return custom.trim().replace(/\/$/, "");
   }
-  return process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000";
+  return process.env.NEXT_PUBLIC_API_BASE || "";
 };
 
 export const API_BASE = getApiBase();
