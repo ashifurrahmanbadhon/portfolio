@@ -132,8 +132,8 @@ export default function AboutPage() {
                   <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-[#0b0f17]">
                     <Image
                       src={
-                        (!aboutData.profile_image || aboutData.profile_image === "/ashifur.jpeg")
-                          ? "/ashifur-about-engineer.webp"
+                        (!aboutData.profile_image || aboutData.profile_image === "/ashifur.jpeg" || aboutData.profile_image === "/ashifur-about-engineer.webp")
+                          ? "/ashifur-about-blend.webp"
                           : aboutData.profile_image
                       }
                       alt={heroData.name || "Ashifur Rahman"}

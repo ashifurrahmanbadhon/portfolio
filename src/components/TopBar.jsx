@@ -42,7 +42,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [editName, setEditName] = useState(user?.full_name || "Ashifur Rahman");
   const [editEmail, setEditEmail] = useState(user?.email || "ashifur.badhon@gmail.com");
-  const [editAvatar, setEditAvatar] = useState(user?.avatar || "/ashifur.jpeg");
+  const [editAvatar, setEditAvatar] = useState(user?.avatar || "/ashifur-dark-blend.webp");
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
@@ -52,7 +52,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
 
   const displayName = user?.full_name || user?.username || "Ashifur Rahman";
   const displayEmail = user?.email || "ashifur.badhon@gmail.com";
-  const userAvatar = user?.avatar || "/ashifur.jpeg";
+  const userAvatar = user?.avatar || "/ashifur-dark-blend.webp";
 
   useEffect(() => {
     if (user) {
