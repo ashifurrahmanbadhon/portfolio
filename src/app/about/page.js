@@ -161,8 +161,8 @@ export default function AboutPage() {
                     {contactData.email && (
                       <div className="flex items-center gap-3 text-gray-300">
                         <Mail size={16} className="text-[#10B981] shrink-0" />
-                        <a href={`mailto:${contactData.email}`} className="hover:text-[#10B981] transition">
-                          {contactData.email}
+                        <a href={`mailto:${contactData.email}`} className="hover:text-[#10B981] transition font-medium">
+                          Send Direct Email
                         </a>
                       </div>
                     )}
