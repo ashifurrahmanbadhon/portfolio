@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, Layers, X } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 export default function ProjectMethodologyManager({ methodologies, setMethodologies, onSave, saving }) {
   const list = Array.isArray(methodologies) ? methodologies : [];
@@ -41,6 +42,19 @@ export default function ProjectMethodologyManager({ methodologies, setMethodolog
     setModalOpen(false);
     if (onSave) {
       onSave("project_methodologies", { items: updated }, "Project methodologies saved!");
+    }
+  };
+
+  const handleToggleActive = (idx) => {
+    const updated = list.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    setMethodologies(updated);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("project_methodologies", { items: updated }, `Step marked as ${isNowActive ? "Active" : "Disabled"}!`);
     }
   };
 
@@ -86,7 +100,12 @@ export default function ProjectMethodologyManager({ methodologies, setMethodolog
               <span className="text-2xl font-black font-mono text-emerald-400">
                 {item.step_number || String(idx + 1).padStart(2, "0")}
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <ActiveToggle
+                  isActive={item.is_active}
+                  onToggle={() => handleToggleActive(idx)}
+                  label="Workflow Step"
+                />
                 <button
                   type="button"
                   onClick={() => openEdit(idx)}

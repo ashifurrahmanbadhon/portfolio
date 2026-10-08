@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, ShieldCheck, X } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 export default function AboutPrinciplesManager({ about, setAbout, onSave, saving }) {
   const principles = Array.isArray(about?.principles) ? about.principles : [];
@@ -42,6 +43,20 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
     setModalOpen(false);
     if (onSave) {
       onSave("about", newAbout, "Guiding principles updated!");
+    }
+  };
+
+  const handleToggleActive = (idx) => {
+    const updated = principles.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    const newAbout = { ...about, principles: updated };
+    setAbout(newAbout);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("about", newAbout, `Principle marked as ${isNowActive ? "Active" : "Disabled"}!`);
     }
   };
 
@@ -88,7 +103,12 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
               <span className="text-lg font-bold font-mono text-emerald-400">
                 {pr.number || `0${idx + 1}.`}
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <ActiveToggle
+                  isActive={pr.is_active}
+                  onToggle={() => handleToggleActive(idx)}
+                  label="Principle"
+                />
                 <button
                   type="button"
                   onClick={() => openEdit(idx)}

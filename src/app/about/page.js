@@ -56,7 +56,7 @@ export default function AboutPage() {
     contactData,
     educations,
     pageHeaders,
-    openResumeModal
+    resumeUrl
   } = usePortfolio();
 
   const header = pageHeaders?.about || {
@@ -111,13 +111,13 @@ export default function AboutPage() {
               >
                 View Case Studies <ArrowRight size={15} />
               </Link>
-              <button
-                type="button"
-                onClick={openResumeModal}
+              <a
+                href={resumeUrl || "/resume.pdf"}
+                download="Ashifur_Rahman_CV.pdf"
                 className="bg-[#111622] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 hover:bg-[#161e30] transition duration-300 cursor-pointer"
               >
                 <Download size={15} /> Download CV
-              </button>
+              </a>
             </div>
           </div>
 
@@ -133,7 +133,7 @@ export default function AboutPage() {
                       src={aboutData.profile_image || heroData.profile_image || "/ashifur.jpeg"}
                       alt={heroData.name || "Ashifur Rahman"}
                       fill
-                      className="object-cover object-top filter grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition duration-500"
+                      className="object-cover object-top group-hover:scale-105 transition duration-500"
                       priority
                       unoptimized
                     />

@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Zap, FileText, Mail, Menu, X } from 'lucide-react';
+import { Zap, Download, Mail, Lock, Menu, X } from 'lucide-react';
+import { usePortfolio } from '@/context/PortfolioContext';
 
 const NAV_ITEMS = [
   { name: 'Home', href: '/' },
@@ -15,9 +16,10 @@ const NAV_ITEMS = [
   { name: 'Contact', href: '/contact' },
 ];
 
-export default function PortfolioNavbar({ onOpenResume }) {
+export default function PortfolioNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { resumeUrl } = usePortfolio();
 
   const isLinkActive = (href) => {
     if (href === '/') {
@@ -25,6 +27,8 @@ export default function PortfolioNavbar({ onOpenResume }) {
     }
     return pathname === href || pathname?.startsWith(href + '/');
   };
+
+  const cvHref = resumeUrl || '/resume.pdf';
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-[#0b0f17]/90 border-b border-[#1e2638] transition-colors">
@@ -61,18 +65,26 @@ export default function PortfolioNavbar({ onOpenResume }) {
 
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onOpenResume}
-            className="px-4 py-2 rounded-lg bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-gray-200 text-xs font-semibold flex items-center gap-2 transition hover:bg-[#161e30] cursor-pointer"
+          <a
+            href={cvHref}
+            download="Ashifur_Rahman_CV.pdf"
+            className="px-4 py-2 rounded-lg bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-gray-200 text-xs font-semibold flex items-center gap-2 transition hover:bg-[#161e30] hover:text-[#10B981] cursor-pointer"
+            title="Download CV Directly"
           >
-            <FileText size={15} className="text-[#10B981]" /> Resume
-          </button>
+            <Download size={14} className="text-[#10B981]" /> Download CV
+          </a>
           <Link
             href="/contact"
             className="bg-[#10B981] text-black text-xs font-bold uppercase tracking-wider px-4.5 py-2 rounded-lg flex items-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition duration-300"
           >
             <Mail size={15} /> Get In Touch
+          </Link>
+          <Link
+            href="/admin"
+            className="px-3 py-2 rounded-lg bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition hover:bg-[#161e30] hover:text-[#10B981]"
+            title="Central Admin CMS"
+          >
+            <Lock size={13} className="text-[#10B981]" /> Admin
           </Link>
         </div>
 
@@ -108,22 +120,27 @@ export default function PortfolioNavbar({ onOpenResume }) {
           })}
           
           <div className="pt-3 mt-3 border-t border-[#1e2638] flex flex-col gap-2.5">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenResume();
-              }}
+            <a
+              href={cvHref}
+              download="Ashifur_Rahman_CV.pdf"
+              onClick={() => setMobileMenuOpen(false)}
               className="w-full text-left px-3.5 py-2.5 rounded-lg text-sm font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/25 flex items-center gap-2 hover:bg-[#10B981]/20 transition"
             >
-              <FileText size={16} /> View &amp; Download CV
-            </button>
+              <Download size={16} /> Download CV
+            </a>
             <Link
               href="/contact"
               onClick={() => setMobileMenuOpen(false)}
               className="w-full text-center px-3.5 py-2.5 rounded-lg text-sm font-bold uppercase tracking-wider text-black bg-[#10B981] hover:bg-[#059669] flex items-center justify-center gap-2 transition"
             >
               <Mail size={16} /> Get In Touch
+            </Link>
+            <Link
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full text-center px-3.5 py-2.5 rounded-lg text-xs font-semibold text-gray-200 bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/40 flex items-center justify-center gap-2 transition"
+            >
+              <Lock size={14} className="text-[#10B981]" /> Admin Console
             </Link>
           </div>
         </div>

@@ -461,9 +461,15 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           await execute(`
-            INSERT INTO highlights (metric_value, metric_label, metric_subtext, sort_order)
-            VALUES (?, ?, ?, ?)
-          `, [item.metric_value || "", item.metric_label || "", item.metric_subtext || "", idx + 1]);
+            INSERT INTO highlights (metric_value, metric_label, metric_subtext, is_active, sort_order)
+            VALUES (?, ?, ?, ?, ?)
+          `, [
+            item.metric_value || "",
+            item.metric_label || "",
+            item.metric_subtext || "",
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
+            idx + 1
+          ]);
         }
         await addActivityLog("Updated Highlights Bar", `Saved ${data.items.length} metrics.`, "Portfolio", user, 1);
       }
@@ -479,8 +485,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           await execute(`
             INSERT INTO experiences (
               role, organization, period, start_date, end_date, is_current,
-              description_points, location, website, sort_order, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              description_points, location, website, is_active, sort_order, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             item.role || "",
             item.organization || "",
@@ -491,6 +497,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             pointsJson,
             item.location || "",
             item.website || "",
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
             idx + 1,
             now,
           ]);
@@ -508,8 +515,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           const period = item.period || (item.start_year ? `${item.start_year} – ${item.end_year || 'Present'}` : "");
           const highlightsJson = JSON.stringify(item.highlights || []);
           await execute(`
-            INSERT INTO educations (degree, institution, subject, start_year, end_year, period, result, badge_text, description, highlights_json, sort_order, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO educations (degree, institution, subject, start_year, end_year, period, result, badge_text, description, highlights_json, is_active, sort_order, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             item.degree || "",
             item.institution || "",
@@ -521,6 +528,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             item.badge_text || "",
             item.description || "",
             highlightsJson,
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
             idx + 1,
             now,
           ]);
@@ -536,9 +544,16 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           await execute(`
-            INSERT INTO skills (category, name, level, icon, sort_order)
-            VALUES (?, ?, ?, ?, ?)
-          `, [item.category || "General", item.name || "", item.level || 80, item.icon || "", idx + 1]);
+            INSERT INTO skills (category, name, level, icon, is_active, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `, [
+            item.category || "General",
+            item.name || "",
+            item.level || 80,
+            item.icon || "",
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
+            idx + 1
+          ]);
         }
         await addActivityLog("Updated Skills Matrix", `Saved ${data.items.length} technical skills.`, "Portfolio", user, 1);
       }
@@ -552,12 +567,13 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           const item = data.items[idx];
           const tagsJson = JSON.stringify(item.tags || []);
           const addImagesJson = JSON.stringify(item.additional_images || []);
+          const isAct = item.is_active !== undefined ? (item.is_active ? 1 : 0) : (item.is_published !== undefined ? (item.is_published ? 1 : 0) : 1);
           await execute(`
             INSERT INTO projects (
               project_number, title, short_description, full_description, image_url,
               additional_images_json, tags_json, category, live_url, github_url,
-              project_date, is_featured, is_published, sort_order, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              project_date, is_featured, is_published, is_active, sort_order, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             item.project_number || String(idx + 1).padStart(2, "0"),
             item.title || "",
@@ -571,7 +587,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             item.github_url || "",
             item.project_date || "2024",
             item.is_featured ? 1 : 0,
-            item.is_published !== undefined ? (item.is_published ? 1 : 0) : 1,
+            isAct,
+            isAct,
             idx + 1,
             now,
           ]);
@@ -660,14 +677,15 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           await execute(`
-            INSERT INTO certifications (title, issuer, year, description, is_verified, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO certifications (title, issuer, year, description, is_verified, is_active, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
           `, [
             item.title || "",
             item.issuer || "",
             item.year || "",
             item.description || "",
             item.is_verified !== undefined ? (item.is_verified ? 1 : 0) : 1,
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
             idx + 1,
           ]);
         }
@@ -682,9 +700,15 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           await execute(`
-            INSERT INTO experience_metrics (metric, label, subtext, sort_order)
-            VALUES (?, ?, ?, ?)
-          `, [item.metric || "", item.label || "", item.subtext || "", idx + 1]);
+            INSERT INTO experience_metrics (metric, label, subtext, is_active, sort_order)
+            VALUES (?, ?, ?, ?, ?)
+          `, [
+            item.metric || "",
+            item.label || "",
+            item.subtext || "",
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
+            idx + 1
+          ]);
         }
         await addActivityLog("Updated Experience Metrics", `Saved ${data.items.length} metrics.`, "Portfolio", user, 1);
       }
@@ -698,9 +722,14 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           const item = data.items[idx];
           const coursesJson = JSON.stringify(item.courses || []);
           await execute(`
-            INSERT INTO coursework_pillars (title, courses_json, sort_order)
-            VALUES (?, ?, ?)
-          `, [item.title || "", coursesJson, idx + 1]);
+            INSERT INTO coursework_pillars (title, courses_json, is_active, sort_order)
+            VALUES (?, ?, ?, ?)
+          `, [
+            item.title || "",
+            coursesJson,
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
+            idx + 1
+          ]);
         }
         await addActivityLog("Updated Coursework Curriculum", `Saved ${data.items.length} pillars.`, "Portfolio", user, 1);
       }
@@ -713,9 +742,17 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           await execute(`
-            INSERT INTO software_tools (name, tool_type, icon, level, summary, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?)
-          `, [item.name || "", item.tool_type || item.type || "", item.icon || "Monitor", item.level || "Proficient", item.summary || "", idx + 1]);
+            INSERT INTO software_tools (name, tool_type, icon, level, summary, is_active, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `, [
+            item.name || "",
+            item.tool_type || item.type || "",
+            item.icon || "Monitor",
+            item.level || "Proficient",
+            item.summary || "",
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
+            idx + 1
+          ]);
         }
         await addActivityLog("Updated Software Tools", `Saved ${data.items.length} tools.`, "Portfolio", user, 1);
       }
@@ -728,8 +765,9 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           const badgeName = typeof item === "string" ? item : (item.name || "");
+          const isActive = typeof item === "object" && item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1;
           if (badgeName) {
-            await execute(`INSERT INTO skill_badges (name, sort_order) VALUES (?, ?)`, [badgeName, idx + 1]);
+            await execute(`INSERT INTO skill_badges (name, is_active, sort_order) VALUES (?, ?, ?)`, [badgeName, isActive, idx + 1]);
           }
         }
         await addActivityLog("Updated Skill Badges", `Saved ${data.items.length} badges.`, "Portfolio", user, 1);
@@ -743,9 +781,15 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           await execute(`
-            INSERT INTO project_methodologies (step_number, title, description, sort_order)
-            VALUES (?, ?, ?, ?)
-          `, [item.step_number || String(idx + 1).padStart(2, "0"), item.title || "", item.description || "", idx + 1]);
+            INSERT INTO project_methodologies (step_number, title, description, is_active, sort_order)
+            VALUES (?, ?, ?, ?, ?)
+          `, [
+            item.step_number || String(idx + 1).padStart(2, "0"),
+            item.title || "",
+            item.description || "",
+            item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
+            idx + 1
+          ]);
         }
         await addActivityLog("Updated Project Methodologies", `Saved ${data.items.length} steps.`, "Portfolio", user, 1);
       }

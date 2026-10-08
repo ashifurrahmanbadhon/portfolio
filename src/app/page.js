@@ -60,7 +60,7 @@ export default function Home() {
     educations,
     certifications,
     homepageCta,
-    openResumeModal
+    resumeUrl
   } = usePortfolio();
 
   const ctaData = {
@@ -105,27 +105,7 @@ export default function Home() {
               </p>
             )}
 
-            <div className="flex flex-wrap gap-4 pt-2">
-              <Link
-                href={heroData.primary_btn_link || "/contact"}
-                className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] transition duration-300"
-              >
-                <Zap size={16} /> {heroData.primary_btn_text || "Contact Me"}
-              </Link>
-              <button
-                type="button"
-                onClick={openResumeModal}
-                className="bg-[#111622] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 hover:bg-[#161e30] transition duration-300 cursor-pointer"
-              >
-                <Download size={16} /> {heroData.secondary_btn_text || "Download CV"}
-              </button>
-              <Link
-                href="/projects"
-                className="bg-[#0b0f17] text-gray-300 border border-[#1e2638] font-semibold text-xs uppercase tracking-wider px-5 py-3.5 rounded-lg flex items-center gap-2 hover:text-[#10B981] hover:border-[#10B981]/40 transition duration-300"
-              >
-                View Projects <ArrowRight size={14} />
-              </Link>
-            </div>
+            {/* Intro text */}
           </div>
 
           {/* Profile Photo Card */}
@@ -139,7 +119,7 @@ export default function Home() {
                     src={heroData.profile_image || "/ashifur.jpeg"}
                     alt={heroData.name || "Ashifur Rahman"}
                     fill
-                    className="object-cover object-top filter grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition duration-500"
+                    className="object-cover object-top group-hover:scale-105 transition duration-500"
                     priority
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent opacity-80" />
@@ -459,13 +439,13 @@ export default function Home() {
             >
               <Mail size={16} /> {ctaData.primary_btn_text}
             </Link>
-            <button
-              type="button"
-              onClick={openResumeModal}
+            <a
+              href={resumeUrl || "/resume.pdf"}
+              download="Ashifur_Rahman_CV.pdf"
               className="bg-[#111622] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-xl flex items-center gap-2 hover:border-[#10B981]/50 hover:bg-[#161e30] transition duration-300 cursor-pointer"
             >
-              <Download size={16} /> {ctaData.secondary_btn_text}
-            </button>
+              <Download size={16} /> {ctaData.secondary_btn_text || "Download CV"}
+            </a>
           </div>
         </div>
       </section>

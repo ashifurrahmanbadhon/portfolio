@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, ArrowUp, ArrowDown, Check, X, Layers, Zap, Monitor, Database, Briefcase, Cpu, ShieldCheck } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 const ICON_OPTIONS = [
   { label: "High Voltage / Power (Zap)", value: "Zap" },
@@ -53,6 +54,20 @@ export default function AboutPillarsManager({ about, setAbout, onSave, saving })
     setModalOpen(false);
     if (onSave) {
       onSave("about", newAbout, "Core Competency Pillars updated successfully!");
+    }
+  };
+
+  const handleToggleActive = (idx) => {
+    const updated = pillars.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    const newAbout = { ...about, pillars: updated };
+    setAbout(newAbout);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("about", newAbout, `Pillar marked as ${isNowActive ? "Active" : "Disabled"}!`);
     }
   };
 
@@ -133,6 +148,11 @@ export default function AboutPillarsManager({ about, setAbout, onSave, saving })
                   >
                     <ArrowDown className="w-3.5 h-3.5 rotate-[-90deg]" />
                   </button>
+                  <ActiveToggle
+                    isActive={item.is_active}
+                    onToggle={() => handleToggleActive(idx)}
+                    label="Pillar"
+                  />
                   <button
                     type="button"
                     onClick={() => openEdit(idx)}

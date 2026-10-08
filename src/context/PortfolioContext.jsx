@@ -53,25 +53,32 @@ export function PortfolioProvider({ children }) {
     }
 
     if (data.about) {
+      const activePillars = (Array.isArray(data.about.pillars) ? data.about.pillars : (prev.pillars || []))
+        .filter(p => p.is_active !== 0 && p.is_active !== false);
+      const activePrinciples = (Array.isArray(data.about.principles) ? data.about.principles : (prev.principles || []))
+        .filter(p => p.is_active !== 0 && p.is_active !== false);
       setAboutData((prev) => ({
         ...prev,
         ...data.about,
-        pillars: Array.isArray(data.about.pillars) ? data.about.pillars : (prev.pillars || []),
-        principles: Array.isArray(data.about.principles) ? data.about.principles : (prev.principles || []),
+        pillars: activePillars,
+        principles: activePrinciples,
       }));
     }
 
     if (Array.isArray(data.highlights) && data.highlights.length > 0) {
-      setHighlights(data.highlights);
+      setHighlights(data.highlights.filter(h => h.is_active !== 0 && h.is_active !== false));
     }
 
     if (Array.isArray(data.experience_metrics) && data.experience_metrics.length > 0) {
-      setExperienceMetrics(data.experience_metrics);
+      setExperienceMetrics(data.experience_metrics.filter(m => m.is_active !== 0 && m.is_active !== false));
     }
 
     if (Array.isArray(data.projects)) {
+      const activeProjects = data.projects.filter(
+        p => p.is_active !== 0 && p.is_active !== false && p.is_published !== 0 && p.is_published !== false
+      );
       setProjectsData(
-        data.projects.map((p, i) => ({
+        activeProjects.map((p, i) => ({
           id: p.project_number || String(i + 1).padStart(2, '0'),
           project_number: p.project_number || String(i + 1).padStart(2, '0'),
           title: p.title,
@@ -89,12 +96,13 @@ export function PortfolioProvider({ children }) {
     }
 
     if (Array.isArray(data.project_methodologies) && data.project_methodologies.length > 0) {
-      setProjectMethodologies(data.project_methodologies);
+      setProjectMethodologies(data.project_methodologies.filter(pm => pm.is_active !== 0 && pm.is_active !== false));
     }
 
     if (Array.isArray(data.experiences)) {
+      const activeExperiences = data.experiences.filter(e => e.is_active !== 0 && e.is_active !== false);
       setExperiences(
-        data.experiences.map((e) => ({
+        activeExperiences.map((e) => ({
           role: e.role,
           organization: e.organization,
           period: e.period,
@@ -106,8 +114,9 @@ export function PortfolioProvider({ children }) {
     }
 
     if (Array.isArray(data.educations)) {
+      const activeEducations = data.educations.filter(ed => ed.is_active !== 0 && ed.is_active !== false);
       setEducations(
-        data.educations.map((ed) => {
+        activeEducations.map((ed) => {
           let parsedHighlights = [];
           if (Array.isArray(ed.highlights)) {
             parsedHighlights = ed.highlights;
@@ -133,16 +142,17 @@ export function PortfolioProvider({ children }) {
     }
 
     if (Array.isArray(data.coursework_pillars) && data.coursework_pillars.length > 0) {
-      setCourseworkPillars(data.coursework_pillars);
+      setCourseworkPillars(data.coursework_pillars.filter(c => c.is_active !== 0 && c.is_active !== false));
     }
 
     if (Array.isArray(data.certifications) && data.certifications.length > 0) {
-      setCertifications(data.certifications);
+      setCertifications(data.certifications.filter(c => c.is_active !== 0 && c.is_active !== false));
     }
 
     if (Array.isArray(data.skills)) {
+      const activeSkills = data.skills.filter(s => s.is_active !== 0 && s.is_active !== false);
       const grouped = {};
-      data.skills.forEach((s) => {
+      activeSkills.forEach((s) => {
         const cat = s.category || 'General';
         if (!grouped[cat]) grouped[cat] = [];
         grouped[cat].push({ name: s.name, level: Number(s.level) || 80, icon: s.icon || 'monitor' });
@@ -157,11 +167,12 @@ export function PortfolioProvider({ children }) {
     }
 
     if (Array.isArray(data.software_tools) && data.software_tools.length > 0) {
-      setSoftwareTools(data.software_tools);
+      setSoftwareTools(data.software_tools.filter(st => st.is_active !== 0 && st.is_active !== false));
     }
 
     if (Array.isArray(data.skill_badges) && data.skill_badges.length > 0) {
-      setSkillBadges(data.skill_badges.map(b => b.name || b));
+      const activeBadges = data.skill_badges.filter(b => typeof b === 'object' ? (b.is_active !== 0 && b.is_active !== false) : true);
+      setSkillBadges(activeBadges.map(b => (typeof b === 'object' ? b.name : b)));
     }
 
     if (data.page_headers) {

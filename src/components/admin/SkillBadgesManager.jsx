@@ -2,22 +2,31 @@
 
 import { useState } from "react";
 import { Plus, Trash2, Check, X } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave, saving }) {
   const rawList = Array.isArray(skillBadges) ? skillBadges : [];
-  // Normalize items to ensure all are strings (handles both DB object rows and plain strings)
+  // Normalize items to ensure all are objects with name and is_active
   const list = rawList
-    .map((b) => (typeof b === "object" && b !== null ? (b.name || "") : String(b || "")))
-    .filter(Boolean);
+    .map((b) => {
+      if (typeof b === "object" && b !== null) {
+        return {
+          name: b.name || "",
+          is_active: b.is_active !== 0 && b.is_active !== false ? 1 : 0,
+        };
+      }
+      return { name: String(b || ""), is_active: 1 };
+    })
+    .filter((b) => b.name);
 
   const [newBadge, setNewBadge] = useState("");
 
   const handleAdd = (e) => {
     e?.preventDefault();
     const val = newBadge.trim();
-    if (!val || list.includes(val)) return;
+    if (!val || list.some((b) => b.name.toLowerCase() === val.toLowerCase())) return;
 
-    const updated = [...list, val];
+    const updated = [...list, { name: val, is_active: 1 }];
     setSkillBadges(updated);
     setNewBadge("");
     if (onSave) {
@@ -25,8 +34,21 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
     }
   };
 
-  const handleDelete = (badgeToDelete) => {
-    const updated = list.filter((b) => b !== badgeToDelete);
+  const handleToggleActive = (idx) => {
+    const updated = list.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    setSkillBadges(updated);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("skill_badges", { items: updated }, `Badge marked as ${isNowActive ? "Active" : "Disabled"}!`);
+    }
+  };
+
+  const handleDelete = (idx) => {
+    const updated = list.filter((_, i) => i !== idx);
     setSkillBadges(updated);
     if (onSave) {
       onSave("skill_badges", { items: updated }, "Skill badge removed!");
@@ -66,15 +88,20 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
       </div>
 
       <div className="flex flex-wrap gap-2 pt-2">
-        {list.map((badge, idx) => (
+        {list.map((item, idx) => (
           <div
             key={idx}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/40 text-xs text-slate-200 transition group"
           >
-            <span>{badge}</span>
+            <span className={item.is_active === 0 ? "line-through text-slate-500" : ""}>{item.name}</span>
+            <ActiveToggle
+              isActive={item.is_active}
+              onToggle={() => handleToggleActive(idx)}
+              label="Badge"
+            />
             <button
               type="button"
-              onClick={() => handleDelete(badge)}
+              onClick={() => handleDelete(idx)}
               className="p-0.5 text-slate-500 hover:text-red-400 transition cursor-pointer"
               title="Remove Badge"
             >

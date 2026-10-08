@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, Sparkles, X } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, saving }) {
   const list = Array.isArray(metrics) ? metrics : [];
@@ -37,6 +38,19 @@ export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, 
     setModalOpen(false);
     if (onSave) {
       onSave("experience_metrics", { items: updated }, "Experience metrics saved!");
+    }
+  };
+
+  const handleToggleActive = (idx) => {
+    const updated = list.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    setMetrics(updated);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("experience_metrics", { items: updated }, `Metric marked as ${isNowActive ? "Active" : "Disabled"}!`);
     }
   };
 
@@ -82,7 +96,12 @@ export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, 
               <span className="text-2xl font-black font-mono text-emerald-400">
                 {item.metric}
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <ActiveToggle
+                  isActive={item.is_active}
+                  onToggle={() => handleToggleActive(idx)}
+                  label="Metric"
+                />
                 <button
                   type="button"
                   onClick={() => openEdit(idx)}

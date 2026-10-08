@@ -51,6 +51,7 @@ import SkillBadgesManager from "@/components/admin/SkillBadgesManager";
 import ProjectMethodologyManager from "@/components/admin/ProjectMethodologyManager";
 import PageHeadersManager from "@/components/admin/PageHeadersManager";
 import HomepageCtaManager from "@/components/admin/HomepageCtaManager";
+import ActiveToggle from "@/components/admin/ActiveToggle";
 
 // Default fallbacks matching portfolio initial state
 const DEFAULT_HERO = {
@@ -151,10 +152,7 @@ function AdminConsoleContent() {
     if (Array.isArray(res.certifications)) setCertifications(res.certifications);
     if (Array.isArray(res.software_tools)) setSoftwareTools(res.software_tools);
     if (Array.isArray(res.skill_badges)) {
-      const normalizedBadges = res.skill_badges
-        .map((b) => (typeof b === "object" && b !== null ? (b.name || "") : String(b || "")))
-        .filter(Boolean);
-      setSkillBadges(normalizedBadges);
+      setSkillBadges(res.skill_badges);
     }
     if (Array.isArray(res.project_methodologies)) setProjectMethodologies(res.project_methodologies);
     if (res.page_headers) setPageHeaders(res.page_headers);
@@ -247,6 +245,23 @@ function AdminConsoleContent() {
     const updated = list.filter((_, idx) => idx !== index);
     setList(updated);
     handleSaveSection(sectionKey, { items: updated }, `${itemLabel} removed successfully!`);
+  };
+
+  // Active / Disabled toggle helper
+  const toggleItemActive = (list, setList, index, sectionKey, itemLabel) => {
+    const updated = list.map((item, idx) => {
+      if (idx !== index) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false && item.is_published !== 0;
+      const nextVal = currentActive ? 0 : 1;
+      return { ...item, is_active: nextVal, is_published: nextVal };
+    });
+    setList(updated);
+    const isNowActive = updated[index].is_active === 1;
+    handleSaveSection(
+      sectionKey,
+      { items: updated },
+      `${itemLabel || "Item"} is now ${isNowActive ? "Active (visible on website)" : "Disabled (hidden from website)"}!`
+    );
   };
 
   // Tab definitions
@@ -501,7 +516,12 @@ function AdminConsoleContent() {
                 >
                   <div className="flex items-start justify-between">
                     <p className="text-xl font-extrabold text-emerald-400 font-mono">{item.metric_value}</p>
-                    <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition">
+                    <div className="flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition">
+                      <ActiveToggle
+                        isActive={item.is_active}
+                        onToggle={() => toggleItemActive(highlights, setHighlights, idx, "highlights", "Metric")}
+                        label="Metric"
+                      />
                       <button
                         onClick={() => {
                           setEditingItem({ ...item });
@@ -752,6 +772,11 @@ function AdminConsoleContent() {
                     </div>
 
                     <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                      <ActiveToggle
+                        isActive={exp.is_active}
+                        onToggle={() => toggleItemActive(experiences, setExperiences, idx, "experiences", "Experience")}
+                        label="Experience"
+                      />
                       <button
                         onClick={() => moveItem(experiences, setExperiences, idx, -1, "experiences")}
                         disabled={idx === 0}
@@ -883,6 +908,11 @@ function AdminConsoleContent() {
                     </div>
 
                     <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                      <ActiveToggle
+                        isActive={ed.is_active}
+                        onToggle={() => toggleItemActive(educations, setEducations, idx, "educations", "Education")}
+                        label="Education"
+                      />
                       <button
                         onClick={() => moveItem(educations, setEducations, idx, -1, "educations")}
                         disabled={idx === 0}
@@ -1007,7 +1037,12 @@ function AdminConsoleContent() {
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161C2A] text-slate-400 border border-[#1E2638]">
                         {skill.category}
                       </span>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
+                        <ActiveToggle
+                          isActive={skill.is_active}
+                          onToggle={() => toggleItemActive(skills, setSkills, originalIndex, "skills", "Skill")}
+                          label="Skill"
+                        />
                         <button
                           onClick={() => {
                             setEditingItem({ ...skill });
@@ -1120,6 +1155,11 @@ function AdminConsoleContent() {
                     </div>
 
                     <div className="flex items-center gap-1.5">
+                      <ActiveToggle
+                        isActive={proj.is_active !== undefined ? proj.is_active : proj.is_published}
+                        onToggle={() => toggleItemActive(projects, setProjects, idx, "projects", "Project")}
+                        label="Project"
+                      />
                       <button
                         onClick={() => moveItem(projects, setProjects, idx, -1, "projects")}
                         disabled={idx === 0}

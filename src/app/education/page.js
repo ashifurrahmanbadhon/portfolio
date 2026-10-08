@@ -20,7 +20,7 @@ import PageHeader from '@/components/portfolio/PageHeader';
 import { usePortfolio } from '@/context/PortfolioContext';
 
 export default function EducationPage() {
-  const { educations, courseworkPillars, certifications, pageHeaders, openResumeModal } = usePortfolio();
+  const { educations, courseworkPillars, certifications, pageHeaders, resumeUrl } = usePortfolio();
 
   const header = pageHeaders?.education || {
     badge_text: "ACADEMIC BACKGROUND",
@@ -211,13 +211,13 @@ export default function EducationPage() {
               <p className="text-xs text-gray-400">Download Ashifur's official Curriculum Vitae or request specific coursework verification.</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={openResumeModal}
+              <a
+                href={resumeUrl || "/resume.pdf"}
+                download="Ashifur_Rahman_CV.pdf"
                 className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:bg-[#059669] transition cursor-pointer"
               >
                 <Download size={15} /> Download Official CV
-              </button>
+              </a>
               <Link
                 href="/contact"
                 className="bg-[#0b0f17] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 transition"
