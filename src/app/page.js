@@ -137,6 +137,22 @@ export default function Home() {
                   {/* Bottom Vignette melting into canvas */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-[#0b0f17]/25 to-transparent opacity-75 pointer-events-none" />
                   <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[1.6rem] pointer-events-none" />
+
+                  {/* High-Resolution Portrait Download Action */}
+                  <a
+                    href={
+                      heroData.profile_image && !heroData.profile_image.includes("ashifur-dark-blend")
+                        ? heroData.profile_image
+                        : "/ashifur-dark-blend.jpg"
+                    }
+                    download="Ashifur-Rahman-Portrait.jpg"
+                    className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0b0f17]/85 hover:bg-emerald-500 text-slate-200 hover:text-slate-950 border border-white/15 hover:border-emerald-400 backdrop-blur-md shadow-lg shadow-black/50 transition-all duration-300 group/btn font-mono text-[11px] font-medium cursor-pointer"
+                    title="Download Formal Portrait (High-Res JPG)"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Download className="w-3.5 h-3.5 shrink-0 transition-transform group-hover/btn:translate-y-0.5" />
+                    <span>Download</span>
+                  </a>
                 </div>
 
                 {/* Floating Specialization Pill on the Blended Card */}
