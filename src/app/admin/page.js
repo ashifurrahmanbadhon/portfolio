@@ -40,6 +40,7 @@ import {
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 import SpotlightCard from "@/components/SpotlightCard";
+import MediaUploader from "@/components/MediaUploader";
 
 // Default fallbacks matching portfolio initial state
 const DEFAULT_HERO = {
@@ -348,13 +349,13 @@ function AdminConsoleContent() {
                 />
               </div>
 
-              <div>
-                <label className="block font-medium text-slate-300 mb-1.5">Profile Photo URL / Path</label>
-                <input
-                  type="text"
+              <div className="md:col-span-2">
+                <MediaUploader
                   value={hero.profile_image || ""}
-                  onChange={(e) => setHero({ ...hero, profile_image: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition font-mono"
+                  onChange={(url) => setHero({ ...hero, profile_image: url })}
+                  label="Hero Profile Photo (Headshot / Portrait)"
+                  description="Upload your high-res profile photo or drag & drop directly from device"
+                  type="image"
                 />
               </div>
 
@@ -536,6 +537,16 @@ function AdminConsoleContent() {
                 value={about.description2 || ""}
                 onChange={(e) => setAbout({ ...about, description2: e.target.value })}
                 className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <MediaUploader
+                value={about.profile_image || ""}
+                onChange={(url) => setAbout({ ...about, profile_image: url })}
+                label="About Section Showcase Photo"
+                description="Professional photo or engineering field showcase image"
+                type="image"
               />
             </div>
 
@@ -1199,9 +1210,26 @@ function AdminConsoleContent() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="space-y-4">
+              <div className="w-full">
+                <MediaUploader
+                  value={resume.file_url || ""}
+                  onChange={(url, fileName) =>
+                    setResume({
+                      ...resume,
+                      file_url: url,
+                      file_name: fileName || resume.file_name || "Ashifur_Rahman_CV.pdf",
+                    })
+                  }
+                  label="Curriculum Vitae (PDF Document Upload)"
+                  description="Upload your latest PDF CV/Resume file directly from your computer"
+                  type="document"
+                  accept=".pdf,application/pdf"
+                />
+              </div>
+
               <div>
-                <label className="block font-medium text-slate-300 mb-1">Resume File Name</label>
+                <label className="block font-medium text-slate-300 mb-1">Display Download File Name</label>
                 <input
                   type="text"
                   value={resume.file_name || ""}
@@ -1209,27 +1237,6 @@ function AdminConsoleContent() {
                   placeholder="Ashifur_Rahman_CV.pdf"
                   className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2 text-white outline-none font-mono"
                 />
-              </div>
-
-              <div>
-                <label className="block font-medium text-slate-300 mb-1">File URL / Download Path</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={resume.file_url || ""}
-                    onChange={(e) => setResume({ ...resume, file_url: e.target.value })}
-                    placeholder="/resume.pdf"
-                    className="flex-1 bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2 text-white outline-none font-mono"
-                  />
-                  <a
-                    href={resume.file_url || "/resume.pdf"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3 py-2 rounded-xl bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638] flex items-center gap-1 font-mono shrink-0"
-                  >
-                    Test <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                </div>
               </div>
             </div>
           </div>
@@ -1727,6 +1734,16 @@ function AdminConsoleContent() {
                     onChange={(e) => setEditingItem({ ...editingItem, short_description: e.target.value })}
                     placeholder="Brief description shown on cards"
                     className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <MediaUploader
+                    value={editingItem.image_url || ""}
+                    onChange={(url) => setEditingItem({ ...editingItem, image_url: url })}
+                    label="Project Media / Thumbnail (Image or Video Demo)"
+                    description="Upload project demo screenshot, schematic diagram, or video showcase"
+                    type="media"
                   />
                 </div>
 

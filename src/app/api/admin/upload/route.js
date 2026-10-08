@@ -24,9 +24,15 @@ export async function POST(req) {
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
 
-    const originalName = file.name || "upload.jpg";
-    const ext = path.extname(originalName) || ".jpg";
-    const randomName = `${crypto.randomBytes(6).toString("hex")}${ext}`;
+    const originalName = file.name || "upload.bin";
+    const ext = (path.extname(originalName) || "").toLowerCase();
+    
+    // Check max file size (50MB)
+    if (buffer.length > 50 * 1024 * 1024) {
+      return NextResponse.json({ success: false, error: "File size exceeds 50MB limit." }, { status: 400 });
+    }
+
+    const randomName = `${Date.now()}_${crypto.randomBytes(4).toString("hex")}${ext || ".bin"}`;
     const filePath = path.join(uploadsDir, randomName);
 
     await fs.writeFile(filePath, buffer);
@@ -37,6 +43,7 @@ export async function POST(req) {
       url: publicUrl,
       file_name: originalName,
       file_size: buffer.length,
+      mime_type: file.type || "application/octet-stream",
     });
   } catch (error) {
     console.error("Upload error:", error);

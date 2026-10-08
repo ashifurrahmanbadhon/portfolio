@@ -28,6 +28,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "./Toast";
 import AnimatedLogo from "./AnimatedLogo";
+import { api } from "@/lib/api";
 
 export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
   const pathname = usePathname();
@@ -61,22 +62,24 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
     }
   }, [user, profileModalOpen]);
 
-  const handlePhotoUpload = (e) => {
+  const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setFormError("Image must be smaller than 5MB");
+    if (file.size > 10 * 1024 * 1024) {
+      setFormError("Image must be smaller than 10MB");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result;
-      setEditAvatar(dataUrl);
-      if (showToast) {
-        showToast("Photo uploaded! Click Save to apply.", "info");
+    try {
+      const res = await api.uploadMedia(file);
+      if (res && res.success && res.url) {
+        setEditAvatar(res.url);
+        if (showToast) showToast("Photo uploaded successfully!", "success");
       }
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (event) => setEditAvatar(event.target?.result);
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleToggle = () => {

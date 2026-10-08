@@ -277,6 +277,20 @@ export const api = {
     return res.json();
   },
 
+  async uploadMedia(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const token = typeof window !== "undefined" ? localStorage.getItem("cms_auth_token") || "" : "";
+    const res = await fetch(`${API_BASE}/api/admin/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: formData,
+    });
+    return res.json();
+  },
+
   async getContactMessages() {
     return cachedFetch(`${API_BASE}/api/contact`, {
       headers: getAuthHeaders(),
