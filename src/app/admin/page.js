@@ -150,7 +150,12 @@ function AdminConsoleContent() {
     if (Array.isArray(res.coursework_pillars)) setCourseworkPillars(res.coursework_pillars);
     if (Array.isArray(res.certifications)) setCertifications(res.certifications);
     if (Array.isArray(res.software_tools)) setSoftwareTools(res.software_tools);
-    if (Array.isArray(res.skill_badges)) setSkillBadges(res.skill_badges);
+    if (Array.isArray(res.skill_badges)) {
+      const normalizedBadges = res.skill_badges
+        .map((b) => (typeof b === "object" && b !== null ? (b.name || "") : String(b || "")))
+        .filter(Boolean);
+      setSkillBadges(normalizedBadges);
+    }
     if (Array.isArray(res.project_methodologies)) setProjectMethodologies(res.project_methodologies);
     if (res.page_headers) setPageHeaders(res.page_headers);
     if (res.homepage_cta) setHomepageCta(res.homepage_cta);
@@ -989,7 +994,7 @@ function AdminConsoleContent() {
 
           {/* Category filter pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-            {["all", "Design & Simulation", "GIS & Data Systems", "Power Systems & Field", "Automation & AI"].map(
+            {["all", ...Array.from(new Set(skills.map((s) => s.category).filter(Boolean)))].map(
               (cat) => (
                 <button
                   key={cat}

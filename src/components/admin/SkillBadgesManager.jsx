@@ -4,7 +4,12 @@ import { useState } from "react";
 import { Plus, Trash2, Check, X } from "lucide-react";
 
 export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave, saving }) {
-  const list = Array.isArray(skillBadges) ? skillBadges : [];
+  const rawList = Array.isArray(skillBadges) ? skillBadges : [];
+  // Normalize items to ensure all are strings (handles both DB object rows and plain strings)
+  const list = rawList
+    .map((b) => (typeof b === "object" && b !== null ? (b.name || "") : String(b || "")))
+    .filter(Boolean);
+
   const [newBadge, setNewBadge] = useState("");
 
   const handleAdd = (e) => {
@@ -20,8 +25,8 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
     }
   };
 
-  const handleDelete = (badge) => {
-    const updated = list.filter((b) => b !== badge);
+  const handleDelete = (badgeToDelete) => {
+    const updated = list.filter((b) => b !== badgeToDelete);
     setSkillBadges(updated);
     if (onSave) {
       onSave("skill_badges", { items: updated }, "Skill badge removed!");
@@ -70,7 +75,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
             <button
               type="button"
               onClick={() => handleDelete(badge)}
-              className="p-0.5 text-slate-500 hover:text-red-400 transition"
+              className="p-0.5 text-slate-500 hover:text-red-400 transition cursor-pointer"
               title="Remove Badge"
             >
               <Trash2 className="w-3 h-3" />

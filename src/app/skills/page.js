@@ -184,15 +184,19 @@ export default function SkillsPage() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-3">
-              {skillBadges.map((badge, idx) => (
-                <div
-                  key={idx}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-xs text-gray-200 transition"
-                >
-                  <Check size={14} className="text-[#10B981] shrink-0" />
-                  <span>{badge}</span>
-                </div>
-              ))}
+              {(Array.isArray(skillBadges) ? skillBadges : []).map((badge, idx) => {
+                const text = typeof badge === "object" && badge !== null ? (badge.name || "") : String(badge || "");
+                if (!text) return null;
+                return (
+                  <div
+                    key={idx}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-xs text-gray-200 transition"
+                  >
+                    <Check size={14} className="text-[#10B981] shrink-0" />
+                    <span>{text}</span>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Bottom CV download banner */}
