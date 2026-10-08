@@ -87,7 +87,7 @@ export async function POST(req) {
         full_name: admin.full_name || "Super Admin",
         email: admin.email || "",
         role: admin.role || "super_admin",
-        avatar: "/ashifur.jpeg",
+        avatar: admin.avatar || "/ashifur.jpeg",
       },
     });
   } catch (error) {

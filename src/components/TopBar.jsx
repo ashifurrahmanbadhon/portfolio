@@ -90,7 +90,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
     }
   };
 
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e?.preventDefault();
     setFormError("");
 
@@ -113,11 +113,32 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
     setSavingProfile(true);
 
     try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("cms_auth_token") || "" : "";
+      const res = await fetch("/api/auth/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify({
+          full_name: editName.trim() || "Ashifur Rahman",
+          email: editEmail.trim(),
+          avatar: editAvatar || "/ashifur.jpeg",
+          current_password: currentPw || undefined,
+          new_password: newPw || undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to update profile.");
+      }
+
       if (updateUser) {
         updateUser({
           full_name: editName.trim() || "Ashifur Rahman",
           email: editEmail.trim(),
-          avatar: editAvatar,
+          avatar: editAvatar || "/ashifur.jpeg",
         });
       }
 
@@ -127,24 +148,22 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
         } catch (e) {}
       }
 
-      setTimeout(() => {
-        setSavingProfile(false);
-        setProfileModalOpen(false);
-        setCurrentPw("");
-        setNewPw("");
-        setConfirmPw("");
-        if (showToast) {
-          showToast(
-            newPw
-              ? "Super Admin profile and password updated successfully!"
-              : "Super Admin email and profile updated successfully!",
-            "success"
-          );
-        }
-      }, 350);
+      setSavingProfile(false);
+      setProfileModalOpen(false);
+      setCurrentPw("");
+      setNewPw("");
+      setConfirmPw("");
+      if (showToast) {
+        showToast(
+          newPw
+            ? "Super Admin profile and password updated successfully!"
+            : "Super Admin profile photo and details saved successfully!",
+          "success"
+        );
+      }
     } catch (err) {
       setSavingProfile(false);
-      setFormError("Failed to update profile. Please try again.");
+      setFormError(err.message || "Failed to update profile. Please try again.");
     }
   };
 

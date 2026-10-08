@@ -128,24 +128,6 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
             </Link>
           );
         })}
-
-        {/* View Live Website Link */}
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 border border-emerald-500/20 transition-all group ${
-            collapsed ? "justify-center" : ""
-          }`}
-        >
-          <ExternalLink className="w-4 h-4 shrink-0 text-emerald-400 group-hover:scale-110 transition-transform" />
-          {!collapsed && (
-            <div className="flex-1 flex items-center justify-between">
-              <span className="font-semibold">Live Website</span>
-              <span className="text-[10px] font-mono text-emerald-400/80">↗</span>
-            </div>
-          )}
-        </a>
       </div>
     </div>
   );
