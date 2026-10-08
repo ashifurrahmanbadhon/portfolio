@@ -15,8 +15,7 @@ import {
   Link2,
   FolderOpen,
   Eye,
-  Film,
-  Download
+  Film
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
@@ -314,14 +313,6 @@ export default function MediaUploader({
                     title="Open Full File"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                  <a
-                    href={value}
-                    download={value.split("/").pop()}
-                    className="p-1.5 rounded-lg bg-[#161C2A] text-slate-300 hover:text-emerald-400 border border-[#1E2638] transition cursor-pointer"
-                    title="Download File"
-                  >
-                    <Download className="w-3.5 h-3.5" />
                   </a>
                   <button
                     type="button"
