@@ -87,11 +87,11 @@ export default function AboutPage() {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#10B981]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-              {aboutData.subtitle || "Professional Background"}
+              {aboutData.subtitle || "About Ashifur"}
             </div>
             
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-snug">
-              {aboutData.title || "Bridging Technical Rigor with Modern Technological Innovation"}
+              {aboutData.title}
             </h2>
 
             <div className="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
