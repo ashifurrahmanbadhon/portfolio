@@ -13,11 +13,11 @@ export const DEFAULT_HERO = {
 };
 
 export const DEFAULT_ABOUT = {
-  subtitle: "About Ashifur",
+  subtitle: "Background & Vision",
   title: "Engineering Precision With Analytical Rigor",
   description1: "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2: "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
-  profile_image: "/api/media/1791451216945_af4f456a.webp",
+  profile_image: "/ashifur.jpeg",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",
@@ -81,9 +81,9 @@ export const DEFAULT_ABOUT = {
 
 export const DEFAULT_HIGHLIGHTS = [
   { metric_value: "B.Sc.", metric_label: "Electrical & Electronic Eng.", metric_subtext: "Accredited Engineering Degree" },
-  { metric_value: "15+", metric_label: "CAD & Engineering Projects", metric_subtext: "SLDs, GIS Maps & Simulations" },
-  { metric_value: "100%", metric_label: "Safety & Compliance Focus", metric_subtext: "Standard Operating Protocols" },
-  { metric_value: "6+", metric_label: "Core Industry Tools", metric_subtext: "AutoCAD, GIS, ETAP, MATLAB" },
+  { metric_value: "15+", metric_label: "CAD & Power Projects", metric_subtext: "SLDs, GIS Maps & Simulations" },
+  { metric_value: "100%", metric_label: "Safety & Compliance", metric_subtext: "Adhering to IEEE & BNBC standards" },
+  { metric_value: "6+", metric_label: "Core Software Tools", metric_subtext: "AutoCAD, ETAP, MATLAB, GIS" },
 ];
 
 export const DEFAULT_EXPERIENCE_METRICS = [
@@ -220,7 +220,7 @@ export const DEFAULT_SKILLS = [
     items: [
       { name: "AutoCAD (Electrical/2D)", level: 90 },
       { name: "MATLAB / Simulink", level: 85 },
-      { name: "ETAP (Power System Analysis)", level: 80 },
+      { name: "ETAP (Power System)", level: 80 },
       { name: "PSNA / PVSyst", level: 75 }
     ]
   },
@@ -229,19 +229,29 @@ export const DEFAULT_SKILLS = [
     icon: "database",
     items: [
       { name: "GIS (ArcGIS / QGIS)", level: 85 },
-      { name: "MS Excel (Advanced / Data)", level: 90 },
-      { name: "Spatial Network Mapping", level: 80 },
-      { name: "Technical Sales Analytics", level: 85 }
+      { name: "MS Excel (Advanced)", level: 90 },
+      { name: "Network Asset Mapping", level: 80 },
+      { name: "Sales & Cost Modeling", level: 85 }
     ]
   },
   {
-    category: "Power Systems & Field",
+    category: "Power Systems",
     icon: "shield",
     items: [
-      { name: "Substation Operations & Testing", level: 88 },
+      { name: "Substation Layout & Operations", level: 88 },
       { name: "Single Line Diagrams (SLD)", level: 92 },
       { name: "Switchgear & Relay Coordination", level: 82 },
-      { name: "Distribution Network & BOQ", level: 86 }
+      { name: "Power Distribution & BOQ", level: 86 }
+    ]
+  },
+  {
+    category: "AI & Automation",
+    icon: "cpu",
+    items: [
+      { name: "AI Tools & Generative AI", level: 82 },
+      { name: "Prompt Engineering", level: 85 },
+      { name: "AI-based Automation", level: 78 },
+      { name: "Data Management & Reporting", level: 88 }
     ]
   }
 ];
@@ -278,16 +288,18 @@ export const DEFAULT_SOFTWARE_TOOLS = [
 ];
 
 export const DEFAULT_SKILL_BADGES = [
-  "Substation Operations",
-  "AutoCAD Electrical",
-  "GIS Asset Mapping",
-  "Single Line Diagrams (SLD)",
-  "Power Transformers",
-  "Switchgear & Relays",
-  "MATLAB & Simulink",
-  "ETAP Load Flow",
-  "Technical Sales Analytics",
-  "Artificial Intelligence"
+  "AutoCAD",
+  "PSNA",
+  "GIS",
+  "MATLAB",
+  "ETAP",
+  "MS Excel",
+  "Power Distribution",
+  "Relay Testing",
+  "Generative AI",
+  "Prompt Engineering",
+  "AI Automation",
+  "Data Reporting"
 ];
 
 export const DEFAULT_PROJECTS = [
