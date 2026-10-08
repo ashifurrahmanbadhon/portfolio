@@ -20,6 +20,65 @@ import {
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 
+async function optimizeImageIfNeeded(file) {
+  if (!file || !file.type || !file.type.startsWith("image/") || file.type.includes("svg") || file.type.includes("gif")) {
+    return file;
+  }
+  if (file.size <= 800 * 1024) {
+    return file;
+  }
+
+  return new Promise((resolve) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const maxDim = 1920;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob && blob.size < file.size) {
+                const optimizedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+                  type: "image/webp",
+                });
+                resolve(optimizedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            "image/webp",
+            0.88
+          );
+        };
+        img.onerror = () => resolve(file);
+        img.src = e.target?.result;
+      };
+      reader.onerror = () => resolve(file);
+      reader.readAsDataURL(file);
+    } catch {
+      resolve(file);
+    }
+  });
+}
+
 export default function MediaUploader({
   value = "",
   onChange,
@@ -59,11 +118,11 @@ export default function MediaUploader({
     (value && value.toLowerCase().endsWith(".pdf"));
 
   // Handle actual file upload
-  const handleFileUpload = async (file) => {
-    if (!file) return;
+  const handleFileUpload = async (rawFile) => {
+    if (!rawFile) return;
 
     // Check size limit
-    const sizeInMB = file.size / (1024 * 1024);
+    const sizeInMB = rawFile.size / (1024 * 1024);
     const limit = type === "video" ? Math.max(maxSizeMB, 50) : maxSizeMB;
     if (sizeInMB > limit) {
       showToast(`File size (${sizeInMB.toFixed(1)}MB) exceeds ${limit}MB limit.`, "error");
@@ -71,9 +130,13 @@ export default function MediaUploader({
     }
 
     setUploading(true);
-    setUploadProgress(20);
+    setUploadProgress(15);
 
     try {
+      // Auto-optimize image for instant upload and Vercel compatibility
+      const file = await optimizeImageIfNeeded(rawFile);
+      setUploadProgress(35);
+
       const progressTimer = setInterval(() => {
         setUploadProgress((prev) => (prev < 90 ? prev + 15 : prev));
       }, 150);
@@ -89,11 +152,38 @@ export default function MediaUploader({
         }
         setUrlInput(res.url);
       } else {
-        showToast(res?.error || "Failed to upload media.", "error");
+        // Fallback for image to ensure admin is never blocked
+        if (rawFile.type.startsWith("image/") && rawFile.size < 4 * 1024 * 1024) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const dataUrl = event.target?.result;
+            if (dataUrl && onChange) {
+              onChange(dataUrl, rawFile.name);
+              setUrlInput(dataUrl);
+              showToast("Loaded image directly", "info");
+            }
+          };
+          reader.readAsDataURL(rawFile);
+        } else {
+          showToast(res?.error || "Failed to upload media.", "error");
+        }
       }
     } catch (err) {
       console.error("Upload error:", err);
-      showToast("Server upload error. Please check your connection.", "error");
+      if (rawFile.type.startsWith("image/") && rawFile.size < 4 * 1024 * 1024) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target?.result;
+          if (dataUrl && onChange) {
+            onChange(dataUrl, rawFile.name);
+            setUrlInput(dataUrl);
+            showToast("Loaded image directly", "info");
+          }
+        };
+        reader.readAsDataURL(rawFile);
+      } else {
+        showToast("Server upload error. Please check your connection.", "error");
+      }
     } finally {
       setUploading(false);
       setUploadProgress(0);
