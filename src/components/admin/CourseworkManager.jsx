@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, BookOpen, X, Check } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 export default function CourseworkManager({ courseworkPillars, setCourseworkPillars, onSave, saving }) {
   const list = Array.isArray(courseworkPillars) ? courseworkPillars : [];
@@ -54,6 +55,19 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
     }
   };
 
+  const handleToggleActive = (idx) => {
+    const updated = list.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    setCourseworkPillars(updated);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("coursework_pillars", { items: updated }, `Coursework pillar marked as ${isNowActive ? "Active" : "Disabled"}!`);
+    }
+  };
+
   const handleDelete = (idx) => {
     if (!window.confirm("Delete this coursework pillar?")) return;
     const updated = list.filter((_, i) => i !== idx);
@@ -96,7 +110,12 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
               <h4 className="text-xs font-bold text-white group-hover:text-emerald-400 transition">
                 {item.title}
               </h4>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <ActiveToggle
+                  isActive={item.is_active}
+                  onToggle={() => handleToggleActive(idx)}
+                  label="Pillar"
+                />
                 <button
                   type="button"
                   onClick={() => openEdit(idx)}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, Cpu, X, Monitor, Terminal, Compass, FileSpreadsheet, Sun, Zap, ShieldCheck } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 const ICON_OPTIONS = [
   { label: "CAD / Monitor", value: "Monitor" },
@@ -57,6 +58,19 @@ export default function SoftwareToolsManager({ softwareTools, setSoftwareTools, 
     }
   };
 
+  const handleToggleActive = (idx) => {
+    const updated = list.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    setSoftwareTools(updated);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("software_tools", { items: updated }, `Tool marked as ${isNowActive ? "Active" : "Disabled"}!`);
+    }
+  };
+
   const handleDelete = (idx) => {
     if (!window.confirm(`Delete tool "${list[idx].name}"?`)) return;
     const updated = list.filter((_, i) => i !== idx);
@@ -101,7 +115,12 @@ export default function SoftwareToolsManager({ softwareTools, setSoftwareTools, 
                   {item.level || "Proficient"}
                 </span>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
+                  <ActiveToggle
+                    isActive={item.is_active}
+                    onToggle={() => handleToggleActive(idx)}
+                    label="Tool"
+                  />
                   <button
                     type="button"
                     onClick={() => openEdit(idx)}

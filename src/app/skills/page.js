@@ -43,7 +43,7 @@ function resolveIcon(iconName, Fallback = Monitor) {
 }
 
 export default function SkillsPage() {
-  const { skillsData, softwareTools, skillBadges, pageHeaders, openResumeModal } = usePortfolio();
+  const { skillsData, softwareTools, skillBadges, pageHeaders, resumeUrl } = usePortfolio();
 
   const header = pageHeaders?.skills || {
     badge_text: "TECHNICAL PROFICIENCY",
@@ -201,13 +201,13 @@ export default function SkillsPage() {
 
             {/* Bottom CV download banner */}
             <div className="pt-8">
-              <button
-                type="button"
-                onClick={openResumeModal}
+              <a
+                href={resumeUrl || "/resume.pdf"}
+                download="Ashifur_Rahman_CV.pdf"
                 className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-xl inline-flex items-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] transition duration-300 cursor-pointer"
               >
                 <Download size={16} /> Download Full Skills Dossier &amp; CV
-              </button>
+              </a>
             </div>
           </div>
         </section>

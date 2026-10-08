@@ -20,7 +20,7 @@ import PageHeader from '@/components/portfolio/PageHeader';
 import { usePortfolio } from '@/context/PortfolioContext';
 
 export default function ExperiencePage() {
-  const { experiences, experienceMetrics, pageHeaders, openResumeModal } = usePortfolio();
+  const { experiences, experienceMetrics, pageHeaders, resumeUrl } = usePortfolio();
 
   const header = pageHeaders?.experience || {
     badge_text: "PROFESSIONAL JOURNEY",
@@ -134,13 +134,13 @@ export default function ExperiencePage() {
             <p className="text-xs text-gray-400">Download Ashifur's official Curriculum Vitae with complete project timelines.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={openResumeModal}
+            <a
+              href={resumeUrl || "/resume.pdf"}
+              download="Ashifur_Rahman_CV.pdf"
               className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:bg-[#059669] transition cursor-pointer"
             >
               <Download size={15} /> Download Official CV
-            </button>
+            </a>
             <Link
               href="/contact"
               className="bg-[#0b0f17] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 transition"

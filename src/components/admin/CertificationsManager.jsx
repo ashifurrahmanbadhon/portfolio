@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, ShieldCheck, X, Check } from "lucide-react";
+import ActiveToggle from "./ActiveToggle";
 
 export default function CertificationsManager({ certifications, setCertifications, onSave, saving }) {
   const list = Array.isArray(certifications) ? certifications : [];
@@ -42,6 +43,19 @@ export default function CertificationsManager({ certifications, setCertification
     setModalOpen(false);
     if (onSave) {
       onSave("certifications", { items: updated }, "Certifications updated!");
+    }
+  };
+
+  const handleToggleActive = (idx) => {
+    const updated = list.map((item, i) => {
+      if (i !== idx) return item;
+      const currentActive = item.is_active !== 0 && item.is_active !== false;
+      return { ...item, is_active: currentActive ? 0 : 1 };
+    });
+    setCertifications(updated);
+    if (onSave) {
+      const isNowActive = updated[idx].is_active === 1;
+      onSave("certifications", { items: updated }, `Certification marked as ${isNowActive ? "Active" : "Disabled"}!`);
     }
   };
 
@@ -89,7 +103,12 @@ export default function CertificationsManager({ certifications, setCertification
                   {item.year || "Certified"}
                 </span>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
+                  <ActiveToggle
+                    isActive={item.is_active}
+                    onToggle={() => handleToggleActive(idx)}
+                    label="Certification"
+                  />
                   <button
                     type="button"
                     onClick={() => openEdit(idx)}
