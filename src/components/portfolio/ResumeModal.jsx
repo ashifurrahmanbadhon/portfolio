@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { X, FileText, Download, ExternalLink, Mail } from 'lucide-react';
+import { triggerCvDownload } from '@/lib/downloadCv';
 
 export default function ResumeModal({ isOpen, onClose, resumeUrl = '/resume.pdf' }) {
   if (!isOpen) return null;
@@ -28,15 +29,13 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/resume.pdf'
         </div>
 
         <div className="space-y-3">
-          <a
-            href={resumeUrl}
-            download="Ashifur_Rahman_CV.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="w-full py-3 rounded-lg bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition"
+          <button
+            type="button"
+            onClick={triggerCvDownload}
+            className="w-full py-3 rounded-lg bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition cursor-pointer"
           >
             <Download size={16} /> Download Official PDF CV
-          </a>
+          </button>
           <a
             href={resumeUrl}
             target="_blank"

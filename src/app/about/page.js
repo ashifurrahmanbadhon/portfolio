@@ -26,6 +26,7 @@ import {
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
 import { usePortfolio } from '@/context/PortfolioContext';
+import { triggerCvDownload } from '@/lib/downloadCv';
 
 const ICON_MAP = {
   Zap,
@@ -111,13 +112,13 @@ export default function AboutPage() {
               >
                 View Case Studies <ArrowRight size={15} />
               </Link>
-              <a
-                href={resumeUrl || "/resume.pdf"}
-                download="Ashifur_Rahman_CV.pdf"
+              <button
+                type="button"
+                onClick={triggerCvDownload}
                 className="bg-[#111622] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 hover:bg-[#161e30] transition duration-300 cursor-pointer"
               >
                 <Download size={15} /> Download CV
-              </a>
+              </button>
             </div>
           </div>
 

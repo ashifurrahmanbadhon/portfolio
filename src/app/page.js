@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import { usePortfolio } from '@/context/PortfolioContext';
+import { triggerCvDownload } from '@/lib/downloadCv';
 
 // Helper for dynamic icons
 const ICON_MAP = {
@@ -439,13 +440,13 @@ export default function Home() {
             >
               <Mail size={16} /> {ctaData.primary_btn_text}
             </Link>
-            <a
-              href={resumeUrl || "/resume.pdf"}
-              download="Ashifur_Rahman_CV.pdf"
+            <button
+              type="button"
+              onClick={triggerCvDownload}
               className="bg-[#111622] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-xl flex items-center gap-2 hover:border-[#10B981]/50 hover:bg-[#161e30] transition duration-300 cursor-pointer"
             >
               <Download size={16} /> {ctaData.secondary_btn_text || "Download CV"}
-            </a>
+            </button>
           </div>
         </div>
       </section>

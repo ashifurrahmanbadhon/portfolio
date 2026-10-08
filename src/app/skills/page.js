@@ -21,6 +21,7 @@ import {
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
 import { usePortfolio } from '@/context/PortfolioContext';
+import { triggerCvDownload } from '@/lib/downloadCv';
 
 const ICON_MAP = {
   Monitor,
@@ -201,13 +202,13 @@ export default function SkillsPage() {
 
             {/* Bottom CV download banner */}
             <div className="pt-8">
-              <a
-                href={resumeUrl || "/resume.pdf"}
-                download="Ashifur_Rahman_CV.pdf"
+              <button
+                type="button"
+                onClick={triggerCvDownload}
                 className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-xl inline-flex items-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] transition duration-300 cursor-pointer"
               >
                 <Download size={16} /> Download Full Skills Dossier &amp; CV
-              </a>
+              </button>
             </div>
           </div>
         </section>
