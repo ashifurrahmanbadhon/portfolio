@@ -17,7 +17,7 @@ export const DEFAULT_ABOUT = {
   title: "Engineering Precision With Analytical Rigor",
   description1: "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2: "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
-  profile_image: "/ashifur.jpeg",
+  profile_image: "/api/media/1791451216945_af4f456a.webp",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",

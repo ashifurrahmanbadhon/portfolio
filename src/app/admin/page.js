@@ -70,16 +70,16 @@ const DEFAULT_HERO = {
 
 const DEFAULT_ABOUT = {
   subtitle: "About Ashifur",
-  title: "Engineering Reliability, Efficiency & Innovation",
+  title: "Engineering Precision With Analytical Rigor",
   description1:
     "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2:
     "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
-  profile_image: "/ashifur.jpeg",
-  focus1_title: "Substation Engineering & SLDs",
-  focus1_text: "High voltage equipment, switchgear, and single line diagrams.",
-  focus2_title: "GIS & Spatial Utility Systems",
-  focus2_text: "Mapping 11kV/0.4kV feeders, asset tracking, and spatial analysis.",
+  profile_image: "/api/media/1791451216945_af4f456a.webp",
+  focus1_title: "Energy Systems & Digital Innovation",
+  focus1_text: "Focus Area",
+  focus2_title: "AutoCAD & GIS",
+  focus2_text: "Mapping & CAD",
 };
 
 const DEFAULT_HIGHLIGHTS = [
@@ -96,7 +96,9 @@ function AdminConsoleContent() {
   const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
+  const [initialLoaded, setInitialLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const ADMIN_CACHE_KEY = "admin_portfolio_cache_v2";
 
   // Data states
   const [hero, setHero] = useState(DEFAULT_HERO);
@@ -130,31 +132,45 @@ function AdminConsoleContent() {
   const [editingItem, setEditingItem] = useState(null);
   const [editingIndex, setEditingIndex] = useState(-1);
 
+  // Apply parsed JSON response into admin states cleanly
+  const applyAdminData = (res) => {
+    if (!res || typeof res !== "object") return;
+    if (res.hero && res.hero.name) setHero(res.hero);
+    if (res.about) setAbout(res.about);
+    if (Array.isArray(res.highlights) && res.highlights.length > 0) setHighlights(res.highlights);
+    if (Array.isArray(res.experiences)) setExperiences(res.experiences);
+    if (Array.isArray(res.educations)) setEducations(res.educations);
+    if (Array.isArray(res.skills)) setSkills(res.skills);
+    if (Array.isArray(res.projects)) setProjects(res.projects);
+    if (res.social_links) setSocialLinks(res.social_links);
+    if (res.resume) setResume(res.resume);
+    if (res.site_settings) setSiteSettings(res.site_settings);
+
+    if (Array.isArray(res.experience_metrics)) setExperienceMetrics(res.experience_metrics);
+    if (Array.isArray(res.coursework_pillars)) setCourseworkPillars(res.coursework_pillars);
+    if (Array.isArray(res.certifications)) setCertifications(res.certifications);
+    if (Array.isArray(res.software_tools)) setSoftwareTools(res.software_tools);
+    if (Array.isArray(res.skill_badges)) setSkillBadges(res.skill_badges);
+    if (Array.isArray(res.project_methodologies)) setProjectMethodologies(res.project_methodologies);
+    if (res.page_headers) setPageHeaders(res.page_headers);
+    if (res.homepage_cta) setHomepageCta(res.homepage_cta);
+  };
+
   // Load content from API
   const loadData = async () => {
     try {
       setLoading(true);
       const res = await api.getPortfolioContent();
       if (res) {
-        if (res.hero && res.hero.name) setHero(res.hero);
-        if (res.about && res.about.title) setAbout(res.about);
-        if (Array.isArray(res.highlights) && res.highlights.length > 0) setHighlights(res.highlights);
-        if (Array.isArray(res.experiences)) setExperiences(res.experiences);
-        if (Array.isArray(res.educations)) setEducations(res.educations);
-        if (Array.isArray(res.skills)) setSkills(res.skills);
-        if (Array.isArray(res.projects)) setProjects(res.projects);
-        if (res.social_links) setSocialLinks(res.social_links);
-        if (res.resume) setResume(res.resume);
-        if (res.site_settings) setSiteSettings(res.site_settings);
+        applyAdminData(res);
+        setInitialLoaded(true);
 
-        if (Array.isArray(res.experience_metrics)) setExperienceMetrics(res.experience_metrics);
-        if (Array.isArray(res.coursework_pillars)) setCourseworkPillars(res.coursework_pillars);
-        if (Array.isArray(res.certifications)) setCertifications(res.certifications);
-        if (Array.isArray(res.software_tools)) setSoftwareTools(res.software_tools);
-        if (Array.isArray(res.skill_badges)) setSkillBadges(res.skill_badges);
-        if (Array.isArray(res.project_methodologies)) setProjectMethodologies(res.project_methodologies);
-        if (res.page_headers) setPageHeaders(res.page_headers);
-        if (res.homepage_cta) setHomepageCta(res.homepage_cta);
+        // Store in admin local cache for instant future loads
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(ADMIN_CACHE_KEY, JSON.stringify(res));
+          } catch (_) {}
+        }
       }
 
       // Load inbox messages
@@ -165,12 +181,24 @@ function AdminConsoleContent() {
     } catch (err) {
       console.error("Failed to load portfolio content:", err);
       showToast("Notice: Using local defaults while syncing database.", "info");
+      setInitialLoaded(true);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    // Attempt instantaneous hydration from admin cache
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(ADMIN_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          applyAdminData(parsed);
+          setInitialLoaded(true);
+        }
+      } catch (_) {}
+    }
     loadData();
   }, []);
 
@@ -185,6 +213,7 @@ function AdminConsoleContent() {
       const res = await api.savePortfolioSection(section, data);
       if (res && res.success) {
         showToast(successMsg || `${section.toUpperCase()} updated successfully!`, "success");
+        loadData();
       } else {
         showToast(res?.error || "Save error occurred", "error");
       }
@@ -310,10 +339,23 @@ function AdminConsoleContent() {
         </div>
       </div>
 
-      {/* ============================================================== */}
-      {/* TAB 1: HOME & HERO SECTION                                     */}
-      {/* ============================================================== */}
-      {currentTab === "home" && (
+      {/* Initial Database Synchronization Skeleton Gate */}
+      {!initialLoaded && loading ? (
+        <div className="bg-[#111622] border border-[#1E2638] rounded-2xl p-12 sm:p-16 flex flex-col items-center justify-center space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+            <RefreshCw className="w-5 h-5 text-emerald-400 animate-spin" />
+          </div>
+          <div className="text-center space-y-1">
+            <h3 className="text-sm font-bold text-white">Synchronizing With Live Database...</h3>
+            <p className="text-xs text-slate-400">Retrieving verified portfolio content and media assets</p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* ============================================================== */}
+          {/* TAB 1: HOME & HERO SECTION                                     */}
+          {/* ============================================================== */}
+          {currentTab === "home" && (
         <div className="space-y-6">
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl">
             <div className="flex items-center justify-between pb-4 border-b border-[#1E2638] mb-6">
@@ -1523,6 +1565,8 @@ function AdminConsoleContent() {
             saving={saving}
           />
         </div>
+      )}
+        </>
       )}
 
       {/* ============================================================== */}
