@@ -75,7 +75,7 @@ const DEFAULT_ABOUT = {
     "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2:
     "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
-  profile_image: "/api/media/1791451216945_af4f456a.webp",
+  profile_image: "/ashifur.jpeg",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",
@@ -98,7 +98,7 @@ function AdminConsoleContent() {
   const [loading, setLoading] = useState(true);
   const [initialLoaded, setInitialLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
-  const ADMIN_CACHE_KEY = "admin_portfolio_cache_v2";
+  const ADMIN_CACHE_KEY = "admin_portfolio_cache_v3";
 
   // Data states
   const [hero, setHero] = useState(DEFAULT_HERO);
@@ -878,7 +878,7 @@ function AdminConsoleContent() {
                         )}
                       </div>
                       <p className="text-xs text-slate-400 mt-1">
-                        <span className="font-semibold text-slate-200">{ed.institution}</span> • {ed.start_year} – {ed.end_year || "Present"} • {ed.result}
+                        <span className="font-semibold text-slate-200">{ed.institution}</span> • {ed.period || (ed.start_year ? `${ed.start_year} – ${ed.end_year || "Present"}` : "Completed")} • {ed.result}
                       </p>
                     </div>
 

@@ -20,7 +20,7 @@ import {
   DEFAULT_HOMEPAGE_CTA
 } from '@/lib/portfolioDefaults';
 
-const CACHE_KEY = 'portfolio_cms_cache_v2';
+const CACHE_KEY = 'portfolio_cms_cache_v3';
 const PortfolioContext = createContext(null);
 
 export function PortfolioProvider({ children }) {
@@ -107,15 +107,28 @@ export function PortfolioProvider({ children }) {
 
     if (Array.isArray(data.educations)) {
       setEducations(
-        data.educations.map((ed) => ({
-          degree: ed.degree,
-          institution: ed.institution,
-          period: `${ed.start_year || ''} – ${ed.end_year || 'Present'}`.trim(),
-          result: ed.result || ed.badge_text || 'Completed',
-          badge_text: ed.badge_text || '',
-          description: ed.description || '',
-          highlights: ed.highlights || []
-        }))
+        data.educations.map((ed) => {
+          let parsedHighlights = [];
+          if (Array.isArray(ed.highlights)) {
+            parsedHighlights = ed.highlights;
+          } else if (ed.highlights_json) {
+            try {
+              parsedHighlights = JSON.parse(ed.highlights_json);
+            } catch (_) {}
+          }
+          const period = (ed.period || (ed.start_year ? `${ed.start_year} – ${ed.end_year || 'Present'}` : '')).trim();
+          return {
+            degree: ed.degree,
+            institution: ed.institution,
+            period: period || '2018 – 2022',
+            start_year: ed.start_year || '',
+            end_year: ed.end_year || '',
+            result: ed.result || ed.badge_text || 'Completed',
+            badge_text: ed.badge_text || '',
+            description: ed.description || '',
+            highlights: parsedHighlights
+          };
+        })
       );
     }
 

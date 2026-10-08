@@ -351,7 +351,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {skillsData.map((cat, idx) => (
                 <div key={idx} className="bg-[#0b0f17] p-6 rounded-2xl border border-[#1e2638] space-y-4">
                   <div className="flex items-center gap-3 pb-3 border-b border-[#1e2638]">

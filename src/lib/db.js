@@ -269,7 +269,14 @@ export async function getPortfolioContent() {
   });
 
   // 5. Educations
-  const educations = (await queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC")) || [];
+  const eduRows = (await queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC")) || [];
+  const educations = eduRows.map((ed) => {
+    let highlights = [];
+    try {
+      highlights = JSON.parse(ed.highlights_json || "[]");
+    } catch (_) {}
+    return { ...ed, highlights };
+  });
 
   // 6. Skills
   const skills = (await queryAll("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC")) || [];
@@ -498,18 +505,22 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         await execute("DELETE FROM educations");
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
+          const period = item.period || (item.start_year ? `${item.start_year} – ${item.end_year || 'Present'}` : "");
+          const highlightsJson = JSON.stringify(item.highlights || []);
           await execute(`
-            INSERT INTO educations (degree, institution, subject, start_year, end_year, result, badge_text, description, sort_order, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO educations (degree, institution, subject, start_year, end_year, period, result, badge_text, description, highlights_json, sort_order, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             item.degree || "",
             item.institution || "",
             item.subject || "",
             item.start_year || "",
             item.end_year || "",
+            period,
             item.result || "",
             item.badge_text || "",
             item.description || "",
+            highlightsJson,
             idx + 1,
             now,
           ]);
