@@ -212,19 +212,21 @@ export async function updateAdminProfile(adminId, { fullName, email, avatar, cur
       UPDATE admins
       SET full_name = COALESCE(?, full_name),
           email = COALESCE(?, email),
+          avatar = COALESCE(?, avatar),
           password_hash = ?,
           salt = ?,
           updated_at = ?
       WHERE id = ?
-    `, [fullName || null, email || null, hash, salt, now, adminId]);
+    `, [fullName || null, email || null, avatar || null, hash, salt, now, adminId]);
   } else {
     await execute(`
       UPDATE admins
       SET full_name = COALESCE(?, full_name),
           email = COALESCE(?, email),
+          avatar = COALESCE(?, avatar),
           updated_at = ?
       WHERE id = ?
-    `, [fullName || null, email || null, now, adminId]);
+    `, [fullName || null, email || null, avatar || null, now, adminId]);
   }
 }
 

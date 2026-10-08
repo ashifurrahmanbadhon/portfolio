@@ -20,7 +20,7 @@ export async function GET(req) {
         full_name: admin.full_name || "Ashifur Rahman",
         email: admin.email || "",
         role: admin.role || "super_admin",
-        avatar: "/ashifur.jpeg",
+        avatar: admin.avatar || "/ashifur.jpeg",
         two_factor_enabled: Boolean(admin.two_factor_enabled),
       },
     });

@@ -162,10 +162,11 @@ function AdminConsoleContent() {
   };
 
   // Load content from API
-  const loadData = async () => {
+  // Load content from API
+  const loadData = async (force = false) => {
     try {
       setLoading(true);
-      const res = await api.getPortfolioContent();
+      const res = await api.getPortfolioContent(force);
       if (res) {
         applyAdminData(res);
         setInitialLoaded(true);
@@ -204,7 +205,7 @@ function AdminConsoleContent() {
         }
       } catch (_) {}
     }
-    loadData();
+    loadData(true);
   }, []);
 
   const switchTab = (tab) => {
@@ -218,7 +219,7 @@ function AdminConsoleContent() {
       const res = await api.savePortfolioSection(section, data);
       if (res && res.success) {
         showToast(successMsg || `${section.toUpperCase()} updated successfully!`, "success");
-        loadData();
+        await loadData(true);
       } else {
         showToast(res?.error || "Save error occurred", "error");
       }
@@ -250,97 +251,78 @@ function AdminConsoleContent() {
 
   // Tab definitions
   const tabs = [
-    { id: "home", label: "1. Home & Hero", icon: Home, liveUrl: "/" },
-    { id: "about", label: "2. About", icon: User, liveUrl: "/about" },
-    { id: "experience", label: "3. Experience", icon: Briefcase, liveUrl: "/experience", count: experiences.length },
-    { id: "education", label: "4. Education", icon: GraduationCap, liveUrl: "/education", count: educations.length },
-    { id: "skills", label: "5. Skills", icon: Cpu, liveUrl: "/skills", count: skills.length },
-    { id: "projects", label: "6. Projects", icon: FolderGit2, liveUrl: "/projects", count: projects.length },
-    { id: "contact", label: "7. Contact & Inbox", icon: Mail, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length },
-    { id: "settings", label: "8. Page Headers & Settings", icon: Sliders, liveUrl: "/" },
+    { id: "home", label: "Home & Hero", pageNum: "Page 1", title: "Home & Hero Section", subtitle: "Live editor for headline, credentials badge, introduction, and primary CTA buttons", icon: Home, liveUrl: "/" },
+    { id: "about", label: "About Ashifur", pageNum: "Page 2", title: "About Ashifur — Background & Vision", subtitle: "Configure personal narrative, engineering focus cards, and operating principles", icon: User, liveUrl: "/about" },
+    { id: "experience", label: "Work Experience", pageNum: "Page 3", title: "Work Experience & Field Operations", subtitle: `Manage ${experiences.length} professional positions and high-voltage field roles`, icon: Briefcase, liveUrl: "/experience", count: experiences.length },
+    { id: "education", label: "Academic Education", pageNum: "Page 4", title: "Academic Background & Certifications", subtitle: `Manage ${educations.length} accredited degrees, certifications, and coursework`, icon: GraduationCap, liveUrl: "/education", count: educations.length },
+    { id: "skills", label: "Technical Skills", pageNum: "Page 5", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
+    { id: "projects", label: "Engineering Projects", pageNum: "Page 6", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
+    { id: "contact", label: "Contact & Inbox", pageNum: "Page 7", title: "Contact Hub & Visitor Inquiries", subtitle: "View incoming client messages and update communication channels", icon: Mail, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length },
+    { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
   ];
 
   const currentTabObj = tabs.find((t) => t.id === currentTab) || tabs[0];
+  const CurrentIcon = currentTabObj.icon;
 
   return (
     <div className="space-y-6 pb-20">
-      {/* Top Banner & Tab Header */}
-      <div className="bg-[#111622] border border-[#1E2638] rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
+      {/* Modern, Sleek Section Command Header (No duplicate horizontal tabs) */}
+      <div className="bg-[#111622] border border-[#1E2638] rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 blur-[100px] pointer-events-none rounded-full" />
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase">
-                Content Management System
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse"></span>
+                {currentTabObj.pageNum} Editor
               </span>
               <span className="text-xs font-mono text-slate-400">• Neon PostgreSQL Cloud</span>
+              {currentTabObj.count !== undefined && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161C2A] text-slate-300 border border-[#1E2638]">
+                  {currentTabObj.count} items
+                </span>
+              )}
+              {currentTabObj.badge > 0 && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-bold animate-pulse">
+                  {currentTabObj.badge} new messages
+                </span>
+              )}
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-              Portfolio Admin Console
+
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0 shadow-inner">
+                <CurrentIcon className="w-4 h-4" />
+              </div>
+              <span>{currentTabObj.title}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Live editor for all 7 webpages. Add, edit, or remove content dynamically.
+
+            <p className="text-xs sm:text-sm text-slate-400">
+              {currentTabObj.subtitle}
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
             <button
-              onClick={loadData}
+              onClick={() => loadData(true)}
               disabled={loading}
-              className="px-3 py-2 rounded-xl bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
+              className="px-3.5 py-2.5 rounded-xl bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono flex items-center gap-2 transition cursor-pointer"
               title="Refresh database records"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-emerald-400" : ""}`} />
-              <span className="hidden sm:inline">Refresh Data</span>
+              <span>{loading ? "Syncing..." : "Refresh Data"}</span>
             </button>
 
             <a
               href={currentTabObj.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition group"
+              className="px-4 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-2 transition group"
             >
               <span>View Live Page</span>
               <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
           </div>
-        </div>
-
-        {/* Horizontal 7-Tab Navigation Bar */}
-        <div className="mt-6 pt-4 border-t border-[#1E2638] flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = currentTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => switchTab(tab.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-medium flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20"
-                    : "text-slate-400 hover:text-white hover:bg-[#161C2A] border border-transparent"
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-slate-950" : "text-slate-400"}`} />
-                <span>{tab.label}</span>
-                {tab.count !== undefined && (
-                  <span
-                    className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                      isActive ? "bg-slate-950/20 text-slate-900" : "bg-[#1E2638] text-slate-300"
-                    }`}
-                  >
-                    {tab.count}
-                  </span>
-                )}
-                {tab.badge > 0 && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-red-500 text-white font-bold animate-pulse">
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
         </div>
       </div>
 
