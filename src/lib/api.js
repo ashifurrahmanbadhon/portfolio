@@ -283,6 +283,25 @@ export const api = {
     }, 5000);
   },
 
+  async deleteContactMessage(id) {
+    cache.clear();
+    const res = await fetch(`${API_BASE}/api/contact?id=${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  async markContactMessageRead(id, isRead = 1) {
+    cache.clear();
+    const res = await fetch(`${API_BASE}/api/contact`, {
+      method: "PATCH",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ id, is_read: isRead }),
+    });
+    return res.json();
+  },
+
   // Roles & Users
   async getUsers() {
     return cachedFetch(`${API_BASE}/api/admin/users`, {
