@@ -943,3 +943,70 @@ export async function getUsers() {
     }),
   };
 }
+
+// ==========================================
+// Media & Document Files (Neon PostgreSQL & SQLite)
+// ==========================================
+export async function ensureMediaTable() {
+  try {
+    if (neonSql) {
+      await neonSql.query(`
+        CREATE TABLE IF NOT EXISTS media_files (
+          id SERIAL PRIMARY KEY,
+          filename VARCHAR(255) UNIQUE NOT NULL,
+          original_name TEXT,
+          mime_type VARCHAR(100),
+          file_size INTEGER,
+          data TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+    } else {
+      const db = getSqliteDb();
+      db.prepare(`
+        CREATE TABLE IF NOT EXISTS media_files (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          filename TEXT UNIQUE NOT NULL,
+          original_name TEXT,
+          mime_type TEXT,
+          file_size INTEGER,
+          data TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      `).run();
+    }
+  } catch (err) {
+    console.error("ensureMediaTable error:", err);
+  }
+}
+
+export async function saveMediaFile({ filename, originalName, mimeType, fileSize, data }) {
+  await ensureMediaTable();
+  if (neonSql) {
+    await neonSql.query(
+      `INSERT INTO media_files (filename, original_name, mime_type, file_size, data)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (filename) DO UPDATE SET
+         data = EXCLUDED.data,
+         file_size = EXCLUDED.file_size,
+         mime_type = EXCLUDED.mime_type`,
+      [filename, originalName, mimeType, fileSize, data]
+    );
+  } else {
+    const db = getSqliteDb();
+    db.prepare(`
+      INSERT OR REPLACE INTO media_files (filename, original_name, mime_type, file_size, data)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(filename, originalName, mimeType, fileSize, data);
+  }
+  return { success: true, filename };
+}
+
+export async function getMediaFile(filename) {
+  await ensureMediaTable();
+  return await queryOne(
+    "SELECT id, filename, original_name, mime_type, file_size, data, created_at FROM media_files WHERE filename = ?",
+    [filename]
+  );
+}
+
