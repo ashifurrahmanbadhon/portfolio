@@ -5,6 +5,7 @@ import { PortfolioProvider, usePortfolio } from '@/context/PortfolioContext';
 import BackgroundGlow from './BackgroundGlow';
 import PortfolioNavbar from './PortfolioNavbar';
 import PortfolioFooter from './PortfolioFooter';
+import ScrollToTopButton from './ScrollToTopButton';
 import ResumeModal from './ResumeModal';
 
 function PortfolioInnerLayout({ children }) {
@@ -34,11 +35,15 @@ function PortfolioInnerLayout({ children }) {
       <BackgroundGlow />
       <PortfolioNavbar onOpenResume={openResumeModal} />
       
-      <main className="flex-1 relative z-10">
+      {/* pt-20 ensures page content starts smoothly below the fixed top navbar */}
+      <main className="flex-1 relative z-10 pt-20">
         {children}
       </main>
 
       <PortfolioFooter />
+
+      {/* Persistent floating scroll to top button at bottom right corner */}
+      <ScrollToTopButton />
 
       <ResumeModal
         isOpen={resumeModalOpen}
