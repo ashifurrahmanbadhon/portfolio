@@ -22,10 +22,11 @@ async function processImage() {
     const b = data[idx * 3 + 2];
     const minC = Math.min(r, g, b);
     const maxC = Math.max(r, g, b);
-    return minC >= 222 && (maxC - minC) < 28;
+    // Almost white and low saturation
+    return minC >= 215 && (maxC - minC) < 30;
   }
 
-  // Seed flood fill
+  // 1. Initial seed flood fill from borders
   for (let x = 0; x < width; x++) {
     if (isWhitePixel(x)) {
       isBg[x] = 1;
@@ -68,13 +69,36 @@ async function processImage() {
     }
   }
 
-  // Calculate distance from background (for smooth boundary de-fringing)
+  // 2. Clear out enclosed pockets of white background in the hair area (above forehead y < 175)
+  // Forehead skin only begins at y=177. Any pixel above y=175 with minC > 105 and low saturation is white backdrop leak
+  let trappedWhiteCount = 0;
+  for (let y = 20; y < 175; y++) {
+    for (let x = 180; x < 580; x++) {
+      const idx = y * width + x;
+      if (isBg[idx] === 0) {
+        const r = data[idx * 3];
+        const g = data[idx * 3 + 1];
+        const b = data[idx * 3 + 2];
+        const minC = Math.min(r, g, b);
+        const maxC = Math.max(r, g, b);
+        const avg = (r + g + b) / 3;
+
+        // If it's a bright white spot trapped in or behind the hair
+        if (minC > 100 && (maxC - minC) < 35 && avg > 110) {
+          isBg[idx] = 1;
+          trappedWhiteCount++;
+        }
+      }
+    }
+  }
+  console.log(`Cleaned trapped white pixels in hair: ${trappedWhiteCount}`);
+
+  // 3. Distance transform from background
   const distFromBg = new Float32Array(width * height);
   for (let i = 0; i < width * height; i++) {
     distFromBg[i] = isBg[i] ? 0 : 999;
   }
 
-  // Multi-pass distance transform (manhattan approx)
   for (let y = 1; y < height - 1; y++) {
     for (let x = 1; x < width - 1; x++) {
       const i = y * width + x;
@@ -93,7 +117,7 @@ async function processImage() {
   }
 
   const rgbDarkBlend = Buffer.alloc(width * height * 3);
-  const bgBaseR = 11, bgBaseG = 15, bgBaseB = 23; // #0b0f17 website dark background
+  const bgBaseR = 11, bgBaseG = 15, bgBaseB = 23; // #0b0f17
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -108,7 +132,6 @@ async function processImage() {
       const bgB = Math.min(255, Math.round(bgBaseB + glowFactor * 22));
 
       if (d === 0) {
-        // Pure background
         rgbDarkBlend[i * 3] = bgR;
         rgbDarkBlend[i * 3 + 1] = bgG;
         rgbDarkBlend[i * 3 + 2] = bgB;
@@ -117,16 +140,23 @@ async function processImage() {
         let fgG = data[i * 3 + 1];
         let fgB = data[i * 3 + 2];
 
-        // Smooth alpha for boundary (d = 1 to 4)
+        // Edge de-fringing
         let alpha = 1.0;
         if (d < 3.5) {
           alpha = Math.min(1.0, (d - 0.2) / 2.8);
-          // De-fringe: hair and jacket edge pixels bleached by white backdrop
-          // remove white contamination
           const whiteDilation = 1 - alpha;
-          fgR = Math.max(0, fgR - Math.round(whiteDilation * 200));
-          fgG = Math.max(0, fgG - Math.round(whiteDilation * 200));
-          fgB = Math.max(0, fgB - Math.round(whiteDilation * 200));
+          fgR = Math.max(0, fgR - Math.round(whiteDilation * 220));
+          fgG = Math.max(0, fgG - Math.round(whiteDilation * 220));
+          fgB = Math.max(0, fgB - Math.round(whiteDilation * 220));
+        }
+
+        // Extra polish: if hair area (y < 175) has any leftover brightness bleached by studio light
+        if (y < 175 && (fgR > 90 || fgG > 90 || fgB > 90)) {
+          const hairT = Math.min(1.0, (Math.max(fgR, fgG, fgB) - 90) / 100);
+          // Darken to match rich dark hair tone (RGB ~ 28, 24, 24)
+          fgR = Math.round(fgR * (1 - hairT * 0.7) + 28 * (hairT * 0.7));
+          fgG = Math.round(fgG * (1 - hairT * 0.7) + 24 * (hairT * 0.7));
+          fgB = Math.round(fgB * (1 - hairT * 0.7) + 24 * (hairT * 0.7));
         }
 
         // Bottom fade: melt bottom of the suit into #0b0f17
@@ -154,49 +184,7 @@ async function processImage() {
     .jpeg({ quality: 94 })
     .toFile(path.join(process.cwd(), 'public', 'ashifur-dark-blend.jpg'));
 
-  // Also transparent PNG with de-fringed edges and bottom fade
-  const rgbaBuffer = Buffer.alloc(width * height * 4);
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const i = y * width + x;
-      const d = distFromBg[i];
-      if (d === 0) {
-        rgbaBuffer[i * 4] = 0;
-        rgbaBuffer[i * 4 + 1] = 0;
-        rgbaBuffer[i * 4 + 2] = 0;
-        rgbaBuffer[i * 4 + 3] = 0;
-      } else {
-        let fgR = data[i * 3];
-        let fgG = data[i * 3 + 1];
-        let fgB = data[i * 3 + 2];
-        let alpha = 1.0;
-        if (d < 3.5) {
-          alpha = Math.min(1.0, (d - 0.2) / 2.8);
-          const whiteDilation = 1 - alpha;
-          fgR = Math.max(0, fgR - Math.round(whiteDilation * 200));
-          fgG = Math.max(0, fgG - Math.round(whiteDilation * 200));
-          fgB = Math.max(0, fgB - Math.round(whiteDilation * 200));
-        }
-
-        let bottomFade = 1.0;
-        if (y > height * 0.78) {
-          const t = (y - height * 0.78) / (height * 0.22);
-          bottomFade = Math.max(0, 1.0 - t);
-        }
-
-        rgbaBuffer[i * 4] = fgR;
-        rgbaBuffer[i * 4 + 1] = fgG;
-        rgbaBuffer[i * 4 + 2] = fgB;
-        rgbaBuffer[i * 4 + 3] = Math.round(alpha * bottomFade * 255);
-      }
-    }
-  }
-
-  await sharp(rgbaBuffer, { raw: { width, height, channels: 4 } })
-    .png()
-    .toFile(path.join(process.cwd(), 'public', 'ashifur-transparent.png'));
-
-  console.log('Successfully generated de-fringed ashifur-dark-blend and transparent images!');
+  console.log('Successfully regenerated dark-blend with hair white spots fixed!');
 }
 
 processImage().catch(console.error);
