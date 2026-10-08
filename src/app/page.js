@@ -109,30 +109,47 @@ export default function Home() {
             {/* Intro text */}
           </div>
 
-          {/* Profile Photo Card */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="relative group">
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#10B981] to-teal-600 opacity-30 blur-xl group-hover:opacity-60 transition duration-500" />
-              
-              <div className="relative bg-[#111622] border-2 border-[#1e2638] rounded-3xl p-4 shadow-2xl">
-                <div className="relative w-64 h-80 sm:w-72 sm:h-96 rounded-2xl overflow-hidden bg-[#0b0f17]">
+          {/* Profile Photo - Seamlessly Blended Portrait */}
+          <div className="lg:col-span-5 flex justify-center items-center relative">
+            <div className="relative group w-full max-w-[340px] sm:max-w-[380px] flex flex-col items-center">
+              {/* Atmospheric Ambient Glow behind portrait */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[420px] h-[400px] sm:h-[480px] bg-gradient-to-tr from-emerald-500/20 via-teal-500/15 to-transparent blur-[80px] rounded-full pointer-events-none group-hover:scale-110 transition duration-700 opacity-80" />
+
+              {/* Cybernetic accent ring */}
+              <div className="absolute -inset-1.5 rounded-[2.5rem] bg-gradient-to-b from-emerald-500/25 via-transparent to-emerald-500/10 blur-xs opacity-60 group-hover:opacity-100 transition duration-500 pointer-events-none" />
+
+              {/* Seamless Blended Container */}
+              <div className="relative w-full rounded-[2rem] p-2.5 sm:p-3 bg-gradient-to-b from-[#141b2a]/90 via-[#0e1422]/80 to-[#0b0f17] border border-emerald-500/25 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-md overflow-hidden transition duration-500 group-hover:border-emerald-500/50">
+                {/* Photo Display with Smooth Edge Vignette */}
+                <div className="relative w-full aspect-[3/4] rounded-[1.6rem] overflow-hidden bg-[#0b0f17]">
                   <Image
-                    src={heroData.profile_image || "/ashifur.jpeg"}
+                    src={
+                      (heroData.profile_image === "/ashifur.jpeg" || !heroData.profile_image)
+                        ? "/ashifur-dark-blend.webp"
+                        : heroData.profile_image
+                    }
                     alt={heroData.name || "Ashifur Rahman"}
                     fill
-                    className="object-cover object-top group-hover:scale-105 transition duration-500"
+                    className="object-cover object-top group-hover:scale-[1.03] transition duration-700 ease-out"
                     priority
+                    unoptimized
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent opacity-80" />
-                  
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-[10px] font-mono uppercase tracking-widest text-[#10B981]">
+                  {/* Bottom Vignette melting into canvas */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-[#0b0f17]/25 to-transparent opacity-75 pointer-events-none" />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[1.6rem] pointer-events-none" />
+                </div>
+
+                {/* Floating Specialization Pill on the Blended Card */}
+                <div className="mt-3 px-3.5 py-2.5 rounded-xl bg-[#0b0f17]/85 border border-[#1e2638] flex items-center justify-between gap-2 backdrop-blur-sm">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-semibold truncate">
                       {heroData.spec_badge_label || "Specialization"}
                     </p>
-                    <p className="text-xs font-bold text-white">
+                    <p className="text-xs font-bold text-white truncate">
                       {heroData.spec_badge_title || "Engineering, Management & AI"}
                     </p>
                   </div>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse shadow-sm shadow-emerald-400/50" />
                 </div>
               </div>
             </div>
