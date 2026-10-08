@@ -20,7 +20,7 @@ import {
   DEFAULT_HOMEPAGE_CTA
 } from '@/lib/portfolioDefaults';
 
-const CACHE_KEY = 'portfolio_cms_cache_v3';
+const CACHE_KEY = 'portfolio_cms_cache_v4';
 const PortfolioContext = createContext(null);
 
 export function PortfolioProvider({ children }) {
@@ -54,16 +54,19 @@ export function PortfolioProvider({ children }) {
     }
 
     if (data.about) {
-      const activePillars = (Array.isArray(data.about.pillars) ? data.about.pillars : (prev.pillars || []))
-        .filter(p => p.is_active !== 0 && p.is_active !== false);
-      const activePrinciples = (Array.isArray(data.about.principles) ? data.about.principles : (prev.principles || []))
-        .filter(p => p.is_active !== 0 && p.is_active !== false);
-      setAboutData((prev) => ({
-        ...prev,
-        ...data.about,
-        pillars: activePillars,
-        principles: activePrinciples,
-      }));
+      setAboutData((prev) => {
+        const rawPillars = Array.isArray(data.about.pillars) ? data.about.pillars : (prev?.pillars || []);
+        const rawPrinciples = Array.isArray(data.about.principles) ? data.about.principles : (prev?.principles || []);
+        const activePillars = rawPillars.filter(p => p.is_active !== 0 && p.is_active !== false);
+        const activePrinciples = rawPrinciples.filter(p => p.is_active !== 0 && p.is_active !== false);
+        return {
+          ...prev,
+          ...data.about,
+          profile_image: data.about.profile_image || prev.profile_image || '/ashifur-about-blend.webp',
+          pillars: activePillars,
+          principles: activePrinciples,
+        };
+      });
     }
 
     if (Array.isArray(data.highlights) && data.highlights.length > 0) {
