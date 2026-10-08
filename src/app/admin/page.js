@@ -60,7 +60,7 @@ const DEFAULT_HERO = {
   badge_text: "Available for Engineering, Technology & AI Opportunities",
   introduction:
     "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
-  profile_image: "/ashifur.jpeg",
+  profile_image: "/ashifur-dark-blend.webp",
   primary_btn_text: "Contact Me",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download CV",
@@ -76,7 +76,7 @@ const DEFAULT_ABOUT = {
     "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2:
     "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
-  profile_image: "/ashifur.jpeg",
+  profile_image: "/ashifur-about-blend.webp",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",
