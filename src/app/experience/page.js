@@ -20,53 +20,39 @@ import PageHeader from '@/components/portfolio/PageHeader';
 import { usePortfolio } from '@/context/PortfolioContext';
 
 export default function ExperiencePage() {
-  const { experiences, openResumeModal } = usePortfolio();
+  const { experiences, experienceMetrics, pageHeaders, openResumeModal } = usePortfolio();
 
-  const careerHighlights = [
-    {
-      metric: "2+ Years",
-      label: "Operational Leadership",
-      subtext: "Remote team coordination & data forecasting"
-    },
-    {
-      metric: "33/11 kV",
-      label: "Substation Engineering",
-      subtext: "DESCO power grid & control room operations"
-    },
-    {
-      metric: "100%",
-      label: "Safety & SOP Adherence",
-      subtext: "Zero-incident field maintenance protocols"
-    },
-    {
-      metric: "500+",
-      label: "Datasets Analyzed",
-      subtext: "Operational workflow & inventory BOQs"
-    }
-  ];
+  const header = pageHeaders?.experience || {
+    badge_text: "PROFESSIONAL JOURNEY",
+    title: "Work Experience &",
+    highlight_word: "Field Operations",
+    description: "A dual-faceted career track combining high-voltage power distribution operations at DESCO with data analytics and workflow planning at Ventech Digital."
+  };
 
   return (
     <PortfolioLayout>
       <PageHeader
         breadcrumbs={[{ name: 'Experience' }]}
-        badgeText="PROFESSIONAL JOURNEY"
-        title="Work Experience &"
-        highlightWord="Field Operations"
-        description="A dual-faceted career track combining high-voltage power distribution operations at DESCO with data analytics and workflow planning at Ventech Digital."
+        badgeText={header.badge_text}
+        title={header.title}
+        highlightWord={header.highlight_word}
+        description={header.description}
       />
 
-      {/* Metrics Row */}
-      <section className="relative z-10 border-b border-[#1e2638] bg-[#0e131d]/70">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {careerHighlights.map((ch, idx) => (
-            <div key={idx}>
-              <p className="text-2xl sm:text-3xl font-extrabold text-[#10B981] font-mono">{ch.metric}</p>
-              <p className="text-sm font-semibold text-white mt-1">{ch.label}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{ch.subtext}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Metrics Row (100% Dynamic from CMS) */}
+      {experienceMetrics && experienceMetrics.length > 0 && (
+        <section className="relative z-10 border-b border-[#1e2638] bg-[#0e131d]/70">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {experienceMetrics.map((ch, idx) => (
+              <div key={idx}>
+                <p className="text-2xl sm:text-3xl font-extrabold text-[#10B981] font-mono">{ch.metric}</p>
+                <p className="text-sm font-semibold text-white mt-1">{ch.label}</p>
+                {ch.subtext && <p className="text-xs text-gray-400 mt-0.5">{ch.subtext}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Main Experience Timeline */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-5xl mx-auto">
@@ -94,46 +80,41 @@ export default function ExperiencePage() {
                       <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#10B981] transition">
                         {exp.role}
                       </h3>
-                      {idx === 0 && (
+                      {exp.period && (
                         <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                          2 Year Tenure
+                          {exp.period}
                         </span>
                       )}
                     </div>
-                    <p className="text-sm font-semibold text-gray-300 mt-1">
-                      {exp.organization}
-                    </p>
+                    <p className="text-sm font-semibold text-gray-300 mt-1">{exp.organization}</p>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs font-mono text-[#10B981] bg-[#10B981]/10 px-3.5 py-1.5 rounded-full w-fit shrink-0 border border-[#10B981]/20">
-                    <Calendar size={13} />
-                    <span>{exp.period}</span>
-                  </div>
+                  {exp.location && (
+                    <div className="flex items-center gap-1.5 text-xs font-mono text-gray-400 shrink-0">
+                      <MapPin size={13} className="text-[#10B981]" />
+                      <span>{exp.location}</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Key Points */}
-                <div className="space-y-3">
-                  <p className="text-xs font-mono uppercase tracking-wider text-gray-400">
-                    Key Responsibilities &amp; Impact:
-                  </p>
-                  <ul className="space-y-2.5">
-                    {exp.points.map((pt, pIdx) => (
-                      <li key={pIdx} className="text-xs sm:text-sm text-gray-300 flex items-start gap-3 leading-relaxed">
-                        <CheckCircle2 size={16} className="text-[#10B981] shrink-0 mt-0.5" />
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {/* Accomplishment points */}
+                <ul className="space-y-2.5 text-xs sm:text-sm text-gray-300 leading-relaxed">
+                  {(exp.points || exp.description_points || []).map((pt, pIdx) => (
+                    <li key={pIdx} className="flex items-start gap-2.5">
+                      <CheckCircle2 size={15} className="text-[#10B981] shrink-0 mt-0.5" />
+                      <span>{pt}</span>
+                    </li>
+                  ))}
+                </ul>
 
-                {/* Applied competencies / tools */}
+                {/* Tools / Core Competency Tags */}
                 {exp.tools && exp.tools.length > 0 && (
-                  <div className="pt-4 border-t border-[#1e2638]/70 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] font-mono text-gray-400 mr-2">Key Competencies:</span>
+                  <div className="pt-4 border-t border-[#1e2638]/60 flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-mono text-gray-400 mr-1">Applied Competencies:</span>
                     {exp.tools.map((tool, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638]"
+                        className="text-[11px] font-mono text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded border border-[#10B981]/25"
                       >
                         {tool}
                       </span>
@@ -149,8 +130,8 @@ export default function ExperiencePage() {
         {/* CTA Bar */}
         <div className="mt-16 bg-[#111622] border border-[#1e2638] rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1">
-            <h4 className="text-lg font-bold text-white">Need a detailed chronological CV?</h4>
-            <p className="text-xs text-gray-400">Download the complete curriculum vitae including all past coursework and technical certifications.</p>
+            <h4 className="text-lg font-bold text-white">Need a detailed operational breakdown?</h4>
+            <p className="text-xs text-gray-400">Download Ashifur's official Curriculum Vitae with complete project timelines.</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
@@ -158,18 +139,19 @@ export default function ExperiencePage() {
               onClick={openResumeModal}
               className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:bg-[#059669] transition cursor-pointer"
             >
-              <Download size={15} /> Download Full CV
+              <Download size={15} /> Download Official CV
             </button>
             <Link
               href="/contact"
               className="bg-[#0b0f17] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 transition"
             >
-              Discuss Opportunities <ArrowRight size={15} />
+              Direct Message <ArrowRight size={15} />
             </Link>
           </div>
         </div>
 
       </section>
+
     </PortfolioLayout>
   );
 }

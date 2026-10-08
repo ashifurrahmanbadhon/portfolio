@@ -41,6 +41,16 @@ import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 import SpotlightCard from "@/components/SpotlightCard";
 import MediaUploader from "@/components/MediaUploader";
+import AboutPillarsManager from "@/components/admin/AboutPillarsManager";
+import AboutPrinciplesManager from "@/components/admin/AboutPrinciplesManager";
+import ExperienceMetricsManager from "@/components/admin/ExperienceMetricsManager";
+import CertificationsManager from "@/components/admin/CertificationsManager";
+import CourseworkManager from "@/components/admin/CourseworkManager";
+import SoftwareToolsManager from "@/components/admin/SoftwareToolsManager";
+import SkillBadgesManager from "@/components/admin/SkillBadgesManager";
+import ProjectMethodologyManager from "@/components/admin/ProjectMethodologyManager";
+import PageHeadersManager from "@/components/admin/PageHeadersManager";
+import HomepageCtaManager from "@/components/admin/HomepageCtaManager";
 
 // Default fallbacks matching portfolio initial state
 const DEFAULT_HERO = {
@@ -101,6 +111,16 @@ function AdminConsoleContent() {
   const [siteSettings, setSiteSettings] = useState({});
   const [messages, setMessages] = useState([]);
 
+  // Dynamic extended sections (100% editable CMS)
+  const [experienceMetrics, setExperienceMetrics] = useState([]);
+  const [courseworkPillars, setCourseworkPillars] = useState([]);
+  const [certifications, setCertifications] = useState([]);
+  const [softwareTools, setSoftwareTools] = useState([]);
+  const [skillBadges, setSkillBadges] = useState([]);
+  const [projectMethodologies, setProjectMethodologies] = useState([]);
+  const [pageHeaders, setPageHeaders] = useState({});
+  const [homepageCta, setHomepageCta] = useState({});
+
   // Active category filter for skills & projects
   const [skillCategoryFilter, setSkillCategoryFilter] = useState("all");
   const [projectCategoryFilter, setProjectCategoryFilter] = useState("all");
@@ -126,6 +146,15 @@ function AdminConsoleContent() {
         if (res.social_links) setSocialLinks(res.social_links);
         if (res.resume) setResume(res.resume);
         if (res.site_settings) setSiteSettings(res.site_settings);
+
+        if (Array.isArray(res.experience_metrics)) setExperienceMetrics(res.experience_metrics);
+        if (Array.isArray(res.coursework_pillars)) setCourseworkPillars(res.coursework_pillars);
+        if (Array.isArray(res.certifications)) setCertifications(res.certifications);
+        if (Array.isArray(res.software_tools)) setSoftwareTools(res.software_tools);
+        if (Array.isArray(res.skill_badges)) setSkillBadges(res.skill_badges);
+        if (Array.isArray(res.project_methodologies)) setProjectMethodologies(res.project_methodologies);
+        if (res.page_headers) setPageHeaders(res.page_headers);
+        if (res.homepage_cta) setHomepageCta(res.homepage_cta);
       }
 
       // Load inbox messages
@@ -194,7 +223,7 @@ function AdminConsoleContent() {
     { id: "skills", label: "5. Skills", icon: Cpu, liveUrl: "/skills", count: skills.length },
     { id: "projects", label: "6. Projects", icon: FolderGit2, liveUrl: "/projects", count: projects.length },
     { id: "contact", label: "7. Contact & Inbox", icon: Mail, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length },
-    { id: "settings", label: "Preferences", icon: Sliders, liveUrl: "/" },
+    { id: "settings", label: "8. Page Headers & Settings", icon: Sliders, liveUrl: "/" },
   ];
 
   const currentTabObj = tabs.find((t) => t.id === currentTab) || tabs[0];
@@ -470,6 +499,14 @@ function AdminConsoleContent() {
               ))}
             </div>
           </div>
+
+          {/* Dynamic Homepage CTA Section Manager */}
+          <HomepageCtaManager
+            homepageCta={homepageCta}
+            setHomepageCta={setHomepageCta}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
         </div>
       )}
 
@@ -477,7 +514,8 @@ function AdminConsoleContent() {
       {/* TAB 2: ABOUT ASHIFUR PAGE                                      */}
       {/* ============================================================== */}
       {currentTab === "about" && (
-        <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
+        <div className="space-y-6">
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -601,6 +639,23 @@ function AdminConsoleContent() {
             </div>
           </div>
         </SpotlightCard>
+
+          {/* Dynamic Core Competency Pillars Manager */}
+          <AboutPillarsManager
+            about={about}
+            setAbout={setAbout}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
+
+          {/* Dynamic Guiding Principles Manager */}
+          <AboutPrinciplesManager
+            about={about}
+            setAbout={setAbout}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
+        </div>
       )}
 
       {/* ============================================================== */}
@@ -722,6 +777,14 @@ function AdminConsoleContent() {
               ))
             )}
           </div>
+
+          {/* Dynamic Experience Metrics Manager */}
+          <ExperienceMetricsManager
+            experienceMetrics={experienceMetrics}
+            setExperienceMetrics={setExperienceMetrics}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
         </div>
       )}
 
@@ -829,6 +892,22 @@ function AdminConsoleContent() {
               ))
             )}
           </div>
+
+          {/* Dynamic Certifications Manager */}
+          <CertificationsManager
+            certifications={certifications}
+            setCertifications={setCertifications}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
+
+          {/* Dynamic Coursework Pillars Manager */}
+          <CourseworkManager
+            courseworkPillars={courseworkPillars}
+            setCourseworkPillars={setCourseworkPillars}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
         </div>
       )}
 
@@ -935,6 +1014,22 @@ function AdminConsoleContent() {
                 );
               })}
           </div>
+
+          {/* Dynamic Software Tools Manager */}
+          <SoftwareToolsManager
+            softwareTools={softwareTools}
+            setSoftwareTools={setSoftwareTools}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
+
+          {/* Dynamic Skill Badges Manager */}
+          <SkillBadgesManager
+            skillBadges={skillBadges}
+            setSkillBadges={setSkillBadges}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
         </div>
       )}
 
@@ -1087,6 +1182,14 @@ function AdminConsoleContent() {
               </div>
             ))}
           </div>
+
+          {/* Dynamic Project Methodologies Manager */}
+          <ProjectMethodologyManager
+            projectMethodologies={projectMethodologies}
+            setProjectMethodologies={setProjectMethodologies}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
         </div>
       )}
 
@@ -1356,7 +1459,8 @@ function AdminConsoleContent() {
       {/* TAB 8: PREFERENCES & SETTINGS                                  */}
       {/* ============================================================== */}
       {currentTab === "settings" && (
-        <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
+        <div className="space-y-6">
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1410,6 +1514,15 @@ function AdminConsoleContent() {
             </div>
           </div>
         </SpotlightCard>
+
+          {/* Dynamic Page Headers & Subtitles Manager for All 7 Pages */}
+          <PageHeadersManager
+            pageHeaders={pageHeaders}
+            setPageHeaders={setPageHeaders}
+            onSave={handleSaveSection}
+            saving={saving}
+          />
+        </div>
       )}
 
       {/* ============================================================== */}

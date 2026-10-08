@@ -2,9 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Lock, Zap, ArrowUpRight } from 'lucide-react';
+import { Lock, Zap } from 'lucide-react';
+import { usePortfolio } from '@/context/PortfolioContext';
 
 export default function PortfolioFooter() {
+  const { heroData } = usePortfolio();
+
+  const fullName = heroData?.name || "ASHIFUR RAHMAN";
+  const roleTitle = heroData?.title || "Electrical & Electronic Engineer";
+
   return (
     <footer className="border-t border-[#1e2638] bg-[#080c13] py-10 text-xs text-gray-500 relative z-10">
       <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-6">
@@ -16,9 +22,9 @@ export default function PortfolioFooter() {
               <Zap size={14} />
             </div>
             <span className="text-base font-black tracking-widest text-[#10B981]">
-              ASHIFUR<span className="text-white font-light text-xs ml-1">.EEE</span>
+              {fullName}
             </span>
-            <span className="text-gray-400 text-xs ml-3 hidden sm:inline">• Electrical &amp; Electronic Engineer</span>
+            <span className="text-gray-400 text-xs ml-3 hidden sm:inline">• {roleTitle}</span>
           </div>
 
           <div className="flex flex-wrap gap-4 text-xs font-mono uppercase tracking-wider text-gray-400">
@@ -35,7 +41,7 @@ export default function PortfolioFooter() {
         {/* Bottom row */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
           <p className="text-gray-400">
-            © {new Date().getFullYear()} Ashifur Rahman. All rights reserved.
+            © {new Date().getFullYear()} {fullName}. All rights reserved.
           </p>
 
           <div className="flex items-center gap-6">
