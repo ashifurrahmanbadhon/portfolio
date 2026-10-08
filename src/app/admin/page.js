@@ -99,7 +99,7 @@ function AdminConsoleContent() {
   const [loading, setLoading] = useState(true);
   const [initialLoaded, setInitialLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
-  const ADMIN_CACHE_KEY = "admin_portfolio_cache_v3";
+  const ADMIN_CACHE_KEY = "admin_portfolio_cache_v4";
 
   // Data states
   const [hero, setHero] = useState(DEFAULT_HERO);
