@@ -34,3 +34,41 @@ export async function GET(req) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(req) {
+  try {
+    const user = authenticateRequest(req);
+    if (!user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ success: false, error: "ID required" }, { status: 400 });
+    }
+    const { deleteContactMessage } = await import("@/lib/db");
+    await deleteContactMessage(id);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    const user = authenticateRequest(req);
+    if (!user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+    const body = await req.json();
+    const { id, is_read } = body;
+    if (!id) {
+      return NextResponse.json({ success: false, error: "ID required" }, { status: 400 });
+    }
+    const { markContactMessageRead } = await import("@/lib/db");
+    await markContactMessageRead(id, is_read !== undefined ? is_read : 1);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}

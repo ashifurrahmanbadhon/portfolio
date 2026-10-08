@@ -821,6 +821,16 @@ export async function getContactMessages() {
   return (await queryAll("SELECT * FROM contact_messages ORDER BY id DESC")) || [];
 }
 
+export async function deleteContactMessage(id) {
+  await execute("DELETE FROM contact_messages WHERE id = ?", [id]);
+  return { success: true };
+}
+
+export async function markContactMessageRead(id, isRead = 1) {
+  await execute("UPDATE contact_messages SET is_read = ? WHERE id = ?", [isRead ? 1 : 0, id]);
+  return { success: true };
+}
+
 // ==========================================
 // Activity & Audit Logs
 // ==========================================

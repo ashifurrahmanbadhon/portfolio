@@ -32,7 +32,7 @@ function ShellContent({ children }) {
         <AnimatedLogo size={42} showText={false} />
         <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
           <span className="w-2 h-2 rounded-full bg-emerald-400 live-pulse"></span>
-          <span>Verifying Central CMS Session...</span>
+          <span>Verifying Admin Console Session...</span>
         </div>
       </div>
     );

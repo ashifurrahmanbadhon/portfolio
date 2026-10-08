@@ -158,11 +158,11 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
             <Menu className="w-4 h-4" />
           </button>
 
-          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 transition-opacity hover:opacity-90 min-w-0">
+          <Link href="/admin" className="flex items-center gap-2 sm:gap-2.5 transition-opacity hover:opacity-90 min-w-0">
             <AnimatedLogo size={26} showText={false} collapsed={collapsed} />
             <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
               <span className="text-xs sm:text-base font-bold text-white tracking-tight truncate">Ashifur Rahman</span>
-              <span className="text-emerald-400 font-mono text-[11px] sm:text-sm font-medium hidden sm:inline">• Central CMS</span>
+              <span className="text-emerald-400 font-mono text-[11px] sm:text-sm font-medium hidden sm:inline">• Portfolio Admin</span>
             </div>
           </Link>
         </div>
@@ -197,16 +197,16 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
             {notifOpen && (
               <div className="animate-dropdown absolute right-0 mt-2 w-72 bg-[#111622] border border-[#1E2638] rounded-xl shadow-xl shadow-black/40 py-2 z-50 text-xs">
                 <div className="px-4 py-2 border-b border-[#1E2638] flex justify-between font-mono">
-                  <span className="text-white font-bold">Notifications</span>
-                  <span className="text-emerald-400 text-[10px]">All Systems Normal</span>
+                  <span className="text-white font-bold">System Status</span>
+                  <span className="text-emerald-400 text-[10px]">Neon Cloud Connected</span>
                 </div>
                 <div className="p-3 border-b border-[#1E2638]/60 space-y-1 hover:bg-[#161E30]/50 transition-colors">
-                  <p className="text-slate-200 font-medium">ToolGhor Platform Active</p>
-                  <p className="text-slate-400 text-[11px]">27 tools & 6 categories synchronized with live website.</p>
+                  <p className="text-slate-200 font-medium">7 Webpages Dynamic</p>
+                  <p className="text-slate-400 text-[11px]">All sections synchronized with cloud database.</p>
                 </div>
                 <div className="p-3 space-y-1 hover:bg-[#161E30]/50 transition-colors">
-                  <p className="text-slate-200 font-medium">Portfolio Connected</p>
-                  <p className="text-slate-400 text-[11px]">Next.js Central Control Center running seamlessly.</p>
+                  <p className="text-slate-200 font-medium">Master Admin Active</p>
+                  <p className="text-slate-400 text-[11px]">Authorized session active with full write permissions.</p>
                 </div>
               </div>
             )}

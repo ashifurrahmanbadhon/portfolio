@@ -36,8 +36,8 @@ export default function CentralLoginPanel() {
   const [view, setView] = useState("login");
 
   // Login form state
-  const [identifier, setIdentifier] = useState("ashifur.badhon@gmail.com");
-  const [password, setPassword] = useState("admin123");
+  const [identifier, setIdentifier] = useState("admin");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -266,12 +266,12 @@ export default function CentralLoginPanel() {
 
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161C2A] border border-[#1E2638] text-[11px] font-mono font-bold text-[#10B981] tracking-wider uppercase shadow-inner">
             <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
-            Ashifur Rahman
+            Master Access
           </div>
 
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-white">CENTRAL CMS</h1>
-            <p className="text-xs text-slate-400 font-medium mt-1">“One Login. Every Website.”</p>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">ADMIN CONSOLE</h1>
+            <p className="text-xs text-slate-400 font-medium mt-1">Portfolio Content Management System</p>
           </div>
         </div>
 
