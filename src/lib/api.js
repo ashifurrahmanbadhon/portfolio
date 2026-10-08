@@ -274,7 +274,14 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
-    return res.json();
+    const result = await res.json();
+    if (result && result.success && typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("portfolio_cms_cache_v2");
+        window.dispatchEvent(new Event("portfolio_content_updated"));
+      } catch (_) {}
+    }
+    return result;
   },
 
   async uploadMedia(file) {
