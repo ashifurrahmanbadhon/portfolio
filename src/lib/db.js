@@ -315,6 +315,14 @@ export async function getPortfolioContent() {
   // 10. Social Links
   const social_links = (await queryOne("SELECT * FROM social_links WHERE id = 1")) || {};
 
+  // 10b. Contact Channels (Separate Dedicated Table)
+  let contact_channels = [];
+  try {
+    contact_channels = (await queryAll("SELECT * FROM contact_channels ORDER BY sort_order ASC, id ASC")) || [];
+  } catch (err) {
+    console.warn("Could not query contact_channels:", err.message);
+  }
+
   // 11. Resume
   const resume = (await queryOne("SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1")) || {};
 
@@ -371,6 +379,7 @@ export async function getPortfolioContent() {
     project_methodologies,
     services,
     social_links,
+    contact_channels,
     resume,
     site_settings,
     page_headers,
@@ -623,7 +632,76 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         data.maps_url ?? null,
         now,
       ]);
+
+      // Synchronize changes to separate contact_channels table
+      try {
+        if (data.email) {
+          await execute("UPDATE contact_channels SET value = ?, url = ?, updated_at = ? WHERE channel_key = 'email'", [data.email, `mailto:${data.email}`, now]);
+        }
+        if (data.phone) {
+          await execute("UPDATE contact_channels SET value = ?, url = ?, updated_at = ? WHERE channel_key = 'phone'", [data.phone, `tel:${data.phone.replace(/\s+/g, '')}`, now]);
+        }
+        if (data.whatsapp) {
+          await execute("UPDATE contact_channels SET value = ?, url = ?, updated_at = ? WHERE channel_key = 'whatsapp'", [data.whatsapp, `https://wa.me/${data.whatsapp.replace(/[^0-9]/g, '')}`, now]);
+        }
+        if (data.linkedin) {
+          await execute("UPDATE contact_channels SET value = ?, url = ?, updated_at = ? WHERE channel_key = 'linkedin'", [data.linkedin, data.linkedin, now]);
+        }
+        if (data.github) {
+          await execute("UPDATE contact_channels SET value = ?, url = ?, updated_at = ? WHERE channel_key = 'github'", [data.github, data.github, now]);
+        }
+        if (data.location) {
+          await execute("UPDATE contact_channels SET value = ?, updated_at = ? WHERE channel_key = 'location'", [data.location, now]);
+        }
+      } catch (err) {
+        console.warn("Sync to contact_channels skipped:", err?.message);
+      }
+
       await addActivityLog("Updated Contact & Social Details", "Modified phone, email, WhatsApp, or location.", "Portfolio", user, 1);
+      break;
+    }
+
+    case "contact_channels": {
+      if (Array.isArray(data.items || data.channels)) {
+        const items = data.items || data.channels;
+        for (const ch of items) {
+          if (!ch.channel_key) continue;
+          await execute(`
+            UPDATE contact_channels SET
+              label = COALESCE(?, label),
+              action_text = COALESCE(?, action_text),
+              value = COALESCE(?, value),
+              url = COALESCE(?, url),
+              is_active = COALESCE(?, is_active),
+              updated_at = ?
+            WHERE channel_key = ?
+          `, [
+            ch.label ?? null,
+            ch.action_text ?? null,
+            ch.value ?? null,
+            ch.url ?? null,
+            ch.is_active !== undefined ? Number(ch.is_active) : null,
+            now,
+            ch.channel_key
+          ]);
+        }
+      } else if (data.channel_key) {
+        await execute(`
+          UPDATE contact_channels SET
+            is_active = COALESCE(?, is_active),
+            value = COALESCE(?, value),
+            url = COALESCE(?, url),
+            updated_at = ?
+          WHERE channel_key = ?
+        `, [
+          data.is_active !== undefined ? Number(data.is_active) : null,
+          data.value ?? null,
+          data.url ?? null,
+          now,
+          data.channel_key
+        ]);
+      }
+      await addActivityLog("Updated Contact Channels", "Toggled active/disabled status or updated contact channel details.", "Portfolio", user, 1);
       break;
     }
 

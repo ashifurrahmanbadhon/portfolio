@@ -110,6 +110,7 @@ function AdminConsoleContent() {
   const [skills, setSkills] = useState([]);
   const [projects, setProjects] = useState([]);
   const [socialLinks, setSocialLinks] = useState({});
+  const [contactChannels, setContactChannels] = useState([]);
   const [resume, setResume] = useState({});
   const [siteSettings, setSiteSettings] = useState({});
   const [messages, setMessages] = useState([]);
@@ -144,6 +145,7 @@ function AdminConsoleContent() {
     if (Array.isArray(res.skills)) setSkills(res.skills);
     if (Array.isArray(res.projects)) setProjects(res.projects);
     if (res.social_links) setSocialLinks(res.social_links);
+    if (Array.isArray(res.contact_channels)) setContactChannels(res.contact_channels);
     if (res.resume) setResume(res.resume);
     if (res.site_settings) setSiteSettings(res.site_settings);
 
@@ -261,6 +263,31 @@ function AdminConsoleContent() {
       sectionKey,
       { items: updated },
       `${itemLabel || "Item"} is now ${isNowActive ? "Active (visible on website)" : "Disabled (hidden from website)"}!`
+    );
+  };
+
+  // Contact Channels Active / Disabled toggle helper
+  const getChannelActive = (key) => {
+    const ch = contactChannels.find((c) => c.channel_key === key);
+    return ch ? ch.is_active !== 0 && ch.is_active !== false : true;
+  };
+
+  const toggleChannelActive = async (key, label) => {
+    let updated = [...contactChannels];
+    const idx = updated.findIndex((c) => c.channel_key === key);
+    let nextActive = 1;
+    if (idx !== -1) {
+      nextActive = updated[idx].is_active !== 0 && updated[idx].is_active !== false ? 0 : 1;
+      updated[idx] = { ...updated[idx], is_active: nextActive };
+    } else {
+      nextActive = 0;
+      updated.push({ channel_key: key, is_active: 0 });
+    }
+    setContactChannels(updated);
+    await handleSaveSection(
+      "contact_channels",
+      { items: updated },
+      `${label} is now ${nextActive === 1 ? "Active (visible on website)" : "Disabled (hidden from website)"}!`
     );
   };
 
@@ -1281,7 +1308,12 @@ function AdminConsoleContent() {
               </div>
 
               <button
-                onClick={() => handleSaveSection("social_links", socialLinks, "Contact & Social links saved!")}
+                onClick={async () => {
+                  await handleSaveSection("social_links", socialLinks, "Contact & Social links saved!");
+                  if (contactChannels.length > 0) {
+                    await handleSaveSection("contact_channels", { items: contactChannels }, "Contact channels updated!");
+                  }
+                }}
                 disabled={saving}
                 className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
               >
@@ -1291,10 +1323,18 @@ function AdminConsoleContent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+              {/* Email */}
               <div>
-                <label className="block font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-emerald-400" /> Email Address
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-medium text-slate-300 flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-emerald-400" /> Email Address
+                  </label>
+                  <ActiveToggle
+                    isActive={getChannelActive("email")}
+                    onToggle={() => toggleChannelActive("email", "Email")}
+                    label="Email"
+                  />
+                </div>
                 <input
                   type="email"
                   value={socialLinks.email || ""}
@@ -1303,10 +1343,18 @@ function AdminConsoleContent() {
                 />
               </div>
 
+              {/* Phone */}
               <div>
-                <label className="block font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-emerald-400" /> Phone Number
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-medium text-slate-300 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-emerald-400" /> Phone Number
+                  </label>
+                  <ActiveToggle
+                    isActive={getChannelActive("phone")}
+                    onToggle={() => toggleChannelActive("phone", "Phone")}
+                    label="Phone"
+                  />
+                </div>
                 <input
                   type="text"
                   value={socialLinks.phone || ""}
@@ -1315,8 +1363,18 @@ function AdminConsoleContent() {
                 />
               </div>
 
+              {/* WhatsApp */}
               <div>
-                <label className="block font-medium text-slate-300 mb-1.5">WhatsApp Number</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-medium text-slate-300 flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-emerald-400" /> WhatsApp Number
+                  </label>
+                  <ActiveToggle
+                    isActive={getChannelActive("whatsapp")}
+                    onToggle={() => toggleChannelActive("whatsapp", "WhatsApp")}
+                    label="WhatsApp"
+                  />
+                </div>
                 <input
                   type="text"
                   value={socialLinks.whatsapp || ""}
@@ -1325,10 +1383,18 @@ function AdminConsoleContent() {
                 />
               </div>
 
+              {/* Location */}
               <div>
-                <label className="block font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Location / Address
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-medium text-slate-300 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Location / Address
+                  </label>
+                  <ActiveToggle
+                    isActive={getChannelActive("location")}
+                    onToggle={() => toggleChannelActive("location", "Location")}
+                    label="Location"
+                  />
+                </div>
                 <input
                   type="text"
                   value={socialLinks.location || ""}
@@ -1337,8 +1403,18 @@ function AdminConsoleContent() {
                 />
               </div>
 
+              {/* LinkedIn */}
               <div>
-                <label className="block font-medium text-slate-300 mb-1.5">LinkedIn Profile URL</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-medium text-slate-300 flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 text-emerald-400" /> LinkedIn Profile URL
+                  </label>
+                  <ActiveToggle
+                    isActive={getChannelActive("linkedin")}
+                    onToggle={() => toggleChannelActive("linkedin", "LinkedIn")}
+                    label="LinkedIn"
+                  />
+                </div>
                 <input
                   type="text"
                   value={socialLinks.linkedin || ""}
@@ -1347,10 +1423,18 @@ function AdminConsoleContent() {
                 />
               </div>
 
+              {/* GitHub */}
               <div>
-                <label className="block font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <FolderGit2 className="w-3.5 h-3.5 text-emerald-400" /> GitHub Profile URL
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-medium text-slate-300 flex items-center gap-1.5">
+                    <FolderGit2 className="w-3.5 h-3.5 text-emerald-400" /> GitHub Profile URL
+                  </label>
+                  <ActiveToggle
+                    isActive={getChannelActive("github")}
+                    onToggle={() => toggleChannelActive("github", "GitHub")}
+                    label="GitHub"
+                  />
+                </div>
                 <input
                   type="text"
                   value={socialLinks.github || ""}
@@ -1358,17 +1442,6 @@ function AdminConsoleContent() {
                   placeholder="https://github.com/ashifurrahmanbadhon"
                   className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                 />
-                <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
-                  <span>Profile:</span>
-                  <a
-                    href={socialLinks.github || "https://github.com/ashifurrahmanbadhon"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-emerald-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
-                  >
-                    ashifurrahmanbadhon (Badhon) <ExternalLink size={10} />
-                  </a>
-                </p>
               </div>
             </div>
           </SpotlightCard>

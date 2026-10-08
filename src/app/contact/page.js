@@ -57,10 +57,16 @@ function GithubIcon({ size = 20, className = "" }) {
 }
 
 export default function ContactPage() {
-  const { contactData, pageHeaders } = usePortfolio();
+  const { contactData, contactChannels, pageHeaders } = usePortfolio();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const isChannelActive = (key) => {
+    if (!contactChannels || contactChannels.length === 0) return true;
+    const ch = contactChannels.find((c) => c.channel_key === key);
+    return ch ? ch.is_active !== 0 && ch.is_active !== false : true;
+  };
 
   const header = pageHeaders?.contact || {
     badge_text: "COMMUNICATION & INQUIRIES",
@@ -119,148 +125,160 @@ export default function ContactPage() {
 
             <div className="space-y-3.5 pt-2">
               {/* Email */}
-              <a
-                href={`mailto:${contactData.email || 'ashifur.badhon@gmail.com'}`}
-                className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
-                title="Click to write an email"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                    <Mail size={20} />
+              {isChannelActive('email') && (
+                <a
+                  href={`mailto:${contactData.email || 'ashifur.badhon@gmail.com'}`}
+                  className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
+                  title="Click to write an email"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
+                      <Mail size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-mono uppercase">Direct Email</p>
+                      <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
+                        Send an Email
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono uppercase">Direct Email</p>
-                    <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
-                      Send an Email
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
-                  Write <ExternalLink size={13} />
-                </span>
-              </a>
+                  <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    Write <ExternalLink size={13} />
+                  </span>
+                </a>
+              )}
 
               {/* Phone */}
-              <a
-                href={`tel:${contactData.phone || '+8801521417284'}`}
-                className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
-                title="Click to make a phone call"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                    <Phone size={20} />
+              {isChannelActive('phone') && (
+                <a
+                  href={`tel:${contactData.phone || '+8801521417284'}`}
+                  className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
+                  title="Click to make a phone call"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
+                      <Phone size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-mono uppercase">Direct Phone Call</p>
+                      <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
+                        Make a Call
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono uppercase">Direct Phone Call</p>
-                    <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
-                      Make a Call
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
-                  Call <ExternalLink size={13} />
-                </span>
-              </a>
+                  <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    Call <ExternalLink size={13} />
+                  </span>
+                </a>
+              )}
 
               {/* WhatsApp */}
-              <a
-                href={contactData.whatsapp_url || `https://wa.me/${(contactData.phone || '+8801521417284').replace(/[^0-9]/g, '')}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-emerald-400 hover:bg-[#141b2a] transition duration-200 group"
-                title="Click to start WhatsApp instant chat"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black transition shrink-0">
-                    <MessageCircle size={20} />
+              {isChannelActive('whatsapp') && (
+                <a
+                  href={contactData.whatsapp_url || `https://wa.me/${(contactData.phone || '+8801521417284').replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-emerald-400 hover:bg-[#141b2a] transition duration-200 group"
+                  title="Click to start WhatsApp instant chat"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black transition shrink-0">
+                      <MessageCircle size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-mono uppercase">WhatsApp Instant Chat</p>
+                      <p className="text-sm font-semibold text-white group-hover:text-emerald-400 transition">
+                        Start WhatsApp Chat
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono uppercase">WhatsApp Instant Chat</p>
-                    <p className="text-sm font-semibold text-white group-hover:text-emerald-400 transition">
-                      Start WhatsApp Chat
-                    </p>
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <span className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Online
+                    </span>
+                    <ExternalLink size={13} className="text-gray-400 group-hover:text-emerald-400 transition" />
                   </div>
-                </div>
-                <div className="flex items-center gap-2.5 shrink-0">
-                  <span className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Online
-                  </span>
-                  <ExternalLink size={13} className="text-gray-400 group-hover:text-emerald-400 transition" />
-                </div>
-              </a>
+                </a>
+              )}
 
               {/* LinkedIn */}
-              <a
-                href={contactData.linkedin_url || contactData.linkedin || "https://www.linkedin.com/in/ashifurrahmanbadhon"}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
-                title="Click to view LinkedIn profile and connect"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                    <LinkedinIcon size={20} />
+              {isChannelActive('linkedin') && (
+                <a
+                  href={contactData.linkedin_url || contactData.linkedin || "https://www.linkedin.com/in/ashifurrahmanbadhon"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
+                  title="Click to view LinkedIn profile and connect"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
+                      <LinkedinIcon size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-mono uppercase">LinkedIn Profile</p>
+                      <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
+                        Connect on LinkedIn
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono uppercase">LinkedIn Profile</p>
-                    <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
-                      Connect on LinkedIn
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
-                  Profile <ExternalLink size={13} />
-                </span>
-              </a>
+                  <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    Profile <ExternalLink size={13} />
+                  </span>
+                </a>
+              )}
 
               {/* GitHub */}
-              <a
-                href={contactData.github_url || contactData.github || "https://github.com/ashifurrahmanbadhon"}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
-                title="Click to explore GitHub profile & code repositories"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                    <GithubIcon size={20} />
+              {isChannelActive('github') && (
+                <a
+                  href={contactData.github_url || contactData.github || "https://github.com/ashifurrahmanbadhon"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
+                  title="Click to explore GitHub profile & code repositories"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
+                      <GithubIcon size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-mono uppercase">GitHub Profile</p>
+                      <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
+                        Explore GitHub Profile
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono uppercase">GitHub Profile</p>
-                    <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
-                      Explore GitHub Profile
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
-                  GitHub <ExternalLink size={13} />
-                </span>
-              </a>
+                  <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    GitHub <ExternalLink size={13} />
+                  </span>
+                </a>
+              )}
 
               {/* Location */}
-              <a
-                href={contactData.maps_url || "https://maps.google.com"}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
-                title="Click to view location in Google Maps"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                    <MapPin size={20} />
+              {isChannelActive('location') && (
+                <a
+                  href={contactData.maps_url || "https://maps.google.com"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-200 group"
+                  title="Click to view location in Google Maps"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
+                      <MapPin size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-mono uppercase">Location</p>
+                      <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
+                        View on Google Maps
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono uppercase">Location</p>
-                    <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
-                      View on Google Maps
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
-                  Maps <ExternalLink size={13} />
-                </span>
-              </a>
+                  <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    Maps <ExternalLink size={13} />
+                  </span>
+                </a>
+              )}
             </div>
 
             {/* Availability SLA Card */}

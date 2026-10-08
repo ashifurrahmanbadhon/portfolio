@@ -38,6 +38,7 @@ export function PortfolioProvider({ children }) {
   const [courseworkPillars, setCourseworkPillars] = useState(DEFAULT_COURSEWORK_PILLARS);
   const [certifications, setCertifications] = useState(DEFAULT_CERTIFICATIONS);
   const [contactData, setContactData] = useState(DEFAULT_CONTACT);
+  const [contactChannels, setContactChannels] = useState([]);
   const [pageHeaders, setPageHeaders] = useState(DEFAULT_PAGE_HEADERS);
   const [homepageCta, setHomepageCta] = useState(DEFAULT_HOMEPAGE_CTA);
   const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
@@ -205,6 +206,10 @@ export function PortfolioProvider({ children }) {
       }));
     }
 
+    if (Array.isArray(data.contact_channels)) {
+      setContactChannels(data.contact_channels);
+    }
+
     if (data.resume && data.resume.file_url) {
       setResumeUrl(data.resume.file_url);
     }
@@ -284,6 +289,7 @@ export function PortfolioProvider({ children }) {
         courseworkPillars,
         certifications,
         contactData,
+        contactChannels,
         pageHeaders,
         homepageCta,
         resumeUrl,

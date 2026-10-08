@@ -166,7 +166,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse"></span> Neon Active
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 truncate">ashifurrahman.me</p>
+              <p className="text-[10px] text-slate-500 truncate" title="ashifur.badhon@gmail.com">ashifur.badhon@gmail.com</p>
             </div>
           )}
 
