@@ -128,23 +128,27 @@ export default function AboutPage() {
               <div className="relative group">
                 <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#10B981] to-teal-600 opacity-25 blur-xl group-hover:opacity-50 transition duration-500" />
                 
-                <div className="relative bg-[#111622] border border-[#1e2638] rounded-3xl p-5 shadow-2xl space-y-5">
-                  <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-[#0b0f17]">
+                <div className="relative bg-gradient-to-b from-[#141b2a]/90 via-[#0e1422]/85 to-[#0b0f17] border border-emerald-500/25 rounded-3xl p-4 sm:p-5 shadow-2xl space-y-4">
+                  <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-[#0b0f17]">
                     <Image
-                      src={aboutData.profile_image || heroData.profile_image || "/ashifur.jpeg"}
+                      src={
+                        (!aboutData.profile_image || aboutData.profile_image === "/ashifur.jpeg")
+                          ? "/ashifur-about-engineer.webp"
+                          : aboutData.profile_image
+                      }
                       alt={heroData.name || "Ashifur Rahman"}
                       fill
                       className="object-cover object-top group-hover:scale-105 transition duration-500"
                       priority
                       unoptimized
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-[#0b0f17]/20 to-transparent opacity-75 pointer-events-none" />
                     
-                    <div className="absolute bottom-4 left-4 right-4">
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 px-3 py-2 rounded-xl bg-[#0b0f17]/85 border border-white/10 backdrop-blur-sm">
                       <p className="text-[10px] font-mono uppercase tracking-widest text-[#10B981]">
                         {heroData.spec_badge_label || "Specialization"}
                       </p>
-                      <p className="text-sm font-bold text-white">
+                      <p className="text-xs font-bold text-white">
                         {heroData.spec_badge_title || "Engineering, Management & AI"}
                       </p>
                     </div>
