@@ -1348,13 +1348,27 @@ function AdminConsoleContent() {
               </div>
 
               <div>
-                <label className="block font-medium text-slate-300 mb-1.5">GitHub Profile URL</label>
+                <label className="block font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <FolderGit2 className="w-3.5 h-3.5 text-emerald-400" /> GitHub Profile URL
+                </label>
                 <input
                   type="text"
                   value={socialLinks.github || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, github: e.target.value })}
+                  placeholder="https://github.com/ashifurrahmanbadhon"
                   className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                 />
+                <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
+                  <span>Profile:</span>
+                  <a
+                    href={socialLinks.github || "https://github.com/ashifurrahmanbadhon"}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-emerald-400 hover:underline flex items-center gap-1 font-mono text-[11px]"
+                  >
+                    ashifurrahmanbadhon (Badhon) <ExternalLink size={10} />
+                  </a>
+                </p>
               </div>
             </div>
           </SpotlightCard>

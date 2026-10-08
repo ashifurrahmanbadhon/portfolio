@@ -426,6 +426,8 @@ export const DEFAULT_CONTACT = {
   whatsapp_url: "https://wa.me/8801521417284",
   linkedin: "linkedin.com/in/ashifurrahmanbadhon",
   linkedin_url: "https://www.linkedin.com/in/ashifurrahmanbadhon",
+  github: "github.com/ashifurrahmanbadhon",
+  github_url: "https://github.com/ashifurrahmanbadhon",
   location: "Tangail, Dhaka, Bangladesh",
   maps_url: "https://maps.google.com/?q=Tangail,+Dhaka,+Bangladesh"
 };

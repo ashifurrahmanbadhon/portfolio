@@ -196,6 +196,10 @@ export function PortfolioProvider({ children }) {
         linkedin_url: data.social_links.linkedin
           ? (data.social_links.linkedin.startsWith('http') ? data.social_links.linkedin : `https://${data.social_links.linkedin}`)
           : prev.linkedin_url,
+        github: data.social_links.github || prev.github,
+        github_url: data.social_links.github
+          ? (data.social_links.github.startsWith('http') ? data.social_links.github : `https://${data.social_links.github}`)
+          : (prev.github_url || 'https://github.com/ashifurrahmanbadhon'),
         location: data.social_links.location || prev.location,
         maps_url: data.social_links.maps_url || prev.maps_url,
       }));
