@@ -17,14 +17,25 @@ const PortfolioContext = createContext(null);
 
 export function PortfolioProvider({ children }) {
   const [heroData, setHeroData] = useState(DEFAULT_HERO);
-  const [aboutData, setAboutData] = useState(DEFAULT_ABOUT);
+  const [aboutData, setAboutData] = useState({
+    ...DEFAULT_ABOUT,
+    pillars: [],
+    principles: [],
+  });
   const [highlights, setHighlights] = useState(DEFAULT_HIGHLIGHTS);
+  const [experienceMetrics, setExperienceMetrics] = useState([]);
   const [skillsData, setSkillsData] = useState(DEFAULT_SKILLS);
+  const [softwareTools, setSoftwareTools] = useState([]);
+  const [skillBadges, setSkillBadges] = useState([]);
   const [projectsData, setProjectsData] = useState(DEFAULT_PROJECTS);
+  const [projectMethodologies, setProjectMethodologies] = useState([]);
   const [experiences, setExperiences] = useState(DEFAULT_EXPERIENCES);
   const [educations, setEducations] = useState(DEFAULT_EDUCATIONS);
+  const [courseworkPillars, setCourseworkPillars] = useState([]);
   const [certifications, setCertifications] = useState(DEFAULT_CERTIFICATIONS);
   const [contactData, setContactData] = useState(DEFAULT_CONTACT);
+  const [pageHeaders, setPageHeaders] = useState({});
+  const [homepageCta, setHomepageCta] = useState({});
   const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
 
@@ -38,12 +49,21 @@ export function PortfolioProvider({ children }) {
         setHeroData((prev) => ({ ...prev, ...data.hero }));
       }
 
-      if (data.about && data.about.title) {
-        setAboutData((prev) => ({ ...prev, ...data.about }));
+      if (data.about) {
+        setAboutData((prev) => ({
+          ...prev,
+          ...data.about,
+          pillars: Array.isArray(data.about.pillars) ? data.about.pillars : (prev.pillars || []),
+          principles: Array.isArray(data.about.principles) ? data.about.principles : (prev.principles || []),
+        }));
       }
 
       if (Array.isArray(data.highlights) && data.highlights.length > 0) {
         setHighlights(data.highlights);
+      }
+
+      if (Array.isArray(data.experience_metrics) && data.experience_metrics.length > 0) {
+        setExperienceMetrics(data.experience_metrics);
       }
 
       if (Array.isArray(data.projects)) {
@@ -54,6 +74,7 @@ export function PortfolioProvider({ children }) {
             title: p.title,
             category: p.category || 'Engineering',
             description: p.short_description || p.full_description,
+            short_description: p.short_description || '',
             full_description: p.full_description || '',
             image_url: p.image_url || '',
             tags: Array.isArray(p.tags) ? p.tags : [],
@@ -62,6 +83,10 @@ export function PortfolioProvider({ children }) {
             is_featured: !!p.is_featured,
           }))
         );
+      }
+
+      if (Array.isArray(data.project_methodologies) && data.project_methodologies.length > 0) {
+        setProjectMethodologies(data.project_methodologies);
       }
 
       if (Array.isArray(data.experiences)) {
@@ -91,6 +116,14 @@ export function PortfolioProvider({ children }) {
         );
       }
 
+      if (Array.isArray(data.coursework_pillars) && data.coursework_pillars.length > 0) {
+        setCourseworkPillars(data.coursework_pillars);
+      }
+
+      if (Array.isArray(data.certifications) && data.certifications.length > 0) {
+        setCertifications(data.certifications);
+      }
+
       if (Array.isArray(data.skills)) {
         const grouped = {};
         data.skills.forEach((s) => {
@@ -105,6 +138,22 @@ export function PortfolioProvider({ children }) {
             items: grouped[cat]
           }))
         );
+      }
+
+      if (Array.isArray(data.software_tools) && data.software_tools.length > 0) {
+        setSoftwareTools(data.software_tools);
+      }
+
+      if (Array.isArray(data.skill_badges) && data.skill_badges.length > 0) {
+        setSkillBadges(data.skill_badges.map(b => b.name || b));
+      }
+
+      if (data.page_headers) {
+        setPageHeaders(data.page_headers);
+      }
+
+      if (data.homepage_cta && data.homepage_cta.title) {
+        setHomepageCta(data.homepage_cta);
       }
 
       if (data.social_links && (data.social_links.email || data.social_links.phone)) {
@@ -137,24 +186,33 @@ export function PortfolioProvider({ children }) {
     loadContent();
   }, [loadContent]);
 
+  const openResumeModal = () => setResumeModalOpen(true);
+  const closeResumeModal = () => setResumeModalOpen(false);
+
   return (
     <PortfolioContext.Provider
       value={{
         heroData,
         aboutData,
         highlights,
+        experienceMetrics,
         skillsData,
+        softwareTools,
+        skillBadges,
         projectsData,
+        projectMethodologies,
         experiences,
         educations,
+        courseworkPillars,
         certifications,
         contactData,
+        pageHeaders,
+        homepageCta,
         resumeUrl,
         resumeModalOpen,
-        setResumeModalOpen,
-        openResumeModal: () => setResumeModalOpen(true),
-        closeResumeModal: () => setResumeModalOpen(false),
-        refreshContent: loadContent
+        openResumeModal,
+        closeResumeModal,
+        reloadContent: loadContent,
       }}
     >
       {children}
@@ -165,23 +223,7 @@ export function PortfolioProvider({ children }) {
 export function usePortfolio() {
   const context = useContext(PortfolioContext);
   if (!context) {
-    return {
-      heroData: DEFAULT_HERO,
-      aboutData: DEFAULT_ABOUT,
-      highlights: DEFAULT_HIGHLIGHTS,
-      skillsData: DEFAULT_SKILLS,
-      projectsData: DEFAULT_PROJECTS,
-      experiences: DEFAULT_EXPERIENCES,
-      educations: DEFAULT_EDUCATIONS,
-      certifications: DEFAULT_CERTIFICATIONS,
-      contactData: DEFAULT_CONTACT,
-      resumeUrl: '/resume.pdf',
-      resumeModalOpen: false,
-      setResumeModalOpen: () => {},
-      openResumeModal: () => {},
-      closeResumeModal: () => {},
-      refreshContent: async () => {}
-    };
+    throw new Error('usePortfolio must be used within a PortfolioProvider');
   }
   return context;
 }

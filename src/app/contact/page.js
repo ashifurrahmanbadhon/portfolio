@@ -38,10 +38,17 @@ function LinkedinIcon({ size = 20, className = "" }) {
 }
 
 export default function ContactPage() {
-  const { contactData } = usePortfolio();
+  const { contactData, pageHeaders } = usePortfolio();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const header = pageHeaders?.contact || {
+    badge_text: "COMMUNICATION & INQUIRIES",
+    title: "Let's Discuss Engineering &",
+    highlight_word: "Technical Solutions",
+    description: "Reach out directly for substation engineering consultations, AutoCAD schematics, GIS asset mapping, operational analytics, or technology collaborations."
+  };
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
@@ -72,10 +79,10 @@ export default function ContactPage() {
     <PortfolioLayout>
       <PageHeader
         breadcrumbs={[{ name: 'Contact' }]}
-        badgeText="COMMUNICATION & INQUIRIES"
-        title="Let's Discuss Engineering &"
-        highlightWord="Technical Solutions"
-        description="Reach out directly for substation engineering consultations, AutoCAD schematics, GIS asset mapping, operational analytics, or technology collaborations."
+        badgeText={header.badge_text}
+        title={header.title}
+        highlightWord={header.highlight_word}
+        description={header.description}
       />
 
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">

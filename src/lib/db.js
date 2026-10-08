@@ -237,6 +237,19 @@ export async function getPortfolioContent() {
 
   // 2. About
   const about = (await queryOne("SELECT * FROM about WHERE id = 1")) || {};
+  let aboutPillars = [];
+  let aboutPrinciples = [];
+  try {
+    aboutPillars = JSON.parse(about.pillars_json || "[]");
+  } catch {}
+  try {
+    aboutPrinciples = JSON.parse(about.principles_json || "[]");
+  } catch {}
+  const aboutEnhanced = {
+    ...about,
+    pillars: aboutPillars,
+    principles: aboutPrinciples,
+  };
 
   // 3. Highlights
   const highlights = (await queryAll("SELECT * FROM highlights ORDER BY sort_order ASC, id ASC")) || [];
@@ -299,21 +312,60 @@ export async function getPortfolioContent() {
   // 12. Site Settings
   const site_settings = (await queryOne("SELECT * FROM site_settings WHERE id = 1")) || {};
 
+  // 13. Certifications & Training
+  const certifications = (await queryAll("SELECT * FROM certifications ORDER BY sort_order ASC, id ASC")) || [];
+
+  // 14. Career & Experience Metrics
+  const experience_metrics = (await queryAll("SELECT * FROM experience_metrics ORDER BY sort_order ASC, id ASC")) || [];
+
+  // 15. Undergraduate Coursework Pillars
+  const cwRows = (await queryAll("SELECT * FROM coursework_pillars ORDER BY sort_order ASC, id ASC")) || [];
+  const coursework_pillars = cwRows.map((r) => {
+    let courses = [];
+    try {
+      courses = JSON.parse(r.courses_json || "[]");
+    } catch {}
+    return { ...r, courses };
+  });
+
+  // 16. Core Software Tools
+  const software_tools = (await queryAll("SELECT * FROM software_tools ORDER BY sort_order ASC, id ASC")) || [];
+
+  // 17. Engineering Project Methodologies
+  const project_methodologies = (await queryAll("SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC")) || [];
+
+  // 18. Page Headers (Map keyed by page_key)
+  const phRows = (await queryAll("SELECT * FROM page_headers")) || [];
+  const page_headers = {};
+  for (const ph of phRows) {
+    page_headers[ph.page_key] = ph;
+  }
+
+  // 19. Homepage Collaboration CTA
+  const homepage_cta = (await queryOne("SELECT * FROM homepage_cta WHERE id = 1")) || {};
+
   return {
     success: true,
     hero,
-    about,
+    about: aboutEnhanced,
     highlights,
     experiences,
+    experience_metrics,
     educations,
+    coursework_pillars,
+    certifications,
     skills,
     grouped_skills,
     skill_badges,
+    software_tools,
     projects,
+    project_methodologies,
     services,
     social_links,
     resume,
     site_settings,
+    page_headers,
+    homepage_cta,
   };
 }
 
@@ -359,6 +411,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
     }
 
     case "about": {
+      const pillarsJson = data.pillars ? JSON.stringify(data.pillars) : (data.pillars_json ?? null);
+      const principlesJson = data.principles ? JSON.stringify(data.principles) : (data.principles_json ?? null);
       await execute(`
         UPDATE about SET
           subtitle = COALESCE(?, subtitle),
@@ -370,6 +424,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           focus1_text = COALESCE(?, focus1_text),
           focus2_title = COALESCE(?, focus2_title),
           focus2_text = COALESCE(?, focus2_text),
+          pillars_json = COALESCE(?, pillars_json),
+          principles_json = COALESCE(?, principles_json),
           updated_at = ?
         WHERE id = 1
       `, [
@@ -382,6 +438,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         data.focus1_text ?? null,
         data.focus2_title ?? null,
         data.focus2_text ?? null,
+        pillarsJson,
+        principlesJson,
         now,
       ]);
       await addActivityLog("Updated About Section", "Modified bio descriptions and engineering focus badges.", "Portfolio", user, 1);
@@ -580,6 +638,174 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         now,
       ]);
       await addActivityLog("Updated Resume Link", "Modified CV file link or download name.", "Portfolio", user, 1);
+      break;
+    }
+
+    case "certifications": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM certifications");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          await execute(`
+            INSERT INTO certifications (title, issuer, year, description, is_verified, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `, [
+            item.title || "",
+            item.issuer || "",
+            item.year || "",
+            item.description || "",
+            item.is_verified !== undefined ? (item.is_verified ? 1 : 0) : 1,
+            idx + 1,
+          ]);
+        }
+        await addActivityLog("Updated Certifications", `Saved ${data.items.length} certificates.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "experience_metrics": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM experience_metrics");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          await execute(`
+            INSERT INTO experience_metrics (metric, label, subtext, sort_order)
+            VALUES (?, ?, ?, ?)
+          `, [item.metric || "", item.label || "", item.subtext || "", idx + 1]);
+        }
+        await addActivityLog("Updated Experience Metrics", `Saved ${data.items.length} metrics.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "coursework_pillars": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM coursework_pillars");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          const coursesJson = JSON.stringify(item.courses || []);
+          await execute(`
+            INSERT INTO coursework_pillars (title, courses_json, sort_order)
+            VALUES (?, ?, ?)
+          `, [item.title || "", coursesJson, idx + 1]);
+        }
+        await addActivityLog("Updated Coursework Curriculum", `Saved ${data.items.length} pillars.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "software_tools": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM software_tools");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          await execute(`
+            INSERT INTO software_tools (name, tool_type, icon, level, summary, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `, [item.name || "", item.tool_type || item.type || "", item.icon || "Monitor", item.level || "Proficient", item.summary || "", idx + 1]);
+        }
+        await addActivityLog("Updated Software Tools", `Saved ${data.items.length} tools.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "skill_badges": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM skill_badges");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          const badgeName = typeof item === "string" ? item : (item.name || "");
+          if (badgeName) {
+            await execute(`INSERT INTO skill_badges (name, sort_order) VALUES (?, ?)`, [badgeName, idx + 1]);
+          }
+        }
+        await addActivityLog("Updated Skill Badges", `Saved ${data.items.length} badges.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "project_methodologies": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM project_methodologies");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          await execute(`
+            INSERT INTO project_methodologies (step_number, title, description, sort_order)
+            VALUES (?, ?, ?, ?)
+          `, [item.step_number || String(idx + 1).padStart(2, "0"), item.title || "", item.description || "", idx + 1]);
+        }
+        await addActivityLog("Updated Project Methodologies", `Saved ${data.items.length} steps.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "page_headers": {
+      if (data.page_key) {
+        if (neonSql) {
+          await neonSql.query(`
+            INSERT INTO page_headers (page_key, badge_text, title, highlight_word, description)
+            VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (page_key) DO UPDATE SET
+              badge_text = EXCLUDED.badge_text,
+              title = EXCLUDED.title,
+              highlight_word = EXCLUDED.highlight_word,
+              description = EXCLUDED.description
+          `, [data.page_key, data.badge_text || "", data.title || "", data.highlight_word || "", data.description || ""]);
+        } else {
+          const db = getSqliteDb();
+          db.prepare(`
+            INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
+            VALUES (?, ?, ?, ?, ?)
+          `).run(data.page_key, data.badge_text || "", data.title || "", data.highlight_word || "", data.description || "");
+        }
+      } else if (typeof data === "object") {
+        for (const [key, val] of Object.entries(data)) {
+          if (val && typeof val === "object") {
+            if (neonSql) {
+              await neonSql.query(`
+                INSERT INTO page_headers (page_key, badge_text, title, highlight_word, description)
+                VALUES ($1, $2, $3, $4, $5)
+                ON CONFLICT (page_key) DO UPDATE SET
+                  badge_text = EXCLUDED.badge_text,
+                  title = EXCLUDED.title,
+                  highlight_word = EXCLUDED.highlight_word,
+                  description = EXCLUDED.description
+              `, [key, val.badge_text || "", val.title || "", val.highlight_word || "", val.description || ""]);
+            } else {
+              const db = getSqliteDb();
+              db.prepare(`
+                INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
+                VALUES (?, ?, ?, ?, ?)
+              `).run(key, val.badge_text || "", val.title || "", val.highlight_word || "", val.description || "");
+            }
+          }
+        }
+      }
+      await addActivityLog("Updated Page Header Banners", "Saved header titles and descriptions.", "Portfolio", user, 1);
+      break;
+    }
+
+    case "homepage_cta": {
+      await execute(`
+        UPDATE homepage_cta SET
+          badge_text = COALESCE(?, badge_text),
+          title = COALESCE(?, title),
+          description = COALESCE(?, description),
+          primary_btn_text = COALESCE(?, primary_btn_text),
+          primary_btn_link = COALESCE(?, primary_btn_link),
+          secondary_btn_text = COALESCE(?, secondary_btn_text),
+          secondary_btn_link = COALESCE(?, secondary_btn_link)
+        WHERE id = 1
+      `, [
+        data.badge_text ?? null,
+        data.title ?? null,
+        data.description ?? null,
+        data.primary_btn_text ?? null,
+        data.primary_btn_link ?? null,
+        data.secondary_btn_text ?? null,
+        data.secondary_btn_link ?? null,
+      ]);
+      await addActivityLog("Updated Homepage CTA", "Modified collaboration callout texts.", "Portfolio", user, 1);
       break;
     }
 
