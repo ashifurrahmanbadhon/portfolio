@@ -365,4 +365,12 @@ export const api = {
     });
     return res.json();
   },
+
+  async syncGit() {
+    const res = await fetch(`${API_BASE}/api/admin/sync-git`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
 };
