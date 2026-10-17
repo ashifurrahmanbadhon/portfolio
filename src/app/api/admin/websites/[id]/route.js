@@ -13,7 +13,7 @@ export async function PUT(req, { params }) {
     const result = await saveWebsite(resolvedParams.id, body, user.sub);
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }
 
@@ -27,6 +27,6 @@ export async function DELETE(req, { params }) {
     const result = await deleteWebsite(resolvedParams.id, user.sub);
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

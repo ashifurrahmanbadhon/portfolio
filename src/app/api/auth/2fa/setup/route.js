@@ -29,6 +29,6 @@ export async function POST(req) {
       otpauth_url: otpauthUrl,
     });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

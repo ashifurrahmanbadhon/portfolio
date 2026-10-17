@@ -1,9 +1,21 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { getAdminByIdentifier, getDb } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req) {
   try {
+    const rateCheck = await checkRateLimit(req, "password-reset", 5, 3600);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many password reset requests. Please try again later. (অত্যধিক অনুরোধ করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।)",
+        },
+        { status: 429, headers: rateCheck.headers }
+      );
+    }
+
     const { identifier } = await req.json();
     const admin = await getAdminByIdentifier(identifier);
     if (!admin) {
@@ -28,10 +40,12 @@ export async function POST(req) {
     return NextResponse.json({
       success: true,
       message: "Password reset instructions dispatched.",
-      // For local development convenience:
-      reset_token: resetToken,
     });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error("Password reset request error:", error);
+    return NextResponse.json(
+      { success: false, error: "Unable to process password reset request at this time." },
+      { status: 500 }
+    );
   }
 }

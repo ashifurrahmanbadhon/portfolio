@@ -41,8 +41,303 @@ function getSqliteDb() {
       }
     }
     sqliteInstance = new DatabaseSync(dbPath);
+    initSqliteDbIfEmpty(sqliteInstance);
   }
   return sqliteInstance;
+}
+
+function initSqliteDbIfEmpty(db) {
+  try {
+    const hasHero = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='hero'").get();
+    if (hasHero) return;
+
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        salt TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        email TEXT,
+        full_name TEXT DEFAULT 'Super Admin',
+        role TEXT DEFAULT 'super_admin',
+        is_active INTEGER DEFAULT 1,
+        failed_login_attempts INTEGER DEFAULT 0,
+        locked_until TEXT,
+        last_login_at TEXT,
+        permissions_json TEXT DEFAULT '["*"]',
+        assigned_websites_json TEXT DEFAULT '["*"]',
+        phone TEXT DEFAULT '01521417284',
+        two_factor_enabled INTEGER DEFAULT 0,
+        totp_secret TEXT,
+        totp_created_at TEXT,
+        failed_2fa_attempts INTEGER DEFAULT 0,
+        locked_2fa_until TEXT,
+        avatar TEXT
+      );
+      CREATE TABLE IF NOT EXISTS hero (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        title TEXT NOT NULL,
+        badge_text TEXT,
+        introduction TEXT,
+        profile_image TEXT,
+        primary_btn_text TEXT,
+        primary_btn_link TEXT,
+        secondary_btn_text TEXT,
+        secondary_btn_link TEXT,
+        spec_badge_label TEXT,
+        spec_badge_title TEXT,
+        updated_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS about (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subtitle TEXT,
+        title TEXT,
+        description1 TEXT,
+        description2 TEXT,
+        profile_image TEXT,
+        focus1_title TEXT,
+        focus1_text TEXT,
+        focus2_title TEXT,
+        focus2_text TEXT,
+        pillars_json TEXT,
+        principles_json TEXT,
+        updated_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS highlights (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        metric_value TEXT,
+        metric_label TEXT,
+        metric_subtext TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS experiences (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        role TEXT,
+        organization TEXT,
+        period TEXT,
+        start_date TEXT,
+        end_date TEXT,
+        is_current INTEGER DEFAULT 0,
+        description_points TEXT,
+        location TEXT,
+        website TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1,
+        created_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS educations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        degree TEXT,
+        institution TEXT,
+        subject TEXT,
+        start_year TEXT,
+        end_year TEXT,
+        period TEXT,
+        result TEXT,
+        badge_text TEXT,
+        description TEXT,
+        highlights_json TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1,
+        created_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS skills (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category TEXT,
+        name TEXT,
+        level INTEGER DEFAULT 80,
+        icon TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS skill_badges (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS projects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        project_number TEXT,
+        title TEXT,
+        short_description TEXT,
+        full_description TEXT,
+        image_url TEXT,
+        additional_images_json TEXT,
+        tags_json TEXT,
+        category TEXT,
+        live_url TEXT,
+        github_url TEXT,
+        project_date TEXT,
+        is_featured INTEGER DEFAULT 0,
+        is_published INTEGER DEFAULT 1,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1,
+        created_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS services (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        description TEXT,
+        icon TEXT,
+        deliverables TEXT,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS social_links (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT,
+        phone TEXT,
+        whatsapp TEXT,
+        linkedin TEXT,
+        github TEXT,
+        facebook TEXT,
+        location TEXT,
+        maps_url TEXT,
+        updated_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS contact_channels (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        channel_key TEXT UNIQUE NOT NULL,
+        label TEXT,
+        action_text TEXT,
+        value TEXT,
+        url TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1,
+        updated_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS resumes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_name TEXT,
+        file_url TEXT,
+        is_active INTEGER DEFAULT 1,
+        upload_date TEXT
+      );
+      CREATE TABLE IF NOT EXISTS site_settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        site_title TEXT,
+        brand_logo TEXT,
+        favicon_url TEXT,
+        meta_description TEXT,
+        og_image_url TEXT,
+        footer_brand TEXT,
+        footer_copyright TEXT,
+        updated_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS certifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        issuer TEXT,
+        year TEXT,
+        description TEXT,
+        is_verified INTEGER DEFAULT 1,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS experience_metrics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        metric TEXT,
+        label TEXT,
+        subtext TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS coursework_pillars (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        subtitle TEXT,
+        courses_json TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS software_tools (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        category TEXT,
+        proficiency TEXT,
+        icon TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS project_methodologies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        step_number TEXT,
+        title TEXT,
+        description TEXT,
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 1
+      );
+      CREATE TABLE IF NOT EXISTS page_headers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        page_key TEXT UNIQUE NOT NULL,
+        badge_text TEXT,
+        title TEXT,
+        highlight_word TEXT,
+        description TEXT
+      );
+      CREATE TABLE IF NOT EXISTS homepage_cta (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        badge_text TEXT,
+        title TEXT,
+        description TEXT,
+        primary_btn_text TEXT,
+        primary_btn_link TEXT,
+        secondary_btn_text TEXT,
+        secondary_btn_link TEXT
+      );
+      CREATE TABLE IF NOT EXISTS websites (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        slug TEXT UNIQUE,
+        url TEXT,
+        cms_url TEXT,
+        description TEXT,
+        website_type TEXT,
+        cms_type TEXT,
+        status TEXT,
+        connection_status TEXT,
+        logo TEXT,
+        api_key TEXT,
+        settings_json TEXT,
+        created_at TEXT,
+        updated_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS password_resets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        admin_id INTEGER,
+        identifier TEXT,
+        token_hash TEXT,
+        expires_at TEXT,
+        used INTEGER DEFAULT 0,
+        created_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS contact_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        email TEXT,
+        subject TEXT,
+        message TEXT,
+        ip_address TEXT,
+        is_read INTEGER DEFAULT 0,
+        created_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS activity_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        website_id INTEGER,
+        website_name TEXT,
+        action TEXT,
+        details TEXT,
+        user TEXT,
+        created_at TEXT
+      );
+    `);
+  } catch (e) {
+    console.error("initSqliteDbIfEmpty error:", e);
+  }
 }
 
 // Convert SQLite '?' positional placeholders to PostgreSQL '$1, $2, ...'
@@ -192,9 +487,45 @@ export async function recordSuccessfulLogin(adminId) {
   const now = new Date().toISOString();
   await execute(`
     UPDATE admins
-    SET failed_login_attempts = 0, locked_until = NULL, last_login_at = ?, updated_at = ?
+    SET failed_login_attempts = 0, locked_until = NULL, failed_2fa_attempts = 0, locked_2fa_until = NULL, last_login_at = ?, updated_at = ?
     WHERE id = ?
   `, [now, now, adminId]);
+}
+
+export function checkAdmin2faLockout(admin, maxAttempts = 5) {
+  if (!admin) return { isLocked: false, message: "" };
+  if (admin.locked_2fa_until) {
+    const lockTime = new Date(admin.locked_2fa_until);
+    if (lockTime > new Date()) {
+      const remainingMins = Math.ceil((lockTime - new Date()) / 60000);
+      return {
+        isLocked: true,
+        message: `Account 2FA is temporarily locked due to excessive failed attempts. Please try again in ${remainingMins} minute(s).`,
+      };
+    }
+  }
+  return { isLocked: false, message: "" };
+}
+
+export async function recordFailed2faAttempt(adminId, maxAttempts = 5, lockoutMinutes = 15) {
+  const admin = await getAdminById(adminId);
+  if (!admin) return 1;
+
+  const currentAttempts = (admin.failed_2fa_attempts || 0) + 1;
+  const now = new Date();
+  let lockedUntil = null;
+
+  if (currentAttempts >= maxAttempts) {
+    lockedUntil = new Date(now.getTime() + lockoutMinutes * 60000).toISOString();
+  }
+
+  await execute(`
+    UPDATE admins
+    SET failed_2fa_attempts = ?, locked_2fa_until = ?, updated_at = ?
+    WHERE id = ?
+  `, [currentAttempts, lockedUntil, now.toISOString(), adminId]);
+
+  return currentAttempts;
 }
 
 export async function updateAdminProfile(adminId, { fullName, email, avatar, currentPassword, newPassword }) {

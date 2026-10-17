@@ -11,6 +11,6 @@ export async function GET(req) {
     const data = await getUsers();
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

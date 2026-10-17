@@ -1,9 +1,21 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { getDb, hashPassword, addActivityLog } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req) {
   try {
+    const rateCheck = await checkRateLimit(req, "password-reset-confirm", 5, 3600);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many password reset attempts. Please try again later. (অত্যধিক অনুরোধ করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।)",
+        },
+        { status: 429, headers: rateCheck.headers }
+      );
+    }
+
     const { token, new_password } = await req.json();
     if (!token || !new_password) {
       return NextResponse.json({ success: false, error: "Token and new password are required." }, { status: 400 });
@@ -30,6 +42,7 @@ export async function POST(req) {
 
     return NextResponse.json({ success: true, message: "Password updated successfully. You can now login." });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error("Password reset confirm error:", error);
+    return NextResponse.json({ success: false, error: "Unable to complete password reset at this time." }, { status: 500 });
   }
 }

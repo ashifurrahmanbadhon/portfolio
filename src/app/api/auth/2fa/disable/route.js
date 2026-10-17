@@ -43,6 +43,6 @@ export async function POST(req) {
 
     return NextResponse.json({ success: true, message: "Two-Factor Authentication disabled" });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

@@ -12,6 +12,6 @@ export async function PUT(req) {
     const result = await saveToolGhorSettings(body, user.sub);
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

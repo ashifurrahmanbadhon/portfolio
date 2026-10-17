@@ -1,9 +1,16 @@
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "ashifur_portfolio_secure_secret_key_2026_x9f";
 const JWT_ALGORITHM = "HS256";
 const SESSION_EXPIRY_HOURS = 24;
 const REMEMBER_EXPIRY_DAYS = 30;
+
+export function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("FATAL: JWT_SECRET environment variable is not configured. Server failing closed.");
+  }
+  return secret;
+}
 
 export function signToken(admin, rememberMe = false) {
   const expiresIn = rememberMe ? `${REMEMBER_EXPIRY_DAYS}d` : `${SESSION_EXPIRY_HOURS}h`;
@@ -29,6 +36,7 @@ export function signToken(admin, rememberMe = false) {
   const payload = {
     sub: admin.username,
     uid: admin.id,
+    type: "session",
     email: admin.email || "",
     role: admin.role || "super_admin",
     full_name: admin.full_name || "Super Admin",
@@ -36,7 +44,7 @@ export function signToken(admin, rememberMe = false) {
     websites: sites,
   };
 
-  const token = jwt.sign(payload, JWT_SECRET, {
+  const token = jwt.sign(payload, getJwtSecret(), {
     algorithm: JWT_ALGORITHM,
     expiresIn,
   });
@@ -48,7 +56,14 @@ export function signToken(admin, rememberMe = false) {
 export function verifyToken(token) {
   if (!token) return null;
   try {
-    return jwt.verify(token, JWT_SECRET, { algorithms: [JWT_ALGORITHM] });
+    const decoded = jwt.verify(token, getJwtSecret(), { algorithms: [JWT_ALGORITHM] });
+    if (!decoded || decoded.type === "2fa_challenge") {
+      return null;
+    }
+    if (decoded.type && decoded.type !== "session") {
+      return null;
+    }
+    return decoded;
   } catch {
     return null;
   }
@@ -61,7 +76,7 @@ export function signChallengeToken(admin, rememberMe = false) {
     sub: admin.username,
     remember: rememberMe,
   };
-  return jwt.sign(payload, JWT_SECRET, {
+  return jwt.sign(payload, getJwtSecret(), {
     algorithm: JWT_ALGORITHM,
     expiresIn: "5m",
   });
@@ -70,7 +85,7 @@ export function signChallengeToken(admin, rememberMe = false) {
 export function verifyChallengeToken(token) {
   if (!token) return null;
   try {
-    const decoded = jwt.verify(token, JWT_SECRET, { algorithms: [JWT_ALGORITHM] });
+    const decoded = jwt.verify(token, getJwtSecret(), { algorithms: [JWT_ALGORITHM] });
     if (decoded.type !== "2fa_challenge") return null;
     return decoded;
   } catch {

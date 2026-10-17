@@ -12,7 +12,7 @@ The platform combines both the visitor-facing engineering portfolio and the admi
 ## 🌟 Architecture Overview
 
 ```
-portfolionext/ (Unified Full-Stack Next.js Project)
+portfolio/ (Unified Full-Stack Next.js Project)
 │
 ├── src/
 │   ├── app/
@@ -82,9 +82,7 @@ npm start
 ## 🔐 Admin Authentication & Credentials
 
 - **Admin Portal URL**: `/admin` (or `/login`)
-- **Default Username**: `admin`
-- **Default Email**: `admin@ashifurrahman.com`
-- **Default Password**: `admin123`
+- **Default Username**: `admin` — change immediately on first login.
 - **Role**: `super_admin`
 
 ### Security Features:
@@ -98,6 +96,6 @@ npm start
 ## ☁️ Deployment (Vercel)
 
 This repository is pre-configured for one-click deployment on **[Vercel](https://vercel.com)**:
-1. Connect this GitHub repository (`ashifurrahmanbadhon/portfolionext`) to Vercel.
+1. Connect this GitHub repository (`ashifurrahmanbadhon/portfolio`) to Vercel.
 2. The included `vercel.json` ensures the framework is recognized as **Next.js**.
 3. All static pages and serverless API endpoints deploy automatically.

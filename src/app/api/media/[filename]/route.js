@@ -3,13 +3,21 @@ import { getMediaFile } from "@/lib/db";
 import path from "path";
 import fs from "fs/promises";
 
+const SAFE_FILENAME_REGEX = /^[a-zA-Z0-9_-]+\.[a-z0-9]+$/i;
+
 export async function GET(req, { params }) {
   try {
     const resolvedParams = await params;
-    const filename = resolvedParams?.filename;
+    const rawFilename = resolvedParams?.filename;
 
-    if (!filename) {
+    if (!rawFilename) {
       return new NextResponse("Filename is required", { status: 400 });
+    }
+
+    const filename = path.basename(rawFilename);
+
+    if (!SAFE_FILENAME_REGEX.test(filename)) {
+      return new NextResponse("File not found", { status: 404 });
     }
 
     // 1. Try DB (Neon PostgreSQL or SQLite)
@@ -29,7 +37,13 @@ export async function GET(req, { params }) {
 
     // 2. Fallback to local filesystem (for pre-existing static uploads)
     try {
-      const filePath = path.join(process.cwd(), "public", "uploads", filename);
+      const uploadsDir = path.resolve(process.cwd(), "public", "uploads");
+      const filePath = path.resolve(uploadsDir, filename);
+
+      if (!filePath.startsWith(uploadsDir)) {
+        return new NextResponse("File not found", { status: 404 });
+      }
+
       const fileData = await fs.readFile(filePath);
       return new NextResponse(fileData, {
         status: 200,

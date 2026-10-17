@@ -5,6 +5,47 @@ import crypto from "crypto";
 import { authenticateRequest } from "@/lib/auth";
 import { saveMediaFile } from "@/lib/db";
 
+const ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"]);
+
+const MIME_BY_EXT = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+  ".avif": "image/avif",
+};
+
+function verifyImageMagicBytes(buf, ext) {
+  if (!buf || buf.length < 12) return false;
+  // JPEG: FF D8 FF
+  if (ext === ".jpg" || ext === ".jpeg") {
+    return buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+  }
+  // PNG: 89 50 4E 47
+  if (ext === ".png") {
+    return buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47;
+  }
+  // GIF: GIF87a or GIF89a
+  if (ext === ".gif") {
+    const header = buf.toString("ascii", 0, 6);
+    return header === "GIF87a" || header === "GIF89a";
+  }
+  // WEBP: RIFF....WEBP
+  if (ext === ".webp") {
+    const riff = buf.toString("ascii", 0, 4);
+    const webp = buf.toString("ascii", 8, 12);
+    return riff === "RIFF" && webp === "WEBP";
+  }
+  // AVIF: ....ftyp(avif|mif1|avis)
+  if (ext === ".avif") {
+    const ftyp = buf.toString("ascii", 4, 8);
+    const brand = buf.toString("ascii", 8, 12);
+    return ftyp === "ftyp" && (brand === "avif" || brand === "mif1" || brand === "avis");
+  }
+  return false;
+}
+
 export async function POST(req) {
   try {
     const user = authenticateRequest(req);
@@ -19,6 +60,19 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: "No file provided" }, { status: 400 });
     }
 
+    const originalName = file.name || "upload.bin";
+    const ext = (path.extname(originalName) || "").toLowerCase();
+
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid file type. Only image files (JPEG, PNG, WebP, GIF, AVIF) are allowed.",
+        },
+        { status: 400 }
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -30,14 +84,22 @@ export async function POST(req) {
       );
     }
 
-    const originalName = file.name || "upload.bin";
-    const ext = (path.extname(originalName) || "").toLowerCase();
-    const randomName = `${Date.now()}_${crypto.randomBytes(4).toString("hex")}${ext || ".bin"}`;
-    const mimeType = file.type || "application/octet-stream";
+    // Verify magic bytes
+    if (!verifyImageMagicBytes(buffer, ext)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "File verification failed. The file contents do not match a valid image.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const randomName = `${Date.now()}_${crypto.randomBytes(4).toString("hex")}${ext}`;
+    const mimeType = MIME_BY_EXT[ext] || "application/octet-stream";
     const base64Data = buffer.toString("base64");
 
     // 1. Save directly to Database (Neon PostgreSQL / SQLite)
-    // This eliminates the Vercel EROFS (Read-only file system) error permanently
     await saveMediaFile({
       filename: randomName,
       originalName,
@@ -53,7 +115,6 @@ export async function POST(req) {
         await fs.mkdir(uploadsDir, { recursive: true });
         await fs.writeFile(path.join(uploadsDir, randomName), buffer);
       } catch (fsErr) {
-        // Silently continue if read-only or permission restricted
         console.warn("Local disk write skipped:", fsErr.message);
       }
     }
@@ -69,6 +130,6 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal server error during upload." }, { status: 500 });
   }
 }

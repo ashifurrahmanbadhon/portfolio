@@ -11,7 +11,7 @@ export async function GET(req) {
     const data = await getSystemSettings();
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }
 
@@ -28,6 +28,6 @@ export async function PUT(req) {
     const result = await saveSystemSettings(category, data, user.sub);
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }
