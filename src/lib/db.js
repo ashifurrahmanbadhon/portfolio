@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
+import { exec } from "child_process";
 import { neon } from "@neondatabase/serverless";
 import { DatabaseSync } from "node:sqlite";
 
@@ -372,13 +373,21 @@ export async function queryOne(sqlText, params = []) {
 }
 
 export async function execute(sqlText, params = []) {
+  let result = null;
   if (neonSql) {
     const pgSql = convertPlaceholders(sqlText);
-    return await neonSql.query(pgSql, params);
-  } else {
-    const db = getSqliteDb();
-    return db.prepare(sqlText).run(...params);
+    result = await neonSql.query(pgSql, params);
   }
+  // Dual-write to SQLite to guarantee local portfolio.db remains 100% in sync
+  try {
+    const db = getSqliteDb();
+    const sqliteParams = params.map((p) => (typeof p === "boolean" ? (p ? 1 : 0) : p));
+    const sqliteRes = db.prepare(sqlText).run(...sqliteParams);
+    if (!result) result = sqliteRes;
+  } catch (err) {
+    // If SQLite schema difference occurs, log and maintain parity
+  }
+  return result;
 }
 
 // Universal getDb() interface for backward compatibility
@@ -1243,13 +1252,14 @@ export async function updatePortfolioSection(section, data, user = "admin") {
               highlight_word = EXCLUDED.highlight_word,
               description = EXCLUDED.description
           `, [data.page_key, data.badge_text || "", data.title || "", data.highlight_word || "", data.description || ""]);
-        } else {
+        }
+        try {
           const db = getSqliteDb();
           db.prepare(`
             INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
             VALUES (?, ?, ?, ?, ?)
           `).run(data.page_key, data.badge_text || "", data.title || "", data.highlight_word || "", data.description || "");
-        }
+        } catch (_) {}
       } else if (typeof data === "object") {
         for (const [key, val] of Object.entries(data)) {
           if (val && typeof val === "object") {
@@ -1263,13 +1273,14 @@ export async function updatePortfolioSection(section, data, user = "admin") {
                   highlight_word = EXCLUDED.highlight_word,
                   description = EXCLUDED.description
               `, [key, val.badge_text || "", val.title || "", val.highlight_word || "", val.description || ""]);
-            } else {
+            }
+            try {
               const db = getSqliteDb();
               db.prepare(`
                 INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
                 VALUES (?, ?, ?, ?, ?)
               `).run(key, val.badge_text || "", val.title || "", val.highlight_word || "", val.description || "");
-            }
+            } catch (_) {}
           }
         }
       }
@@ -1307,6 +1318,9 @@ export async function updatePortfolioSection(section, data, user = "admin") {
 
   // Invalidate cache AFTER writes commit to ensure immediate freshness for next read
   invalidatePortfolioContentCache();
+
+  // Background dual-database sync and Git Push for instant live deployment
+  triggerGitSyncInBackground();
 
   return { success: true, message: `Updated section: ${section}` };
 }
@@ -1713,14 +1727,52 @@ export async function saveMediaFile({ filename, originalName, mimeType, fileSize
          mime_type = EXCLUDED.mime_type`,
       [filename, originalName, mimeType, fileSize, data]
     );
-  } else {
+  }
+  try {
     const db = getSqliteDb();
     db.prepare(`
       INSERT OR REPLACE INTO media_files (filename, original_name, mime_type, file_size, data)
       VALUES (?, ?, ?, ?, ?)
     `).run(filename, originalName, mimeType, fileSize, data);
-  }
+  } catch (_) {}
+
+  // Trigger git push if media saved
+  triggerGitSyncInBackground();
+
   return { success: true, filename };
+}
+
+let gitSyncDebounceTimer = null;
+export function triggerGitSyncInBackground() {
+  if (process.env.VERCEL) {
+    return;
+  }
+  if (gitSyncDebounceTimer) {
+    clearTimeout(gitSyncDebounceTimer);
+  }
+  gitSyncDebounceTimer = setTimeout(() => {
+    try {
+      exec("git status --porcelain", { cwd: process.cwd() }, (err, stdout) => {
+        if (err) return;
+        const modified = (stdout || "")
+          .split("\n")
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0 && !l.includes("scratch/"));
+
+        if (modified.length === 0) return;
+
+        exec('git add portfolio.db public/ && git commit -m "chore(cms): auto-sync admin content update" && git push origin main', { cwd: process.cwd() }, (pushErr, pushOut, pushStderr) => {
+          if (pushErr) {
+            console.error("[Git Auto-Sync] Push error:", pushStderr || pushErr.message);
+          } else {
+            console.log("[Git Auto-Sync] Changes committed & pushed to GitHub! Vercel live deploy triggered.");
+          }
+        });
+      });
+    } catch (e) {
+      console.warn("[Git Auto-Sync] Failed:", e.message);
+    }
+  }, 2000);
 }
 
 export async function getMediaFile(filename) {

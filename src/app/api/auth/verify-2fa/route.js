@@ -92,7 +92,7 @@ export async function POST(req) {
       admin.username
     );
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       token,
       expires_at: exp,
@@ -105,6 +105,18 @@ export async function POST(req) {
         avatar: admin.avatar || "/ashifur.jpeg",
       },
     });
+
+    res.cookies.set({
+      name: "cms_auth_token",
+      value: token,
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: decoded.remember ? 90 * 24 * 60 * 60 : 30 * 24 * 60 * 60,
+    });
+
+    return res;
   } catch (error) {
     console.error("2FA verify error:", error);
     return NextResponse.json(
