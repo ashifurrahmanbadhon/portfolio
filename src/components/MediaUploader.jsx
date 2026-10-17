@@ -20,10 +20,14 @@ import {
   Sliders,
   Move,
   Check,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 import SpotlightCard from "@/components/SpotlightCard";
+import { parsePhotoPosition, formatPhotoPosition } from "@/lib/photoPosition";
 
 function parsePosition(posStr) {
   if (!posStr || typeof posStr !== "string") return { x: 50, y: 15 };
@@ -213,17 +217,23 @@ export default function MediaUploader({
   const [mode, setMode] = useState("upload"); // 'upload' | 'url'
   const [urlInput, setUrlInput] = useState(value || "");
 
-  // Facebook Reposition Modal State
+  // 2D Reposition & Zoom Modal State
+  const initialPos = parsePhotoPosition(positionValue);
   const [isRepositionModalOpen, setIsRepositionModalOpen] = useState(false);
   const [pendingFile, setPendingFile] = useState(null);
   const [pendingPreview, setPendingPreview] = useState(null);
-  const [modalPosition, setModalPosition] = useState(positionValue || "50% 15%");
+  const [modalX, setModalX] = useState(initialPos.x);
+  const [modalY, setModalY] = useState(initialPos.y);
+  const [modalZoom, setModalZoom] = useState(initialPos.zoom);
   const [isDraggingModal, setIsDraggingModal] = useState(false);
 
-  // Sync modalPosition whenever positionValue changes
+  // Sync state whenever positionValue changes
   useEffect(() => {
     if (positionValue) {
-      setModalPosition(positionValue);
+      const p = parsePhotoPosition(positionValue);
+      setModalX(p.x);
+      setModalY(p.y);
+      setModalZoom(p.zoom);
     }
   }, [positionValue]);
 
@@ -246,19 +256,18 @@ export default function MediaUploader({
     type === "document" ||
     (value && value.toLowerCase().endsWith(".pdf"));
 
-  // Facebook-style Drag-to-Reposition inside Modal
+  // 2D Drag-to-Reposition inside Modal (Up, Down, Left, Right)
   const handleModalDragStart = (e) => {
     e.preventDefault();
     const clientX = e.clientX ?? e.touches?.[0]?.clientX;
     const clientY = e.clientY ?? e.touches?.[0]?.clientY;
     if (clientX === undefined || clientY === undefined) return;
 
-    const cur = parsePosition(modalPosition);
     modalDragRef.current = {
       startX: clientX,
       startY: clientY,
-      initX: cur.x,
-      initY: cur.y,
+      initX: modalX,
+      initY: modalY,
     };
     setIsDraggingModal(true);
   };
@@ -274,10 +283,13 @@ export default function MediaUploader({
       const deltaX = clientX - modalDragRef.current.startX;
       const deltaY = clientY - modalDragRef.current.startY;
 
-      const newX = Math.max(0, Math.min(100, Math.round(modalDragRef.current.initX - (deltaX / rect.width) * 100)));
-      const newY = Math.max(0, Math.min(100, Math.round(modalDragRef.current.initY - (deltaY / rect.height) * 100)));
+      // Sensitivity factor scaled smoothly by zoom
+      const sensitivity = 100 / Math.max(1, modalZoom);
+      const newX = Math.max(0, Math.min(100, Math.round(modalDragRef.current.initX - (deltaX / rect.width) * sensitivity)));
+      const newY = Math.max(0, Math.min(100, Math.round(modalDragRef.current.initY - (deltaY / rect.height) * sensitivity)));
 
-      setModalPosition(`${newX}% ${newY}%`);
+      setModalX(newX);
+      setModalY(newY);
     };
 
     const handleModalDragEnd = () => {
@@ -390,13 +402,16 @@ export default function MediaUploader({
       return;
     }
 
-    // If it's an image and repositioning is supported: Open Facebook-style Reposition Modal BEFORE uploading
+    // If it's an image and repositioning is supported: Open 2D Reposition & Zoom Modal BEFORE uploading
     if (rawFile.type.startsWith("image/") && onPositionChange) {
       try {
         const localUrl = URL.createObjectURL(rawFile);
         setPendingFile(rawFile);
         setPendingPreview(localUrl);
-        setModalPosition(positionValue || "50% 15%");
+        const p = parsePhotoPosition(positionValue);
+        setModalX(p.x);
+        setModalY(p.y);
+        setModalZoom(p.zoom);
         setIsRepositionModalOpen(true);
       } catch (e) {
         executeUpload(rawFile, positionValue || "50% 15%");
@@ -408,7 +423,7 @@ export default function MediaUploader({
 
   // Confirm reposition inside modal
   const handleConfirmReposition = () => {
-    const finalPos = modalPosition || "50% 15%";
+    const finalPos = formatPhotoPosition(modalX, modalY, modalZoom);
     if (onPositionChange) {
       onPositionChange(finalPos);
     }
@@ -417,13 +432,18 @@ export default function MediaUploader({
     if (pendingFile) {
       executeUpload(pendingFile, finalPos);
     } else {
-      showToast("Photo position saved!", "success");
+      showToast("Photo position & zoom saved!", "success");
     }
+    setPendingFile(null);
+    setPendingPreview(null);
   };
 
   // Cancel reposition inside modal
   const handleCancelReposition = () => {
     setIsRepositionModalOpen(false);
+    if (pendingFile) {
+      executeUpload(pendingFile, formatPhotoPosition(modalX, modalY, modalZoom));
+    }
     setPendingFile(null);
     setPendingPreview(null);
   };
@@ -433,7 +453,10 @@ export default function MediaUploader({
     if (!value || isPdf || isVideo || uploading) return;
     setPendingFile(null);
     setPendingPreview(value);
-    setModalPosition(positionValue || "50% 15%");
+    const p = parsePhotoPosition(positionValue);
+    setModalX(p.x);
+    setModalY(p.y);
+    setModalZoom(p.zoom);
     setIsRepositionModalOpen(true);
   };
 
@@ -651,7 +674,7 @@ export default function MediaUploader({
                       alt="Uploaded media preview"
                       fill
                       unoptimized
-                      style={{ objectPosition: positionValue || "50% 15%" }}
+                      style={parsePhotoPosition(positionValue || "50% 15%").style}
                       className="object-cover transition-all select-none"
                     />
 
@@ -788,12 +811,12 @@ export default function MediaUploader({
               </button>
             </div>
 
-            {/* Reposition Drag Canvas */}
-            <div className="p-5 space-y-3 flex-1 overflow-y-auto">
+            {/* Reposition Drag Canvas with Zoom & 2D Pan */}
+            <div className="p-5 space-y-4 flex-1 overflow-y-auto">
               <div className="flex items-center justify-between text-[11px] font-mono">
-                <span className="text-slate-300 font-medium">Click &amp; drag directly on the photo:</span>
+                <span className="text-slate-300 font-medium">Click &amp; drag photo (Up, Down, Left, Right):</span>
                 <span className="px-2 py-0.5 rounded bg-[#161C2A] text-emerald-300 border border-emerald-500/30 font-bold">
-                  {modalPosition}
+                  {modalX}% {modalY}% {modalZoom > 1 ? `• ${Math.round(modalZoom * 100)}% Zoom` : ""}
                 </span>
               </div>
 
@@ -814,7 +837,11 @@ export default function MediaUploader({
                   draggable={false}
                   fill
                   unoptimized
-                  style={{ objectPosition: modalPosition }}
+                  style={{
+                    objectPosition: `${modalX}% ${modalY}%`,
+                    transform: modalZoom > 1 ? `scale(${modalZoom})` : undefined,
+                    transformOrigin: `${modalX}% ${modalY}%`,
+                  }}
                   className="object-cover pointer-events-none select-none transition-none"
                 />
 
@@ -833,6 +860,94 @@ export default function MediaUploader({
                   </div>
                 )}
 
+                {/* Directional 4-way compass overlay pill in bottom center */}
+                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-200 pointer-events-none flex items-center gap-1.5 shadow-lg">
+                  <span className="text-emerald-400 font-bold">⇦ ⇨ ⇧ ⇩</span>
+                  <span>Drag any direction</span>
+                </div>
+              </div>
+
+              {/* Zoom & Pan Control Bar */}
+              <div className="p-3.5 rounded-xl bg-[#090D15] border border-[#1E2638] space-y-2.5">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <div className="flex items-center gap-1.5 text-slate-300">
+                    <ZoomIn className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Zoom Level:</span>
+                    <span className="font-bold text-emerald-300">{Math.round(modalZoom * 100)}%</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                    <span>Position:</span>
+                    <span className="text-emerald-400 font-bold">{modalX}% {modalY}%</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setModalZoom((z) => Math.max(1, Math.round((z - 0.1) * 100) / 100))}
+                    className="p-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
+                    title="Zoom Out"
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="range"
+                    min="1"
+                    max="3"
+                    step="0.05"
+                    value={modalZoom}
+                    onChange={(e) => setModalZoom(parseFloat(e.target.value))}
+                    className="flex-1 accent-emerald-500 cursor-pointer h-1.5 bg-[#161C2A] rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setModalZoom((z) => Math.min(3, Math.round((z + 0.1) * 100) / 100))}
+                    className="p-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
+                    title="Zoom In"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setModalZoom(1);
+                      setModalX(50);
+                      setModalY(50);
+                    }}
+                    className="px-2.5 py-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white transition text-xs font-mono flex items-center gap-1 cursor-pointer"
+                    title="Reset Zoom & Center"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                {/* Quick zoom presets */}
+                <div className="flex items-center justify-between pt-1 border-t border-[#161C2A]">
+                  <span className="text-[10px] font-mono text-slate-400">Quick Presets:</span>
+                  <div className="flex items-center gap-1.5">
+                    {[
+                      { label: "1.0x (Fit)", val: 1.0 },
+                      { label: "1.25x", val: 1.25 },
+                      { label: "1.5x", val: 1.5 },
+                      { label: "2.0x", val: 2.0 },
+                    ].map((p) => (
+                      <button
+                        key={p.label}
+                        type="button"
+                        onClick={() => setModalZoom(p.val)}
+                        className={`px-2 py-0.5 rounded text-[10px] font-mono transition cursor-pointer ${
+                          Math.abs(modalZoom - p.val) < 0.05
+                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold"
+                            : "bg-[#141A29] text-slate-400 hover:text-white border border-transparent"
+                        }`}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 

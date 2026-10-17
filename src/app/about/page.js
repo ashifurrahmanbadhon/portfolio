@@ -28,6 +28,7 @@ import PageHeader from '@/components/portfolio/PageHeader';
 import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
+import { parsePhotoPosition } from '@/lib/photoPosition';
 
 const ICON_MAP = {
   Zap,
@@ -136,7 +137,7 @@ export default function AboutPage() {
                       alt={heroData.name || "Ashifur Rahman"}
                       fill
                       className="object-cover group-hover:scale-105 transition duration-500"
-                      style={{ objectPosition: aboutData.profile_position || "center 12%" }}
+                      style={parsePhotoPosition(aboutData.profile_position || "center 12%").style}
                       priority
                       unoptimized
                     />

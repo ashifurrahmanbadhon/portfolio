@@ -28,6 +28,7 @@ import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
+import { parsePhotoPosition } from '@/lib/photoPosition';
 
 // Helper for dynamic icons
 const ICON_MAP = {
@@ -122,7 +123,7 @@ export default function Home() {
                     alt={heroData.name || "Ashifur Rahman"}
                     fill
                     className="object-cover group-hover:scale-105 transition duration-500"
-                    style={{ objectPosition: heroData.profile_position || "center 15%" }}
+                    style={parsePhotoPosition(heroData.profile_position || "center 15%").style}
                     priority
                     sizes="(max-width: 640px) 256px, 288px"
                   />
@@ -297,7 +298,7 @@ export default function Home() {
                         alt={proj.title}
                         fill
                         className="object-cover group-hover:scale-105 transition duration-500"
-                        style={{ objectPosition: proj.image_position || "center center" }}
+                        style={parsePhotoPosition(proj.image_position || "center center").style}
                         loading="lazy"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         unoptimized

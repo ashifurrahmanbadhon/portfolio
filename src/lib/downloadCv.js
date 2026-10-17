@@ -1,38 +1,27 @@
 /**
- * Triggers a direct file download of the CV without navigating away from the current page.
+ * Triggers an instant, direct file download of the CV with zero latency without navigating away.
  */
-export async function triggerCvDownload(e) {
+export function triggerCvDownload(e, customUrl) {
   if (e && typeof e.preventDefault === 'function') {
     e.preventDefault();
   }
 
   const fileName = 'Ashifur_Rahman_CV.pdf';
+  const targetUrl = customUrl || '/resume.pdf';
 
-  try {
-    const res = await fetch('/api/download-cv');
-    if (!res.ok) throw new Error('Download request failed');
+  // Instant native download trigger — 0ms network roundtrip wait
+  const link = document.createElement('a');
+  link.style.display = 'none';
+  link.href = targetUrl;
+  link.setAttribute('download', fileName);
+  link.setAttribute('target', '_blank');
+  link.setAttribute('rel', 'noopener noreferrer');
+  document.body.appendChild(link);
+  link.click();
 
-    const blob = await res.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.style.display = 'none';
-    link.href = blobUrl;
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-
-    setTimeout(() => {
+  setTimeout(() => {
+    try {
       link.remove();
-      window.URL.revokeObjectURL(blobUrl);
-    }, 1000);
-  } catch (err) {
-    // Hidden iframe fallback ensures the window URL NEVER changes
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = '/api/download-cv';
-    document.body.appendChild(iframe);
-    setTimeout(() => {
-      iframe.remove();
-    }, 8000);
-  }
+    } catch (_) {}
+  }, 300);
 }
