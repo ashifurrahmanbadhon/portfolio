@@ -62,7 +62,7 @@ export function PortfolioProvider({ children }) {
         return {
           ...prev,
           ...data.about,
-          profile_image: data.about.profile_image || prev.profile_image || '/ashifur.jpeg',
+          profile_image: data.about.profile_image || prev.profile_image || '/ashifur-about.jpg',
           pillars: activePillars,
           principles: activePrinciples,
         };

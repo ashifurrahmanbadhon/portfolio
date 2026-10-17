@@ -131,7 +131,7 @@ export default function AboutPage() {
                 <div className="relative bg-[#111622] border border-[#1e2638] rounded-3xl p-5 shadow-2xl space-y-5">
                   <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-[#0b0f17]">
                     <Image
-                      src={aboutData.profile_image || heroData.profile_image || "/ashifur.jpeg"}
+                      src={aboutData.profile_image || "/ashifur-about.jpg"}
                       alt={heroData.name || "Ashifur Rahman"}
                       fill
                       className="object-cover object-top group-hover:scale-105 transition duration-500"

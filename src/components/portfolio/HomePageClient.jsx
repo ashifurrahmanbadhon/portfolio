@@ -117,7 +117,7 @@ export default function Home() {
               <div className="relative bg-[#111622] border-2 border-[#1e2638] rounded-3xl p-4 shadow-2xl">
                 <div className="relative w-64 h-80 sm:w-72 sm:h-96 rounded-2xl overflow-hidden bg-[#0b0f17]">
                   <Image
-                    src={heroData.profile_image || "/ashifur.jpeg"}
+                    src={heroData.profile_image || "/ashifur-home.jpg"}
                     alt={heroData.name || "Ashifur Rahman"}
                     fill
                     className="object-cover object-top group-hover:scale-105 transition duration-500"
