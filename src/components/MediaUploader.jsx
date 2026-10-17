@@ -18,7 +18,8 @@ import {
   Film,
   Compass,
   Sliders,
-  Move
+  Move,
+  Check,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
@@ -125,16 +126,29 @@ export default function MediaUploader({
 }) {
   const { showToast } = useToast();
   const fileInputRef = useRef(null);
-  const previewBoxRef = useRef(null);
-  const dragRef = useRef({ startX: 0, startY: 0, initialPercentX: 50, initialPercentY: 15 });
+  const modalBoxRef = useRef(null);
+  const modalDragRef = useRef({ startX: 0, startY: 0, initX: 50, initY: 15 });
 
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [tempPreview, setTempPreview] = useState(null);
-  const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
   const [mode, setMode] = useState("upload"); // 'upload' | 'url'
   const [urlInput, setUrlInput] = useState(value || "");
+
+  // Facebook Reposition Modal State
+  const [isRepositionModalOpen, setIsRepositionModalOpen] = useState(false);
+  const [pendingFile, setPendingFile] = useState(null);
+  const [pendingPreview, setPendingPreview] = useState(null);
+  const [modalPosition, setModalPosition] = useState(positionValue || "50% 15%");
+  const [isDraggingModal, setIsDraggingModal] = useState(false);
+
+  // Sync modalPosition whenever positionValue changes
+  useEffect(() => {
+    if (positionValue) {
+      setModalPosition(positionValue);
+    }
+  }, [positionValue]);
 
   // Determine accept attribute
   const defaultAccept =
@@ -155,91 +169,75 @@ export default function MediaUploader({
     type === "document" ||
     (value && value.toLowerCase().endsWith(".pdf"));
 
-  // Facebook-style Drag-to-Reposition event listeners
-  const handleDragPhotoStart = (e) => {
+  // Facebook-style Drag-to-Reposition inside Modal
+  const handleModalDragStart = (e) => {
     e.preventDefault();
     const clientX = e.clientX ?? e.touches?.[0]?.clientX;
     const clientY = e.clientY ?? e.touches?.[0]?.clientY;
     if (clientX === undefined || clientY === undefined) return;
 
-    const cur = parsePosition(positionValue);
-    dragRef.current = {
+    const cur = parsePosition(modalPosition);
+    modalDragRef.current = {
       startX: clientX,
       startY: clientY,
-      initialPercentX: cur.x,
-      initialPercentY: cur.y,
+      initX: cur.x,
+      initY: cur.y,
     };
-    setIsDraggingPhoto(true);
+    setIsDraggingModal(true);
   };
 
   useEffect(() => {
-    const handleDragPhotoMove = (e) => {
-      if (!isDraggingPhoto || !previewBoxRef.current || !onPositionChange) return;
+    const handleModalDragMove = (e) => {
+      if (!isDraggingModal || !modalBoxRef.current) return;
       const clientX = e.clientX ?? e.touches?.[0]?.clientX;
       const clientY = e.clientY ?? e.touches?.[0]?.clientY;
       if (clientX === undefined || clientY === undefined) return;
 
-      const rect = previewBoxRef.current.getBoundingClientRect();
-      const deltaX = clientX - dragRef.current.startX;
-      const deltaY = clientY - dragRef.current.startY;
+      const rect = modalBoxRef.current.getBoundingClientRect();
+      const deltaX = clientX - modalDragRef.current.startX;
+      const deltaY = clientY - modalDragRef.current.startY;
 
-      const pctChangeX = (deltaX / rect.width) * 100;
-      const pctChangeY = (deltaY / rect.height) * 100;
+      const newX = Math.max(0, Math.min(100, Math.round(modalDragRef.current.initX - (deltaX / rect.width) * 100)));
+      const newY = Math.max(0, Math.min(100, Math.round(modalDragRef.current.initY - (deltaY / rect.height) * 100)));
 
-      const newX = Math.max(0, Math.min(100, Math.round(dragRef.current.initialPercentX - pctChangeX)));
-      const newY = Math.max(0, Math.min(100, Math.round(dragRef.current.initialPercentY - pctChangeY)));
-
-      onPositionChange(`${newX}% ${newY}%`);
+      setModalPosition(`${newX}% ${newY}%`);
     };
 
-    const handleDragPhotoEnd = () => {
-      if (isDraggingPhoto) {
-        setIsDraggingPhoto(false);
-      }
+    const handleModalDragEnd = () => {
+      if (isDraggingModal) setIsDraggingModal(false);
     };
 
-    if (isDraggingPhoto) {
-      window.addEventListener("mousemove", handleDragPhotoMove);
-      window.addEventListener("mouseup", handleDragPhotoEnd);
-      window.addEventListener("touchmove", handleDragPhotoMove, { passive: false });
-      window.addEventListener("touchend", handleDragPhotoEnd);
+    if (isDraggingModal) {
+      window.addEventListener("mousemove", handleModalDragMove);
+      window.addEventListener("mouseup", handleModalDragEnd);
+      window.addEventListener("touchmove", handleModalDragMove, { passive: false });
+      window.addEventListener("touchend", handleModalDragEnd);
     }
 
     return () => {
-      window.removeEventListener("mousemove", handleDragPhotoMove);
-      window.removeEventListener("mouseup", handleDragPhotoEnd);
-      window.removeEventListener("touchmove", handleDragPhotoMove);
-      window.removeEventListener("touchend", handleDragPhotoEnd);
+      window.removeEventListener("mousemove", handleModalDragMove);
+      window.removeEventListener("mouseup", handleModalDragEnd);
+      window.removeEventListener("touchmove", handleModalDragMove);
+      window.removeEventListener("touchend", handleModalDragEnd);
     };
-  }, [isDraggingPhoto, onPositionChange, positionValue]);
+  }, [isDraggingModal]);
 
-  // Handle actual file upload
-  const handleFileUpload = async (rawFile) => {
+  // Actual background upload execution
+  const executeUpload = async (rawFile, targetPos) => {
     if (!rawFile) return;
 
-    // Check size limit
-    const sizeInMB = rawFile.size / (1024 * 1024);
-    const limit = type === "video" ? Math.max(maxSizeMB, 50) : maxSizeMB;
-    if (sizeInMB > limit) {
-      showToast(`File size (${sizeInMB.toFixed(1)}MB) exceeds ${limit}MB limit.`, "error");
-      return;
-    }
-
-    // Immediately show local photo preview so upload progress shows directly on top of the image
+    // Show temporary preview with upload percentage directly over the photo
     if (rawFile.type.startsWith("image/")) {
       try {
         const objUrl = URL.createObjectURL(rawFile);
         setTempPreview(objUrl);
-      } catch (e) {
-        console.warn("ObjectURL creation fallback", e);
-      }
+      } catch (e) {}
     }
 
     setUploading(true);
     setUploadProgress(15);
 
     try {
-      // Auto-optimize image for instant upload and Vercel compatibility
       const file = await optimizeImageIfNeeded(rawFile);
       setUploadProgress(35);
 
@@ -252,13 +250,15 @@ export default function MediaUploader({
       setUploadProgress(100);
 
       if (res && res.success && res.url) {
-        showToast("Media uploaded successfully!", "success");
+        showToast("Photo uploaded successfully!", "success");
         if (onChange) {
           onChange(res.url, res.file_name);
         }
+        if (onPositionChange && targetPos) {
+          onPositionChange(targetPos);
+        }
         setUrlInput(res.url);
       } else {
-        // Fallback for image to ensure admin is never blocked
         if (rawFile.type.startsWith("image/") && rawFile.size < 4 * 1024 * 1024) {
           const reader = new FileReader();
           reader.onload = (event) => {
@@ -266,6 +266,7 @@ export default function MediaUploader({
             if (dataUrl && onChange) {
               onChange(dataUrl, rawFile.name);
               setUrlInput(dataUrl);
+              if (onPositionChange && targetPos) onPositionChange(targetPos);
               showToast("Loaded image directly", "info");
             }
           };
@@ -283,6 +284,7 @@ export default function MediaUploader({
           if (dataUrl && onChange) {
             onChange(dataUrl, rawFile.name);
             setUrlInput(dataUrl);
+            if (onPositionChange && targetPos) onPositionChange(targetPos);
             showToast("Loaded image directly", "info");
           }
         };
@@ -299,12 +301,71 @@ export default function MediaUploader({
     }
   };
 
+  // Called whenever user selects or drops a file
+  const handleFilePicked = (rawFile) => {
+    if (!rawFile) return;
+
+    // Check size limit
+    const sizeInMB = rawFile.size / (1024 * 1024);
+    const limit = type === "video" ? Math.max(maxSizeMB, 50) : maxSizeMB;
+    if (sizeInMB > limit) {
+      showToast(`File size (${sizeInMB.toFixed(1)}MB) exceeds ${limit}MB limit.`, "error");
+      return;
+    }
+
+    // If it's an image and repositioning is supported: Open Facebook-style Reposition Modal BEFORE uploading
+    if (rawFile.type.startsWith("image/") && onPositionChange) {
+      try {
+        const localUrl = URL.createObjectURL(rawFile);
+        setPendingFile(rawFile);
+        setPendingPreview(localUrl);
+        setModalPosition(positionValue || "50% 15%");
+        setIsRepositionModalOpen(true);
+      } catch (e) {
+        executeUpload(rawFile, positionValue || "50% 15%");
+      }
+    } else {
+      executeUpload(rawFile, positionValue || "50% 15%");
+    }
+  };
+
+  // Confirm reposition inside modal
+  const handleConfirmReposition = () => {
+    const finalPos = modalPosition || "50% 15%";
+    if (onPositionChange) {
+      onPositionChange(finalPos);
+    }
+    setIsRepositionModalOpen(false);
+
+    if (pendingFile) {
+      executeUpload(pendingFile, finalPos);
+    } else {
+      showToast("Photo position saved!", "success");
+    }
+  };
+
+  // Cancel reposition inside modal
+  const handleCancelReposition = () => {
+    setIsRepositionModalOpen(false);
+    setPendingFile(null);
+    setPendingPreview(null);
+  };
+
+  // Trigger reposition modal on existing photo
+  const handleOpenExistingReposition = () => {
+    if (!value || isPdf || isVideo || uploading) return;
+    setPendingFile(null);
+    setPendingPreview(value);
+    setModalPosition(positionValue || "50% 15%");
+    setIsRepositionModalOpen(true);
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
-      handleFileUpload(file);
+      handleFilePicked(file);
     }
   };
 
@@ -368,7 +429,8 @@ export default function MediaUploader({
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) handleFileUpload(file);
+          if (file) handleFilePicked(file);
+          if (e.target) e.target.value = "";
         }}
       />
 
@@ -423,6 +485,17 @@ export default function MediaUploader({
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
+                  {onPositionChange && !isPdf && !isVideo && (
+                    <button
+                      type="button"
+                      onClick={handleOpenExistingReposition}
+                      className="px-2.5 py-1.5 rounded-lg bg-[#161C2A] hover:bg-[#1E2638] text-emerald-400 font-semibold border border-emerald-500/20 text-[11px] flex items-center gap-1 transition cursor-pointer"
+                      title="Reposition photo (Facebook style)"
+                    >
+                      <Move className="w-3 h-3" />
+                      <span>Reposition</span>
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
@@ -488,151 +561,31 @@ export default function MediaUploader({
                     className="w-full max-h-60 rounded-xl object-contain bg-black"
                   />
                 ) : (
-                  <div className="relative w-full h-44 sm:h-52">
-                    <Image
+                  <div
+                    className={`relative w-full h-48 sm:h-56 group/preview ${
+                      onPositionChange && !uploading ? "cursor-pointer" : ""
+                    }`}
+                    onClick={handleOpenExistingReposition}
+                  >
+                    <img
                       src={tempPreview || value}
                       alt="Uploaded media preview"
-                      fill
-                      className="object-contain p-2"
-                      unoptimized
+                      style={{ objectPosition: positionValue || "50% 15%" }}
+                      className="w-full h-full object-cover transition-all select-none"
                     />
+
+                    {/* Facebook style hover overlay badge */}
+                    {onPositionChange && !uploading && (
+                      <div className="absolute inset-0 bg-black/45 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none">
+                        <span className="px-3.5 py-1.5 rounded-xl bg-black/85 backdrop-blur-md text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-2 shadow-2xl">
+                          <Move className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Click to Reposition Photo (Facebook Style)</span>
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-
-              {/* Repositioning & Framing Controls (Enabled for images when onPositionChange is provided) */}
-              {onPositionChange && !isPdf && !isVideo && (
-                <div className="mt-4 pt-4 border-t border-[#1E2638] space-y-3.5 bg-[#070A0F]/60 p-3.5 rounded-xl border border-[#1E2638]/70">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 font-bold">
-                      <Compass size={15} />
-                      <span>Photo Reposition &amp; Framing (মনমতো পজিশন অ্যাডজাস্ট করুন)</span>
-                    </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161C2A] text-emerald-300 border border-emerald-500/30 font-semibold">
-                      {positionValue || "50% 15%"}
-                    </span>
-                  </div>
-
-                  {/* Facebook Drag-to-Reposition Live Canvas */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                      <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                        <Move size={13} /> Facebook Drag-to-Reposition:
-                      </span>
-                      <span className="text-[10px] text-slate-400">ছবির ওপর মাউস ড্র্যাগ করে অ্যাডজাস্ট করুন</span>
-                    </div>
-
-                    <div
-                      ref={previewBoxRef}
-                      onMouseDown={handleDragPhotoStart}
-                      onTouchStart={handleDragPhotoStart}
-                      className={`relative w-full h-44 rounded-xl overflow-hidden bg-[#070A0F] border select-none transition-all ${
-                        isDraggingPhoto
-                          ? "border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.35)] cursor-grabbing"
-                          : "border-emerald-500/30 hover:border-emerald-500/60 cursor-grab"
-                      }`}
-                    >
-                      <img
-                        src={tempPreview || value}
-                        alt="Framing preview"
-                        draggable={false}
-                        style={{ objectPosition: positionValue || "50% 15%" }}
-                        className="w-full h-full object-cover pointer-events-none select-none transition-none"
-                      />
-
-                      {/* Rule of thirds alignment grid on drag */}
-                      {isDraggingPhoto && (
-                        <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/40 bg-emerald-500/5">
-                          <div className="border-r border-b border-emerald-400/20" />
-                          <div className="border-r border-b border-emerald-400/20" />
-                          <div className="border-b border-emerald-400/20" />
-                          <div className="border-r border-b border-emerald-400/20" />
-                          <div className="border-r border-b border-emerald-400/20" />
-                          <div className="border-b border-emerald-400/20" />
-                          <div className="border-r border-emerald-400/20" />
-                          <div className="border-r border-emerald-400/20" />
-                          <div />
-                        </div>
-                      )}
-
-                      {/* Floating Indicator */}
-                      <div className="absolute top-2.5 left-2.5 pointer-events-none flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
-                        <Move size={12} className={isDraggingPhoto ? "text-emerald-400 animate-pulse" : "text-emerald-400"} />
-                        <span>{isDraggingPhoto ? `Repositioning (${parsePosition(positionValue).x}% ${parsePosition(positionValue).y}%)` : "Drag photo to reposition (Facebook style)"}</span>
-                      </div>
-
-                      <div className="absolute bottom-2.5 right-2.5 pointer-events-none text-[10px] font-mono bg-black/85 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/40 font-bold">
-                        {positionValue || "50% 15%"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quick Preset Buttons */}
-                  <div className="space-y-1.5 pt-1">
-                    <span className="text-[10px] font-mono text-slate-400">Quick Alignment Presets:</span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
-                      {[
-                        { label: "Top (মাথা/শীর্ষ)", pos: "50% 5%" },
-                        { label: "Face Focus (চেহারা)", pos: "50% 15%" },
-                        { label: "Center (মাঝা)", pos: "50% 50%" },
-                        { label: "Lower (নিচের অংশ)", pos: "50% 80%" },
-                      ].map((preset) => (
-                        <button
-                          key={preset.pos}
-                          type="button"
-                          onClick={() => onPositionChange(preset.pos)}
-                          className={`px-2 py-1.5 rounded-lg border transition text-center cursor-pointer ${
-                            (positionValue || "50% 15%").trim() === preset.pos
-                              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500 font-bold shadow-sm"
-                              : "bg-[#161C2A] text-slate-300 hover:text-white border-[#1E2638] hover:border-emerald-500/30"
-                          }`}
-                        >
-                          {preset.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Fine Tuning Sliders */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                    <div>
-                      <div className="flex justify-between text-[10px] font-mono text-slate-300 mb-1">
-                        <span>Vertical Offset (উল্লম্ব ফোকাস)</span>
-                        <span className="text-emerald-400 font-bold">{parsePosition(positionValue).y}%</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={parsePosition(positionValue).y}
-                        onChange={(e) => {
-                          const cur = parsePosition(positionValue);
-                          onPositionChange(`${cur.x}% ${e.target.value}%`);
-                        }}
-                        className="w-full accent-emerald-500 h-1.5 bg-[#161C2A] rounded-lg cursor-pointer"
-                      />
-                    </div>
-
-                    <div>
-                      <div className="flex justify-between text-[10px] font-mono text-slate-300 mb-1">
-                        <span>Horizontal Offset (অনুভূমিক ফোকাস)</span>
-                        <span className="text-emerald-400 font-bold">{parsePosition(positionValue).x}%</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={parsePosition(positionValue).x}
-                        onChange={(e) => {
-                          const cur = parsePosition(positionValue);
-                          onPositionChange(`${e.target.value}% ${cur.y}%`);
-                        }}
-                        className="w-full accent-emerald-500 h-1.5 bg-[#161C2A] rounded-lg cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             /* Case 2: No value -> Show Drag & Drop Upload Zone */
@@ -718,6 +671,109 @@ export default function MediaUploader({
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Facebook-style Photo Reposition Modal (Direct Click & Drag Before / After Upload) */}
+      {isRepositionModalOpen && (
+        <div className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div
+            className="bg-[#0D121F] border border-[#1E2638] rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-[#1E2638] flex items-center justify-between bg-[#111624]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <Move className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white tracking-wide">
+                    {pendingFile ? "Reposition Photo Before Upload" : "Reposition Photo (Facebook Style)"}
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    Drag the photo to adjust framing and position
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleCancelReposition}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#161C2A] transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Reposition Drag Canvas */}
+            <div className="p-5 space-y-3 flex-1 overflow-y-auto">
+              <div className="flex items-center justify-between text-[11px] font-mono">
+                <span className="text-slate-300 font-medium">Click &amp; drag directly on the photo:</span>
+                <span className="px-2 py-0.5 rounded bg-[#161C2A] text-emerald-300 border border-emerald-500/30 font-bold">
+                  {modalPosition}
+                </span>
+              </div>
+
+              <div
+                ref={modalBoxRef}
+                onMouseDown={handleModalDragStart}
+                onTouchStart={handleModalDragStart}
+                className={`relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden bg-[#070A0F] border select-none transition-all ${
+                  isDraggingModal
+                    ? "border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.35)] cursor-grabbing"
+                    : "border-emerald-500/40 hover:border-emerald-400 cursor-grab"
+                }`}
+              >
+                <img
+                  src={pendingPreview || value}
+                  alt="Reposition Preview"
+                  draggable={false}
+                  style={{ objectPosition: modalPosition }}
+                  className="w-full h-full object-cover pointer-events-none select-none transition-none"
+                />
+
+                {/* 3x3 Grid Lines on Drag (Facebook standard) */}
+                {isDraggingModal && (
+                  <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/50 bg-emerald-500/10 animate-in fade-in duration-100">
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-b border-emerald-400/30" />
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-b border-emerald-400/30" />
+                    <div className="border-r border-emerald-400/30" />
+                    <div className="border-r border-emerald-400/30" />
+                    <div />
+                  </div>
+                )}
+
+                {/* Instruction Badge */}
+                <div className="absolute top-3 left-3 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md text-[11px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
+                  <Move className={`w-3.5 h-3.5 ${isDraggingModal ? "text-emerald-400 animate-pulse" : "text-emerald-400"}`} />
+                  <span>{isDraggingModal ? "Dragging position..." : "Drag photo to reposition"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="px-5 py-3.5 border-t border-[#1E2638] bg-[#0A0E18] flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={handleCancelReposition}
+                className="px-4 py-2 rounded-xl bg-[#141A29] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmReposition}
+                className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 cursor-pointer"
+              >
+                <Check className="w-4 h-4" />
+                <span>{pendingFile ? "Save & Upload Photo" : "Apply Position"}</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

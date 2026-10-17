@@ -88,9 +88,14 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
   }, []);
 
   const [editAvatarPosition, setEditAvatarPosition] = useState("50% 15%");
-  const [showAvatarReposition, setShowAvatarReposition] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarProgress, setAvatarProgress] = useState(0);
+
+  // Facebook-style Avatar Reposition Modal State
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState(null);
+  const [pendingAvatarUrl, setPendingAvatarUrl] = useState(null);
+  const [tempAvatarPos, setTempAvatarPos] = useState("50% 15%");
   const [isDraggingAvatar, setIsDraggingAvatar] = useState(false);
   const avatarDragRef = useRef({ startX: 0, startY: 0, initX: 50, initY: 15 });
   const avatarBoxRef = useRef(null);
@@ -98,18 +103,21 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedPos = localStorage.getItem("admin_avatar_position");
-      if (savedPos) setEditAvatarPosition(savedPos);
+      if (savedPos) {
+        setEditAvatarPosition(savedPos);
+        setTempAvatarPos(savedPos);
+      }
     }
   }, []);
 
-  // Facebook-style Drag-to-Reposition for Super Admin Avatar
+  // Facebook-style Drag-to-Reposition for Super Admin Avatar inside Modal
   const handleAvatarDragStart = (e) => {
     e.preventDefault();
     const clientX = e.clientX ?? e.touches?.[0]?.clientX;
     const clientY = e.clientY ?? e.touches?.[0]?.clientY;
     if (clientX === undefined || clientY === undefined) return;
 
-    const parts = (editAvatarPosition || "50% 15%").split(" ");
+    const parts = (tempAvatarPos || "50% 15%").split(" ");
     const initX = parseFloat(parts[0]) || 50;
     const initY = parseFloat(parts[1]) || 15;
 
@@ -131,11 +139,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       const newX = Math.max(0, Math.min(100, Math.round(avatarDragRef.current.initX - (deltaX / rect.width) * 100)));
       const newY = Math.max(0, Math.min(100, Math.round(avatarDragRef.current.initY - (deltaY / rect.height) * 100)));
 
-      const posStr = `${newX}% ${newY}%`;
-      setEditAvatarPosition(posStr);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("admin_avatar_position", posStr);
-      }
+      setTempAvatarPos(`${newX}% ${newY}%`);
     };
 
     const handleEnd = () => {
@@ -164,7 +168,8 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
     }
   }, [user, profileModalOpen]);
 
-  const handlePhotoUpload = async (e) => {
+  // When user selects a photo from computer: Open Facebook reposition modal BEFORE uploading
+  const handlePhotoSelected = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
@@ -173,10 +178,50 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
     }
 
     try {
-      const tempUrl = URL.createObjectURL(file);
-      setEditAvatar(tempUrl);
-    } catch {}
+      const localUrl = URL.createObjectURL(file);
+      setPendingAvatarFile(file);
+      setPendingAvatarUrl(localUrl);
+      setTempAvatarPos(editAvatarPosition || "50% 15%");
+      setIsAvatarModalOpen(true);
+    } catch {
+      executeAvatarUpload(file, editAvatarPosition || "50% 15%");
+    }
+    if (e.target) e.target.value = "";
+  };
 
+  // Open reposition modal for existing avatar
+  const handleOpenExistingAvatarReposition = () => {
+    setPendingAvatarFile(null);
+    setPendingAvatarUrl(editAvatar || userAvatar);
+    setTempAvatarPos(editAvatarPosition || "50% 15%");
+    setIsAvatarModalOpen(true);
+  };
+
+  // Confirm reposition inside modal
+  const handleConfirmAvatarReposition = async () => {
+    const finalPos = tempAvatarPos || "50% 15%";
+    setEditAvatarPosition(finalPos);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_avatar_position", finalPos);
+    }
+    setIsAvatarModalOpen(false);
+
+    if (pendingAvatarFile) {
+      executeAvatarUpload(pendingAvatarFile, finalPos);
+    } else {
+      if (showToast) showToast("Avatar position saved!", "success");
+    }
+  };
+
+  // Cancel reposition inside modal
+  const handleCancelAvatarReposition = () => {
+    setIsAvatarModalOpen(false);
+    setPendingAvatarFile(null);
+    setPendingAvatarUrl(null);
+  };
+
+  // Background upload of avatar
+  const executeAvatarUpload = async (file, targetPos) => {
     setAvatarUploading(true);
     setAvatarProgress(15);
 
@@ -191,6 +236,12 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
 
       if (res && res.success && res.url) {
         setEditAvatar(res.url);
+        if (targetPos) {
+          setEditAvatarPosition(targetPos);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("admin_avatar_position", targetPos);
+          }
+        }
         if (showToast) showToast("Photo uploaded successfully!", "success");
       }
     } catch {
@@ -201,6 +252,8 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       setTimeout(() => {
         setAvatarUploading(false);
         setAvatarProgress(0);
+        setPendingAvatarFile(null);
+        setPendingAvatarUrl(null);
       }, 400);
     }
   };
@@ -509,7 +562,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                   id="admin-avatar-file-input"
                   type="file"
                   accept="image/*"
-                  onChange={handlePhotoUpload}
+                  onChange={handlePhotoSelected}
                   className="hidden"
                 />
                 <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#0E131F]" />
@@ -532,11 +585,11 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                   </label>
                   <button
                     type="button"
-                    onClick={() => setShowAvatarReposition(!showAvatarReposition)}
+                    onClick={handleOpenExistingAvatarReposition}
                     className="px-2.5 py-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-emerald-400 border border-emerald-500/25 text-[11px] font-mono flex items-center gap-1 cursor-pointer transition"
                   >
-                    <Compass className="w-3 h-3" />
-                    <span>{showAvatarReposition ? "Done" : "Reposition"}</span>
+                    <Move className="w-3 h-3" />
+                    <span>Reposition</span>
                   </button>
                   {editAvatar && editAvatar !== "/ashifur.jpeg" && (
                     <button
@@ -556,110 +609,6 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                 </div>
               </div>
             </div>
-
-            {/* Avatar Reposition Panel (Facebook Style Drag) */}
-            {showAvatarReposition && (
-              <div className="p-4 border-b border-[#1E2638] bg-[#070A0F]/90 space-y-3">
-                <div className="flex items-center justify-between text-[11px] font-mono">
-                  <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                    <Move className="w-3.5 h-3.5" /> Facebook Drag-to-Reposition:
-                  </span>
-                  <span className="text-[10px] text-emerald-300 font-bold px-2 py-0.5 rounded bg-[#161C2A] border border-emerald-500/30">
-                    {editAvatarPosition}
-                  </span>
-                </div>
-
-                {/* Drag Canvas */}
-                <div
-                  ref={avatarBoxRef}
-                  onMouseDown={handleAvatarDragStart}
-                  onTouchStart={handleAvatarDragStart}
-                  className={`relative w-full h-36 rounded-xl overflow-hidden bg-[#0B0F17] border select-none transition-all ${
-                    isDraggingAvatar
-                      ? "border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-grabbing"
-                      : "border-emerald-500/30 hover:border-emerald-500/60 cursor-grab"
-                  }`}
-                >
-                  <img
-                    src={editAvatar || userAvatar}
-                    alt="Avatar Reposition"
-                    draggable={false}
-                    style={{ objectPosition: editAvatarPosition }}
-                    className="w-full h-full object-cover pointer-events-none select-none"
-                  />
-
-                  {isDraggingAvatar && (
-                    <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/40 bg-emerald-500/5">
-                      <div className="border-r border-b border-emerald-400/20" />
-                      <div className="border-r border-b border-emerald-400/20" />
-                      <div className="border-b border-emerald-400/20" />
-                      <div className="border-r border-b border-emerald-400/20" />
-                      <div className="border-r border-b border-emerald-400/20" />
-                      <div className="border-b border-emerald-400/20" />
-                      <div className="border-r border-emerald-400/20" />
-                      <div className="border-r border-emerald-400/20" />
-                      <div />
-                    </div>
-                  )}
-
-                  <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/80 text-[9px] font-mono text-emerald-300 border border-emerald-500/40 pointer-events-none">
-                    <Move className="w-2.5 h-2.5" />
-                    <span>{isDraggingAvatar ? "Dragging position..." : "Drag photo to reposition (Facebook style)"}</span>
-                  </div>
-                </div>
-
-                {/* Presets */}
-                <div className="grid grid-cols-4 gap-1.5 text-[10px] font-mono">
-                  {[
-                    { label: "Top", pos: "50% 5%" },
-                    { label: "Face", pos: "50% 15%" },
-                    { label: "Center", pos: "50% 50%" },
-                    { label: "Lower", pos: "50% 80%" },
-                  ].map((p) => (
-                    <button
-                      key={p.pos}
-                      type="button"
-                      onClick={() => {
-                        setEditAvatarPosition(p.pos);
-                        if (typeof window !== "undefined") {
-                          localStorage.setItem("admin_avatar_position", p.pos);
-                        }
-                      }}
-                      className={`py-1 rounded border text-center transition cursor-pointer ${
-                        editAvatarPosition === p.pos
-                          ? "bg-emerald-500/20 text-emerald-300 border-emerald-500 font-bold"
-                          : "bg-[#161C2A] text-slate-300 border-[#1E2638] hover:border-emerald-500/30"
-                      }`}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Slider */}
-                <div className="pt-1">
-                  <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
-                    <span>Vertical Offset (উল্লম্ব ফোকাস)</span>
-                    <span className="text-emerald-400 font-bold">{editAvatarPosition.split(" ")[1] || "15%"}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={parseFloat(editAvatarPosition.split(" ")[1]) || 15}
-                    onChange={(e) => {
-                      const x = editAvatarPosition.split(" ")[0] || "50%";
-                      const pos = `${x} ${e.target.value}%`;
-                      setEditAvatarPosition(pos);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("admin_avatar_position", pos);
-                      }
-                    }}
-                    className="w-full accent-emerald-500 h-1 bg-[#161C2A] rounded-lg cursor-pointer"
-                  />
-                </div>
-              </div>
-            )}
 
             {/* Form */}
             <form onSubmit={handleSaveProfile} className="p-5 space-y-4">
@@ -781,6 +730,110 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Facebook-style Avatar Reposition Modal */}
+      {isAvatarModalOpen && (
+        <div className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div
+            className="bg-[#0D121F] border border-[#1E2638] rounded-2xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-5 py-4 border-b border-[#1E2638] flex items-center justify-between bg-[#111624]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <Move className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white tracking-wide">
+                    {pendingAvatarFile ? "Reposition Avatar Before Upload" : "Reposition Avatar (Facebook Style)"}
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    Drag the photo to center your face
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleCancelAvatarReposition}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#161C2A] transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Reposition Drag Canvas */}
+            <div className="p-5 space-y-3 flex flex-col items-center">
+              <div className="w-full flex items-center justify-between text-[11px] font-mono">
+                <span className="text-slate-300 font-medium">Click &amp; drag directly on the avatar:</span>
+                <span className="px-2 py-0.5 rounded bg-[#161C2A] text-emerald-300 border border-emerald-500/30 font-bold">
+                  {tempAvatarPos}
+                </span>
+              </div>
+
+              {/* Framed Avatar Canvas */}
+              <div
+                ref={avatarBoxRef}
+                onMouseDown={handleAvatarDragStart}
+                onTouchStart={handleAvatarDragStart}
+                className={`relative w-56 h-56 rounded-3xl overflow-hidden bg-[#070A0F] border-2 select-none transition-all ${
+                  isDraggingAvatar
+                    ? "border-emerald-400 shadow-[0_0_35px_rgba(16,185,129,0.35)] cursor-grabbing"
+                    : "border-emerald-500/40 hover:border-emerald-400 cursor-grab"
+                }`}
+              >
+                <img
+                  src={pendingAvatarUrl || editAvatar || userAvatar}
+                  alt="Avatar Reposition"
+                  draggable={false}
+                  style={{ objectPosition: tempAvatarPos }}
+                  className="w-full h-full object-cover pointer-events-none select-none transition-none"
+                />
+
+                {/* 3x3 Grid Lines on Drag (Facebook standard) */}
+                {isDraggingAvatar && (
+                  <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/50 bg-emerald-500/10 animate-in fade-in duration-100">
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-b border-emerald-400/30" />
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-r border-b border-emerald-400/30" />
+                    <div className="border-b border-emerald-400/30" />
+                    <div className="border-r border-emerald-400/30" />
+                    <div className="border-r border-emerald-400/30" />
+                    <div />
+                  </div>
+                )}
+
+                {/* Instruction Badge */}
+                <div className="absolute top-2.5 left-2.5 pointer-events-none flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
+                  <Move className={`w-3 h-3 ${isDraggingAvatar ? "text-emerald-400 animate-pulse" : "text-emerald-400"}`} />
+                  <span>{isDraggingAvatar ? "Dragging position..." : "Drag photo to reposition"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="px-5 py-3.5 border-t border-[#1E2638] bg-[#0A0E18] flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={handleCancelAvatarReposition}
+                className="px-4 py-2 rounded-xl bg-[#141A29] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmAvatarReposition}
+                className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 cursor-pointer"
+              >
+                <Check className="w-4 h-4" />
+                <span>{pendingAvatarFile ? "Save & Upload Avatar" : "Apply Position"}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
