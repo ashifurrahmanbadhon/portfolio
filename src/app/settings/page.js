@@ -17,6 +17,7 @@ import {
 
 import { useToast } from "@/components/Toast";
 import TwoFactorSettings from "@/components/TwoFactorSettings";
+import SpotlightCard from "@/components/SpotlightCard";
 
 export default function SettingsPage() {
   const { showToast } = useToast();
@@ -102,7 +103,7 @@ export default function SettingsPage() {
       </div>
 
       {/* TAB CONTENT */}
-      <div className="p-6 md:p-8 rounded-2xl bg-[#0B0F17] border border-[#1E2638] animate-fade-up">
+      <SpotlightCard className="p-6 md:p-8 rounded-2xl bg-[#0B0F17] border border-[#1E2638] animate-fade-up">
         {/* General */}
         {activeTab === "general" && (
           <div className="space-y-5 max-w-2xl">
@@ -310,7 +311,7 @@ export default function SettingsPage() {
             </div>
           </div>
         )}
-      </div>
+      </SpotlightCard>
     </div>
   );
 }

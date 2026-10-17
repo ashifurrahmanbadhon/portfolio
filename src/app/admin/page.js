@@ -63,6 +63,7 @@ const DEFAULT_HERO = {
   introduction:
     "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
   profile_image: "/ashifur-home.jpg",
+  profile_position: "center 15%",
   primary_btn_text: "Contact Me",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download CV",
@@ -79,6 +80,7 @@ const DEFAULT_ABOUT = {
   description2:
     "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
   profile_image: "/ashifur-about.jpg",
+  profile_position: "center 12%",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",
@@ -135,12 +137,15 @@ function AdminConsoleContent() {
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [deletingBulk, setDeletingBulk] = useState(false);
 
-  // Dynamic time greeting state (auto changes based on current local time)
+  // Dynamic time greeting & live ticking clock (12-hour format with seconds & full date bar)
   const [timeGreeting, setTimeGreeting] = useState({ text: "Good Day", emoji: "✨" });
+  const [liveTime, setLiveTime] = useState("");
+  const [liveDate, setLiveDate] = useState("");
 
   useEffect(() => {
-    const updateGreeting = () => {
-      const hour = new Date().getHours();
+    const updateClock = () => {
+      const now = new Date();
+      const hour = now.getHours();
       if (hour >= 5 && hour < 12) {
         setTimeGreeting({ text: "Good Morning", emoji: "🌅" });
       } else if (hour >= 12 && hour < 17) {
@@ -150,9 +155,29 @@ function AdminConsoleContent() {
       } else {
         setTimeGreeting({ text: "Good Night", emoji: "🌙" });
       }
+
+      // 12-hour format with seconds: e.g. "08:46:03 PM"
+      const timeStr = now.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
+
+      // Full date with day name: e.g. "Saturday, 17 Oct 2026"
+      const dateStr = now.toLocaleDateString("en-US", {
+        weekday: "long",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      setLiveTime(timeStr);
+      setLiveDate(dateStr);
     };
-    updateGreeting();
-    const timer = setInterval(updateGreeting, 60000);
+
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -386,20 +411,36 @@ function AdminConsoleContent() {
 
   return (
     <div className="space-y-6 pb-20">
-      {/* Modern, Sleek Section Command Header (No duplicate horizontal tabs) */}
-      <div className="bg-[#111622] border border-[#1E2638] rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      {/* Modern, Sleek Section Command Header with SpotlightCard, Big Greeting & Live 12hr Clock */}
+      <SpotlightCard className="bg-[#111622] border border-[#1E2638] rounded-2xl p-5 sm:p-7 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 blur-[100px] pointer-events-none rounded-full" />
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div className="space-y-1.5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+          <div className="space-y-3">
+            {/* Top Row: Prominent Greeting & Realtime 12hr Clock with Date Bar */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl sm:text-3xl">{timeGreeting.emoji}</span>
+                <span className="text-xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent">
+                  {timeGreeting.text}, Ashifur!
+                </span>
+              </div>
+
+              {liveTime && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#090D15] border border-emerald-500/30 text-emerald-400 font-mono text-xs sm:text-sm shadow-inner">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-bold tracking-wider">{liveTime}</span>
+                  <span className="text-slate-600">•</span>
+                  <span className="text-slate-300 font-medium">{liveDate}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Sub-row: Active Editor Page badge & Cloud Status */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm">
-                <span>{timeGreeting.emoji}</span>
-                <span>{timeGreeting.text}, Ashifur!</span>
-              </span>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse"></span>
-                {currentTabObj.pageNum} Editor
+                {currentTabObj.pageNum} Editor: {currentTabObj.title}
               </span>
               <span className="text-xs font-mono text-slate-400">• Neon PostgreSQL Cloud</span>
               {currentTabObj.count !== undefined && (
@@ -414,19 +455,12 @@ function AdminConsoleContent() {
               )}
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0 shadow-inner">
-                <CurrentIcon className="w-4 h-4" />
-              </div>
-              <span>{currentTabObj.title}</span>
-            </h1>
-
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed">
               {currentTabObj.subtitle}
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
+          <div className="flex items-center gap-2.5 shrink-0 self-start lg:self-center">
             <button
               onClick={() => loadData(true)}
               disabled={loading}
@@ -448,7 +482,7 @@ function AdminConsoleContent() {
             </a>
           </div>
         </div>
-      </div>
+      </SpotlightCard>
 
       {/* Initial Database Synchronization Skeleton Gate */}
       {!initialLoaded && loading ? (
@@ -535,6 +569,8 @@ function AdminConsoleContent() {
                 <MediaUploader
                   value={hero.profile_image || ""}
                   onChange={(url) => setHero({ ...hero, profile_image: url })}
+                  positionValue={hero.profile_position || "center 15%"}
+                  onPositionChange={(pos) => setHero({ ...hero, profile_position: pos })}
                   label="Hero Profile Photo (Headshot / Portrait)"
                   description="Upload your high-res profile photo or drag & drop directly from device"
                   type="image"
@@ -740,6 +776,8 @@ function AdminConsoleContent() {
               <MediaUploader
                 value={about.profile_image || ""}
                 onChange={(url) => setAbout({ ...about, profile_image: url })}
+                positionValue={about.profile_position || "center 12%"}
+                onPositionChange={(pos) => setAbout({ ...about, profile_position: pos })}
                 label="About Section Showcase Photo"
                 description="Professional photo or engineering field showcase image"
                 type="image"
@@ -821,7 +859,7 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "experience" && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
+          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-emerald-400" />
@@ -851,7 +889,7 @@ function AdminConsoleContent() {
               <Plus className="w-4 h-4" />
               <span>Add New Experience</span>
             </button>
-          </div>
+          </SpotlightCard>
 
           <div className="space-y-3">
             {experiences.length === 0 ? (
@@ -860,9 +898,9 @@ function AdminConsoleContent() {
               </div>
             ) : (
               experiences.map((exp, idx) => (
-                <div
+                <SpotlightCard
                   key={idx}
-                  className="bg-[#111622] border border-[#1E2638] hover:border-emerald-500/40 p-5 rounded-2xl transition group relative space-y-3"
+                  className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl group relative space-y-3"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1E2638] pb-3">
                     <div>
@@ -936,7 +974,7 @@ function AdminConsoleContent() {
                       ))}
                     </ul>
                   )}
-                </div>
+                </SpotlightCard>
               ))
             )}
           </div>
@@ -956,7 +994,7 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "education" && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
+          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-emerald-400" />
@@ -987,7 +1025,7 @@ function AdminConsoleContent() {
               <Plus className="w-4 h-4" />
               <span>Add Education</span>
             </button>
-          </div>
+          </SpotlightCard>
 
           <div className="space-y-3">
             {educations.length === 0 ? (
@@ -996,9 +1034,9 @@ function AdminConsoleContent() {
               </div>
             ) : (
               educations.map((ed, idx) => (
-                <div
+                <SpotlightCard
                   key={idx}
-                  className="bg-[#111622] border border-[#1E2638] hover:border-emerald-500/40 p-5 rounded-2xl transition group relative space-y-2"
+                  className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl group relative space-y-2"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1E2638] pb-3">
                     <div>
@@ -1056,7 +1094,7 @@ function AdminConsoleContent() {
                   </div>
 
                   {ed.description && <p className="text-xs text-slate-300 leading-relaxed">{ed.description}</p>}
-                </div>
+                </SpotlightCard>
               ))
             )}
           </div>
@@ -1084,7 +1122,7 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "skills" && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
+          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-emerald-400" />
@@ -1111,7 +1149,7 @@ function AdminConsoleContent() {
               <Plus className="w-4 h-4" />
               <span>Add New Skill</span>
             </button>
-          </div>
+          </SpotlightCard>
 
           {/* Category filter pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
@@ -1138,9 +1176,9 @@ function AdminConsoleContent() {
               .map((skill, idx) => {
                 const originalIndex = skills.indexOf(skill);
                 return (
-                  <div
+                  <SpotlightCard
                     key={idx}
-                    className="bg-[#111622] border border-[#1E2638] hover:border-emerald-500/40 p-4 rounded-xl space-y-3 transition group relative"
+                    className="bg-[#111622] border border-[#1E2638] p-4 rounded-xl space-y-3 group relative"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161C2A] text-slate-400 border border-[#1E2638]">
@@ -1183,7 +1221,7 @@ function AdminConsoleContent() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </SpotlightCard>
                 );
               })}
           </div>
@@ -1211,7 +1249,7 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "projects" && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
+          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                 <FolderGit2 className="w-5 h-5 text-emerald-400" />
@@ -1244,13 +1282,13 @@ function AdminConsoleContent() {
               <Plus className="w-4 h-4" />
               <span>Add New Project</span>
             </button>
-          </div>
+          </SpotlightCard>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {projects.map((proj, idx) => (
-              <div
+              <SpotlightCard
                 key={idx}
-                className="bg-[#111622] border border-[#1E2638] hover:border-emerald-500/40 p-5 rounded-2xl space-y-3.5 transition group relative flex flex-col justify-between"
+                className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -1357,7 +1395,7 @@ function AdminConsoleContent() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
 
@@ -2179,6 +2217,8 @@ function AdminConsoleContent() {
                   <MediaUploader
                     value={editingItem.image_url || ""}
                     onChange={(url) => setEditingItem({ ...editingItem, image_url: url })}
+                    positionValue={editingItem.image_position || "center center"}
+                    onPositionChange={(pos) => setEditingItem({ ...editingItem, image_position: pos })}
                     label="Project Media / Thumbnail (Image or Video Demo)"
                     description="Upload project demo screenshot, schematic diagram, or video showcase"
                     type="media"

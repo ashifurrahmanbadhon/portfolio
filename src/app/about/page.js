@@ -135,7 +135,8 @@ export default function AboutPage() {
                       src={aboutData.profile_image || "/ashifur-about.jpg"}
                       alt={heroData.name || "Ashifur Rahman"}
                       fill
-                      className="object-cover object-[center_12%] group-hover:scale-105 transition duration-500"
+                      className="object-cover group-hover:scale-105 transition duration-500"
+                      style={{ objectPosition: aboutData.profile_position || "center 12%" }}
                       priority
                       unoptimized
                     />

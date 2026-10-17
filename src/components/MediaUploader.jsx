@@ -15,10 +15,41 @@ import {
   Link2,
   FolderOpen,
   Eye,
-  Film
+  Film,
+  Compass,
+  Sliders
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
+
+function parsePosition(posStr) {
+  if (!posStr || typeof posStr !== "string") return { x: 50, y: 15 };
+  const parts = posStr.trim().split(/\s+/);
+  let x = 50;
+  let y = 15;
+  if (parts.length >= 2) {
+    if (parts[0] === "center") x = 50;
+    else if (parts[0] === "left") x = 0;
+    else if (parts[0] === "right") x = 100;
+    else {
+      const parsedX = parseFloat(parts[0]);
+      if (!isNaN(parsedX)) x = parsedX;
+    }
+
+    if (parts[1] === "top") y = 0;
+    else if (parts[1] === "center") y = 50;
+    else if (parts[1] === "bottom") y = 100;
+    else {
+      const parsedY = parseFloat(parts[1]);
+      if (!isNaN(parsedY)) y = parsedY;
+    }
+  } else if (parts.length === 1) {
+    if (parts[0] === "top") { x = 50; y = 0; }
+    else if (parts[0] === "bottom") { x = 50; y = 100; }
+    else if (parts[0] === "center") { x = 50; y = 50; }
+  }
+  return { x: Math.max(0, Math.min(100, Math.round(x))), y: Math.max(0, Math.min(100, Math.round(y))) };
+}
 
 async function optimizeImageIfNeeded(file) {
   if (!file || !file.type || !file.type.startsWith("image/") || file.type.includes("svg") || file.type.includes("gif")) {
@@ -82,6 +113,8 @@ async function optimizeImageIfNeeded(file) {
 export default function MediaUploader({
   value = "",
   onChange,
+  positionValue = "50% 15%",
+  onPositionChange,
   label = "Upload Media",
   description = "Drag & drop file or browse from device",
   type = "image", // 'image' | 'video' | 'media' | 'document'
@@ -372,6 +405,99 @@ export default function MediaUploader({
                   </div>
                 )}
               </div>
+
+              {/* Repositioning & Framing Controls (Enabled for images when onPositionChange is provided) */}
+              {onPositionChange && !isPdf && !isVideo && (
+                <div className="mt-4 pt-4 border-t border-[#1E2638] space-y-3.5 bg-[#070A0F]/60 p-3.5 rounded-xl border border-[#1E2638]/70">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 font-bold">
+                      <Compass size={15} />
+                      <span>Photo Reposition &amp; Framing (মনমতো পজিশন অ্যাডজাস্ট করুন)</span>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161C2A] text-emerald-300 border border-emerald-500/30 font-semibold">
+                      {positionValue || "50% 15%"}
+                    </span>
+                  </div>
+
+                  {/* Quick Preset Buttons */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-mono text-slate-400">Quick Alignment Presets:</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
+                      {[
+                        { label: "Top (মাথা/শীর্ষ)", pos: "50% 5%" },
+                        { label: "Face Focus (চেহারা)", pos: "50% 15%" },
+                        { label: "Center (মাঝা)", pos: "50% 50%" },
+                        { label: "Lower (নিচের অংশ)", pos: "50% 80%" },
+                      ].map((preset) => (
+                        <button
+                          key={preset.pos}
+                          type="button"
+                          onClick={() => onPositionChange(preset.pos)}
+                          className={`px-2 py-1.5 rounded-lg border transition text-center cursor-pointer ${
+                            (positionValue || "50% 15%").trim() === preset.pos
+                              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500 font-bold shadow-sm"
+                              : "bg-[#161C2A] text-slate-300 hover:text-white border-[#1E2638] hover:border-emerald-500/30"
+                          }`}
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Fine Tuning Sliders */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <div className="flex justify-between text-[10px] font-mono text-slate-300 mb-1">
+                        <span>Vertical Offset (উল্লম্ব ফোকাস)</span>
+                        <span className="text-emerald-400 font-bold">{parsePosition(positionValue).y}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={parsePosition(positionValue).y}
+                        onChange={(e) => {
+                          const cur = parsePosition(positionValue);
+                          onPositionChange(`${cur.x}% ${e.target.value}%`);
+                        }}
+                        className="w-full accent-emerald-500 h-1.5 bg-[#161C2A] rounded-lg cursor-pointer"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[10px] font-mono text-slate-300 mb-1">
+                        <span>Horizontal Offset (অনুভূমিক ফোকাস)</span>
+                        <span className="text-emerald-400 font-bold">{parsePosition(positionValue).x}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={parsePosition(positionValue).x}
+                        onChange={(e) => {
+                          const cur = parsePosition(positionValue);
+                          onPositionChange(`${e.target.value}% ${cur.y}%`);
+                        }}
+                        className="w-full accent-emerald-500 h-1.5 bg-[#161C2A] rounded-lg cursor-pointer"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Live Framing Simulation */}
+                  <div className="relative w-full h-36 rounded-xl overflow-hidden bg-[#070A0F] border border-emerald-500/30">
+                    <img
+                      src={value}
+                      alt="Framing preview"
+                      style={{ objectPosition: positionValue || "50% 15%" }}
+                      className="w-full h-full object-cover transition-all duration-150"
+                    />
+                    <div className="absolute bottom-2 left-2 text-[9px] font-mono bg-black/80 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
+                      Live Portfolio Card Framing Preview
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             /* Case 2: No value -> Show Drag & Drop Upload Zone */

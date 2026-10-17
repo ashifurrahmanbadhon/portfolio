@@ -55,10 +55,12 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
   const userAvatar = user?.avatar || "/ashifur.jpeg";
 
   const [timeGreeting, setTimeGreeting] = useState({ text: "Good Day", emoji: "✨" });
+  const [liveTime, setLiveTime] = useState("");
 
   useEffect(() => {
     const updateGreeting = () => {
-      const hour = new Date().getHours();
+      const now = new Date();
+      const hour = now.getHours();
       if (hour >= 5 && hour < 12) {
         setTimeGreeting({ text: "Good Morning", emoji: "🌅" });
       } else if (hour >= 12 && hour < 17) {
@@ -68,9 +70,18 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       } else {
         setTimeGreeting({ text: "Good Night", emoji: "🌙" });
       }
+
+      setLiveTime(
+        now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        })
+      );
     };
     updateGreeting();
-    const timer = setInterval(updateGreeting, 60000);
+    const timer = setInterval(updateGreeting, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -209,10 +220,15 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
           </Link>
         </div>
 
-        {/* Dynamic Time-based Greeting Badge */}
+        {/* Dynamic Time-based Greeting Badge with Live 12hr Clock */}
         <div className="hidden md:flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-xs font-mono text-emerald-300 shadow-sm">
           <span className="text-sm">{timeGreeting.emoji}</span>
           <span className="font-semibold">{timeGreeting.text}, Ashifur!</span>
+          {liveTime && (
+            <span className="text-emerald-400 font-bold border-l border-emerald-500/30 pl-2">
+              {liveTime}
+            </span>
+          )}
         </div>
 
         {/* Click-away backdrop to dismiss dropdowns smoothly */}
