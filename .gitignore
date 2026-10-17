@@ -44,4 +44,4 @@ Thumbs.db
 
 # Local Databases
 *.db
-portfolio.db
+!portfolio.db
