@@ -571,6 +571,7 @@ function AdminConsoleContent() {
                   onChange={(url) => setHero({ ...hero, profile_image: url })}
                   positionValue={hero.profile_position || "center 15%"}
                   onPositionChange={(pos) => setHero({ ...hero, profile_position: pos })}
+                  previewAspect="3/4"
                   label="Hero Profile Photo (Headshot / Portrait)"
                   description="Upload your high-res profile photo or drag & drop directly from device"
                   type="image"
@@ -778,6 +779,7 @@ function AdminConsoleContent() {
                 onChange={(url) => setAbout({ ...about, profile_image: url })}
                 positionValue={about.profile_position || "center 12%"}
                 onPositionChange={(pos) => setAbout({ ...about, profile_position: pos })}
+                previewAspect="4/5"
                 label="About Section Showcase Photo"
                 description="Professional photo or engineering field showcase image"
                 type="image"
@@ -2219,6 +2221,7 @@ function AdminConsoleContent() {
                     onChange={(url) => setEditingItem({ ...editingItem, image_url: url })}
                     positionValue={editingItem.image_position || "center center"}
                     onPositionChange={(pos) => setEditingItem({ ...editingItem, image_position: pos })}
+                    previewAspect="16/9"
                     label="Project Media / Thumbnail (Image or Video Demo)"
                     description="Upload project demo screenshot, schematic diagram, or video showcase"
                     type="media"

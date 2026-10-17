@@ -808,11 +808,6 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                   </div>
                 )}
 
-                {/* Instruction Badge */}
-                <div className="absolute top-2.5 left-2.5 pointer-events-none flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
-                  <Move className="w-3 h-3 text-emerald-400" />
-                  <span>Reposition Photo</span>
-                </div>
               </div>
             </div>
 

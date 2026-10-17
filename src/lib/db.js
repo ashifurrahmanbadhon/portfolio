@@ -83,6 +83,7 @@ function initSqliteDbIfEmpty(db) {
         badge_text TEXT,
         introduction TEXT,
         profile_image TEXT,
+        profile_position TEXT DEFAULT 'center 15%',
         primary_btn_text TEXT,
         primary_btn_link TEXT,
         secondary_btn_text TEXT,
@@ -98,6 +99,7 @@ function initSqliteDbIfEmpty(db) {
         description1 TEXT,
         description2 TEXT,
         profile_image TEXT,
+        profile_position TEXT DEFAULT 'center 12%',
         focus1_title TEXT,
         focus1_text TEXT,
         focus2_title TEXT,
@@ -167,6 +169,7 @@ function initSqliteDbIfEmpty(db) {
         short_description TEXT,
         full_description TEXT,
         image_url TEXT,
+        image_position TEXT DEFAULT 'center center',
         additional_images_json TEXT,
         tags_json TEXT,
         category TEXT,
@@ -740,7 +743,6 @@ export async function getPortfolioContent() {
 // Portfolio Section Updates
 // ==========================================
 export async function updatePortfolioSection(section, data, user = "admin") {
-  invalidatePortfolioContentCache();
   const now = new Date().toISOString();
 
   switch (section) {
@@ -752,6 +754,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           badge_text = COALESCE(?, badge_text),
           introduction = COALESCE(?, introduction),
           profile_image = COALESCE(?, profile_image),
+          profile_position = COALESCE(?, profile_position),
           primary_btn_text = COALESCE(?, primary_btn_text),
           primary_btn_link = COALESCE(?, primary_btn_link),
           secondary_btn_text = COALESCE(?, secondary_btn_text),
@@ -766,6 +769,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         data.badge_text ?? null,
         data.introduction ?? null,
         data.profile_image ?? null,
+        data.profile_position ?? null,
         data.primary_btn_text ?? null,
         data.primary_btn_link ?? null,
         data.secondary_btn_text ?? null,
@@ -788,6 +792,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           description1 = COALESCE(?, description1),
           description2 = COALESCE(?, description2),
           profile_image = COALESCE(?, profile_image),
+          profile_position = COALESCE(?, profile_position),
           focus1_title = COALESCE(?, focus1_title),
           focus1_text = COALESCE(?, focus1_text),
           focus2_title = COALESCE(?, focus2_title),
@@ -802,6 +807,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         data.description1 ?? null,
         data.description2 ?? null,
         data.profile_image ?? null,
+        data.profile_position ?? null,
         data.focus1_title ?? null,
         data.focus1_text ?? null,
         data.focus2_title ?? null,
@@ -929,16 +935,17 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           const isAct = item.is_active !== undefined ? (item.is_active ? 1 : 0) : (item.is_published !== undefined ? (item.is_published ? 1 : 0) : 1);
           await execute(`
             INSERT INTO projects (
-              project_number, title, short_description, full_description, image_url,
+              project_number, title, short_description, full_description, image_url, image_position,
               additional_images_json, tags_json, category, live_url, github_url,
               project_date, is_featured, is_published, is_active, sort_order, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             item.project_number || String(idx + 1).padStart(2, "0"),
             item.title || "",
             item.short_description || "",
             item.full_description || "",
             item.image_url || "",
+            item.image_position || "center center",
             addImagesJson,
             tagsJson,
             item.category || "Engineering",
@@ -1297,6 +1304,9 @@ export async function updatePortfolioSection(section, data, user = "admin") {
     default:
       break;
   }
+
+  // Invalidate cache AFTER writes commit to ensure immediate freshness for next read
+  invalidatePortfolioContentCache();
 
   return { success: true, message: `Updated section: ${section}` };
 }

@@ -116,7 +116,7 @@ export default function Home() {
               <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#10B981] to-teal-600 opacity-30 blur-xl group-hover:opacity-60 transition duration-500" />
               
               <div className="relative bg-[#111622] border-2 border-[#1e2638] rounded-3xl p-4 shadow-2xl">
-                <div className="relative w-64 h-80 sm:w-72 sm:h-96 rounded-2xl overflow-hidden bg-[#0b0f17]">
+                <div className="relative w-64 sm:w-72 aspect-[3/4] rounded-2xl overflow-hidden bg-[#0b0f17]">
                   <Image
                     src={heroData.profile_image || "/ashifur-home.jpg"}
                     alt={heroData.name || "Ashifur Rahman"}
@@ -290,7 +290,7 @@ export default function Home() {
               >
                 <div>
                   {proj.image_url && (
-                    <div className="relative w-full h-36 rounded-xl overflow-hidden mb-4 bg-[#070a0f] border border-[#1e2638]">
+                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-[#070a0f] border border-[#1e2638]">
                       <Image
                         src={proj.image_url}
                         alt={proj.title}

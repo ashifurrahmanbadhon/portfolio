@@ -4,6 +4,7 @@ export const DEFAULT_HERO = {
   badge_text: "Available for Engineering, Technology & AI Opportunities",
   introduction: "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
   profile_image: "/ashifur-home.jpg",
+  profile_position: "center 15%",
   primary_btn_text: "Contact Me",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download CV",
@@ -18,6 +19,7 @@ export const DEFAULT_ABOUT = {
   description1: "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2: "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
   profile_image: "/ashifur-about.jpg",
+  profile_position: "center 12%",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",
@@ -312,6 +314,7 @@ export const DEFAULT_PROJECTS = [
     description: "Designed and developed a DC-DC buck converter for regulated battery charging from a solar power system, focusing on voltage conversion, circuit design, power efficiency, and renewable energy integration.",
     tags: ["Power Electronics", "Buck Converter", "Solar Energy"],
     image_url: "",
+    image_position: "center center",
     live_url: "",
     github_url: "",
     is_featured: true
@@ -325,6 +328,7 @@ export const DEFAULT_PROJECTS = [
     description: "Engineered comprehensive Single Line Diagrams, busbar configurations, transformer protection schemes, and overcurrent relay coordination in AutoCAD.",
     tags: ["AutoCAD", "ETAP", "Power Systems"],
     image_url: "",
+    image_position: "center center",
     live_url: "",
     github_url: "",
     is_featured: true
@@ -338,6 +342,7 @@ export const DEFAULT_PROJECTS = [
     description: "Spatial mapping of 11kV/0.4kV distribution feeders, pole infrastructure, transformers, and load points with GIS geodatabases for outage tracking.",
     tags: ["ArcGIS", "QGIS", "Spatial Analysis"],
     image_url: "",
+    image_position: "center center",
     live_url: "",
     github_url: "",
     is_featured: true
@@ -351,6 +356,7 @@ export const DEFAULT_PROJECTS = [
     description: "Designed an intelligent reactive power compensation model in MATLAB/Simulink to maintain power factor above 0.95 under variable inductive industrial loads.",
     tags: ["MATLAB", "Simulink", "Industrial Control"],
     image_url: "",
+    image_position: "center center",
     live_url: "",
     github_url: "",
     is_featured: false
@@ -364,6 +370,7 @@ export const DEFAULT_PROJECTS = [
     description: "Conducted solar irradiance modeling, inverter sizing, shadow analysis, string sizing, and cost-benefit ROI analysis with PVSyst and AutoCAD.",
     tags: ["PVSyst", "Solar PV", "AutoCAD"],
     image_url: "",
+    image_position: "center center",
     live_url: "",
     github_url: "",
     is_featured: false
@@ -377,6 +384,7 @@ export const DEFAULT_PROJECTS = [
     description: "Designed star-delta starting schematics, safety interlocks, overload relay calculations, and automated motor control sequences.",
     tags: ["PSNA", "Motor Control", "AutoCAD"],
     image_url: "",
+    image_position: "center center",
     live_url: "",
     github_url: "",
     is_featured: false
@@ -390,6 +398,7 @@ export const DEFAULT_PROJECTS = [
     description: "Developed an automated MS Excel dashboard with dynamic pricing models, bill of quantities (BOQ) generators, and margin analysis.",
     tags: ["MS Excel", "Data Analytics", "BOQ"],
     image_url: "",
+    image_position: "center center",
     live_url: "",
     github_url: "",
     is_featured: false

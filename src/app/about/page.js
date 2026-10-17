@@ -130,7 +130,7 @@ export default function AboutPage() {
                 <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#10B981] to-teal-600 opacity-25 blur-xl group-hover:opacity-50 transition duration-500" />
                 
                 <div className="relative bg-[#111622] border border-[#1e2638] rounded-3xl p-5 shadow-2xl space-y-5">
-                  <div className="relative w-full aspect-[4/5] sm:h-[460px] rounded-2xl overflow-hidden bg-[#0b0f17]">
+                  <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-[#0b0f17]">
                     <Image
                       src={aboutData.profile_image || "/ashifur-about.jpg"}
                       alt={heroData.name || "Ashifur Rahman"}

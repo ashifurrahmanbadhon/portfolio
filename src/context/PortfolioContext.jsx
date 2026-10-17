@@ -91,6 +91,7 @@ export function PortfolioProvider({ children }) {
           short_description: p.short_description || '',
           full_description: p.full_description || '',
           image_url: p.image_url || '',
+          image_position: p.image_position || 'center center',
           tags: Array.isArray(p.tags) ? p.tags : [],
           live_url: p.live_url || '',
           github_url: p.github_url || '',

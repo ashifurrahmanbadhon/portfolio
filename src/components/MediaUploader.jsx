@@ -54,6 +54,78 @@ function parsePosition(posStr) {
   return { x: Math.max(0, Math.min(100, Math.round(x))), y: Math.max(0, Math.min(100, Math.round(y))) };
 }
 
+function getPreviewAspectStyle(previewAspect, fallbackAspect = "wide") {
+  const raw = previewAspect || (fallbackAspect === "portrait" ? "4/5" : fallbackAspect === "square" ? "1/1" : "16/9");
+  const normalized = String(raw).replace(":", "/").trim();
+  const parts = normalized.split("/").map((n) => parseFloat(n.trim()));
+
+  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1]) && parts[1] > 0) {
+    const num = parts[0];
+    const den = parts[1];
+    const ratio = num / den;
+
+    if (ratio <= 1.05) {
+      return {
+        aspectRatio: `${num} / ${den}`,
+        height: "min(380px, 50vh)",
+        width: "auto",
+        maxWidth: "100%",
+        margin: "0 auto",
+      };
+    } else {
+      return {
+        aspectRatio: `${num} / ${den}`,
+        width: "100%",
+        maxHeight: "50vh",
+        margin: "0 auto",
+      };
+    }
+  }
+
+  return {
+    aspectRatio: "16 / 9",
+    width: "100%",
+    maxHeight: "50vh",
+    margin: "0 auto",
+  };
+}
+
+function getInlineAspectStyle(previewAspect, fallbackAspect = "wide") {
+  const raw = previewAspect || (fallbackAspect === "portrait" ? "4/5" : fallbackAspect === "square" ? "1/1" : "16/9");
+  const normalized = String(raw).replace(":", "/").trim();
+  const parts = normalized.split("/").map((n) => parseFloat(n.trim()));
+
+  if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1]) && parts[1] > 0) {
+    const num = parts[0];
+    const den = parts[1];
+    const ratio = num / den;
+
+    if (ratio <= 1.05) {
+      return {
+        aspectRatio: `${num} / ${den}`,
+        height: "220px",
+        width: "auto",
+        maxWidth: "100%",
+        margin: "0 auto",
+      };
+    } else {
+      return {
+        aspectRatio: `${num} / ${den}`,
+        width: "100%",
+        maxWidth: "340px",
+        margin: "0 auto",
+      };
+    }
+  }
+
+  return {
+    aspectRatio: "16 / 9",
+    width: "100%",
+    maxWidth: "340px",
+    margin: "0 auto",
+  };
+}
+
 async function optimizeImageIfNeeded(file) {
   if (!file || !file.type || !file.type.startsWith("image/") || file.type.includes("svg") || file.type.includes("gif")) {
     return file;
@@ -124,7 +196,11 @@ export default function MediaUploader({
   accept,
   maxSizeMB = 15,
   aspectRatio = "wide", // 'square' | 'portrait' | 'video' | 'wide'
+  previewAspect,
 }) {
+  const modalAspectStyle = getPreviewAspectStyle(previewAspect, aspectRatio);
+  const inlineAspectStyle = getInlineAspectStyle(previewAspect, aspectRatio);
+
   const { showToast } = useToast();
   const fileInputRef = useRef(null);
   const modalBoxRef = useRef(null);
@@ -563,7 +639,8 @@ export default function MediaUploader({
                   />
                 ) : (
                   <div
-                    className={`relative w-44 sm:w-52 h-56 sm:h-64 rounded-2xl overflow-hidden shadow-2xl border border-[#1E2638] bg-[#0A0E18] group/preview mx-auto ${
+                    style={inlineAspectStyle}
+                    className={`relative rounded-2xl overflow-hidden shadow-2xl border border-[#1E2638] bg-[#0A0E18] group/preview mx-auto ${
                       onPositionChange && !uploading ? "cursor-pointer" : ""
                     }`}
                     onClick={handleOpenExistingReposition}
@@ -720,7 +797,8 @@ export default function MediaUploader({
                 ref={modalBoxRef}
                 onMouseDown={handleModalDragStart}
                 onTouchStart={handleModalDragStart}
-                className={`relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden bg-[#070A0F] border select-none transition-all ${
+                style={modalAspectStyle}
+                className={`relative rounded-2xl overflow-hidden bg-[#070A0F] border select-none transition-all ${
                   isDraggingModal
                     ? "border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.35)] cursor-grabbing"
                     : "border-emerald-500/40 hover:border-emerald-400 cursor-grab"
@@ -749,11 +827,6 @@ export default function MediaUploader({
                   </div>
                 )}
 
-                {/* Instruction Badge */}
-                <div className="absolute top-3 left-3 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md text-[11px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
-                  <Move className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Reposition Photo</span>
-                </div>
               </div>
             </div>
 

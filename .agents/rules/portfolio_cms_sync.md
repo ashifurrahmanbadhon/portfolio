@@ -1,17 +1,9 @@
-# Strict Two-Way Synchronization Rule: Portfolio & Central CMS
+# Portfolio CMS Synchronization Flow
 
-Whenever Antigravity or any AI assistant adds, edits, or modifies anything in the portfolio (content, images, links, copy, or settings):
-
-1. **Full Database Synchronization**:
-   - Every content change must be updated in both **Neon PostgreSQL (Cloud)** and **SQLite (`portfolio.db`)**.
-   - Separate tables (e.g. `hero`, `about`, `experiences`, `educations`, `skills`, `projects`, `contact_channels`, `social_links`, `homepage_cta`, `page_headers`, `resumes`) must remain dedicated, clean, and up to date.
-
-2. **CMS Admin Parity**:
-   - The CMS admin console (`src/app/admin/page.js`) must reflect the exact same state, inputs, toggles, and default values.
-   - Any new feature or toggle on the public portfolio must have a corresponding control in the CMS admin console.
-
-3. **Fallback Defaults (`portfolioDefaults.js`)**:
-   - `src/lib/portfolioDefaults.js` must always be updated to match the latest portfolio content for immediate hydration, SSR, and offline safety.
-
-4. **Instant Invalidation & Reactive Refresh**:
-   - Clear and bump cache versions in `PortfolioContext.jsx` and `src/app/admin/page.js` so neither the user nor the visitor ever sees stale content.
+1. **Source of Truth**: Neon PostgreSQL (Cloud) persists all updates via dedicated per-section tables.
+2. **Local Dual-Write**: SQLite (`portfolio.db`) mirrors every cloud table schema and write in real-time.
+3. **Immediate Cache Invalidation**: `invalidatePortfolioContentCache()` runs after DB writes commit (~2s refresh).
+4. **Code & Deployment Flow**: Local Git changes → Push to GitHub `main` → Vercel auto-deploy pipeline triggers.
+5. **Admin Panel Parity**: Every admin input round-trips to DB (`PUT /api/content`) with zero local-only state.
+6. **Fallback Defaults**: `src/lib/portfolioDefaults.js` stays in sync with DB for instant SSR and hydration.
+7. **Drift Verification**: `node scripts/audit_sync.cjs` validates 0 drift across Neon, SQLite, and `/api/content`.

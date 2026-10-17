@@ -1,3 +1,4 @@
+try { process.loadEnvFile('.env.local'); } catch (_) {}
 const { neon } = require('@neondatabase/serverless');
 const { DatabaseSync } = require('node:sqlite');
 
@@ -57,6 +58,7 @@ const REQUIRED_SCHEMAS = {
       { name: 'badge_text', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'introduction', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'profile_image', pgType: 'TEXT', sqliteType: 'TEXT' },
+      { name: 'profile_position', pgType: "TEXT DEFAULT 'center 15%'", sqliteType: "TEXT DEFAULT 'center 15%'" },
       { name: 'primary_btn_text', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'primary_btn_link', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'secondary_btn_text', pgType: 'TEXT', sqliteType: 'TEXT' },
@@ -73,6 +75,7 @@ const REQUIRED_SCHEMAS = {
       { name: 'description1', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'description2', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'profile_image', pgType: 'TEXT', sqliteType: 'TEXT' },
+      { name: 'profile_position', pgType: "TEXT DEFAULT 'center 12%'", sqliteType: "TEXT DEFAULT 'center 12%'" },
       { name: 'focus1_title', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'focus1_text', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'focus2_title', pgType: 'TEXT', sqliteType: 'TEXT' },
@@ -141,6 +144,7 @@ const REQUIRED_SCHEMAS = {
       { name: 'short_description', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'full_description', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'image_url', pgType: 'TEXT', sqliteType: 'TEXT' },
+      { name: 'image_position', pgType: "TEXT DEFAULT 'center center'", sqliteType: "TEXT DEFAULT 'center center'" },
       { name: 'additional_images_json', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'tags_json', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'category', pgType: 'TEXT', sqliteType: 'TEXT' },

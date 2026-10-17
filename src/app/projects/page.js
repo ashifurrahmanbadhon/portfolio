@@ -101,7 +101,7 @@ export default function ProjectsPage() {
               <div>
                 {/* Visual Thumbnail (renders if image uploaded) */}
                 {proj.image_url && (
-                  <div className="relative w-full h-44 rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638]">
+                  <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638]">
                     <Image
                       src={proj.image_url}
                       alt={proj.title}
