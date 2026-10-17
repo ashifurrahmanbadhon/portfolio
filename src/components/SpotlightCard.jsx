@@ -5,8 +5,8 @@ import { useRef, memo } from "react";
 const SpotlightCard = memo(function SpotlightCard({
   children,
   className = "",
-  spotlightColor = "rgba(16, 185, 129, 0.08)",
-  borderColor = "rgba(16, 185, 129, 0.15)",
+  spotlightColor = "rgba(16, 185, 129, 0.12)",
+  borderColor = "rgba(16, 185, 129, 0.45)",
   ...props
 }) {
   const cardRef = useRef(null);

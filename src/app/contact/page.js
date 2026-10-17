@@ -297,7 +297,7 @@ export default function ContactPage() {
           {/* Right Column: Interactive Form */}
           <SpotlightCard className="lg:col-span-7 bg-[#111622] p-8 sm:p-10 rounded-2xl border border-[#1e2638] shadow-2xl relative">
             <div className="mb-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Send an Instant Message</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 group-hover:text-[#10B981] transition">Send an Instant Message</h3>
               <p className="text-xs sm:text-sm text-gray-400">
                 Submit this form to record your inquiry directly in Ashifur's database and dispatch it immediately.
               </p>

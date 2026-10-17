@@ -25,6 +25,7 @@ import {
   Sun
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
+import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 
@@ -193,15 +194,17 @@ export default function Home() {
                 <Link
                   key={pIdx}
                   href="/about"
-                  className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-300 group block"
+                  className="block h-full"
                 >
-                  <Icon className="text-[#10B981] mb-3 group-hover:scale-110 transition" size={28} />
-                  <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
-                    {pillar.title}
-                  </h4>
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    {pillar.subtitle || pillar.description}
-                  </p>
+                  <SpotlightCard className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] h-full">
+                    <Icon className="text-[#10B981] mb-3 group-hover:scale-110 transition" size={28} />
+                    <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
+                      {pillar.title}
+                    </h4>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      {pillar.subtitle || pillar.description}
+                    </p>
+                  </SpotlightCard>
                 </Link>
               );
             })}
@@ -228,16 +231,16 @@ export default function Home() {
 
             <div className="space-y-6">
               {experiences.slice(0, 2).map((exp, idx) => (
-                <div
+                <SpotlightCard
                   key={idx}
-                  className="bg-[#111622] p-6 sm:p-7 rounded-2xl border border-[#1e2638] hover:border-[#10B981]/40 transition space-y-3 group"
+                  className="bg-[#111622] p-6 sm:p-7 rounded-2xl border border-[#1e2638] space-y-3"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                       <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">{exp.role}</h4>
                       <p className="text-xs font-semibold text-gray-300 mt-0.5">{exp.organization}</p>
                     </div>
-                    <span className="text-xs font-mono text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-full w-fit">
+                    <span className="text-xs font-mono text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 px-3 py-1 rounded-full w-fit transition">
                       {exp.period}
                     </span>
                   </div>
@@ -246,7 +249,7 @@ export default function Home() {
                       <li key={pIdx}>{pt}</li>
                     ))}
                   </ul>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>
@@ -271,9 +274,9 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projectsData.slice(0, 3).map((proj) => (
-              <div
+              <SpotlightCard
                 key={proj.id}
-                className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 flex flex-col justify-between hover:border-[#10B981]/40 hover:scale-[1.01] transition duration-300 group overflow-hidden"
+                className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 flex flex-col justify-between hover:scale-[1.01] transition duration-300"
               >
                 <div>
                   {proj.image_url && (
@@ -304,12 +307,15 @@ export default function Home() {
 
                 <div className="flex flex-wrap gap-2 pt-4 border-t border-[#1e2638]/70">
                   {(proj.tags || []).map((tag, tIdx) => (
-                    <span key={tIdx} className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638]">
+                    <span
+                      key={tIdx}
+                      className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
+                    >
                       {tag}
                     </span>
                   ))}
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
         </section>
@@ -334,18 +340,18 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {skillsData.map((cat, idx) => (
-                <div key={idx} className="bg-[#0b0f17] p-6 rounded-2xl border border-[#1e2638] space-y-4">
+                <SpotlightCard key={idx} className="bg-[#0b0f17] p-6 rounded-2xl border border-[#1e2638] space-y-4">
                   <div className="flex items-center gap-3 pb-3 border-b border-[#1e2638]">
-                    <div className="p-2 rounded-lg bg-[#10B981]/10 text-[#10B981]">
+                    <div className="p-2 rounded-lg bg-[#10B981]/10 text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition">
                       <Monitor size={20} />
                     </div>
-                    <h4 className="font-bold text-white">{cat.category}</h4>
+                    <h4 className="font-bold text-white group-hover:text-[#10B981] transition">{cat.category}</h4>
                   </div>
                   <div className="space-y-3 pt-2">
                     {cat.items.map((skill, sIdx) => (
                       <div key={sIdx}>
                         <div className="flex justify-between text-xs font-medium mb-1">
-                          <span className="text-gray-200">{skill.name}</span>
+                          <span className="text-gray-200 group-hover:text-[#10B981] transition">{skill.name}</span>
                           <span className="text-[#10B981] font-mono">{skill.level}%</span>
                         </div>
                         <div className="w-full bg-[#1e2638] rounded-full h-1.5">
@@ -354,7 +360,7 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>
@@ -379,15 +385,15 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Main Degree Card */}
           {educations && educations.length > 0 && (
-            <div className="bg-[#111622] p-8 rounded-2xl border border-[#1e2638] space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981]">
+            <SpotlightCard className="bg-[#111622] p-8 rounded-2xl border border-[#1e2638] space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition">
                 <GraduationCap size={24} />
               </div>
               <div>
                 <span className="text-xs font-mono text-[#10B981] uppercase tracking-wider">
                   {educations[0].period || "Degree Completed"}
                 </span>
-                <h4 className="text-lg font-bold text-white mt-1">{educations[0].degree}</h4>
+                <h4 className="text-lg font-bold text-white mt-1 group-hover:text-[#10B981] transition">{educations[0].degree}</h4>
                 <p className="text-sm text-gray-400 mt-1">{educations[0].institution}</p>
               </div>
               {educations[0].description && (
@@ -395,28 +401,28 @@ export default function Home() {
                   {educations[0].description}
                 </p>
               )}
-            </div>
+            </SpotlightCard>
           )}
 
           {/* Dynamic Certifications Box */}
-          <div className="bg-[#111622] p-8 rounded-2xl border border-[#1e2638] space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981]">
+          <SpotlightCard className="bg-[#111622] p-8 rounded-2xl border border-[#1e2638] space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition">
               <ShieldCheck size={24} />
             </div>
             <div>
               <span className="text-xs font-mono text-[#10B981] uppercase tracking-wider">Certifications &amp; Training</span>
-              <h4 className="text-lg font-bold text-white mt-1">Specialized Engineering Modules</h4>
+              <h4 className="text-lg font-bold text-white mt-1 group-hover:text-[#10B981] transition">Specialized Engineering Modules</h4>
               <p className="text-sm text-gray-400 mt-1">Industry Standards &amp; Practical Training</p>
             </div>
             <ul className="text-xs text-gray-400 space-y-2 pt-2 border-t border-[#1e2638]">
               {(certifications || []).slice(0, 3).map((cert, cIdx) => (
-                <li key={cIdx} className="flex items-center gap-2">
+                <li key={cIdx} className="flex items-center gap-2 group-hover:text-gray-200 transition">
                   <CheckCircle2 size={14} className="text-[#10B981] shrink-0" />
                   <span>{cert.title}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </SpotlightCard>
         </div>
       </section>
 

@@ -53,12 +53,12 @@ export default function EducationPage() {
 
         <div className="space-y-6">
           {educations.map((edu, idx) => (
-            <div
+            <SpotlightCard
               key={idx}
               className={`bg-[#111622] rounded-2xl border p-6 sm:p-8 transition duration-300 ${
                 idx === 0
                   ? 'border-[#10B981]/40 shadow-[0_0_30px_rgba(16,185,129,0.06)]'
-                  : 'border-[#1e2638] hover:border-[#10B981]/30'
+                  : 'border-[#1e2638]'
               }`}
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#1e2638]">
@@ -68,7 +68,7 @@ export default function EducationPage() {
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-lg sm:text-xl font-bold text-white">
+                      <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#10B981] transition">
                         {edu.degree}
                       </h3>
                       {edu.badge_text ? (
@@ -114,14 +114,14 @@ export default function EducationPage() {
                   {edu.highlights.map((h, hIdx) => (
                     <span
                       key={hIdx}
-                      className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638]"
+                      className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
                     >
                       {h}
                     </span>
                   ))}
                 </div>
               )}
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </section>
@@ -145,7 +145,7 @@ export default function EducationPage() {
                     <div className="p-2 rounded-lg bg-[#10B981]/10 text-[#10B981]">
                       <BookOpen size={18} />
                     </div>
-                    <h4 className="font-bold text-white text-sm sm:text-base">{pillar.title}</h4>
+                    <h4 className="font-bold text-white text-sm sm:text-base group-hover:text-[#10B981] transition">{pillar.title}</h4>
                   </div>
 
                   <ul className="space-y-2.5 text-xs text-gray-300">
@@ -176,9 +176,9 @@ export default function EducationPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {certifications.map((cert, idx) => (
-              <div
+              <SpotlightCard
                 key={idx}
-                className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] hover:border-[#10B981]/40 transition duration-300 flex flex-col justify-between group"
+                className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -202,14 +202,14 @@ export default function EducationPage() {
                 <div className="mt-6 pt-4 border-t border-[#1e2638]/70 flex items-center gap-1.5 text-xs text-emerald-400 font-mono">
                   <Check size={14} /> Verified Credential
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
 
           {/* CTA Bar */}
-          <div className="mt-16 bg-[#111622] border border-[#1e2638] rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <SpotlightCard className="mt-16 bg-[#111622] border border-[#1e2638] rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div className="space-y-1">
-              <h4 className="text-lg font-bold text-white">Interested in reviewing verified academic transcripts?</h4>
+              <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">Interested in reviewing verified academic transcripts?</h4>
               <p className="text-xs text-gray-400">Download Ashifur's official Curriculum Vitae or request specific coursework verification.</p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -227,7 +227,7 @@ export default function EducationPage() {
                 Get In Touch <ArrowRight size={15} />
               </Link>
             </div>
-          </div>
+          </SpotlightCard>
         </section>
       )}
 

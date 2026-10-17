@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
+import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 
@@ -72,7 +73,7 @@ export default function ExperiencePage() {
               <div className="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-[#10B981] ring-4 ring-[#0b0f17] shadow-[0_0_12px_rgba(16,185,129,0.5)]" />
 
               {/* Card Container */}
-              <div className="bg-[#111622] p-6 sm:p-8 rounded-2xl border border-[#1e2638] hover:border-[#10B981]/50 transition duration-300 space-y-5 group">
+              <SpotlightCard className="bg-[#111622] p-6 sm:p-8 rounded-2xl border border-[#1e2638] space-y-5">
                 
                 {/* Header row */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1e2638]/70 pb-4">
@@ -115,7 +116,7 @@ export default function ExperiencePage() {
                     {exp.tools.map((tool, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[11px] font-mono text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded border border-[#10B981]/25"
+                        className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
                       >
                         {tool}
                       </span>
@@ -123,15 +124,15 @@ export default function ExperiencePage() {
                   </div>
                 )}
 
-              </div>
+              </SpotlightCard>
             </div>
           ))}
         </div>
 
         {/* CTA Bar */}
-        <div className="mt-16 bg-[#111622] border border-[#1e2638] rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <SpotlightCard className="mt-16 bg-[#111622] border border-[#1e2638] rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1">
-            <h4 className="text-lg font-bold text-white">Need a detailed operational breakdown?</h4>
+            <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">Need a detailed operational breakdown?</h4>
             <p className="text-xs text-gray-400">Download Ashifur's official Curriculum Vitae with complete project timelines.</p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -149,7 +150,7 @@ export default function ExperiencePage() {
               Direct Message <ArrowRight size={15} />
             </Link>
           </div>
-        </div>
+        </SpotlightCard>
 
       </section>
 

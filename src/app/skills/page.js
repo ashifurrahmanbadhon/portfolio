@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
+import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 
@@ -84,16 +85,16 @@ export default function SkillsPage() {
           {skillsData.map((category, idx) => {
             const CatIcon = getCategoryIcon(category.category);
             return (
-              <div
+              <SpotlightCard
                 key={idx}
-                className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 sm:p-7 flex flex-col justify-between hover:border-[#10B981]/40 transition duration-300"
+                className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 sm:p-7 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center gap-3 pb-4 border-b border-[#1e2638]/70 mb-5">
                     <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center border border-[#10B981]/30">
                       <CatIcon size={20} />
                     </div>
-                    <h3 className="font-bold text-white text-base sm:text-lg">
+                    <h3 className="font-bold text-white text-base sm:text-lg group-hover:text-[#10B981] transition">
                       {category.category}
                     </h3>
                   </div>
@@ -102,7 +103,7 @@ export default function SkillsPage() {
                     {category.items.map((skill, sIdx) => (
                       <div key={sIdx} className="space-y-1.5">
                         <div className="flex justify-between items-center text-xs">
-                          <span className="font-medium text-gray-200">{skill.name}</span>
+                          <span className="font-medium text-gray-200 group-hover:text-[#10B981] transition">{skill.name}</span>
                           <span className="font-mono text-[#10B981] font-bold">{skill.level}%</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-[#0b0f17] border border-[#1e2638] overflow-hidden p-0.5">
@@ -115,7 +116,7 @@ export default function SkillsPage() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </SpotlightCard>
             );
           })}
         </div>
@@ -137,9 +138,9 @@ export default function SkillsPage() {
               {softwareTools.map((tool, idx) => {
                 const ToolIcon = resolveIcon(tool.icon, Monitor);
                 return (
-                  <div
+                  <SpotlightCard
                     key={idx}
-                    className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] hover:border-[#10B981]/40 transition space-y-4 group"
+                    className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-4"
                   >
                     <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center border border-[#10B981]/30 group-hover:scale-105 transition">
@@ -155,7 +156,7 @@ export default function SkillsPage() {
                     <div>
                       <h4 className="font-bold text-white text-base group-hover:text-[#10B981] transition">{tool.name}</h4>
                       {tool.tool_type && (
-                        <p className="text-xs font-mono text-gray-400 mt-0.5">{tool.tool_type}</p>
+                        <p className="text-xs font-mono text-gray-400 group-hover:text-emerald-300 transition mt-0.5">{tool.tool_type}</p>
                       )}
                     </div>
 
@@ -164,7 +165,7 @@ export default function SkillsPage() {
                         {tool.summary}
                       </p>
                     )}
-                  </div>
+                  </SpotlightCard>
                 );
               })}
             </div>
@@ -191,7 +192,7 @@ export default function SkillsPage() {
                 return (
                   <div
                     key={idx}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-xs text-gray-200 transition"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/60 hover:text-[#10B981] hover:bg-[#10B981]/10 text-xs text-gray-200 transition duration-200 cursor-default"
                   >
                     <Check size={14} className="text-[#10B981] shrink-0" />
                     <span>{text}</span>

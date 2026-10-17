@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
+import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 
@@ -211,9 +212,9 @@ export default function AboutPage() {
             {pillars.map((pillar, idx) => {
               const Icon = resolveIcon(pillar.icon, Zap);
               return (
-                <div
+                <SpotlightCard
                   key={idx}
-                  className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] hover:border-[#10B981]/50 hover:bg-[#141b2a] transition duration-300 flex flex-col justify-between group"
+                  className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] flex flex-col justify-between"
                 >
                   <div>
                     <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 mb-5">
@@ -229,7 +230,7 @@ export default function AboutPage() {
                       {pillar.description}
                     </p>
                   </div>
-                </div>
+                </SpotlightCard>
               );
             })}
           </div>
@@ -247,22 +248,22 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {principles.map((pr, idx) => (
-                <div key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638]">
+                <SpotlightCard key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638]">
                   <div className="text-[#10B981] font-mono text-2xl font-bold mb-2">
                     {pr.number || String(idx + 1).padStart(2, "0") + "."}
                   </div>
-                  <h4 className="text-sm font-bold text-white mb-2">{pr.title}</h4>
+                  <h4 className="text-sm font-bold text-white mb-2 group-hover:text-[#10B981] transition">{pr.title}</h4>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     {pr.description}
                   </p>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
 
             {/* Bottom CTA Box */}
-            <div className="bg-gradient-to-r from-[#111622] to-[#151e30] border border-[#1e2638] p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+            <SpotlightCard className="bg-gradient-to-r from-[#111622] to-[#151e30] border border-[#1e2638] p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
               <div>
-                <h4 className="text-lg font-bold text-white">Looking to collaborate or recruit?</h4>
+                <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">Looking to collaborate or recruit?</h4>
                 <p className="text-xs text-gray-400 mt-1">Explore my career journey or reach out for engineering consultation.</p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -279,7 +280,7 @@ export default function AboutPage() {
                   Contact Ashifur
                 </Link>
               </div>
-            </div>
+            </SpotlightCard>
           </div>
         </section>
       )}

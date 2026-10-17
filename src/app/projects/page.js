@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
+import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 
 export default function ProjectsPage() {
@@ -93,9 +94,9 @@ export default function ProjectsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((proj) => (
-            <div
+            <SpotlightCard
               key={proj.id}
-              className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 sm:p-7 flex flex-col justify-between hover:border-[#10B981]/50 hover:bg-[#131b2a] hover:scale-[1.01] transition-all duration-300 group shadow-lg overflow-hidden"
+              className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 sm:p-7 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300 shadow-lg"
             >
               <div>
                 {/* Visual Thumbnail (renders if image uploaded) */}
@@ -163,7 +164,7 @@ export default function ProjectsPage() {
                     {proj.tags.map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/20 transition"
+                        className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
                       >
                         {tag}
                       </span>
@@ -172,17 +173,17 @@ export default function ProjectsPage() {
                 )}
 
                 <div className="flex items-center justify-between text-xs font-mono text-[#10B981] pt-1">
-                  <span className="inline-flex items-center gap-1.5 text-gray-400 text-[11px]">
+                  <span className="inline-flex items-center gap-1.5 text-gray-400 text-[11px] group-hover:text-gray-300 transition">
                     <FileCheck size={14} className="text-[#10B981]" /> Verified Implementation
                   </span>
                   {proj.category && (
-                    <span className="text-[10px] uppercase text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded">
+                    <span className="text-[10px] uppercase text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded group-hover:text-emerald-300 group-hover:bg-emerald-500/20 transition">
                       {proj.category}
                     </span>
                   )}
                 </div>
               </div>
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </section>
@@ -201,15 +202,15 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {projectMethodologies.map((step, idx) => (
-                <div key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-3">
+                <SpotlightCard key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-3">
                   <span className="text-2xl font-black font-mono text-[#10B981]">
                     {step.step_number || String(idx + 1).padStart(2, "0")}
                   </span>
-                  <h4 className="text-sm font-bold text-white">{step.title}</h4>
+                  <h4 className="text-sm font-bold text-white group-hover:text-[#10B981] transition">{step.title}</h4>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     {step.description}
                   </p>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>
