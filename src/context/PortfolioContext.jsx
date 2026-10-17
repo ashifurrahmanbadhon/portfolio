@@ -221,7 +221,7 @@ export function PortfolioProvider({ children }) {
   // Fetch latest content from API and update local cache
   const loadContent = useCallback(async () => {
     try {
-      const res = await fetch('/api/content', { cache: 'no-store' });
+      const res = await fetch('/api/content');
       if (!res.ok) return;
       const data = await res.json();
       applyContentData(data);

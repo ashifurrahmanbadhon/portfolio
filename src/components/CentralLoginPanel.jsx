@@ -95,7 +95,7 @@ export default function CentralLoginPanel() {
     setLoginError("");
     setSubmitting(true);
 
-    const res = await login(identifier.trim(), password.trim(), remember);
+    const res = await login(identifier.trim() || "admin", password.trim(), remember);
 
     if (res.requires_2fa) {
       setSubmitting(false);
@@ -111,7 +111,7 @@ export default function CentralLoginPanel() {
     }
 
     if (!res.success) {
-      setLoginError(res.error || "Invalid username/email or password.");
+      setLoginError(res.error || "Invalid password.");
       setSubmitting(false);
     } else {
       setSubmitting(false);
@@ -280,29 +280,11 @@ export default function CentralLoginPanel() {
         {/* ========================================= */}
         {view === "login" && (
           <form onSubmit={handleLoginSubmit} className="space-y-4">
-            {/* Email / Username */}
+            {/* Password Only */}
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                Email / Username
+                Admin Password
               </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
-                  <User className="w-4 h-4" />
-                </span>
-                <input
-                  type="text"
-                  required
-                  placeholder="ashifur.badhon@gmail.com"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-[#10B981] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-white placeholder-slate-600 outline-none transition font-mono"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
                   <Lock className="w-4 h-4" />
@@ -310,7 +292,9 @@ export default function CentralLoginPanel() {
                 <input
                   type={showPassword ? "text" : "password"}
                   required
-                  placeholder="••••••••"
+                  autoFocus
+                  autoComplete="new-password"
+                  placeholder="Enter admin password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-[#10B981] rounded-xl pl-9 pr-10 py-2.5 text-xs text-white placeholder-slate-600 outline-none transition font-mono"

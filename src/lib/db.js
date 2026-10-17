@@ -567,15 +567,69 @@ export async function updateAdminProfile(adminId, { fullName, email, avatar, cur
   }
 }
 
+let portfolioCache = null;
+let portfolioCacheExpiry = 0;
+
+export function invalidatePortfolioContentCache() {
+  portfolioCache = null;
+  portfolioCacheExpiry = 0;
+}
+
 // ==========================================
-// Portfolio Content Query (Full Structured Object)
+// Portfolio Content Query (Full Structured Object - Parallelized & Cached)
 // ==========================================
 export async function getPortfolioContent() {
-  // 1. Hero
-  const hero = (await queryOne("SELECT * FROM hero WHERE id = 1")) || {};
+  const now = Date.now();
+  if (portfolioCache && now < portfolioCacheExpiry) {
+    return portfolioCache;
+  }
 
-  // 2. About
-  const about = (await queryOne("SELECT * FROM about WHERE id = 1")) || {};
+  const [
+    heroRes,
+    aboutRes,
+    highlights,
+    expRows,
+    eduRows,
+    skills,
+    skill_badges,
+    projRows,
+    services,
+    social_links_res,
+    contact_channels_res,
+    resumeRes,
+    site_settings_res,
+    certifications,
+    experience_metrics,
+    cwRows,
+    software_tools,
+    project_methodologies,
+    phRows,
+    homepage_cta_res
+  ] = await Promise.all([
+    queryOne("SELECT * FROM hero WHERE id = 1"),
+    queryOne("SELECT * FROM about WHERE id = 1"),
+    queryAll("SELECT * FROM highlights ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM experiences ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM projects WHERE is_published = 1 ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM services ORDER BY sort_order ASC, id ASC"),
+    queryOne("SELECT * FROM social_links WHERE id = 1"),
+    queryAll("SELECT * FROM contact_channels ORDER BY sort_order ASC, id ASC").catch(() => []),
+    queryOne("SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1"),
+    queryOne("SELECT * FROM site_settings WHERE id = 1"),
+    queryAll("SELECT * FROM certifications ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM experience_metrics ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM coursework_pillars ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM software_tools ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM page_headers"),
+    queryOne("SELECT * FROM homepage_cta WHERE id = 1")
+  ]);
+
+  const hero = heroRes || {};
+  const about = aboutRes || {};
   let aboutPillars = [];
   let aboutPrinciples = [];
   try {
@@ -590,12 +644,7 @@ export async function getPortfolioContent() {
     principles: aboutPrinciples,
   };
 
-  // 3. Highlights
-  const highlights = (await queryAll("SELECT * FROM highlights ORDER BY sort_order ASC, id ASC")) || [];
-
-  // 4. Experiences
-  const expRows = (await queryAll("SELECT * FROM experiences ORDER BY sort_order ASC, id ASC")) || [];
-  const experiences = expRows.map((r) => {
+  const experiences = (expRows || []).map((r) => {
     let points = [];
     try {
       points = JSON.parse(r.description_points || "[]");
@@ -605,9 +654,7 @@ export async function getPortfolioContent() {
     return { ...r, description_points: points };
   });
 
-  // 5. Educations
-  const eduRows = (await queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC")) || [];
-  const educations = eduRows.map((ed) => {
+  const educations = (eduRows || []).map((ed) => {
     let highlights = [];
     try {
       highlights = JSON.parse(ed.highlights_json || "[]");
@@ -615,22 +662,15 @@ export async function getPortfolioContent() {
     return { ...ed, highlights };
   });
 
-  // 6. Skills
-  const skills = (await queryAll("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC")) || [];
   const grouped_skills = {};
-  for (const s of skills) {
+  for (const s of (skills || [])) {
     if (!grouped_skills[s.category]) {
       grouped_skills[s.category] = [];
     }
     grouped_skills[s.category].push(s);
   }
 
-  // 7. Skill Badges
-  const skill_badges = (await queryAll("SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC")) || [];
-
-  // 8. Projects
-  const projRows = (await queryAll("SELECT * FROM projects WHERE is_published = 1 ORDER BY sort_order ASC, id ASC")) || [];
-  const projects = projRows.map((p) => {
+  const projects = (projRows || []).map((p) => {
     let tags = [];
     let additionalImages = [];
     try {
@@ -646,35 +686,12 @@ export async function getPortfolioContent() {
     return { ...p, tags, additional_images: additionalImages };
   });
 
-  // 9. Services
-  const services = (await queryAll("SELECT * FROM services ORDER BY sort_order ASC, id ASC")) || [];
+  const social_links = social_links_res || {};
+  const contact_channels = contact_channels_res || [];
+  const resume = resumeRes || {};
+  const site_settings = site_settings_res || {};
 
-  // 10. Social Links
-  const social_links = (await queryOne("SELECT * FROM social_links WHERE id = 1")) || {};
-
-  // 10b. Contact Channels (Separate Dedicated Table)
-  let contact_channels = [];
-  try {
-    contact_channels = (await queryAll("SELECT * FROM contact_channels ORDER BY sort_order ASC, id ASC")) || [];
-  } catch (err) {
-    console.warn("Could not query contact_channels:", err.message);
-  }
-
-  // 11. Resume
-  const resume = (await queryOne("SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1")) || {};
-
-  // 12. Site Settings
-  const site_settings = (await queryOne("SELECT * FROM site_settings WHERE id = 1")) || {};
-
-  // 13. Certifications & Training
-  const certifications = (await queryAll("SELECT * FROM certifications ORDER BY sort_order ASC, id ASC")) || [];
-
-  // 14. Career & Experience Metrics
-  const experience_metrics = (await queryAll("SELECT * FROM experience_metrics ORDER BY sort_order ASC, id ASC")) || [];
-
-  // 15. Undergraduate Coursework Pillars
-  const cwRows = (await queryAll("SELECT * FROM coursework_pillars ORDER BY sort_order ASC, id ASC")) || [];
-  const coursework_pillars = cwRows.map((r) => {
+  const coursework_pillars = (cwRows || []).map((r) => {
     let courses = [];
     try {
       courses = JSON.parse(r.courses_json || "[]");
@@ -682,39 +699,30 @@ export async function getPortfolioContent() {
     return { ...r, courses };
   });
 
-  // 16. Core Software Tools
-  const software_tools = (await queryAll("SELECT * FROM software_tools ORDER BY sort_order ASC, id ASC")) || [];
-
-  // 17. Engineering Project Methodologies
-  const project_methodologies = (await queryAll("SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC")) || [];
-
-  // 18. Page Headers (Map keyed by page_key)
-  const phRows = (await queryAll("SELECT * FROM page_headers")) || [];
   const page_headers = {};
-  for (const ph of phRows) {
+  for (const ph of (phRows || [])) {
     page_headers[ph.page_key] = ph;
   }
 
-  // 19. Homepage Collaboration CTA
-  const homepage_cta = (await queryOne("SELECT * FROM homepage_cta WHERE id = 1")) || {};
+  const homepage_cta = homepage_cta_res || {};
 
-  return {
+  const result = {
     success: true,
     hero,
     about: aboutEnhanced,
-    highlights,
+    highlights: highlights || [],
     experiences,
-    experience_metrics,
+    experience_metrics: experience_metrics || [],
     educations,
     coursework_pillars,
-    certifications,
-    skills,
+    certifications: certifications || [],
+    skills: skills || [],
     grouped_skills,
-    skill_badges,
-    software_tools,
+    skill_badges: skill_badges || [],
+    software_tools: software_tools || [],
     projects,
-    project_methodologies,
-    services,
+    project_methodologies: project_methodologies || [],
+    services: services || [],
     social_links,
     contact_channels,
     resume,
@@ -722,12 +730,17 @@ export async function getPortfolioContent() {
     page_headers,
     homepage_cta,
   };
+
+  portfolioCache = result;
+  portfolioCacheExpiry = Date.now() + 15000; // 15-second cache
+  return result;
 }
 
 // ==========================================
 // Portfolio Section Updates
 // ==========================================
 export async function updatePortfolioSection(section, data, user = "admin") {
+  invalidatePortfolioContentCache();
   const now = new Date().toISOString();
 
   switch (section) {
