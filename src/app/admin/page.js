@@ -18,6 +18,8 @@ import {
   Trash2,
   Edit2,
   Check,
+  CheckSquare,
+  Square,
   X,
   ArrowUp,
   ArrowDown,
@@ -60,7 +62,7 @@ const DEFAULT_HERO = {
   badge_text: "Available for Engineering, Technology & AI Opportunities",
   introduction:
     "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
-  profile_image: "/ashifur-dark-blend.webp",
+  profile_image: "/ashifur.jpeg",
   primary_btn_text: "Contact Me",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download CV",
@@ -76,7 +78,7 @@ const DEFAULT_ABOUT = {
     "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2:
     "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
-  profile_image: "/ashifur-about-blend.webp",
+  profile_image: "/ashifur.jpeg",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",
@@ -128,6 +130,60 @@ function AdminConsoleContent() {
   // Active category filter for skills & projects
   const [skillCategoryFilter, setSkillCategoryFilter] = useState("all");
   const [projectCategoryFilter, setProjectCategoryFilter] = useState("all");
+
+  // Inbound messages bulk selection state
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [deletingBulk, setDeletingBulk] = useState(false);
+
+  const toggleSelectMessage = (id) => {
+    setSelectedMessages((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const selectAllMessages = () => {
+    if (selectedMessages.length === messages.length && messages.length > 0) {
+      setSelectedMessages([]);
+    } else {
+      setSelectedMessages(messages.map((m) => m.id));
+    }
+  };
+
+  const handleBulkDeleteMessages = async () => {
+    if (selectedMessages.length === 0) return;
+    if (!window.confirm(`Delete ${selectedMessages.length} selected message(s) permanently?`)) return;
+    setDeletingBulk(true);
+    try {
+      if (api.deleteContactMessages) {
+        await api.deleteContactMessages(selectedMessages);
+      } else {
+        await Promise.all(selectedMessages.map((id) => api.deleteContactMessage(id)));
+      }
+      setMessages((prev) => prev.filter((m) => !selectedMessages.includes(m.id)));
+      showToast(`${selectedMessages.length} message(s) deleted successfully`, "info");
+      setSelectedMessages([]);
+    } catch (err) {
+      console.error("Bulk delete failed:", err);
+      showToast("Failed to delete selected messages", "error");
+    } finally {
+      setDeletingBulk(false);
+    }
+  };
+
+  const handleBulkMarkRead = async () => {
+    if (selectedMessages.length === 0) return;
+    try {
+      await Promise.all(selectedMessages.map((id) => api.markContactMessageRead(id, 1)));
+      setMessages((prev) =>
+        prev.map((m) => (selectedMessages.includes(m.id) ? { ...m, is_read: 1 } : m))
+      );
+      showToast(`${selectedMessages.length} message(s) marked as read`, "success");
+      setSelectedMessages([]);
+    } catch (err) {
+      console.error("Bulk mark read failed:", err);
+      showToast("Failed to mark messages as read", "error");
+    }
+  };
 
   // Modals state
   const [modalType, setModalType] = useState(null); // 'experience' | 'education' | 'skill' | 'project' | 'highlight'
@@ -299,7 +355,8 @@ function AdminConsoleContent() {
     { id: "education", label: "Academic Education", pageNum: "Page 4", title: "Academic Background & Certifications", subtitle: `Manage ${educations.length} accredited degrees, certifications, and coursework`, icon: GraduationCap, liveUrl: "/education", count: educations.length },
     { id: "skills", label: "Technical Skills", pageNum: "Page 5", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
     { id: "projects", label: "Engineering Projects", pageNum: "Page 6", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
-    { id: "contact", label: "Contact & Inbox", pageNum: "Page 7", title: "Contact Hub & Visitor Inquiries", subtitle: "View incoming client messages and update communication channels", icon: Mail, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length },
+    { id: "contact", label: "Contact Info", pageNum: "Page 7", title: "Contact Hub & Communication Channels", subtitle: "Update email, phone, WhatsApp, office location, and social media channels", icon: Mail, liveUrl: "/contact" },
+    { id: "inbox", label: "Messages Inbox", pageNum: "Inbox", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length, count: messages.length },
     { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
   ];
 
@@ -1499,115 +1556,215 @@ function AdminConsoleContent() {
               </div>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Section C: Inbound Messages Inbox */}
-          <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1E2638]">
+      {/* ============================================================== */}
+      {/* TAB: INBOUND MESSAGES INBOX (Dedicated Page)                   */}
+      {/* ============================================================== */}
+      {currentTab === "inbox" && (
+        <div className="space-y-6">
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
+            {/* Header and Bulk Action Toolbar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E2638]">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-emerald-400" />
+                  <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-emerald-400" />
                     Inbound Messages Inbox
-                  </h3>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                  </h2>
+                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
                     {messages.length} total
                   </span>
+                  {messages.filter((m) => !m.is_read).length > 0 && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30 font-bold">
+                      {messages.filter((m) => !m.is_read).length} new
+                    </span>
+                  )}
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Direct inquiries submitted by visitors from the <code className="text-emerald-400">/contact</code> page.
+                <p className="text-xs text-slate-400 mt-1">
+                  Direct visitor inquiries submitted via the <code className="text-emerald-400">/contact</code> page. Select messages to mark or delete in bulk.
                 </p>
               </div>
 
-              <button
-                onClick={async () => {
-                  const res = await api.getContactMessages();
-                  if (res && res.messages) {
-                    setMessages(res.messages);
-                    showToast("Inbox refreshed!", "info");
-                  }
-                }}
-                className="px-3 py-1.5 rounded-xl bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono flex items-center gap-1.5 transition"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Refresh Inbox</span>
-              </button>
+              {/* Action Toolbar */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                {messages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={selectAllMessages}
+                    className={`px-3 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition cursor-pointer ${
+                      selectedMessages.length === messages.length && messages.length > 0
+                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                        : "bg-[#161C2A] text-slate-300 hover:text-white border-[#1E2638]"
+                    }`}
+                  >
+                    {selectedMessages.length === messages.length && messages.length > 0 ? (
+                      <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Square className="w-3.5 h-3.5 text-slate-400" />
+                    )}
+                    <span>
+                      {selectedMessages.length === messages.length && messages.length > 0
+                        ? "Deselect All"
+                        : `Select All (${messages.length})`}
+                    </span>
+                  </button>
+                )}
+
+                {selectedMessages.length > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleBulkMarkRead}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Mark Read ({selectedMessages.length})</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleBulkDeleteMessages}
+                      disabled={deletingBulk}
+                      className="px-3.5 py-1.5 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-mono font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>{deletingBulk ? "Deleting..." : `Delete Selected (${selectedMessages.length})`}</span>
+                    </button>
+                  </>
+                )}
+
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const res = await api.getContactMessages();
+                    if (res && res.messages) {
+                      setMessages(res.messages);
+                      showToast("Inbox refreshed!", "info");
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Refresh</span>
+                </button>
+              </div>
             </div>
 
+            {/* Messages Body */}
             {messages.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 text-xs">
-                No inquiries received yet. New visitor messages will show up here immediately.
+              <div className="py-16 text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                  <MessageSquare className="w-6 h-6" />
+                </div>
+                <p className="text-white font-medium text-sm">No Inquiries Received Yet</p>
+                <p className="text-slate-400 text-xs max-w-sm mx-auto">
+                  Visitor messages submitted through the contact form will be recorded and displayed here immediately.
+                </p>
               </div>
             ) : (
               <div className="space-y-3">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`p-4 rounded-xl border transition space-y-2 ${
-                      msg.is_read
-                        ? "bg-[#0A0D12] border-[#1E2638]"
-                        : "bg-[#0E1524] border-emerald-500/40 shadow-sm"
-                    }`}
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1E2638] pb-2">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            msg.is_read ? "bg-slate-600" : "bg-emerald-400 animate-pulse"
-                          }`}
-                        />
-                        <span className="font-bold text-white text-xs">{msg.name}</span>
-                        <a
-                          href={`mailto:${msg.email}`}
-                          className="text-[11px] font-mono text-emerald-400 hover:underline"
-                        >
-                          &lt;{msg.email}&gt;
-                        </a>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono text-slate-500">
-                          {msg.created_at ? new Date(msg.created_at).toLocaleString() : ""}
-                        </span>
-                        {!msg.is_read && (
+                {messages.map((msg) => {
+                  const isSelected = selectedMessages.includes(msg.id);
+                  return (
+                    <div
+                      key={msg.id}
+                      onClick={(e) => {
+                        if (e.target.closest("button") || e.target.closest("a")) return;
+                        toggleSelectMessage(msg.id);
+                      }}
+                      className={`p-4 sm:p-5 rounded-xl border transition-all space-y-2.5 cursor-pointer ${
+                        isSelected
+                          ? "bg-[#0e1726] border-emerald-500/70 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/40"
+                          : msg.is_read
+                          ? "bg-[#0A0D12] border-[#1E2638] hover:border-[#2a364f]"
+                          : "bg-[#0E1524] border-emerald-500/40 shadow-sm hover:border-emerald-500/60"
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#1E2638] pb-2.5">
+                        <div className="flex items-center gap-3">
                           <button
-                            onClick={async () => {
-                              await api.markContactMessageRead(msg.id, 1);
-                              setMessages(messages.map((m) => (m.id === msg.id ? { ...m, is_read: 1 } : m)));
-                              showToast("Message marked as read", "success");
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSelectMessage(msg.id);
                             }}
-                            className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition"
+                            className="p-1 text-slate-400 hover:text-emerald-400 transition cursor-pointer"
+                            title={isSelected ? "Deselect" : "Select message"}
                           >
-                            Mark Read
+                            {isSelected ? (
+                              <CheckSquare className="w-4 h-4 text-emerald-400" />
+                            ) : (
+                              <Square className="w-4 h-4 text-slate-500 hover:text-slate-300" />
+                            )}
                           </button>
-                        )}
-                        <button
-                          onClick={async () => {
-                            if (!window.confirm("Delete this message?")) return;
-                            await api.deleteContactMessage(msg.id);
-                            setMessages(messages.filter((m) => m.id !== msg.id));
-                            showToast("Message deleted", "info");
-                          }}
-                          className="p-1 text-slate-500 hover:text-red-400 transition"
-                          title="Delete Message"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
 
-                    {msg.subject && (
-                      <p className="text-xs font-semibold text-slate-200">
-                        Subject: {msg.subject}
+                          <span
+                            className={`w-2 h-2 rounded-full shrink-0 ${
+                              msg.is_read ? "bg-slate-600" : "bg-emerald-400 animate-pulse"
+                            }`}
+                          />
+                          <span className="font-bold text-white text-xs sm:text-sm">{msg.name}</span>
+                          <a
+                            href={`mailto:${msg.email}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-[11px] sm:text-xs font-mono text-emerald-400 hover:underline"
+                          >
+                            &lt;{msg.email}&gt;
+                          </a>
+                        </div>
+
+                        <div className="flex items-center gap-2 self-end sm:self-auto">
+                          <span className="text-[10px] font-mono text-slate-500">
+                            {msg.created_at ? new Date(msg.created_at).toLocaleString() : ""}
+                          </span>
+                          {!msg.is_read && (
+                            <button
+                              type="button"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                await api.markContactMessageRead(msg.id, 1);
+                                setMessages(messages.map((m) => (m.id === msg.id ? { ...m, is_read: 1 } : m)));
+                                showToast("Message marked as read", "success");
+                              }}
+                              className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition cursor-pointer"
+                            >
+                              Mark Read
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (!window.confirm("Delete this message?")) return;
+                              await api.deleteContactMessage(msg.id);
+                              setMessages(messages.filter((m) => m.id !== msg.id));
+                              setSelectedMessages((prev) => prev.filter((id) => id !== msg.id));
+                              showToast("Message deleted", "info");
+                            }}
+                            className="p-1 text-slate-500 hover:text-red-400 transition cursor-pointer"
+                            title="Delete Message"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {msg.subject && (
+                        <p className="text-xs font-semibold text-slate-200">
+                          Subject: <span className="text-white font-normal">{msg.subject}</span>
+                        </p>
+                      )}
+                      <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">
+                        {msg.message}
                       </p>
-                    )}
-                    <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
-                      {msg.message}
-                    </p>
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
-          </div>
+          </SpotlightCard>
         </div>
       )}
 

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
+import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 
@@ -139,7 +140,7 @@ export default function EducationPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {courseworkPillars.map((pillar, idx) => (
-                <div key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-4">
+                <SpotlightCard key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-4">
                   <div className="flex items-center gap-2.5 pb-3 border-b border-[#1e2638]">
                     <div className="p-2 rounded-lg bg-[#10B981]/10 text-[#10B981]">
                       <BookOpen size={18} />
@@ -155,7 +156,7 @@ export default function EducationPage() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>

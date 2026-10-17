@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
+import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 
 function LinkedinIcon({ size = 20, className = "" }) {
@@ -282,7 +283,7 @@ export default function ContactPage() {
             </div>
 
             {/* Availability SLA Card */}
-            <div className="bg-[#0e131d] border border-[#1e2638] rounded-2xl p-5 space-y-2">
+            <SpotlightCard className="bg-[#0e131d] border border-[#1e2638] rounded-2xl p-5 space-y-2">
               <div className="flex items-center gap-2 text-xs font-mono text-[#10B981]">
                 <Clock size={14} />
                 <span>Response Time SLA</span>
@@ -290,11 +291,11 @@ export default function ContactPage() {
               <p className="text-xs text-gray-300 leading-relaxed">
                 Messages received via form or email are typically answered within 24 hours. For urgent inquiries, WhatsApp chat is prioritized.
               </p>
-            </div>
+            </SpotlightCard>
           </div>
 
           {/* Right Column: Interactive Form */}
-          <div className="lg:col-span-7 bg-[#111622] p-8 sm:p-10 rounded-2xl border border-[#1e2638] shadow-2xl relative">
+          <SpotlightCard className="lg:col-span-7 bg-[#111622] p-8 sm:p-10 rounded-2xl border border-[#1e2638] shadow-2xl relative">
             <div className="mb-6">
               <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Send an Instant Message</h3>
               <p className="text-xs sm:text-sm text-gray-400">
@@ -375,7 +376,7 @@ export default function ContactPage() {
                 <Send size={16} /> {submitting ? "Saving & Sending..." : "Send Direct Message"}
               </button>
             </form>
-          </div>
+          </SpotlightCard>
 
         </div>
       </section>

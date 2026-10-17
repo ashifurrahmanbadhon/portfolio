@@ -56,13 +56,13 @@ export default function ProjectsPage() {
 
       {/* Filter Tabs Bar (100% Dynamic) */}
       <section className="relative z-10 border-b border-[#1e2638] bg-[#0e131d]/60 sticky top-[73px] z-40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between gap-4 overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
           <div className="flex items-center gap-2 text-xs font-mono text-gray-400 shrink-0">
             <Filter size={14} className="text-[#10B981]" />
             <span>Filter by Domain:</span>
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <div className="flex flex-wrap items-center gap-2">
             {categories.map((cat) => (
               <button
                 key={cat}

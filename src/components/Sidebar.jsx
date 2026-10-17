@@ -11,6 +11,7 @@ import {
   Cpu,
   FolderGit2,
   Mail,
+  MessageSquare,
   Sliders,
   ExternalLink,
   ChevronLeft,
@@ -31,7 +32,8 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
     { name: "Education", tab: "education", href: "/admin?tab=education", icon: GraduationCap, badge: "Page 4" },
     { name: "Skills Matrix", tab: "skills", href: "/admin?tab=skills", icon: Cpu, badge: "Page 5" },
     { name: "Projects", tab: "projects", href: "/admin?tab=projects", icon: FolderGit2, badge: "Page 6" },
-    { name: "Contact & Inbox", tab: "contact", href: "/admin?tab=contact", icon: Mail, badge: "Page 7" },
+    { name: "Contact Info", tab: "contact", href: "/admin?tab=contact", icon: Mail, badge: "Page 7" },
+    { name: "Messages Inbox", tab: "inbox", href: "/admin?tab=inbox", icon: MessageSquare, badge: "Inbox" },
   ];
 
   const utilityNav = [

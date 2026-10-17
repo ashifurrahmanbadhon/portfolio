@@ -90,13 +90,35 @@ export async function DELETE(req) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
     const { searchParams } = new URL(req.url);
+    let idsToDelete = [];
     const id = searchParams.get("id");
-    if (!id) {
-      return NextResponse.json({ success: false, error: "ID required" }, { status: 400 });
+    const ids = searchParams.get("ids");
+    if (ids) {
+      idsToDelete = ids.split(",").map((i) => i.trim()).filter(Boolean);
+    } else if (id) {
+      idsToDelete = [id];
+    } else {
+      try {
+        const body = await req.json();
+        if (Array.isArray(body?.ids)) {
+          idsToDelete = body.ids;
+        } else if (body?.id) {
+          idsToDelete = [body.id];
+        }
+      } catch (e) {
+        // no json body
+      }
     }
+
+    if (idsToDelete.length === 0) {
+      return NextResponse.json({ success: false, error: "ID or IDs required" }, { status: 400 });
+    }
+
     const { deleteContactMessage } = await import("@/lib/db");
-    await deleteContactMessage(id);
-    return NextResponse.json({ success: true });
+    for (const msgId of idsToDelete) {
+      await deleteContactMessage(msgId);
+    }
+    return NextResponse.json({ success: true, count: idsToDelete.length });
   } catch (error) {
     console.error("Contact DELETE error:", error);
     return NextResponse.json(

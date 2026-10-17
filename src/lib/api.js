@@ -323,6 +323,15 @@ export const api = {
     return res.json();
   },
 
+  async deleteContactMessages(ids) {
+    cache.clear();
+    const res = await fetch(`${API_BASE}/api/contact?ids=${ids.join(",")}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   async markContactMessageRead(id, isRead = 1) {
     cache.clear();
     const res = await fetch(`${API_BASE}/api/contact`, {
