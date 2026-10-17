@@ -533,11 +533,17 @@ export async function updateAdminProfile(adminId, { fullName, email, avatar, cur
   if (!admin) throw new Error("Admin not found");
 
   const now = new Date().toISOString();
+  const isEmailChange = Boolean(email && email.trim().toLowerCase() !== (admin.email || "").toLowerCase());
+
+  if (newPassword || isEmailChange) {
+    if (!currentPassword || !verifyPassword(currentPassword, admin.password_hash, admin.salt)) {
+      const err = new Error("Current administrative password verification required.");
+      err.statusCode = 401;
+      throw err;
+    }
+  }
 
   if (newPassword) {
-    if (!currentPassword || !verifyPassword(currentPassword, admin.password_hash, admin.salt)) {
-      throw new Error("Current password verification failed");
-    }
     const { hash, salt } = hashPassword(newPassword);
     await execute(`
       UPDATE admins

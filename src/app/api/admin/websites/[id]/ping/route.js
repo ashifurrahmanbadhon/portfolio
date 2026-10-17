@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getWebsites } from "@/lib/db";
 import { authenticateRequest } from "@/lib/auth";
+import { isSafePublicUrl } from "@/lib/security";
 
 export async function POST(req, { params }) {
   try {
@@ -16,6 +17,14 @@ export async function POST(req, { params }) {
       return NextResponse.json({ success: false, error: "Website not found" }, { status: 404 });
     }
 
+    const safeCheck = isSafePublicUrl(site.url);
+    if (!safeCheck.safe) {
+      return NextResponse.json(
+        { success: false, error: safeCheck.error || "Blocked private or unsafe target URL." },
+        { status: 400 }
+      );
+    }
+
     const start = Date.now();
     let status = "online";
     let latency = 45;
@@ -28,9 +37,8 @@ export async function POST(req, { params }) {
       latency = Math.max(12, Date.now() - start);
       status = res.ok ? "online" : "warning";
     } catch {
-      // Mock latency for local test urls
-      latency = Math.floor(Math.random() * 30) + 25;
-      status = "online";
+      status = "offline";
+      latency = 0;
     }
 
     return NextResponse.json({
@@ -42,6 +50,7 @@ export async function POST(req, { params }) {
       checked_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
+    console.error("Ping error:", error);
+    return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

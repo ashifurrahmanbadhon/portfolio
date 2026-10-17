@@ -1,7 +1,10 @@
 const { DatabaseSync } = require('node:sqlite');
 const { neon } = require('@neondatabase/serverless');
 
-const databaseUrl = process.env.DATABASE_URL || 'postgres://neondb_owner:[REDACTED_SECRET]@[REDACTED_HOST]-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require';
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error('FATAL: DATABASE_URL environment variable is not set. Failing closed.');
+}
 const sql = neon(databaseUrl);
 
 const sqlite = new DatabaseSync('portfolio.db');

@@ -45,6 +45,14 @@ export async function PUT(req) {
     });
     return NextResponse.json({ success: true, message: "Profile updated successfully" });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    console.error("PUT /api/auth/me error:", error);
+    const status = error.statusCode || 400;
+    const message = error.statusCode
+      ? error.message
+      : "Failed to update profile. Please check your inputs and try again.";
+    return NextResponse.json(
+      { success: false, error: message },
+      { status }
+    );
   }
 }

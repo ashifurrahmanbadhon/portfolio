@@ -39,6 +39,9 @@ export default function TwoFactorSettings() {
   const [showRegenModal, setShowRegenModal] = useState(false);
 
   // Setup state
+  const [setupStep, setSetupStep] = useState("password"); // "password" | "qr"
+  const [setupPassword, setSetupPassword] = useState("");
+  const [showSetupPassword, setShowSetupPassword] = useState(false);
   const [setupData, setSetupData] = useState(null);
   const [setupLoading, setSetupLoading] = useState(false);
   const [setupCode, setSetupCode] = useState("");
@@ -86,23 +89,38 @@ export default function TwoFactorSettings() {
     fetchStatus();
   }, []);
 
-  // Initiate Setup Flow
-  const handleStartSetup = async () => {
+  // Initiate Setup Flow - Step 1: Open password modal
+  const handleStartSetup = () => {
     setShowSetupModal(true);
-    setSetupLoading(true);
+    setSetupStep("password");
+    setSetupPassword("");
+    setShowSetupPassword(false);
     setSetupData(null);
     setSetupCode("");
     setSetupError("");
     setSetupRecoveryCodes(null);
     setCopiedKey(false);
     setCopiedAllCodes(false);
+  };
+
+  // Step 1 Submit: Authenticate with password to generate TOTP secret
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!setupPassword) {
+      setSetupError("Password is required to initiate 2FA setup.");
+      return;
+    }
+
+    setSetupLoading(true);
+    setSetupError("");
 
     try {
-      const res = await api.setup2FA();
+      const res = await api.setup2FA(setupPassword);
       if (res && res.success) {
         setSetupData(res);
+        setSetupStep("qr");
       } else {
-        setSetupError(res?.error || "Could not generate TOTP setup credentials.");
+        setSetupError(res?.error || "Incorrect password or authorization error.");
       }
     } catch (e) {
       setSetupError("Failed to initiate 2FA setup. Check backend connectivity.");
@@ -123,7 +141,7 @@ export default function TwoFactorSettings() {
     setSetupError("");
 
     try {
-      const res = await api.enable2FA(setupData.setup_token, setupCode.trim());
+      const res = await api.enable2FA(setupData.secret || setupData.manual_key, setupCode.trim(), setupPassword);
       if (res && res.success) {
         setSetupRecoveryCodes(res.recovery_codes || []);
         fetchStatus();
@@ -343,10 +361,35 @@ ${codes.map((c, i) => `${i + 1}. ${c}`).join("\n")}
                 : "Codes generated upon enabling 2FA."}
             </p>
             <div className="text-[10px] font-mono text-amber-400/90 pt-1">
-              {status.two_factor_enabled ? "Secure SHA-256 Hashed" : "Inactive"}
+              {status.two_factor_enabled ? "PBKDF2 Salted (80-bit entropy)" : "Inactive"}
             </div>
           </div>
         </div>
+
+        {/* Security Recommendation for PBKDF2 Recovery Codes */}
+        {status.two_factor_enabled && (
+          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-2.5 text-xs text-amber-200">
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <p className="text-[11px] font-mono leading-relaxed">
+                <span className="font-bold text-amber-300">Security Recommendation:</span> 2FA recovery codes now use 80-bit PBKDF2 salted encryption. If your codes were issued under older algorithms, we recommend regenerating them once.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowRegenModal(true);
+                  setRegenPassword("");
+                  setRegenCode("");
+                  setRegenError("");
+                  setNewRegenCodes(null);
+                }}
+                className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold whitespace-nowrap cursor-pointer transition shrink-0"
+              >
+                Regenerate Codes
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Security Policy Information Card */}
         <div className="p-4 rounded-xl bg-[#0F141F] border border-blue-500/20 text-xs text-slate-300 space-y-2">
@@ -377,111 +420,184 @@ ${codes.map((c, i) => `${i + 1}. ${c}`).join("\n")}
             </button>
 
             {!setupRecoveryCodes ? (
-              <>
-                <div className="space-y-1 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center mb-2">
-                    <QrCode className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white tracking-tight">Set Up Two-Factor Authentication</h3>
-                  <p className="text-xs text-slate-400">
-                    Scan the QR code with your authenticator app (Google Authenticator, Microsoft Authenticator, or Authy).
-                  </p>
-                </div>
-
-                {setupLoading ? (
-                  <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-400 font-mono text-xs">
-                    <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
-                    <span>Generating unique TOTP secret...</span>
-                  </div>
-                ) : setupData ? (
-                  <div className="space-y-4">
-                    {/* QR Code Container */}
-                    <div className="flex justify-center p-4 bg-white rounded-xl w-fit mx-auto shadow-inner border border-slate-200">
-                      <img
-                        src={setupData.qr_code}
-                        alt="2FA QR Code"
-                        className="w-44 h-44 sm:w-48 sm:h-48 rounded"
-                      />
+              setupStep === "password" ? (
+                /* Step 1: Admin Password Verification */
+                <div className="space-y-4">
+                  <div className="space-y-1 text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center mb-2">
+                      <Lock className="w-6 h-6" />
                     </div>
+                    <h3 className="text-lg font-bold text-white tracking-tight">Confirm Identity to Enable 2FA</h3>
+                    <p className="text-xs text-slate-400">
+                      Enter your current administrator password to begin setting up Two-Factor Authentication.
+                    </p>
+                  </div>
 
-                    {/* Manual Setup Key Fallback */}
-                    <div className="p-3 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-1.5">
-                      <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                        <span>Manual Setup Key:</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(setupData.manual_key, setCopiedKey)}
-                          className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer"
-                        >
-                          {copiedKey ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                          <span>{copiedKey ? "Copied" : "Copy"}</span>
-                        </button>
-                      </div>
-                      <div className="font-mono text-xs text-white tracking-widest break-all bg-[#161C2A] p-2 rounded-lg text-center select-all">
-                        {setupData.manual_key}
-                      </div>
-                    </div>
-
-                    {/* Verification Form */}
-                    <form onSubmit={handleConfirmEnable} className="space-y-3.5">
-                      <div>
-                        <label className="block text-xs font-medium text-slate-300 mb-1.5 text-center">
-                          Enter 6-digit verification code from app:
-                        </label>
+                  <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-mono text-slate-300 mb-1.5">
+                        Current Admin Password
+                      </label>
+                      <div className="relative">
                         <input
-                          type="text"
+                          type={showSetupPassword ? "text" : "password"}
                           required
                           autoFocus
-                          inputMode="numeric"
-                          maxLength={6}
-                          placeholder="000000"
-                          value={setupCode}
-                          onChange={(e) => setSetupCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                          className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-400 rounded-xl px-4 py-2.5 text-center text-xl tracking-[0.35em] text-white font-mono placeholder:tracking-normal placeholder:text-slate-600 outline-none transition font-bold"
+                          value={setupPassword}
+                          onChange={(e) => setSetupPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-400 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono outline-none pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowSetupPassword(!showSetupPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300"
+                        >
+                          {showSetupPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {setupError && (
+                      <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-xl font-mono leading-relaxed flex items-start gap-2">
+                        <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                        <span className="flex-1">{setupError}</span>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2.5 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setShowSetupModal(false)}
+                        className="flex-1 py-2.5 rounded-xl text-xs font-mono font-medium bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 border border-[#1E2638] transition cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={setupLoading || !setupPassword}
+                        className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        {setupLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Verifying...</span>
+                          </>
+                        ) : (
+                          <span>Continue</span>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                /* Step 2: Scan QR & Enter 6-digit Code */
+                <>
+                  <div className="space-y-1 text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center mb-2">
+                      <QrCode className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white tracking-tight">Set Up Two-Factor Authentication</h3>
+                    <p className="text-xs text-slate-400">
+                      Scan the QR code with your authenticator app (Google Authenticator, Microsoft Authenticator, or Authy).
+                    </p>
+                  </div>
+
+                  {setupLoading ? (
+                    <div className="py-12 flex flex-col items-center justify-center gap-3 text-slate-400 font-mono text-xs">
+                      <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
+                      <span>Generating unique TOTP secret...</span>
+                    </div>
+                  ) : setupData ? (
+                    <div className="space-y-4">
+                      {/* QR Code Container */}
+                      <div className="flex justify-center p-4 bg-white rounded-xl w-fit mx-auto shadow-inner border border-slate-200">
+                        <img
+                          src={setupData.qr_code}
+                          alt="2FA QR Code"
+                          className="w-44 h-44 sm:w-48 sm:h-48 rounded"
                         />
                       </div>
 
-                      {setupError && (
-                        <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-xl font-mono leading-relaxed flex items-start gap-2">
-                          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                          <span className="flex-1">{setupError}</span>
+                      {/* Manual Setup Key Fallback */}
+                      <div className="p-3 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-1.5">
+                        <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                          <span>Manual Setup Key:</span>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(setupData.manual_key, setCopiedKey)}
+                            className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer"
+                          >
+                            {copiedKey ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                            <span>{copiedKey ? "Copied" : "Copy"}</span>
+                          </button>
                         </div>
-                      )}
-
-                      <div className="flex gap-2.5 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => setShowSetupModal(false)}
-                          className="flex-1 py-2.5 rounded-xl text-xs font-mono font-medium bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 border border-[#1E2638] transition cursor-pointer"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={setupSubmitting || setupCode.length !== 6}
-                          className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
-                        >
-                          {setupSubmitting ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                              <span>Verifying...</span>
-                            </>
-                          ) : (
-                            <>
-                              <ShieldCheck className="w-4 h-4" />
-                              <span>Activate 2FA</span>
-                            </>
-                          )}
-                        </button>
+                        <div className="font-mono text-xs text-white tracking-widest break-all bg-[#161C2A] p-2 rounded-lg text-center select-all">
+                          {setupData.manual_key}
+                        </div>
                       </div>
-                    </form>
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-rose-400 text-xs font-mono">
-                    {setupError || "Unable to initialize setup."}
-                  </div>
-                )}
-              </>
+
+                      {/* Verification Form */}
+                      <form onSubmit={handleConfirmEnable} className="space-y-3.5">
+                        <div>
+                          <label className="block text-xs font-medium text-slate-300 mb-1.5 text-center">
+                            Enter 6-digit verification code from app:
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            autoFocus
+                            inputMode="numeric"
+                            maxLength={6}
+                            placeholder="000000"
+                            value={setupCode}
+                            onChange={(e) => setSetupCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                            className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-400 rounded-xl px-4 py-2.5 text-center text-xl tracking-[0.35em] text-white font-mono placeholder:tracking-normal placeholder:text-slate-600 outline-none transition font-bold"
+                          />
+                        </div>
+
+                        {setupError && (
+                          <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-xl font-mono leading-relaxed flex items-start gap-2">
+                            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                            <span className="flex-1">{setupError}</span>
+                          </div>
+                        )}
+
+                        <div className="flex gap-2.5 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setSetupStep("password")}
+                            className="flex-1 py-2.5 rounded-xl text-xs font-mono font-medium bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 border border-[#1E2638] transition cursor-pointer"
+                          >
+                            Back
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={setupSubmitting || setupCode.length !== 6}
+                            className="flex-1 py-2.5 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          >
+                            {setupSubmitting ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>Verifying...</span>
+                              </>
+                            ) : (
+                              <>
+                                <ShieldCheck className="w-4 h-4" />
+                                <span>Activate 2FA</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 text-rose-400 text-xs font-mono">
+                      {setupError || "Unable to initialize setup."}
+                    </div>
+                  )}
+                </>
+              )
             ) : (
               /* Success & Recovery Codes View */
               <div className="space-y-4 animate-fadeIn">

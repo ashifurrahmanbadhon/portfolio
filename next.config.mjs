@@ -11,6 +11,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  poweredByHeader: false,
   async headers() {
     return [
       {

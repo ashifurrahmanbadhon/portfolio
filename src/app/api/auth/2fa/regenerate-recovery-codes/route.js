@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 import { authenticateRequest } from "@/lib/auth";
 import { getDb, verifyPassword, getAdminById, addActivityLog } from "@/lib/db";
-import { generateRecoveryCodes } from "@/lib/totp";
+import { generateRecoveryCodes, hashRecoveryCode } from "@/lib/totp";
 
 export async function POST(req) {
   try {
@@ -16,7 +15,7 @@ export async function POST(req) {
     const admin = await getAdminById(user.uid);
 
     if (!admin || !verifyPassword(password, admin.password_hash, admin.salt)) {
-      return NextResponse.json({ success: false, error: "Invalid administrative password" }, { status: 401 });
+      return NextResponse.json({ success: false, error: "Invalid administrative password." }, { status: 401 });
     }
 
     const recoveryCodes = generateRecoveryCodes(8);
@@ -28,14 +27,15 @@ export async function POST(req) {
       VALUES (?, ?, 0, ?)
     `);
     for (const rc of recoveryCodes) {
-      const hash = crypto.createHash("sha256").update(rc.replace("-", "").toLowerCase()).digest("hex");
-      await insertCode.run(user.uid, hash, now);
+      const saltedHash = hashRecoveryCode(rc);
+      await insertCode.run(user.uid, saltedHash, now);
     }
 
     await addActivityLog("Regenerated 2FA Recovery Codes", "New backup codes generated.", "Central CMS", user.sub);
 
     return NextResponse.json({ success: true, recovery_codes: recoveryCodes });
   } catch (error) {
-    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
+    console.error("Regenerate recovery codes error:", error);
+    return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

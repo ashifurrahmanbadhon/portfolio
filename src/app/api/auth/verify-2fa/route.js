@@ -9,7 +9,7 @@ import {
   addActivityLog,
   getDb
 } from "@/lib/db";
-import { verifyTOTP } from "@/lib/totp";
+import { verifyTOTP, verifyRecoveryCode } from "@/lib/totp";
 import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req) {
@@ -25,7 +25,10 @@ export async function POST(req) {
       );
     }
 
-    const { challenge_token, code, is_recovery } = await req.json();
+    const body = await req.json();
+    const challenge_token = body.challenge_token || body.two_factor_token;
+    const code = body.code;
+    const is_recovery = Boolean(body.is_recovery || body.method === "recovery");
 
     const decoded = verifyChallengeToken(challenge_token);
     if (!decoded) {
@@ -49,14 +52,20 @@ export async function POST(req) {
     const db = getDb();
 
     if (is_recovery) {
-      // Recovery code check
-      const cleanCode = (code || "").replace("-", "").toLowerCase().trim();
-      const codeHash = crypto.createHash("sha256").update(cleanCode).digest("hex");
-      const rec = await db.prepare(
-        "SELECT id FROM admin_recovery_codes WHERE admin_id = ? AND code_hash = ? AND used = 0 LIMIT 1"
-      ).get(admin.id, codeHash);
+      // Recovery code check (supports salted PBKDF2 and legacy hashes)
+      const allCodes = (await db.prepare(
+        "SELECT id, code_hash FROM admin_recovery_codes WHERE admin_id = ? AND used = 0"
+      ).all(admin.id)) || [];
 
-      if (!rec) {
+      let matchedId = null;
+      for (const rc of allCodes) {
+        if (verifyRecoveryCode(code, rc.code_hash)) {
+          matchedId = rc.id;
+          break;
+        }
+      }
+
+      if (!matchedId) {
         await recordFailed2faAttempt(admin.id);
         return NextResponse.json({ success: false, error: "Invalid or already used recovery code." }, { status: 401 });
       }
@@ -64,7 +73,7 @@ export async function POST(req) {
       // Mark used
       await db.prepare("UPDATE admin_recovery_codes SET used = 1, used_at = ? WHERE id = ?").run(
         new Date().toISOString(),
-        rec.id
+        matchedId
       );
     } else {
       // TOTP check

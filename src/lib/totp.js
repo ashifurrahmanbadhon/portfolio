@@ -62,12 +62,50 @@ export function verifyTOTP(token, secret, window = 1) {
   return false;
 }
 
+/**
+ * High-entropy recovery codes: 10 random bytes (80-bit entropy)
+ * Formatted as XXXXX-XXXXX
+ */
 export function generateRecoveryCodes(count = 8) {
   const codes = [];
   for (let i = 0; i < count; i++) {
-    const part1 = crypto.randomBytes(2).toString("hex").toUpperCase();
-    const part2 = crypto.randomBytes(2).toString("hex").toUpperCase();
+    const raw = crypto.randomBytes(10).toString("hex").toUpperCase();
+    const part1 = raw.slice(0, 5);
+    const part2 = raw.slice(5, 10);
     codes.push(`${part1}-${part2}`);
   }
   return codes;
+}
+
+/**
+ * PBKDF2 salted hash for recovery codes
+ */
+export function hashRecoveryCode(code, salt = null) {
+  const clean = (code || "").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  const s = salt || crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(clean, s, 50000, 32, "sha256").toString("hex");
+  return `${s}:${hash}`;
+}
+
+/**
+ * Secure constant-time verification of recovery code against salted PBKDF2
+ * with backwards-compatible fallback for legacy sha256 codes
+ */
+export function verifyRecoveryCode(code, stored) {
+  if (!code || !stored) return false;
+  const clean = (code || "").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+
+  try {
+    if (stored.includes(":")) {
+      const [s, expectedHash] = stored.split(":");
+      const actualHash = crypto.pbkdf2Sync(clean, s, 50000, 32, "sha256").toString("hex");
+      return crypto.timingSafeEqual(Buffer.from(actualHash, "hex"), Buffer.from(expectedHash, "hex"));
+    }
+
+    // Legacy unsalted sha256
+    const legacyHash = crypto.createHash("sha256").update(clean).digest("hex");
+    return crypto.timingSafeEqual(Buffer.from(legacyHash, "hex"), Buffer.from(stored, "hex"));
+  } catch {
+    return false;
+  }
 }

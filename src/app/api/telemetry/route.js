@@ -1,45 +1,35 @@
 import { NextResponse } from "next/server";
+import { authenticateRequest } from "@/lib/auth";
+import { getWebsites } from "@/lib/db";
+import { isSafePublicUrl } from "@/lib/security";
 import { checkRateLimit } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Real Telemetry & Health Probe API
- * Measures actual round-trip latency, HTTP status, and network headers for registered properties.
- */
 export async function GET(req) {
   try {
+    const user = authenticateRequest(req);
+    if (!user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
     const rateCheck = await checkRateLimit(req, "telemetry", 60, 3600);
     if (!rateCheck.allowed) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Rate limit exceeded for telemetry probe. (টেলিমেট্রি অনুরোধের সীমা অতিক্রম করেছে।)",
-        },
+        { success: false, error: "Rate limit exceeded for telemetry probe." },
         { status: 429, headers: rateCheck.headers }
       );
     }
 
-    const targets = [
-      {
-        name: "Ashifur Rahman Portfolio",
-        slug: "portfolio",
-        url: "https://ashifurrahman.netlify.app/",
-        type: "Personal Brand & Showcase",
-      },
-      {
-        name: "ToolGhor Platform",
-        slug: "toolghor",
-        url: "https://toolghor.netlify.app/",
-        type: "Web Utility Suite",
-      },
-      {
-        name: "Central CMS Core",
-        slug: "central-cms",
-        url: "http://localhost:3000/api/health",
-        type: "Administrative Hub",
-      },
-    ];
+    const dbSites = (await getWebsites()) || [];
+    const targets = dbSites
+      .filter((s) => s.url && isSafePublicUrl(s.url).safe)
+      .map((s) => ({
+        name: s.name,
+        slug: s.slug || String(s.id),
+        url: s.url,
+        type: s.website_type || "Web Property",
+      }));
 
     const results = await Promise.all(
       targets.map(async (target) => {
@@ -65,22 +55,20 @@ export async function GET(req) {
             statusCode: res.status,
             latencyMs: latency,
             ttfb: Math.max(12, Math.round(latency * 0.72)),
-            uptime: "99.98%",
-            ssl: target.url.startsWith("https://") ? "Valid (TLS 1.3)" : "Localhost / Internal",
-            server: res.headers.get("server") || "Netlify / Edge",
+            ssl: target.url.startsWith("https://") ? "Valid (TLS 1.3)" : "HTTP",
+            server: res.headers.get("server") || "Edge",
             lastChecked: new Date().toISOString(),
             isReal: true,
           };
         } catch {
           return {
             ...target,
-            status: "active",
-            statusCode: 200,
-            latencyMs: Math.max(35, Math.round(performance.now() - startTime)),
-            ttfb: 42,
-            uptime: "99.95%",
-            ssl: "Valid",
-            server: "CDN Edge",
+            status: "offline",
+            statusCode: 503,
+            latencyMs: 0,
+            ttfb: 0,
+            ssl: "Unknown",
+            server: "Unknown",
             lastChecked: new Date().toISOString(),
             isReal: true,
           };
@@ -95,9 +83,6 @@ export async function GET(req) {
     });
   } catch (error) {
     console.error("Telemetry error:", error);
-    return NextResponse.json(
-      { success: false, error: "Internal server error." },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
 }

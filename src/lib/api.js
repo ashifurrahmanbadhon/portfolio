@@ -76,10 +76,10 @@ export const api = {
   },
 
   async verify2FA(two_factor_token, code, method = "totp") {
-    const res = await fetch(`${API_BASE}/api/auth/2fa/verify`, {
+    const res = await fetch(`${API_BASE}/api/auth/verify-2fa`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ two_factor_token, code, method }),
+      body: JSON.stringify({ two_factor_token, challenge_token: two_factor_token, code, method, is_recovery: method === "recovery" }),
     });
     return res.json();
   },
@@ -101,19 +101,20 @@ export const api = {
     return res.json();
   },
 
-  async setup2FA() {
+  async setup2FA(password = "") {
     const res = await fetch(`${API_BASE}/api/auth/2fa/setup`, {
       method: "POST",
-      headers: getAuthHeaders(),
+      headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
     });
     return res.json();
   },
 
-  async enable2FA(setup_token, code) {
+  async enable2FA(setup_token, code, password = "") {
     const res = await fetch(`${API_BASE}/api/auth/2fa/enable`, {
       method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ setup_token, code }),
+      headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({ setup_token, code, password }),
     });
     return res.json();
   },

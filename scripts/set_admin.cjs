@@ -1,17 +1,24 @@
 const crypto = require('crypto');
 const { neon } = require('@neondatabase/serverless');
 
-const databaseUrl = process.env.DATABASE_URL || 'postgres://neondb_owner:[REDACTED_SECRET]@[REDACTED_HOST]-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require';
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error('FATAL: DATABASE_URL environment variable is required. Failing closed.');
+}
 const sql = neon(databaseUrl);
 
 async function setMasterAdmin() {
-  const newPassword = '[REDACTED_PASSWORD]';
+  const newPassword = process.env.ADMIN_PASSWORD;
+  if (!newPassword) {
+    throw new Error('FATAL: ADMIN_PASSWORD environment variable is required. Never use hardcoded passwords.');
+  }
+
   const salt = crypto.randomBytes(16).toString('hex');
   const hash = crypto.pbkdf2Sync(newPassword, salt, 100000, 32, 'sha256').toString('hex');
   const now = new Date().toISOString();
 
-  // Reset or create master admin
-  const existing = await sql`SELECT id FROM admins WHERE username = 'admin' OR id = 1`;
+  // Reset or create master admin (preserves two_factor_enabled setting)
+  const existing = await sql`SELECT id, two_factor_enabled FROM admins WHERE username = 'admin' OR id = 1`;
   if (existing && existing.length > 0) {
     await sql`
       UPDATE admins SET
@@ -23,7 +30,6 @@ async function setMasterAdmin() {
         role = 'super_admin',
         failed_login_attempts = 0,
         locked_until = NULL,
-        two_factor_enabled = 0,
         updated_at = ${now}
       WHERE id = ${existing[0].id}
     `;

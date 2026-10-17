@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { queryOne } from "@/lib/db";
+import { isSafePublicUrl } from "@/lib/security";
 
 export async function GET() {
   try {
@@ -12,13 +13,23 @@ export async function GET() {
     try {
       const resumeRow = await queryOne("SELECT * FROM resumes WHERE id = 1 OR is_active = 1 LIMIT 1");
       if (resumeRow?.file_url && resumeRow.file_url.startsWith("http")) {
-        const response = await fetch(resumeRow.file_url);
-        if (response.ok) {
-          const arrayBuffer = await response.arrayBuffer();
-          fileBuffer = Buffer.from(arrayBuffer);
+        const safeCheck = isSafePublicUrl(resumeRow.file_url);
+        if (safeCheck.safe) {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+          const response = await fetch(resumeRow.file_url, { signal: controller.signal });
+          clearTimeout(timeout);
+          if (response.ok) {
+            const arrayBuffer = await response.arrayBuffer();
+            fileBuffer = Buffer.from(arrayBuffer);
+          }
+        } else {
+          console.warn("Blocked unsafe resume URL:", resumeRow.file_url);
         }
       }
-    } catch (_) {}
+    } catch (fetchErr) {
+      console.warn("Custom resume remote fetch failed, falling back to local:", fetchErr.message);
+    }
 
     // Fallback to local /public/resume.pdf
     if (!fileBuffer) {
@@ -41,6 +52,7 @@ export async function GET() {
       },
     });
   } catch (err) {
-    return new NextResponse("Error downloading CV: " + err.message, { status: 500 });
+    console.error("Error downloading CV:", err);
+    return new NextResponse("Error downloading CV. Please try again later.", { status: 500 });
   }
 }
