@@ -18,6 +18,7 @@ import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
 import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
+import { parsePhotoPosition } from '@/lib/photoPosition';
 
 export default function ProjectsPage() {
   const { projectsData, projectMethodologies, pageHeaders } = usePortfolio();
@@ -107,7 +108,7 @@ export default function ProjectsPage() {
                       alt={proj.title}
                       fill
                       className="object-cover group-hover:scale-105 transition duration-500"
-                      style={{ objectPosition: proj.image_position || "center center" }}
+                      style={parsePhotoPosition(proj.image_position || "center center").style}
                       unoptimized
                     />
                   </div>
