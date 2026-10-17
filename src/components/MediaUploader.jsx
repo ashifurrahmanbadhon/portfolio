@@ -17,7 +17,8 @@ import {
   Eye,
   Film,
   Compass,
-  Sliders
+  Sliders,
+  Move
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
@@ -124,10 +125,14 @@ export default function MediaUploader({
 }) {
   const { showToast } = useToast();
   const fileInputRef = useRef(null);
+  const previewBoxRef = useRef(null);
+  const dragRef = useRef({ startX: 0, startY: 0, initialPercentX: 50, initialPercentY: 15 });
 
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [tempPreview, setTempPreview] = useState(null);
+  const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
   const [mode, setMode] = useState("upload"); // 'upload' | 'url'
   const [urlInput, setUrlInput] = useState(value || "");
 
@@ -150,6 +155,64 @@ export default function MediaUploader({
     type === "document" ||
     (value && value.toLowerCase().endsWith(".pdf"));
 
+  // Facebook-style Drag-to-Reposition event listeners
+  const handleDragPhotoStart = (e) => {
+    e.preventDefault();
+    const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+    const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+    if (clientX === undefined || clientY === undefined) return;
+
+    const cur = parsePosition(positionValue);
+    dragRef.current = {
+      startX: clientX,
+      startY: clientY,
+      initialPercentX: cur.x,
+      initialPercentY: cur.y,
+    };
+    setIsDraggingPhoto(true);
+  };
+
+  useEffect(() => {
+    const handleDragPhotoMove = (e) => {
+      if (!isDraggingPhoto || !previewBoxRef.current || !onPositionChange) return;
+      const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+      const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+      if (clientX === undefined || clientY === undefined) return;
+
+      const rect = previewBoxRef.current.getBoundingClientRect();
+      const deltaX = clientX - dragRef.current.startX;
+      const deltaY = clientY - dragRef.current.startY;
+
+      const pctChangeX = (deltaX / rect.width) * 100;
+      const pctChangeY = (deltaY / rect.height) * 100;
+
+      const newX = Math.max(0, Math.min(100, Math.round(dragRef.current.initialPercentX - pctChangeX)));
+      const newY = Math.max(0, Math.min(100, Math.round(dragRef.current.initialPercentY - pctChangeY)));
+
+      onPositionChange(`${newX}% ${newY}%`);
+    };
+
+    const handleDragPhotoEnd = () => {
+      if (isDraggingPhoto) {
+        setIsDraggingPhoto(false);
+      }
+    };
+
+    if (isDraggingPhoto) {
+      window.addEventListener("mousemove", handleDragPhotoMove);
+      window.addEventListener("mouseup", handleDragPhotoEnd);
+      window.addEventListener("touchmove", handleDragPhotoMove, { passive: false });
+      window.addEventListener("touchend", handleDragPhotoEnd);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleDragPhotoMove);
+      window.removeEventListener("mouseup", handleDragPhotoEnd);
+      window.removeEventListener("touchmove", handleDragPhotoMove);
+      window.removeEventListener("touchend", handleDragPhotoEnd);
+    };
+  }, [isDraggingPhoto, onPositionChange, positionValue]);
+
   // Handle actual file upload
   const handleFileUpload = async (rawFile) => {
     if (!rawFile) return;
@@ -160,6 +223,16 @@ export default function MediaUploader({
     if (sizeInMB > limit) {
       showToast(`File size (${sizeInMB.toFixed(1)}MB) exceeds ${limit}MB limit.`, "error");
       return;
+    }
+
+    // Immediately show local photo preview so upload progress shows directly on top of the image
+    if (rawFile.type.startsWith("image/")) {
+      try {
+        const objUrl = URL.createObjectURL(rawFile);
+        setTempPreview(objUrl);
+      } catch (e) {
+        console.warn("ObjectURL creation fallback", e);
+      }
     }
 
     setUploading(true);
@@ -218,8 +291,11 @@ export default function MediaUploader({
         showToast("Server upload error. Please check your connection.", "error");
       }
     } finally {
-      setUploading(false);
-      setUploadProgress(0);
+      setTimeout(() => {
+        setUploading(false);
+        setUploadProgress(0);
+        setTempPreview(null);
+      }, 450);
     }
   };
 
@@ -369,6 +445,24 @@ export default function MediaUploader({
 
               {/* Media Preview Box */}
               <div className="relative rounded-xl overflow-hidden bg-[#070A0F] border border-[#1E2638] flex items-center justify-center">
+                {uploading && (
+                  <div className="absolute inset-0 z-30 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-2.5 p-4 animate-in fade-in duration-150">
+                    <div className="relative w-16 h-16 flex items-center justify-center">
+                      <svg className="w-16 h-16 transform -rotate-90">
+                        <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" className="text-slate-800" fill="transparent" />
+                        <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" strokeDasharray={163.36} strokeDashoffset={163.36 - (163.36 * uploadProgress) / 100} strokeLinecap="round" className="text-emerald-400 transition-all duration-150" fill="transparent" />
+                      </svg>
+                      <span className="absolute text-xs font-mono font-black text-emerald-300">{uploadProgress}%</span>
+                    </div>
+                    <div className="text-center space-y-1">
+                      <p className="text-xs font-bold text-white tracking-wide">Uploading Photo...</p>
+                      <div className="w-40 h-1.5 bg-[#161C2A] rounded-full overflow-hidden mx-auto border border-[#1E2638]">
+                        <div className="h-full bg-emerald-400 transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                      <p className="text-[10px] font-mono text-emerald-400 font-semibold">{uploadProgress}% Complete</p>
+                    </div>
+                  </div>
+                )}
                 {isPdf ? (
                   <div className="py-6 px-4 flex flex-col items-center justify-center space-y-2 text-center">
                     <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400">
@@ -376,7 +470,7 @@ export default function MediaUploader({
                     </div>
                     <div>
                       <p className="font-bold text-white text-xs">PDF Document Loaded</p>
-                      <p className="text-[10px] font-mono text-slate-400">{value.split("/").pop()}</p>
+                      <p className="text-[10px] font-mono text-slate-400">{(tempPreview || value).split("/").pop()}</p>
                     </div>
                     <a
                       href={value}
@@ -389,14 +483,14 @@ export default function MediaUploader({
                   </div>
                 ) : isVideo ? (
                   <video
-                    src={value}
+                    src={tempPreview || value}
                     controls
                     className="w-full max-h-60 rounded-xl object-contain bg-black"
                   />
                 ) : (
                   <div className="relative w-full h-44 sm:h-52">
                     <Image
-                      src={value}
+                      src={tempPreview || value}
                       alt="Uploaded media preview"
                       fill
                       className="object-contain p-2"
@@ -419,8 +513,62 @@ export default function MediaUploader({
                     </span>
                   </div>
 
-                  {/* Quick Preset Buttons */}
+                  {/* Facebook Drag-to-Reposition Live Canvas */}
                   <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                      <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                        <Move size={13} /> Facebook Drag-to-Reposition:
+                      </span>
+                      <span className="text-[10px] text-slate-400">ছবির ওপর মাউস ড্র্যাগ করে অ্যাডজাস্ট করুন</span>
+                    </div>
+
+                    <div
+                      ref={previewBoxRef}
+                      onMouseDown={handleDragPhotoStart}
+                      onTouchStart={handleDragPhotoStart}
+                      className={`relative w-full h-44 rounded-xl overflow-hidden bg-[#070A0F] border select-none transition-all ${
+                        isDraggingPhoto
+                          ? "border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.35)] cursor-grabbing"
+                          : "border-emerald-500/30 hover:border-emerald-500/60 cursor-grab"
+                      }`}
+                    >
+                      <img
+                        src={tempPreview || value}
+                        alt="Framing preview"
+                        draggable={false}
+                        style={{ objectPosition: positionValue || "50% 15%" }}
+                        className="w-full h-full object-cover pointer-events-none select-none transition-none"
+                      />
+
+                      {/* Rule of thirds alignment grid on drag */}
+                      {isDraggingPhoto && (
+                        <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/40 bg-emerald-500/5">
+                          <div className="border-r border-b border-emerald-400/20" />
+                          <div className="border-r border-b border-emerald-400/20" />
+                          <div className="border-b border-emerald-400/20" />
+                          <div className="border-r border-b border-emerald-400/20" />
+                          <div className="border-r border-b border-emerald-400/20" />
+                          <div className="border-b border-emerald-400/20" />
+                          <div className="border-r border-emerald-400/20" />
+                          <div className="border-r border-emerald-400/20" />
+                          <div />
+                        </div>
+                      )}
+
+                      {/* Floating Indicator */}
+                      <div className="absolute top-2.5 left-2.5 pointer-events-none flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
+                        <Move size={12} className={isDraggingPhoto ? "text-emerald-400 animate-pulse" : "text-emerald-400"} />
+                        <span>{isDraggingPhoto ? `Repositioning (${parsePosition(positionValue).x}% ${parsePosition(positionValue).y}%)` : "Drag photo to reposition (Facebook style)"}</span>
+                      </div>
+
+                      <div className="absolute bottom-2.5 right-2.5 pointer-events-none text-[10px] font-mono bg-black/85 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/40 font-bold">
+                        {positionValue || "50% 15%"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Preset Buttons */}
+                  <div className="space-y-1.5 pt-1">
                     <span className="text-[10px] font-mono text-slate-400">Quick Alignment Presets:</span>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
                       {[
@@ -483,19 +631,6 @@ export default function MediaUploader({
                       />
                     </div>
                   </div>
-
-                  {/* Live Framing Simulation */}
-                  <div className="relative w-full h-36 rounded-xl overflow-hidden bg-[#070A0F] border border-emerald-500/30">
-                    <img
-                      src={value}
-                      alt="Framing preview"
-                      style={{ objectPosition: positionValue || "50% 15%" }}
-                      className="w-full h-full object-cover transition-all duration-150"
-                    />
-                    <div className="absolute bottom-2 left-2 text-[9px] font-mono bg-black/80 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/40">
-                      Live Portfolio Card Framing Preview
-                    </div>
-                  </div>
                 </div>
               )}
             </div>
@@ -513,18 +648,44 @@ export default function MediaUploader({
               }`}
             >
               {uploading ? (
-                <div className="space-y-3 py-2">
-                  <div className="w-8 h-8 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin mx-auto" />
-                  <p className="text-xs font-mono text-emerald-400 font-bold">
-                    Uploading {uploadProgress}%...
-                  </p>
-                  <div className="w-48 mx-auto h-1.5 bg-[#161C2A] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-400 transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
+                tempPreview ? (
+                  <div className="relative w-full h-44 rounded-xl overflow-hidden bg-[#070A0F] border border-emerald-500/40 flex items-center justify-center">
+                    <img
+                      src={tempPreview}
+                      alt="Uploading preview"
+                      className="w-full h-full object-cover blur-[1px] opacity-60"
                     />
+                    <div className="absolute inset-0 z-30 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center space-y-2.5 p-4 animate-in fade-in duration-150">
+                      <div className="relative w-16 h-16 flex items-center justify-center">
+                        <svg className="w-16 h-16 transform -rotate-90">
+                          <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" className="text-slate-800" fill="transparent" />
+                          <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" strokeDasharray={163.36} strokeDashoffset={163.36 - (163.36 * uploadProgress) / 100} strokeLinecap="round" className="text-emerald-400 transition-all duration-150" fill="transparent" />
+                        </svg>
+                        <span className="absolute text-xs font-mono font-black text-emerald-300">{uploadProgress}%</span>
+                      </div>
+                      <div className="text-center space-y-1">
+                        <p className="text-xs font-bold text-white tracking-wide">Uploading Photo...</p>
+                        <div className="w-40 h-1.5 bg-[#161C2A] rounded-full overflow-hidden mx-auto border border-[#1E2638]">
+                          <div className="h-full bg-emerald-400 transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
+                        </div>
+                        <p className="text-[10px] font-mono text-emerald-400 font-semibold">{uploadProgress}% Complete</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="space-y-3 py-2">
+                    <div className="w-8 h-8 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin mx-auto" />
+                    <p className="text-xs font-mono text-emerald-400 font-bold">
+                      Uploading {uploadProgress}%...
+                    </p>
+                    <div className="w-48 mx-auto h-1.5 bg-[#161C2A] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-400 transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all">

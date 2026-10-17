@@ -25,6 +25,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import AnimatedLogo from "./AnimatedLogo";
+import SpotlightCard from "./SpotlightCard";
 import { useAuth } from "@/context/AuthContext";
 import { API_BASE } from "@/lib/api";
 
@@ -256,8 +257,8 @@ export default function CentralLoginPanel() {
       <div className="absolute w-96 h-96 bg-[#10B981]/10 blur-[130px] rounded-full pointer-events-none -top-24 -left-24"></div>
       <div className="absolute w-80 h-80 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none -bottom-20 -right-20"></div>
 
-      {/* Main Card */}
-      <div className="animate-fade-up bg-[#111622]/95 backdrop-blur-md border border-[#1E2638] w-full max-w-sm p-7 sm:p-8 rounded-2xl shadow-2xl relative z-10 space-y-6">
+      {/* Main Login Console Card with SpotlightCard effect */}
+      <SpotlightCard className="animate-fade-up bg-[#111622]/95 backdrop-blur-md border border-[#1E2638] w-full max-w-sm p-7 sm:p-8 rounded-2xl shadow-2xl relative z-10 space-y-6">
         {/* Branding */}
         <div className="text-center space-y-2.5">
           <div className="flex justify-center mb-1">
@@ -788,7 +789,7 @@ export default function CentralLoginPanel() {
             🔒 Secure Multi-Website Session Protection
           </span>
         </div>
-      </div>
+      </SpotlightCard>
     </div>
   );
 }

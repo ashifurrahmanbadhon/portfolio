@@ -5,6 +5,7 @@ import { useRef, memo } from "react";
 const SpotlightCard = memo(function SpotlightCard({
   children,
   className = "",
+  contentClassName = "",
   spotlightColor = "rgba(16, 185, 129, 0.12)",
   borderColor = "rgba(16, 185, 129, 0.45)",
   ...props
@@ -50,7 +51,7 @@ const SpotlightCard = memo(function SpotlightCard({
         }}
       />
 
-      <div className="relative z-10">{children}</div>
+      <div className={`relative z-10 ${contentClassName}`}>{children}</div>
     </div>
   );
 });

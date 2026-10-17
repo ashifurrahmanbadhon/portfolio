@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Zap, Download, Lock, Menu, X } from 'lucide-react';
 import { triggerCvDownload } from '@/lib/downloadCv';
+import SpotlightCard from '@/components/SpotlightCard';
 
 const NAV_ITEMS = [
   { name: 'Home', href: '/' },
@@ -29,7 +30,7 @@ export default function PortfolioNavbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-md bg-[#0b0f17]/95 border-b border-[#1e2638] transition-colors">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-3.5 flex items-center justify-between">
         {/* Brand Logo with breathing space */}
         <Link href="/" className="flex items-center gap-2 group select-none shrink-0 mr-6 xl:mr-10">
           <div className="w-8 h-8 rounded-lg bg-[#10B981]/15 border border-[#10B981]/40 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 shadow-sm shadow-[#10B981]/10">
@@ -40,17 +41,20 @@ export default function PortfolioNavbar() {
           </span>
         </Link>
 
-        {/* Desktop Navigation Links (shifted slightly right with generous spacing from logo) */}
-        <div className="hidden lg:flex items-center ml-auto mr-6 space-x-1 xl:space-x-2 text-xs font-semibold uppercase tracking-wider">
+        {/* Desktop Navigation Links with SpotlightCard effect */}
+        <SpotlightCard
+          className="hidden lg:block ml-auto mr-4 p-1 rounded-2xl bg-[#111622]/90 border border-[#1e2638] shadow-lg hover:scale-100 hover:translate-y-0"
+          contentClassName="flex items-center space-x-1 xl:space-x-1.5 text-xs font-semibold uppercase tracking-wider"
+        >
           {NAV_ITEMS.map((item) => {
             const active = isLinkActive(item.href);
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-1.5 rounded-lg transition-all duration-200 ${
+                className={`px-3 py-1.5 rounded-xl transition-all duration-200 ${
                   active
-                    ? 'text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 font-bold shadow-xs shadow-[#10B981]/10'
+                    ? 'text-[#10B981] bg-[#10B981]/15 border border-[#10B981]/30 font-bold shadow-xs shadow-[#10B981]/10'
                     : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent'
                 }`}
               >
@@ -58,25 +62,29 @@ export default function PortfolioNavbar() {
               </Link>
             );
           })}
-        </div>
+        </SpotlightCard>
 
-        {/* Action Buttons: Direct CV Download + Admin */}
-        <div className="hidden md:flex items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={triggerCvDownload}
-            className="px-4 py-2 rounded-lg bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-gray-200 text-xs font-semibold flex items-center gap-2 transition hover:bg-[#161e30] hover:text-[#10B981] cursor-pointer"
-            title="Download CV Directly (No page leave)"
-          >
-            <Download size={14} className="text-[#10B981]" /> Download CV
-          </button>
-          <Link
-            href="/admin"
-            className="px-3.5 py-2 rounded-lg bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/50 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition hover:bg-[#161e30] hover:text-[#10B981]"
-            title="Central Admin CMS"
-          >
-            <Lock size={13} className="text-[#10B981]" /> Admin
-          </Link>
+        {/* Action Buttons: Direct CV Download + Admin with SpotlightCard effect */}
+        <div className="hidden md:flex items-center gap-2.5 shrink-0">
+          <SpotlightCard className="p-0.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:scale-105 hover:-translate-y-0.5 transition-all">
+            <button
+              type="button"
+              onClick={triggerCvDownload}
+              className="px-3.5 py-1.5 text-gray-200 text-xs font-semibold flex items-center gap-2 transition hover:text-[#10B981] cursor-pointer"
+              title="Download CV Directly (No page leave)"
+            >
+              <Download size={14} className="text-[#10B981]" /> Download CV
+            </button>
+          </SpotlightCard>
+          <SpotlightCard className="p-0.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:scale-105 hover:-translate-y-0.5 transition-all">
+            <Link
+              href="/admin"
+              className="px-3.5 py-1.5 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition hover:text-[#10B981]"
+              title="Central Admin CMS"
+            >
+              <Lock size={13} className="text-[#10B981]" /> Admin
+            </Link>
+          </SpotlightCard>
         </div>
 
         {/* Mobile menu hamburger button */}
