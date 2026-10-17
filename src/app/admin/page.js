@@ -135,6 +135,27 @@ function AdminConsoleContent() {
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [deletingBulk, setDeletingBulk] = useState(false);
 
+  // Dynamic time greeting state (auto changes based on current local time)
+  const [timeGreeting, setTimeGreeting] = useState({ text: "Good Day", emoji: "✨" });
+
+  useEffect(() => {
+    const updateGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 12) {
+        setTimeGreeting({ text: "Good Morning", emoji: "🌅" });
+      } else if (hour >= 12 && hour < 17) {
+        setTimeGreeting({ text: "Good Afternoon", emoji: "☀️" });
+      } else if (hour >= 17 && hour < 21) {
+        setTimeGreeting({ text: "Good Evening", emoji: "🌆" });
+      } else {
+        setTimeGreeting({ text: "Good Night", emoji: "🌙" });
+      }
+    };
+    updateGreeting();
+    const timer = setInterval(updateGreeting, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
   const toggleSelectMessage = (id) => {
     setSelectedMessages((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -371,7 +392,11 @@ function AdminConsoleContent() {
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm">
+                <span>{timeGreeting.emoji}</span>
+                <span>{timeGreeting.text}, Ashifur!</span>
+              </span>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse"></span>
                 {currentTabObj.pageNum} Editor
@@ -1634,21 +1659,6 @@ function AdminConsoleContent() {
                     </button>
                   </>
                 )}
-
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const res = await api.getContactMessages();
-                    if (res && res.messages) {
-                      setMessages(res.messages);
-                      showToast("Inbox refreshed!", "info");
-                    }
-                  }}
-                  className="px-3 py-1.5 rounded-xl bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Refresh</span>
-                </button>
               </div>
             </div>
 

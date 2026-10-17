@@ -36,7 +36,7 @@ export default function SettingsPage() {
     smtpPort: "587",
     smtpUser: "ashifur.badhon@gmail.com",
     apiRateLimit: "120",
-    corsOrigins: "http://localhost:3000, https://toolghor.netlify.app, https://ashifurrahman.netlify.app",
+    corsOrigins: "http://localhost:3000, https://ashifurrahmanbadhon.vercel.app, https://toolghor.vercel.app",
     webhookUrl: "https://api.github.com/repos/ashifur/webhooks",
   });
 

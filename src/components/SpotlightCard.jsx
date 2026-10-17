@@ -25,7 +25,7 @@ const SpotlightCard = memo(function SpotlightCard({
     <div
       ref={cardRef}
       onPointerMove={handlePointerMove}
-      className={`group relative rounded-2xl bg-[#0B0F17] border border-[#1E2638] overflow-hidden transition-colors duration-150 ${className}`}
+      className={`group relative rounded-2xl bg-[#0B0F17] border border-[#1E2638] overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-950/20 ${className}`}
       style={{
         "--spotlight-x": "-999px",
         "--spotlight-y": "-999px",
