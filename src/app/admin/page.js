@@ -356,7 +356,7 @@ function AdminConsoleContent() {
     { id: "skills", label: "Technical Skills", pageNum: "Page 5", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
     { id: "projects", label: "Engineering Projects", pageNum: "Page 6", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
     { id: "contact", label: "Contact Info", pageNum: "Page 7", title: "Contact Hub & Communication Channels", subtitle: "Update email, phone, WhatsApp, office location, and social media channels", icon: Mail, liveUrl: "/contact" },
-    { id: "inbox", label: "Messages Inbox", pageNum: "Inbox", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length, count: messages.length },
+    { id: "inbox", label: "Inbox", pageNum: "Page 8", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length, count: messages.length },
     { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
   ];
 
@@ -1571,7 +1571,7 @@ function AdminConsoleContent() {
                 <div className="flex items-center gap-2">
                   <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                     <MessageSquare className="w-5 h-5 text-emerald-400" />
-                    Inbound Messages Inbox
+                    Inbox
                   </h2>
                   <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
                     {messages.length} total

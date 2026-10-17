@@ -87,12 +87,12 @@ export default function SkillsPage() {
             return (
               <SpotlightCard
                 key={idx}
-                className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 sm:p-7 flex flex-col justify-between"
+                className="bg-[#111622] rounded-2xl border border-[#1e2638] p-7 flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center gap-3 pb-4 border-b border-[#1e2638]/70 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center border border-[#10B981]/30">
-                      <CatIcon size={20} />
+                  <div className="flex items-center gap-3.5 pb-4 border-b border-[#1e2638]/70 mb-5">
+                    <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 shrink-0">
+                      <CatIcon size={22} />
                     </div>
                     <h3 className="font-bold text-white text-base sm:text-lg group-hover:text-[#10B981] transition">
                       {category.category}
@@ -140,31 +140,31 @@ export default function SkillsPage() {
                 return (
                   <SpotlightCard
                     key={idx}
-                    className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-4"
+                    className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] space-y-4 flex flex-col justify-between"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center border border-[#10B981]/30 group-hover:scale-105 transition">
-                        <ToolIcon size={20} />
-                      </div>
-                      {tool.level && (
-                        <span className="text-[11px] font-mono text-[#10B981] bg-[#10B981]/10 px-2.5 py-0.5 rounded-full border border-[#10B981]/20">
-                          {tool.level}
-                        </span>
-                      )}
-                    </div>
-
                     <div>
-                      <h4 className="font-bold text-white text-base group-hover:text-[#10B981] transition">{tool.name}</h4>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300">
+                          <ToolIcon size={24} />
+                        </div>
+                        {tool.level && (
+                          <span className="text-[11px] font-mono text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 group-hover:border-[#10B981]/50 px-2.5 py-0.5 rounded-full border border-[#10B981]/20 transition">
+                            {tool.level}
+                          </span>
+                        )}
+                      </div>
+
+                      <h4 className="font-bold text-white text-base group-hover:text-[#10B981] transition mb-1">{tool.name}</h4>
                       {tool.tool_type && (
-                        <p className="text-xs font-mono text-gray-400 group-hover:text-emerald-300 transition mt-0.5">{tool.tool_type}</p>
+                        <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-3">{tool.tool_type}</p>
+                      )}
+
+                      {tool.summary && (
+                        <p className="text-xs text-gray-400 group-hover:text-gray-300 leading-relaxed pt-2 border-t border-[#1e2638] transition">
+                          {tool.summary}
+                        </p>
                       )}
                     </div>
-
-                    {tool.summary && (
-                      <p className="text-xs text-gray-300 leading-relaxed pt-1 border-t border-[#1e2638]">
-                        {tool.summary}
-                      </p>
-                    )}
                   </SpotlightCard>
                 );
               })}

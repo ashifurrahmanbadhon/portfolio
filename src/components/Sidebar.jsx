@@ -33,7 +33,7 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
     { name: "Skills Matrix", tab: "skills", href: "/admin?tab=skills", icon: Cpu, badge: "Page 5" },
     { name: "Projects", tab: "projects", href: "/admin?tab=projects", icon: FolderGit2, badge: "Page 6" },
     { name: "Contact Info", tab: "contact", href: "/admin?tab=contact", icon: Mail, badge: "Page 7" },
-    { name: "Messages Inbox", tab: "inbox", href: "/admin?tab=inbox", icon: MessageSquare, badge: "Inbox" },
+    { name: "Inbox", tab: "inbox", href: "/admin?tab=inbox", icon: MessageSquare, badge: "Page 8" },
   ];
 
   const utilityNav = [
@@ -42,11 +42,11 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
 
   return (
     <div className="space-y-4">
-      {/* 7 Webpages Navigation */}
+      {/* 8 Webpages Navigation */}
       <div>
         {!collapsed && (
           <div className="px-3 pb-2 text-[10px] font-mono uppercase tracking-wider text-emerald-400/80 font-bold flex items-center justify-between">
-            <span>7 Website Pages</span>
+            <span>8 Website Pages</span>
             <span className="text-[9px] bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 text-emerald-400">
               CMS Tabs
             </span>

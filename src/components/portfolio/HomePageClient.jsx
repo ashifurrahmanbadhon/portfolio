@@ -196,14 +196,23 @@ export default function Home() {
                   href="/about"
                   className="block h-full"
                 >
-                  <SpotlightCard className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] h-full">
-                    <Icon className="text-[#10B981] mb-3 group-hover:scale-110 transition" size={28} />
-                    <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
-                      {pillar.title}
-                    </h4>
-                    <p className="text-xs text-gray-400 leading-relaxed">
-                      {pillar.subtitle || pillar.description}
-                    </p>
+                  <SpotlightCard className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] h-full flex flex-col justify-between">
+                    <div>
+                      <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 mb-4">
+                        <Icon size={24} />
+                      </div>
+                      <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
+                        {pillar.title}
+                      </h4>
+                      {pillar.subtitle && (
+                        <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-2">
+                          {pillar.subtitle}
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-400 leading-relaxed">
+                        {pillar.description || pillar.subtitle}
+                      </p>
+                    </div>
                   </SpotlightCard>
                 </Link>
               );

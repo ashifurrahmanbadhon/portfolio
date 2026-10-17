@@ -130,16 +130,16 @@ export default function AboutPage() {
                 <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#10B981] to-teal-600 opacity-25 blur-xl group-hover:opacity-50 transition duration-500" />
                 
                 <div className="relative bg-[#111622] border border-[#1e2638] rounded-3xl p-5 shadow-2xl space-y-5">
-                  <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-[#0b0f17]">
+                  <div className="relative w-full aspect-[4/5] sm:h-[460px] rounded-2xl overflow-hidden bg-[#0b0f17]">
                     <Image
                       src={aboutData.profile_image || "/ashifur-about.jpg"}
                       alt={heroData.name || "Ashifur Rahman"}
                       fill
-                      className="object-cover object-top group-hover:scale-105 transition duration-500"
+                      className="object-cover object-[center_12%] group-hover:scale-105 transition duration-500"
                       priority
                       unoptimized
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17]/90 via-transparent to-transparent opacity-85" />
                     
                     <div className="absolute bottom-4 left-4 right-4">
                       <p className="text-[10px] font-mono uppercase tracking-widest text-[#10B981]">
@@ -224,7 +224,9 @@ export default function AboutPage() {
                       {pillar.title}
                     </h4>
                     {pillar.subtitle && (
-                      <p className="text-xs font-mono text-[#10B981]/80 mb-3">{pillar.subtitle}</p>
+                      <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-3">
+                        {pillar.subtitle}
+                      </p>
                     )}
                     <p className="text-xs text-gray-400 leading-relaxed">
                       {pillar.description}

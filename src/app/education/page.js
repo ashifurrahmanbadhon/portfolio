@@ -140,22 +140,22 @@ export default function EducationPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {courseworkPillars.map((pillar, idx) => (
-                <SpotlightCard key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-4">
-                  <div className="flex items-center gap-2.5 pb-3 border-b border-[#1e2638]">
-                    <div className="p-2 rounded-lg bg-[#10B981]/10 text-[#10B981]">
-                      <BookOpen size={18} />
+                <SpotlightCard key={idx} className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] space-y-4 flex flex-col justify-between">
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 mb-4">
+                      <BookOpen size={24} />
                     </div>
-                    <h4 className="font-bold text-white text-sm sm:text-base group-hover:text-[#10B981] transition">{pillar.title}</h4>
-                  </div>
+                    <h4 className="font-bold text-white text-base group-hover:text-[#10B981] transition mb-3 pb-3 border-b border-[#1e2638]">{pillar.title}</h4>
 
-                  <ul className="space-y-2.5 text-xs text-gray-300">
-                    {(pillar.courses || []).map((course, cIdx) => (
-                      <li key={cIdx} className="flex items-start gap-2">
-                        <Check size={14} className="text-[#10B981] shrink-0 mt-0.5" />
-                        <span>{course}</span>
-                      </li>
-                    ))}
-                  </ul>
+                    <ul className="space-y-2.5 text-xs text-gray-300">
+                      {(pillar.courses || []).map((course, cIdx) => (
+                        <li key={cIdx} className="flex items-start gap-2 group-hover:text-gray-200 transition">
+                          <Check size={14} className="text-[#10B981] shrink-0 mt-0.5" />
+                          <span>{course}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </SpotlightCard>
               ))}
             </div>
@@ -182,18 +182,26 @@ export default function EducationPage() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center border border-[#10B981]/30">
-                      <ShieldCheck size={20} />
+                    <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300">
+                      <ShieldCheck size={24} />
                     </div>
-                    {cert.year && <span className="text-xs font-mono text-gray-400">{cert.year}</span>}
+                    {cert.year && (
+                      <span className="text-[11px] font-mono text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 group-hover:border-[#10B981]/50 px-2.5 py-0.5 rounded-full border border-[#10B981]/20 transition">
+                        {cert.year}
+                      </span>
+                    )}
                   </div>
 
                   <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
                     {cert.title}
                   </h4>
-                  {cert.issuer && <p className="text-xs font-mono text-[#10B981] mb-3">{cert.issuer}</p>}
+                  {cert.issuer && (
+                    <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-3">
+                      {cert.issuer}
+                    </p>
+                  )}
                   {cert.description && (
-                    <p className="text-xs text-gray-400 leading-relaxed">
+                    <p className="text-xs text-gray-400 group-hover:text-gray-300 leading-relaxed transition">
                       {cert.description}
                     </p>
                   )}
