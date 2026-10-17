@@ -41,28 +41,33 @@ export default function PortfolioNavbar() {
           </span>
         </Link>
 
-        {/* Desktop Navigation Links with SpotlightCard effect */}
-        <SpotlightCard
-          className="hidden lg:block ml-auto mr-4 p-1 rounded-2xl bg-[#111622]/90 border border-[#1e2638] shadow-lg hover:scale-100 hover:translate-y-0"
-          contentClassName="flex items-center space-x-1 xl:space-x-1.5 text-xs font-semibold uppercase tracking-wider"
-        >
+        {/* Desktop Navigation Links: each page item individually wrapped in SpotlightCard */}
+        <div className="hidden lg:flex items-center gap-1.5 xl:gap-2 ml-auto mr-3 text-xs font-semibold uppercase tracking-wider">
           {NAV_ITEMS.map((item) => {
             const active = isLinkActive(item.href);
             return (
-              <Link
+              <SpotlightCard
                 key={item.name}
-                href={item.href}
-                className={`px-3 py-1.5 rounded-xl transition-all duration-200 ${
+                className={`p-0.5 rounded-xl transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 ${
                   active
-                    ? 'text-[#10B981] bg-[#10B981]/15 border border-[#10B981]/30 font-bold shadow-xs shadow-[#10B981]/10'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent'
+                    ? "bg-[#10B981]/15 border border-[#10B981]/40 shadow-xs shadow-[#10B981]/15"
+                    : "bg-[#111622] border border-[#1e2638]"
                 }`}
               >
-                {item.name}
-              </Link>
+                <Link
+                  href={item.href}
+                  className={`px-3 py-1.5 block rounded-lg transition-all duration-200 ${
+                    active
+                      ? "text-[#10B981] font-bold"
+                      : "text-gray-300 hover:text-white"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              </SpotlightCard>
             );
           })}
-        </SpotlightCard>
+        </div>
 
         {/* Action Buttons: Direct CV Download + Admin with SpotlightCard effect */}
         <div className="hidden md:flex items-center gap-2.5 shrink-0">

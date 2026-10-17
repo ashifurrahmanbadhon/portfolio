@@ -258,7 +258,10 @@ export default function CentralLoginPanel() {
       <div className="absolute w-80 h-80 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none -bottom-20 -right-20"></div>
 
       {/* Main Login Console Card with SpotlightCard effect */}
-      <SpotlightCard className="animate-fade-up bg-[#111622]/95 backdrop-blur-md border border-[#1E2638] w-full max-w-sm p-7 sm:p-8 rounded-2xl shadow-2xl relative z-10 space-y-6">
+      <SpotlightCard
+        className="animate-fade-up bg-[#111622]/95 backdrop-blur-md border border-[#1E2638] w-full max-w-sm p-7 sm:p-8 rounded-2xl shadow-2xl relative z-10"
+        contentClassName="space-y-6"
+      >
         {/* Branding */}
         <div className="text-center space-y-2.5">
           <div className="flex justify-center mb-1">
