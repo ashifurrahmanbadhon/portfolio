@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, ShieldCheck, X, Check } from "lucide-react";
+import SpotlightCard from "@/components/SpotlightCard";
 import ActiveToggle from "./ActiveToggle";
 
 export default function CertificationsManager({ certifications, setCertifications, onSave, saving }) {
@@ -69,7 +70,7 @@ export default function CertificationsManager({ certifications, setCertification
   };
 
   return (
-    <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+    <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-3">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -93,7 +94,7 @@ export default function CertificationsManager({ certifications, setCertification
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
         {list.map((item, idx) => (
-          <div
+          <SpotlightCard
             key={idx}
             className="bg-[#0A0D12] border border-[#1E2638] p-4 rounded-xl flex flex-col justify-between group relative"
           >
@@ -144,7 +145,7 @@ export default function CertificationsManager({ certifications, setCertification
             <div className="mt-3 pt-2 border-t border-[#1E2638] flex items-center gap-1 text-[11px] font-mono text-emerald-400">
               <Check className="w-3 h-3" /> Verified Credential
             </div>
-          </div>
+          </SpotlightCard>
         ))}
       </div>
 
@@ -230,6 +231,6 @@ export default function CertificationsManager({ certifications, setCertification
           </div>
         </div>
       )}
-    </div>
+    </SpotlightCard>
   );
 }

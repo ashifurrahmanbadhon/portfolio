@@ -210,7 +210,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Real Performance Diagnostics Banner */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#111622] via-[#0B0F17] to-[#111622] border border-[#1E2638] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <SpotlightCard className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#111622] via-[#0B0F17] to-[#111622] border border-[#1E2638] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
             <Activity className="w-5 h-5" />
@@ -242,7 +242,7 @@ export default function AnalyticsPage() {
             <span className="text-white font-bold">{activeNodesCount}/{nodes.length}</span>
           </div>
         </div>
-      </div>
+      </SpotlightCard>
 
       {/* 4 Telemetry Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

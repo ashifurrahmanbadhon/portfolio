@@ -734,7 +734,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
         </div>
       )}
 
-      {/* Facebook-style Avatar Reposition Modal */}
+      {/* Avatar Reposition Modal */}
       {isAvatarModalOpen && (
         <div className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
           <div
@@ -749,10 +749,10 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white tracking-wide">
-                    {pendingAvatarFile ? "Reposition Avatar Before Upload" : "Reposition Avatar (Facebook Style)"}
+                    {pendingAvatarFile ? "Reposition Avatar Before Upload" : "Reposition Photo"}
                   </h3>
                   <p className="text-[11px] text-slate-400 font-mono">
-                    Drag the photo to center your face
+                    Adjust framing and position
                   </p>
                 </div>
               </div>
@@ -810,8 +810,8 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
 
                 {/* Instruction Badge */}
                 <div className="absolute top-2.5 left-2.5 pointer-events-none flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
-                  <Move className={`w-3 h-3 ${isDraggingAvatar ? "text-emerald-400 animate-pulse" : "text-emerald-400"}`} />
-                  <span>{isDraggingAvatar ? "Dragging position..." : "Drag photo to reposition"}</span>
+                  <Move className="w-3 h-3 text-emerald-400" />
+                  <span>Reposition Photo</span>
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sliders, Save } from "lucide-react";
+import SpotlightCard from "@/components/SpotlightCard";
 
 const PAGES = [
   { key: "home", label: "Home Page (/)" },
@@ -42,7 +43,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
   };
 
   return (
-    <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
+    <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-3">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -131,6 +132,6 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
           />
         </div>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

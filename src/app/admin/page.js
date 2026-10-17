@@ -630,12 +630,12 @@ function AdminConsoleContent() {
           </SpotlightCard>
 
           {/* Highlights Metrics Cards */}
-          <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#1E2638]">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-emerald-400" />
-                  Hero Highlights & Metrics Cards
+                  Hero Highlights &amp; Metrics Cards
                 </h3>
                 <p className="text-xs text-slate-400">Featured metric banners appearing right under the hero headline.</p>
               </div>
@@ -655,7 +655,7 @@ function AdminConsoleContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {highlights.map((item, idx) => (
-                <div
+                <SpotlightCard
                   key={idx}
                   className="bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/40 p-4 rounded-xl space-y-2 group relative transition"
                 >
@@ -689,10 +689,10 @@ function AdminConsoleContent() {
                   </div>
                   <p className="text-xs font-bold text-white">{item.metric_label}</p>
                   <p className="text-[11px] text-slate-400">{item.metric_subtext}</p>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
-          </div>
+          </SpotlightCard>
 
           {/* Dynamic Homepage CTA Section Manager */}
           <HomepageCtaManager
@@ -785,7 +785,7 @@ function AdminConsoleContent() {
             </div>
 
             {/* Core Focus Area 1 */}
-            <div className="p-4 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-3">
+            <SpotlightCard className="p-4 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-3">
               <div className="font-bold text-emerald-400 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" /> Focus Pillar 1
               </div>
@@ -807,10 +807,10 @@ function AdminConsoleContent() {
                   className="w-full bg-[#111622] border border-[#1E2638] focus:border-emerald-500 rounded-lg px-3 py-2 text-white outline-none resize-none"
                 />
               </div>
-            </div>
+            </SpotlightCard>
 
             {/* Core Focus Area 2 */}
-            <div className="p-4 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-3">
+            <SpotlightCard className="p-4 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-3">
               <div className="font-bold text-emerald-400 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" /> Focus Pillar 2
               </div>
@@ -832,7 +832,7 @@ function AdminConsoleContent() {
                   className="w-full bg-[#111622] border border-[#1E2638] focus:border-emerald-500 rounded-lg px-3 py-2 text-white outline-none resize-none"
                 />
               </div>
-            </div>
+            </SpotlightCard>
           </div>
         </SpotlightCard>
 
@@ -1567,7 +1567,7 @@ function AdminConsoleContent() {
           </SpotlightCard>
 
           {/* Section B: Resume / CV Management */}
-          <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#1E2638]">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -1618,7 +1618,7 @@ function AdminConsoleContent() {
                 />
               </div>
             </div>
-          </div>
+          </SpotlightCard>
         </div>
       )}
 
@@ -1716,7 +1716,7 @@ function AdminConsoleContent() {
                 {messages.map((msg) => {
                   const isSelected = selectedMessages.includes(msg.id);
                   return (
-                    <div
+                    <SpotlightCard
                       key={msg.id}
                       onClick={(e) => {
                         if (e.target.closest("button") || e.target.closest("a")) return;
@@ -1807,7 +1807,7 @@ function AdminConsoleContent() {
                       <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">
                         {msg.message}
                       </p>
-                    </div>
+                    </SpotlightCard>
                   );
                 })}
               </div>

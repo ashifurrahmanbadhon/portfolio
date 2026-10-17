@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
+import SpotlightCard from "@/components/SpotlightCard";
 
 function parsePosition(posStr) {
   if (!posStr || typeof posStr !== "string") return { x: 50, y: 15 };
@@ -466,7 +467,7 @@ export default function MediaUploader({
         <div>
           {/* Case 1: Value exists -> Show Live Preview Card */}
           {value ? (
-            <div className="bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/30 rounded-2xl p-3 sm:p-4 space-y-3 transition">
+            <SpotlightCard className="bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/30 rounded-2xl p-3 sm:p-4 space-y-3 transition">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
@@ -490,7 +491,7 @@ export default function MediaUploader({
                       type="button"
                       onClick={handleOpenExistingReposition}
                       className="px-2.5 py-1.5 rounded-lg bg-[#161C2A] hover:bg-[#1E2638] text-emerald-400 font-semibold border border-emerald-500/20 text-[11px] flex items-center gap-1 transition cursor-pointer"
-                      title="Reposition photo (Facebook style)"
+                      title="Reposition Photo"
                     >
                       <Move className="w-3 h-3" />
                       <span>Reposition</span>
@@ -517,7 +518,7 @@ export default function MediaUploader({
               </div>
 
               {/* Media Preview Box */}
-              <div className="relative rounded-xl overflow-hidden bg-[#070A0F] border border-[#1E2638] flex items-center justify-center">
+              <div className="relative rounded-xl overflow-hidden bg-[#070A0F] border border-[#1E2638] flex items-center justify-center p-3 sm:p-4">
                 {uploading && (
                   <div className="absolute inset-0 z-30 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-2.5 p-4 animate-in fade-in duration-150">
                     <div className="relative w-16 h-16 flex items-center justify-center">
@@ -562,10 +563,11 @@ export default function MediaUploader({
                   />
                 ) : (
                   <div
-                    className={`relative w-full h-48 sm:h-56 group/preview ${
+                    className={`relative w-44 sm:w-52 h-56 sm:h-64 rounded-2xl overflow-hidden shadow-2xl border border-[#1E2638] bg-[#0A0E18] group/preview mx-auto ${
                       onPositionChange && !uploading ? "cursor-pointer" : ""
                     }`}
                     onClick={handleOpenExistingReposition}
+                    title="Click to reposition photo"
                   >
                     <img
                       src={tempPreview || value}
@@ -574,19 +576,19 @@ export default function MediaUploader({
                       className="w-full h-full object-cover transition-all select-none"
                     />
 
-                    {/* Facebook style hover overlay badge */}
+                    {/* Hover overlay badge */}
                     {onPositionChange && !uploading && (
                       <div className="absolute inset-0 bg-black/45 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none">
-                        <span className="px-3.5 py-1.5 rounded-xl bg-black/85 backdrop-blur-md text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-2 shadow-2xl">
+                        <span className="px-3.5 py-1.5 rounded-xl bg-black/90 backdrop-blur-md text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-2 shadow-2xl">
                           <Move className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Click to Reposition Photo (Facebook Style)</span>
+                          <span>Reposition Photo</span>
                         </span>
                       </div>
                     )}
                   </div>
                 )}
               </div>
-            </div>
+            </SpotlightCard>
           ) : (
             /* Case 2: No value -> Show Drag & Drop Upload Zone */
             <div
@@ -674,7 +676,7 @@ export default function MediaUploader({
         </div>
       )}
 
-      {/* Facebook-style Photo Reposition Modal (Direct Click & Drag Before / After Upload) */}
+      {/* Photo Reposition Modal (Direct Click & Drag Before / After Upload) */}
       {isRepositionModalOpen && (
         <div className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
           <div
@@ -689,10 +691,10 @@ export default function MediaUploader({
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white tracking-wide">
-                    {pendingFile ? "Reposition Photo Before Upload" : "Reposition Photo (Facebook Style)"}
+                    Reposition Photo
                   </h3>
                   <p className="text-[11px] text-slate-400 font-mono">
-                    Drag the photo to adjust framing and position
+                    Adjust framing and position
                   </p>
                 </div>
               </div>
@@ -732,7 +734,7 @@ export default function MediaUploader({
                   className="w-full h-full object-cover pointer-events-none select-none transition-none"
                 />
 
-                {/* 3x3 Grid Lines on Drag (Facebook standard) */}
+                {/* 3x3 Grid Lines on Drag */}
                 {isDraggingModal && (
                   <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/50 bg-emerald-500/10 animate-in fade-in duration-100">
                     <div className="border-r border-b border-emerald-400/30" />
@@ -749,8 +751,8 @@ export default function MediaUploader({
 
                 {/* Instruction Badge */}
                 <div className="absolute top-3 left-3 pointer-events-none flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 backdrop-blur-md text-[11px] font-mono text-emerald-300 border border-emerald-500/40 shadow-lg">
-                  <Move className={`w-3.5 h-3.5 ${isDraggingModal ? "text-emerald-400 animate-pulse" : "text-emerald-400"}`} />
-                  <span>{isDraggingModal ? "Dragging position..." : "Drag photo to reposition"}</span>
+                  <Move className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Reposition Photo</span>
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Trash2, Check, X } from "lucide-react";
+import SpotlightCard from "@/components/SpotlightCard";
 import ActiveToggle from "./ActiveToggle";
 
 export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave, saving }) {
@@ -56,7 +57,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
   };
 
   return (
-    <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+    <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-3">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -110,6 +111,6 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
           </div>
         ))}
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

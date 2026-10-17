@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Edit2, Trash2, Layers, X } from "lucide-react";
+import SpotlightCard from "@/components/SpotlightCard";
 import ActiveToggle from "./ActiveToggle";
 
 export default function ProjectMethodologyManager({ methodologies, setMethodologies, onSave, saving }) {
@@ -68,7 +69,7 @@ export default function ProjectMethodologyManager({ methodologies, setMethodolog
   };
 
   return (
-    <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+    <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-3">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -92,7 +93,7 @@ export default function ProjectMethodologyManager({ methodologies, setMethodolog
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-2">
         {list.map((item, idx) => (
-          <div
+          <SpotlightCard
             key={idx}
             className="bg-[#0A0D12] border border-[#1E2638] p-4 rounded-xl space-y-2 group relative"
           >
@@ -127,7 +128,7 @@ export default function ProjectMethodologyManager({ methodologies, setMethodolog
 
             <h4 className="text-xs font-bold text-white">{item.title}</h4>
             <p className="text-xs text-slate-400 leading-relaxed">{item.description}</p>
-          </div>
+          </SpotlightCard>
         ))}
       </div>
 
@@ -201,6 +202,6 @@ export default function ProjectMethodologyManager({ methodologies, setMethodolog
           </div>
         </div>
       )}
-    </div>
+    </SpotlightCard>
   );
 }
