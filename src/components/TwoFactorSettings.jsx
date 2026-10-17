@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   ShieldCheck,
   ShieldAlert,
@@ -512,9 +513,12 @@ ${codes.map((c, i) => `${i + 1}. ${c}`).join("\n")}
                     <div className="space-y-4">
                       {/* QR Code Container */}
                       <div className="flex justify-center p-4 bg-white rounded-xl w-fit mx-auto shadow-inner border border-slate-200">
-                        <img
+                        <Image
                           src={setupData.qr_code}
                           alt="2FA QR Code"
+                          width={192}
+                          height={192}
+                          unoptimized
                           className="w-44 h-44 sm:w-48 sm:h-48 rounded"
                         />
                       </div>

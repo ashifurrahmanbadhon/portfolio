@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Menu,
   ExternalLink,
@@ -420,13 +421,13 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
               className="flex items-center gap-2.5 p-1.5 pr-2 rounded-lg hover:bg-[#111622] border border-transparent hover:border-[#1E2638] transition-all duration-150 interactive-btn cursor-pointer"
             >
               <div className="w-7 h-7 rounded-lg overflow-hidden bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold font-mono flex items-center justify-center transition-transform duration-200 hover:scale-105 shrink-0">
-                <img
-                  src={userAvatar}
+                <Image
+                  src={userAvatar || "/ashifur.jpeg"}
                   alt={displayName}
+                  width={28}
+                  height={28}
+                  unoptimized
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
                 />
               </div>
               <div className="hidden md:block text-left">
@@ -534,14 +535,14 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
             <div className="p-5 border-b border-[#1E2638]/60 bg-[#0B0F17]/50 flex items-center gap-4">
               <div className="relative group">
                 <div className="w-16 h-16 rounded-2xl overflow-hidden bg-emerald-500/15 border-2 border-emerald-500/40 shadow-lg shrink-0 relative">
-                  <img
-                    src={editAvatar || userAvatar}
+                  <Image
+                    src={editAvatar || userAvatar || "/ashifur.jpeg"}
                     alt={displayName}
+                    width={64}
+                    height={64}
+                    unoptimized
                     style={{ objectPosition: editAvatarPosition }}
                     className="w-full h-full object-cover select-none pointer-events-none"
-                    onError={(e) => {
-                      e.currentTarget.src = "/ashifur.jpeg";
-                    }}
                   />
                   {avatarUploading && (
                     <div className="absolute inset-0 bg-black/80 rounded-2xl flex flex-col items-center justify-center z-20 animate-in fade-in duration-150">
@@ -785,10 +786,13 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                     : "border-emerald-500/40 hover:border-emerald-400 cursor-grab"
                 }`}
               >
-                <img
-                  src={pendingAvatarUrl || editAvatar || userAvatar}
+                <Image
+                  src={pendingAvatarUrl || editAvatar || userAvatar || "/ashifur.jpeg"}
                   alt="Avatar Reposition"
+                  width={224}
+                  height={224}
                   draggable={false}
+                  unoptimized
                   style={{ objectPosition: tempAvatarPos }}
                   className="w-full h-full object-cover pointer-events-none select-none transition-none"
                 />

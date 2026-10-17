@@ -39,21 +39,23 @@ import {
   Layers,
   ChevronRight
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 import SpotlightCard from "@/components/SpotlightCard";
 import MediaUploader from "@/components/MediaUploader";
-import AboutPillarsManager from "@/components/admin/AboutPillarsManager";
-import AboutPrinciplesManager from "@/components/admin/AboutPrinciplesManager";
-import ExperienceMetricsManager from "@/components/admin/ExperienceMetricsManager";
-import CertificationsManager from "@/components/admin/CertificationsManager";
-import CourseworkManager from "@/components/admin/CourseworkManager";
-import SoftwareToolsManager from "@/components/admin/SoftwareToolsManager";
-import SkillBadgesManager from "@/components/admin/SkillBadgesManager";
-import ProjectMethodologyManager from "@/components/admin/ProjectMethodologyManager";
-import PageHeadersManager from "@/components/admin/PageHeadersManager";
-import HomepageCtaManager from "@/components/admin/HomepageCtaManager";
 import ActiveToggle from "@/components/admin/ActiveToggle";
+
+const AboutPillarsManager = dynamic(() => import("@/components/admin/AboutPillarsManager"), { ssr: true });
+const AboutPrinciplesManager = dynamic(() => import("@/components/admin/AboutPrinciplesManager"), { ssr: true });
+const ExperienceMetricsManager = dynamic(() => import("@/components/admin/ExperienceMetricsManager"), { ssr: true });
+const CertificationsManager = dynamic(() => import("@/components/admin/CertificationsManager"), { ssr: true });
+const CourseworkManager = dynamic(() => import("@/components/admin/CourseworkManager"), { ssr: true });
+const SoftwareToolsManager = dynamic(() => import("@/components/admin/SoftwareToolsManager"), { ssr: true });
+const SkillBadgesManager = dynamic(() => import("@/components/admin/SkillBadgesManager"), { ssr: true });
+const ProjectMethodologyManager = dynamic(() => import("@/components/admin/ProjectMethodologyManager"), { ssr: true });
+const PageHeadersManager = dynamic(() => import("@/components/admin/PageHeadersManager"), { ssr: true });
+const HomepageCtaManager = dynamic(() => import("@/components/admin/HomepageCtaManager"), { ssr: true });
 
 // Default fallbacks matching portfolio initial state
 const DEFAULT_HERO = {

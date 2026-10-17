@@ -1,12 +1,14 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { PortfolioProvider, usePortfolio } from '@/context/PortfolioContext';
 import BackgroundGlow from './BackgroundGlow';
 import PortfolioNavbar from './PortfolioNavbar';
 import PortfolioFooter from './PortfolioFooter';
-import ScrollToTopButton from './ScrollToTopButton';
-import ResumeModal from './ResumeModal';
+
+const ScrollToTopButton = dynamic(() => import('./ScrollToTopButton'), { ssr: false });
+const ResumeModal = dynamic(() => import('./ResumeModal'), { ssr: false });
 
 function PortfolioInnerLayout({ children }) {
   const { resumeModalOpen, closeResumeModal, openResumeModal, resumeUrl, isLoaded } = usePortfolio();

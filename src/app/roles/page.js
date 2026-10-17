@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ShieldCheck,
   UserCheck,
@@ -320,7 +321,7 @@ export default function RolesPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl overflow-hidden bg-purple-500/15 border border-purple-500/30 text-purple-300 font-bold flex items-center justify-center shrink-0 text-xs">
                         {u.avatar ? (
-                          <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" />
+                          <Image src={u.avatar} alt={u.name} width={32} height={32} unoptimized className="w-full h-full object-cover" />
                         ) : (
                           <span>
                             {u.name
@@ -456,7 +457,7 @@ export default function RolesPage() {
                 <div className="relative group shrink-0">
                   <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-purple-500/40 bg-[#141A29] flex items-center justify-center text-purple-300 font-bold text-sm relative shadow-md">
                     {userForm.avatar ? (
-                      <img src={userForm.avatar} alt={userForm.name || "User"} className="w-full h-full object-cover" />
+                      <Image src={userForm.avatar} alt={userForm.name || "User"} width={56} height={56} unoptimized className="w-full h-full object-cover" />
                     ) : (
                       <User className="w-6 h-6 text-slate-400" />
                     )}

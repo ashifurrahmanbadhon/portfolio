@@ -646,11 +646,13 @@ export default function MediaUploader({
                     onClick={handleOpenExistingReposition}
                     title="Click to reposition photo"
                   >
-                    <img
+                    <Image
                       src={tempPreview || value}
                       alt="Uploaded media preview"
+                      fill
+                      unoptimized
                       style={{ objectPosition: positionValue || "50% 15%" }}
-                      className="w-full h-full object-cover transition-all select-none"
+                      className="object-cover transition-all select-none"
                     />
 
                     {/* Hover overlay badge */}
@@ -682,10 +684,12 @@ export default function MediaUploader({
               {uploading ? (
                 tempPreview ? (
                   <div className="relative w-full h-44 rounded-xl overflow-hidden bg-[#070A0F] border border-emerald-500/40 flex items-center justify-center">
-                    <img
+                    <Image
                       src={tempPreview}
                       alt="Uploading preview"
-                      className="w-full h-full object-cover blur-[1px] opacity-60"
+                      fill
+                      unoptimized
+                      className="object-cover blur-[1px] opacity-60"
                     />
                     <div className="absolute inset-0 z-30 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center space-y-2.5 p-4 animate-in fade-in duration-150">
                       <div className="relative w-16 h-16 flex items-center justify-center">
@@ -804,12 +808,14 @@ export default function MediaUploader({
                     : "border-emerald-500/40 hover:border-emerald-400 cursor-grab"
                 }`}
               >
-                <img
+                <Image
                   src={pendingPreview || value}
                   alt="Reposition Preview"
                   draggable={false}
+                  fill
+                  unoptimized
                   style={{ objectPosition: modalPosition }}
-                  className="w-full h-full object-cover pointer-events-none select-none transition-none"
+                  className="object-cover pointer-events-none select-none transition-none"
                 />
 
                 {/* 3x3 Grid Lines on Drag */}

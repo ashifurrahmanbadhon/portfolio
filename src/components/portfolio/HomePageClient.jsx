@@ -124,6 +124,7 @@ export default function Home() {
                     className="object-cover group-hover:scale-105 transition duration-500"
                     style={{ objectPosition: heroData.profile_position || "center 15%" }}
                     priority
+                    sizes="(max-width: 640px) 256px, 288px"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent opacity-80" />
                   
@@ -297,6 +298,8 @@ export default function Home() {
                         fill
                         className="object-cover group-hover:scale-105 transition duration-500"
                         style={{ objectPosition: proj.image_position || "center center" }}
+                        loading="lazy"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         unoptimized
                       />
                     </div>
