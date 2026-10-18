@@ -38,7 +38,7 @@ export async function POST(req) {
     }
 
     // Check Password
-    const isValid = verifyPassword(password, admin.password_hash, admin.salt) || (password === "admin123" && admin.username === "admin");
+    const isValid = verifyPassword(password, admin.password_hash, admin.salt);
     if (!isValid) {
       const attempts = await recordFailedLogin(admin.id);
       await addActivityLog(
@@ -77,7 +77,7 @@ export async function POST(req) {
     const { token, exp } = signToken(admin, rememberMe);
     await addActivityLog("Super Admin Login", "Authenticated successfully into Central CMS.", "Central CMS", admin.username);
 
-    const res = NextResponse.json({
+    return NextResponse.json({
       success: true,
       token,
       expires_at: exp,
@@ -90,18 +90,6 @@ export async function POST(req) {
         avatar: admin.avatar || "/ashifur.jpeg",
       },
     });
-
-    res.cookies.set({
-      name: "cms_auth_token",
-      value: token,
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: rememberMe ? 90 * 24 * 60 * 60 : 30 * 24 * 60 * 60,
-    });
-
-    return res;
   } catch (error) {
     console.error("POST /api/auth/login error:", error);
     console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });

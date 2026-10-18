@@ -29,7 +29,7 @@ export async function POST(req) {
         const changes = (stdout || "")
           .split("\n")
           .map((l) => l.trim())
-          .filter((l) => l.length > 0 && !l.includes("scratch/"));
+          .filter((l) => l.length > 0 && !l.includes("scratch/") && !l.endsWith(".db"));
 
         if (changes.length === 0) {
           resolve(
@@ -43,7 +43,7 @@ export async function POST(req) {
         }
 
         exec(
-          'git add -A portfolio.db public/ .gitignore && git commit -m "chore(cms): sync admin updates to live" && git push origin main',
+          'git add public/ .gitignore && git commit -m "chore(cms): sync admin updates to live" && git push origin main',
           { cwd: process.cwd() },
           (pushErr, pushOut, pushStderr) => {
             if (pushErr) {
