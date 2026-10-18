@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Zap, Download, Lock, Menu, X } from 'lucide-react';
+import { Zap, Download, Menu, X } from 'lucide-react';
 import { triggerCvDownload } from '@/lib/downloadCv';
 import SpotlightCard from '@/components/SpotlightCard';
 
@@ -69,7 +69,7 @@ export default function PortfolioNavbar() {
           })}
         </div>
 
-        {/* Action Buttons: Direct CV Download + Admin with SpotlightCard effect */}
+        {/* Action Button: Direct CV Download with SpotlightCard effect */}
         <div className="hidden md:flex items-center gap-2.5 shrink-0">
           <SpotlightCard className="p-0.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:scale-105 hover:-translate-y-0.5 transition-all">
             <button
@@ -80,15 +80,6 @@ export default function PortfolioNavbar() {
             >
               <Download size={14} className="text-[#10B981]" /> Download CV
             </button>
-          </SpotlightCard>
-          <SpotlightCard className="p-0.5 rounded-xl bg-[#111622] border border-[#1e2638] hover:scale-105 hover:-translate-y-0.5 transition-all">
-            <Link
-              href="/admin"
-              className="px-3.5 py-1.5 text-gray-200 text-xs font-semibold flex items-center gap-1.5 transition hover:text-[#10B981]"
-              title="Central Admin CMS"
-            >
-              <Lock size={13} className="text-[#10B981]" /> Admin
-            </Link>
           </SpotlightCard>
         </div>
 
@@ -134,13 +125,6 @@ export default function PortfolioNavbar() {
             >
               <Download size={16} /> Download CV
             </button>
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center px-3.5 py-2.5 rounded-lg text-xs font-semibold text-gray-200 bg-[#111622] border border-[#1e2638] hover:border-[#10B981]/40 flex items-center justify-center gap-2 transition"
-            >
-              <Lock size={14} className="text-[#10B981]" /> Admin Console
-            </Link>
           </div>
         </div>
       )}
