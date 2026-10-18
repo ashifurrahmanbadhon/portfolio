@@ -22,6 +22,21 @@
   }
 }
 
+/* Inter as the single UI font across all pages */
+body, button, input, select, textarea, p, span, h1, h2, h3, h4, h5, h6, a, div, li, td, th {
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* JetBrains Mono stays ONLY for genuine code / preformatted content */
+code, pre, kbd, samp {
+  font-family: var(--font-mono), monospace !important;
+}
+
+/* Non-code elements with .font-mono class use Inter */
+.font-mono:not(code):not(pre):not(kbd):not(samp):not(code *):not(pre *) {
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
 /* Custom Minimal Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;

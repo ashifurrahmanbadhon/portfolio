@@ -46,7 +46,7 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/Ashifur_Rah
           </a>
           <a
             href="mailto:ashifur.badhon@gmail.com?subject=Request%20for%20Ashifur%20Rahman%20Full%20Resume"
-            className="w-full py-2 text-gray-400 hover:text-[#10B981] font-mono text-xs flex items-center justify-center gap-1.5 transition"
+            className="w-full py-2 text-gray-400 hover:text-[#10B981] text-xs flex items-center justify-center gap-1.5 transition"
           >
             <Mail size={14} /> Request Custom CV via Email
           </a>

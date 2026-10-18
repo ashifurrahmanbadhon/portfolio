@@ -74,7 +74,6 @@ export default function SkillsPage() {
       {/* Main Technical Domains Grid */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
         <div className="mb-12">
-          <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Applied Competency</p>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Domain Competency Ratings</h2>
           <p className="text-gray-400 text-xs sm:text-sm mt-2 max-w-2xl">
             Empirically evaluated proficiencies cultivated through academic labs, field internships, and professional operations.
@@ -104,7 +103,7 @@ export default function SkillsPage() {
                       <div key={sIdx} className="space-y-1.5">
                         <div className="flex justify-between items-center text-xs">
                           <span className="font-medium text-gray-200 group-hover:text-[#10B981] transition">{skill.name}</span>
-                          <span className="font-mono text-[#10B981] font-bold">{skill.level}%</span>
+                          <span className="text-[#10B981] font-bold">{skill.level}%</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-[#0b0f17] border border-[#1e2638] overflow-hidden p-0.5">
                           <div
@@ -127,7 +126,6 @@ export default function SkillsPage() {
         <section className="relative z-10 px-6 md:px-12 py-16 bg-[#0e131d] border-y border-[#1e2638]">
           <div className="max-w-7xl mx-auto">
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Software Stack</p>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Engineering Software &amp; Frameworks</h3>
               <p className="text-gray-400 text-xs sm:text-sm mt-3">
                 Industrial applications and computational platforms utilized in daily engineering, drafting, and data modeling.
@@ -148,7 +146,7 @@ export default function SkillsPage() {
                           <ToolIcon size={24} />
                         </div>
                         {tool.level && (
-                          <span className="text-[11px] font-mono text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 group-hover:border-[#10B981]/50 px-2.5 py-0.5 rounded-full border border-[#10B981]/20 transition">
+                          <span className="text-[11px] font-semibold text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 group-hover:border-[#10B981]/50 px-2.5 py-0.5 rounded-full border border-[#10B981]/20 transition">
                             {tool.level}
                           </span>
                         )}
@@ -156,7 +154,7 @@ export default function SkillsPage() {
 
                       <h4 className="font-bold text-white text-base group-hover:text-[#10B981] transition mb-1">{tool.name}</h4>
                       {tool.tool_type && (
-                        <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-3">{tool.tool_type}</p>
+                        <p className="text-xs text-white/90 group-hover:text-[#10B981] transition mb-3">{tool.tool_type}</p>
                       )}
 
                       {tool.summary && (
@@ -178,7 +176,6 @@ export default function SkillsPage() {
         <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <div>
-              <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Technical Standards</p>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Engineering Protocols &amp; Regulatory Standards</h3>
               <p className="text-gray-400 text-xs sm:text-sm mt-2">
                 Knowledge frameworks governing electrical installations, distribution grids, and computational reliability.
