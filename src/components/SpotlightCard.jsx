@@ -51,7 +51,7 @@ const SpotlightCard = memo(function SpotlightCard({
         }}
       />
 
-      <div className={`relative z-10 ${contentClassName}`}>{children}</div>
+      <div className={`relative z-10 w-full ${contentClassName}`}>{children}</div>
     </div>
   );
 });
