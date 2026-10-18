@@ -898,36 +898,38 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "experience" && (
         <div className="space-y-4">
-          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-emerald-400" />
-                Work Experience Timeline
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Manage all career positions shown on <code className="text-emerald-400">/experience</code>. Total positions: {experiences.length}
-              </p>
-            </div>
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+            <div className="flex items-center justify-between gap-4 w-full">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-emerald-400" />
+                  Work Experience Timeline
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Manage all career positions shown on <code className="text-emerald-400">/experience</code>. Total positions: {experiences.length}
+                </p>
+              </div>
 
-            <button
-              onClick={() => {
-                setEditingItem({
-                  role: "",
-                  organization: "",
-                  period: "",
-                  location: "Dhaka, Bangladesh",
-                  website: "",
-                  description_points: [""],
-                  is_current: false,
-                });
-                setEditingIndex(-1);
-                setModalType("experience");
-              }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Experience</span>
-            </button>
+              <button
+                onClick={() => {
+                  setEditingItem({
+                    role: "",
+                    organization: "",
+                    period: "",
+                    location: "Dhaka, Bangladesh",
+                    website: "",
+                    description_points: [""],
+                    is_current: false,
+                  });
+                  setEditingIndex(-1);
+                  setModalType("experience");
+                }}
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Experience</span>
+              </button>
+            </div>
           </SpotlightCard>
 
           <div className="space-y-3">
@@ -1033,37 +1035,39 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "education" && (
         <div className="space-y-4">
-          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-emerald-400" />
-                Education &amp; Qualifications
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Manage degrees, institutions, and academic accolades at <code className="text-emerald-400">/education</code>.
-              </p>
-            </div>
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+            <div className="flex items-center justify-between gap-4 w-full">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-emerald-400" />
+                  Education &amp; Qualifications
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Manage degrees, institutions, and academic accolades at <code className="text-emerald-400">/education</code>.
+                </p>
+              </div>
 
-            <button
-              onClick={() => {
-                setEditingItem({
-                  degree: "",
-                  institution: "",
-                  subject: "",
-                  start_year: "",
-                  end_year: "",
-                  result: "",
-                  badge_text: "",
-                  description: "",
-                });
-                setEditingIndex(-1);
-                setModalType("education");
-              }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Education</span>
-            </button>
+              <button
+                onClick={() => {
+                  setEditingItem({
+                    degree: "",
+                    institution: "",
+                    subject: "",
+                    start_year: "",
+                    end_year: "",
+                    result: "",
+                    badge_text: "",
+                    description: "",
+                  });
+                  setEditingIndex(-1);
+                  setModalType("education");
+                }}
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Education</span>
+              </button>
+            </div>
           </SpotlightCard>
 
           <div className="space-y-3">
@@ -1161,33 +1165,35 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "skills" && (
         <div className="space-y-4">
-          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Cpu className="w-5 h-5 text-emerald-400" />
-                Technical Skills Matrix
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Categorized engineering skills &amp; software tools displayed at <code className="text-emerald-400">/skills</code>.
-              </p>
-            </div>
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+            <div className="flex items-center justify-between gap-4 w-full">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-emerald-400" />
+                  Technical Skills Matrix
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Categorized engineering skills &amp; software tools displayed at <code className="text-emerald-400">/skills</code>.
+                </p>
+              </div>
 
-            <button
-              onClick={() => {
-                setEditingItem({
-                  name: "",
-                  category: "Design & Simulation",
-                  level: 85,
-                  icon: "monitor",
-                });
-                setEditingIndex(-1);
-                setModalType("skill");
-              }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Skill</span>
-            </button>
+              <button
+                onClick={() => {
+                  setEditingItem({
+                    name: "",
+                    category: "Design & Simulation",
+                    level: 85,
+                    icon: "monitor",
+                  });
+                  setEditingIndex(-1);
+                  setModalType("skill");
+                }}
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Skill</span>
+              </button>
+            </div>
           </SpotlightCard>
 
           {/* Category filter pills */}
@@ -1288,39 +1294,41 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "projects" && (
         <div className="space-y-4">
-          <SpotlightCard className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111622] border border-[#1E2638] p-5 rounded-2xl">
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <FolderGit2 className="w-5 h-5 text-emerald-400" />
-                Engineering Projects Portfolio
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Technical showcase cards displayed at <code className="text-emerald-400">/projects</code>. Total projects: {projects.length}
-              </p>
-            </div>
+          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+            <div className="flex items-center justify-between gap-4 w-full">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <FolderGit2 className="w-5 h-5 text-emerald-400" />
+                  Engineering Projects Portfolio
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Technical showcase cards displayed at <code className="text-emerald-400">/projects</code>. Total projects: {projects.length}
+                </p>
+              </div>
 
-            <button
-              onClick={() => {
-                setEditingItem({
-                  project_number: String(projects.length + 1).padStart(2, "0"),
-                  title: "",
-                  category: "Power Electronics",
-                  short_description: "",
-                  full_description: "",
-                  tags: ["AutoCAD", "Simulation"],
-                  live_url: "",
-                  github_url: "",
-                  is_featured: false,
-                  is_published: true,
-                });
-                setEditingIndex(-1);
-                setModalType("project");
-              }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Project</span>
-            </button>
+              <button
+                onClick={() => {
+                  setEditingItem({
+                    project_number: String(projects.length + 1).padStart(2, "0"),
+                    title: "",
+                    category: "Power Electronics",
+                    short_description: "",
+                    full_description: "",
+                    tags: ["AutoCAD", "Simulation"],
+                    live_url: "",
+                    github_url: "",
+                    is_featured: false,
+                    is_published: true,
+                  });
+                  setEditingIndex(-1);
+                  setModalType("project");
+                }}
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Project</span>
+              </button>
+            </div>
           </SpotlightCard>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

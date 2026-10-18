@@ -58,7 +58,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
 
   return (
     <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-3">
+      <div className="flex items-center justify-between pb-3 border-b border-[#1E2638] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
             <Check className="w-4 h-4 text-emerald-400" />
@@ -69,7 +69,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
           </p>
         </div>
 
-        <form onSubmit={handleAdd} className="flex items-center gap-2 ml-auto self-end sm:self-auto">
+        <form onSubmit={handleAdd} className="flex items-center gap-2 shrink-0 ml-auto">
           <input
             type="text"
             value={newBadge}

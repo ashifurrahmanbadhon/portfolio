@@ -97,7 +97,7 @@ export default function AboutPillarsManager({ about, setAbout, onSave, saving })
 
   return (
     <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-3">
+      <div className="flex items-center justify-between pb-3 border-b border-[#1E2638] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
             <Layers className="w-4 h-4 text-emerald-400" />
@@ -111,7 +111,7 @@ export default function AboutPillarsManager({ about, setAbout, onSave, saving })
         <button
           type="button"
           onClick={openAdd}
-          className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
+          className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add New Pillar</span>
