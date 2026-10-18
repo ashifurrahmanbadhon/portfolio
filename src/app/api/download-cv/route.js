@@ -31,9 +31,12 @@ export async function GET() {
       console.warn("Custom resume remote fetch failed, falling back to local:", fetchErr.message);
     }
 
-    // Fallback to local /public/resume.pdf
+    // Fallback to local /public/Ashifur_Rahman_CV.pdf or /public/resume.pdf
     if (!fileBuffer) {
-      const filePath = path.join(process.cwd(), "public", "resume.pdf");
+      let filePath = path.join(process.cwd(), "public", "Ashifur_Rahman_CV.pdf");
+      if (!fs.existsSync(filePath)) {
+        filePath = path.join(process.cwd(), "public", "resume.pdf");
+      }
       if (fs.existsSync(filePath)) {
         fileBuffer = fs.readFileSync(filePath);
       }
