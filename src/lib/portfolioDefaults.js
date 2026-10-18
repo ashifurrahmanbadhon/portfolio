@@ -8,7 +8,7 @@ export const DEFAULT_HERO = {
   primary_btn_text: "Contact Me",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download CV",
-  secondary_btn_link: "/resume.pdf",
+  secondary_btn_link: "/Ashifur_Rahman_CV.pdf",
   spec_badge_label: "Specialization",
   spec_badge_title: "Engineering, Management & AI"
 };
@@ -129,7 +129,7 @@ export const DEFAULT_EDUCATIONS = [
   {
     degree: "Bachelor of Science in Electrical & Electronic Engineering (EEE)",
     institution: "IUBAT – International University of Business Agriculture and Technology",
-    period: "2018 – 2022",
+    period: "2017 – 2023",
     result: "Graduate",
     badge_text: "Graduated",
     description: "Comprehensive curriculum in Power Systems Analysis, High Voltage Engineering, Switchgear & Protection, Electrical Machines, Telecommunications, and Control Systems.",
@@ -138,7 +138,7 @@ export const DEFAULT_EDUCATIONS = [
   {
     degree: "Higher Secondary Certificate (HSC) — Science",
     institution: "General Mahmudul Hasan Adarsha College, Tangail",
-    period: "2015 – 2017",
+    period: "2014 – 2016",
     result: "Passed",
     badge_text: "Higher Secondary",
     description: "Focused coursework in Physics, Chemistry, Higher Mathematics, and Basic Computing.",
@@ -147,7 +147,7 @@ export const DEFAULT_EDUCATIONS = [
   {
     degree: "Secondary School Certificate (SSC) — Science",
     institution: "Bindu Bashini Government Boys' High School, Tangail",
-    period: "2013 – 2015",
+    period: "2012 – 2014",
     result: "Passed",
     badge_text: "Secondary School",
     description: "Strong foundational academics with distinction in Science, General Mathematics, and Physics.",
@@ -500,5 +500,5 @@ export const DEFAULT_HOMEPAGE_CTA = {
   primary_btn_text: "Open Contact Hub",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download Official CV",
-  secondary_btn_link: "/resume.pdf"
+  secondary_btn_link: "/Ashifur_Rahman_CV.pdf"
 };

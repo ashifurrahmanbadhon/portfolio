@@ -684,10 +684,10 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("highlight");
                 }}
-                className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add Metric</span>
+                <span>Add New Metric</span>
               </button>
             </div>
 
@@ -923,7 +923,7 @@ function AdminConsoleContent() {
                 setEditingIndex(-1);
                 setModalType("experience");
               }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer self-start sm:self-auto"
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Add New Experience</span>
@@ -1059,10 +1059,10 @@ function AdminConsoleContent() {
                 setEditingIndex(-1);
                 setModalType("education");
               }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer self-start sm:self-auto"
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Education</span>
+              <span>Add New Education</span>
             </button>
           </SpotlightCard>
 
@@ -1183,7 +1183,7 @@ function AdminConsoleContent() {
                 setEditingIndex(-1);
                 setModalType("skill");
               }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer self-start sm:self-auto"
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Add New Skill</span>
@@ -1316,7 +1316,7 @@ function AdminConsoleContent() {
                 setEditingIndex(-1);
                 setModalType("project");
               }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer self-start sm:self-auto"
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Add New Project</span>

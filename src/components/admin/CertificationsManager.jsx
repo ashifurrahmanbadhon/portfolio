@@ -85,10 +85,10 @@ export default function CertificationsManager({ certifications, setCertification
         <button
           type="button"
           onClick={openAdd}
-          className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0"
+          className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>Add Certification</span>
+          <span>Add New Certification</span>
         </button>
       </div>
 
