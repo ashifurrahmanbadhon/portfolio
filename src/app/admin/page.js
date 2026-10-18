@@ -340,17 +340,10 @@ function AdminConsoleContent() {
     try {
       let res = await api.savePortfolioSection(section, data);
 
-      // If unauthorized, heal session automatically with master credentials
+      // If unauthorized, notify user to log in again
       if (res?.error === "Unauthorized" || res?.status === 401) {
-        const reLogin = await api.login("admin", "admin123", true);
-        if (reLogin && reLogin.token) {
-          localStorage.setItem("cms_auth_token", reLogin.token);
-          try {
-            document.cookie = `cms_auth_token=${reLogin.token}; path=/; max-age=${90 * 24 * 60 * 60}; SameSite=Lax`;
-          } catch (_) {}
-          // Retry save with healed session
-          res = await api.savePortfolioSection(section, data);
-        }
+        showToast("Session expired or unauthorized. Please log in again.", "error");
+        return;
       }
 
       if (res && res.success) {

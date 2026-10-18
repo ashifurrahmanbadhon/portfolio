@@ -1761,7 +1761,7 @@ export function triggerGitSyncInBackground() {
 
         if (modified.length === 0) return;
 
-        exec('git add portfolio.db public/ && git commit -m "chore(cms): auto-sync admin content update" && git push origin main', { cwd: process.cwd() }, (pushErr, pushOut, pushStderr) => {
+        exec('git add public/ && git commit -m "chore(cms): auto-sync admin content update" && git push origin main', { cwd: process.cwd() }, (pushErr, pushOut, pushStderr) => {
           if (pushErr) {
             console.error("[Git Auto-Sync] Push error:", pushStderr || pushErr.message);
           } else {

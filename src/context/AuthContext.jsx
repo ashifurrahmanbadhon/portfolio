@@ -66,25 +66,12 @@ export function AuthProvider({ children }) {
           })
             .then(async (res) => {
               if (res.status === 401) {
-                // Server rejected stale token - heal seamlessly with master login
-                const reRes = await api.login("admin", "admin123", true);
-                if (reRes && reRes.token) {
-                  setToken(reRes.token);
-                  localStorage.setItem("cms_auth_token", reRes.token);
-                  try {
-                    document.cookie = `cms_auth_token=${reRes.token}; path=/; max-age=${90 * 24 * 60 * 60}; SameSite=Lax`;
-                  } catch (_) {}
-                  if (reRes.user) {
-                    setUser(reRes.user);
-                    localStorage.setItem("cms_auth_user", JSON.stringify(reRes.user));
-                  }
-                } else {
-                  localStorage.removeItem("cms_auth_token");
-                  localStorage.removeItem("cms_auth_user");
-                  localStorage.removeItem("cms_auth_exp");
-                  setToken(null);
-                  setUser(null);
-                }
+                // Server rejected invalid/stale token - clear session cleanly
+                localStorage.removeItem("cms_auth_token");
+                localStorage.removeItem("cms_auth_user");
+                localStorage.removeItem("cms_auth_exp");
+                setToken(null);
+                setUser(null);
               } else if (res.ok) {
                 const data = await res.json();
                 if (data && data.user) {
@@ -118,8 +105,8 @@ export function AuthProvider({ children }) {
         };
       }
 
-      if (res && (res.token || res.success)) {
-        const authToken = res.token || "demo-jwt-token";
+      if (res && res.token && res.success) {
+        const authToken = res.token;
         const authUser = res.user || {
           username: identifier,
           full_name: "Ashifur Rahman",
@@ -133,9 +120,6 @@ export function AuthProvider({ children }) {
 
         localStorage.setItem("cms_auth_token", authToken);
         localStorage.setItem("cms_auth_user", JSON.stringify(authUser));
-        try {
-          document.cookie = `cms_auth_token=${authToken}; path=/; max-age=${90 * 24 * 60 * 60}; SameSite=Lax`;
-        } catch (_) {}
         if (res.expires_at) {
           localStorage.setItem("cms_auth_exp", res.expires_at.toString());
         }
@@ -148,34 +132,9 @@ export function AuthProvider({ children }) {
         };
       }
     } catch (err) {
-      // Fallback for default admin credentials if backend connection temporarily unavailable
-      if (
-        (identifier === "admin" ||
-          identifier === "ashifur.badhon@gmail.com" ||
-          identifier === "admin@ashifurrahman.com") &&
-        password === "admin123"
-      ) {
-        const fallbackUser = {
-          username: "admin",
-          full_name: "Ashifur Rahman",
-          role: "super_admin",
-          title: "Electrical & Electronic Engineer",
-          email: "ashifur.badhon@gmail.com",
-        };
-        const fallbackToken = "offline-admin-token-" + Date.now();
-        setToken(fallbackToken);
-        setUser(fallbackUser);
-        localStorage.setItem("cms_auth_token", fallbackToken);
-        localStorage.setItem("cms_auth_user", JSON.stringify(fallbackUser));
-        try {
-          document.cookie = `cms_auth_token=${fallbackToken}; path=/; max-age=${90 * 24 * 60 * 60}; SameSite=Lax`;
-        } catch (_) {}
-        return { success: true, user: fallbackUser };
-      }
-
       return {
         success: false,
-        error: "Server connection error. Please verify the Python server is running.",
+        error: "Server connection error. Please try again.",
       };
     }
   };
