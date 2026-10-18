@@ -7,7 +7,7 @@ export function triggerCvDownload(e, customUrl) {
   }
 
   const fileName = 'Ashifur_Rahman_CV.pdf';
-  const targetUrl = customUrl || '/resume.pdf';
+  const targetUrl = (customUrl && customUrl !== '/resume.pdf') ? customUrl : '/Ashifur_Rahman_CV.pdf';
 
   // Instant native download trigger — 0ms network roundtrip wait
   const link = document.createElement('a');

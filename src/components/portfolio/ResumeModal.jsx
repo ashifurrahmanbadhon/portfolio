@@ -4,7 +4,7 @@ import React from 'react';
 import { X, FileText, Download, ExternalLink, Mail } from 'lucide-react';
 import { triggerCvDownload } from '@/lib/downloadCv';
 
-export default function ResumeModal({ isOpen, onClose, resumeUrl = '/resume.pdf' }) {
+export default function ResumeModal({ isOpen, onClose, resumeUrl = '/Ashifur_Rahman_CV.pdf' }) {
   if (!isOpen) return null;
 
   return (

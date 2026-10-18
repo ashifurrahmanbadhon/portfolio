@@ -41,7 +41,7 @@ export function PortfolioProvider({ children }) {
   const [contactChannels, setContactChannels] = useState([]);
   const [pageHeaders, setPageHeaders] = useState(DEFAULT_PAGE_HEADERS);
   const [homepageCta, setHomepageCta] = useState(DEFAULT_HOMEPAGE_CTA);
-  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
+  const [resumeUrl, setResumeUrl] = useState('/Ashifur_Rahman_CV.pdf');
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -134,7 +134,7 @@ export function PortfolioProvider({ children }) {
           return {
             degree: ed.degree,
             institution: ed.institution,
-            period: period || '2018 – 2022',
+            period: period || '2017 – 2023',
             start_year: ed.start_year || '',
             end_year: ed.end_year || '',
             result: ed.result || ed.badge_text || 'Completed',

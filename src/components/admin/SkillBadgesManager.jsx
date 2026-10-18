@@ -69,7 +69,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
           </p>
         </div>
 
-        <form onSubmit={handleAdd} className="flex items-center gap-2">
+        <form onSubmit={handleAdd} className="flex items-center gap-2 ml-auto self-end sm:self-auto">
           <input
             type="text"
             value={newBadge}
@@ -83,7 +83,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
             className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1 transition cursor-pointer disabled:opacity-40"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Add</span>
+            <span>Add New</span>
           </button>
         </form>
       </div>
