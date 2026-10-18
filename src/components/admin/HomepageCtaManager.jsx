@@ -108,7 +108,7 @@ export default function HomepageCtaManager({ homepageCta, setHomepageCta, onSave
               type="text"
               value={cta.secondary_btn_link || ""}
               onChange={(e) => handleChange("secondary_btn_link", e.target.value)}
-              placeholder="/resume.pdf"
+              placeholder="/Ashifur_Rahman_CV.pdf"
               className="bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
             />
           </div>

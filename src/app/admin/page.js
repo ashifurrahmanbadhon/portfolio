@@ -69,7 +69,7 @@ const DEFAULT_HERO = {
   primary_btn_text: "Contact Me",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download CV",
-  secondary_btn_link: "/resume.pdf",
+  secondary_btn_link: "/Ashifur_Rahman_CV.pdf",
   spec_badge_label: "Specialization",
   spec_badge_title: "Engineering, Management & AI",
 };
@@ -659,7 +659,7 @@ function AdminConsoleContent() {
                     type="text"
                     value={hero.secondary_btn_link || ""}
                     onChange={(e) => setHero({ ...hero, secondary_btn_link: e.target.value })}
-                    placeholder="/resume.pdf"
+                    placeholder="/Ashifur_Rahman_CV.pdf"
                     className="bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
