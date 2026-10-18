@@ -88,11 +88,6 @@ export default function AboutPage() {
           
           {/* Left Column: Biography Narrative */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#10B981]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-              {aboutData.subtitle || "About Ashifur"}
-            </div>
-            
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-snug">
               {aboutData.title}
             </h2>
@@ -144,7 +139,7 @@ export default function AboutPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17]/90 via-transparent to-transparent opacity-85" />
                     
                     <div className="absolute bottom-4 left-4 right-4">
-                      <p className="text-[10px] font-mono uppercase tracking-widest text-[#10B981]">
+                      <p className="text-[10px] uppercase tracking-wider text-[#10B981] font-semibold">
                         {heroData.spec_badge_label || "Specialization"}
                       </p>
                       <p className="text-sm font-bold text-white">
@@ -190,7 +185,7 @@ export default function AboutPage() {
           <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {highlights.map((h, i) => (
               <div key={i}>
-                <p className="text-3xl font-extrabold text-[#10B981] font-mono">{h.metric_value}</p>
+                <p className="text-3xl font-extrabold text-[#10B981]">{h.metric_value}</p>
                 <p className="text-sm font-semibold text-white mt-1">{h.metric_label}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{h.metric_subtext}</p>
               </div>
@@ -203,7 +198,6 @@ export default function AboutPage() {
       {pillars && pillars.length > 0 && (
         <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Core Competencies</p>
             <h3 className="text-2xl sm:text-4xl font-extrabold text-white">Engineering Domains &amp; Capabilities</h3>
             <p className="text-gray-400 text-xs sm:text-sm mt-3">
               A versatile spectrum combining traditional high-voltage engineering with modern data-driven and computational methods.
@@ -226,7 +220,7 @@ export default function AboutPage() {
                       {pillar.title}
                     </h4>
                     {pillar.subtitle && (
-                      <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-3">
+                      <p className="text-xs text-white/90 group-hover:text-[#10B981] transition mb-3">
                         {pillar.subtitle}
                       </p>
                     )}
@@ -246,14 +240,13 @@ export default function AboutPage() {
         <section className="relative z-10 px-6 md:px-12 py-16 bg-[#0e131d] border-t border-[#1e2638]">
           <div className="max-w-5xl mx-auto space-y-10">
             <div className="text-center">
-              <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Professional Mindset</p>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Guiding Principles</h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {principles.map((pr, idx) => (
                 <SpotlightCard key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638]">
-                  <div className="text-[#10B981] font-mono text-2xl font-bold mb-2">
+                  <div className="text-[#10B981] text-2xl font-bold mb-2">
                     {pr.number || String(idx + 1).padStart(2, "0") + "."}
                   </div>
                   <h4 className="text-sm font-bold text-white mb-2 group-hover:text-[#10B981] transition">{pr.title}</h4>

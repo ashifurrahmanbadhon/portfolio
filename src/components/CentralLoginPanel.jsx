@@ -263,14 +263,9 @@ export default function CentralLoginPanel() {
         contentClassName="space-y-6"
       >
         {/* Branding */}
-        <div className="text-center space-y-2.5">
-          <div className="flex justify-center mb-1">
+        <div className="text-center space-y-3">
+          <div className="flex justify-center mb-2">
             <AnimatedLogo size={46} showText={false} />
-          </div>
-
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161C2A] border border-[#1E2638] text-[11px] font-mono font-bold text-[#10B981] tracking-wider uppercase shadow-inner">
-            <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
-            Master Access
           </div>
 
           <div>

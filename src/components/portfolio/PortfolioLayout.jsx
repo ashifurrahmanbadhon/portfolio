@@ -21,10 +21,7 @@ function PortfolioInnerLayout({ children }) {
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
             <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
           </div>
-          <div className="text-center space-y-1">
-            <p className="text-[11px] font-mono uppercase tracking-widest text-emerald-400">
-              Ashifur Rahman • EEE
-            </p>
+          <div className="text-center">
             <p className="text-xs text-slate-400">Loading verified portfolio content...</p>
           </div>
         </div>

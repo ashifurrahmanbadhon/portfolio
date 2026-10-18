@@ -117,7 +117,6 @@ export default function ContactPage() {
           {/* Left Column: Direct Contact Channels */}
           <div className="lg:col-span-5 space-y-6">
             <div>
-              <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Direct Reach</p>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Contact Information</h2>
               <p className="text-gray-400 text-xs sm:text-sm mt-2 leading-relaxed">
                 Connect through any preferred communication channel. All inquiries receive direct attention.
@@ -138,13 +137,13 @@ export default function ContactPage() {
                         <Mail size={20} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 font-mono uppercase">Direct Email</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">Direct Email</p>
                         <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
                           Send an Email
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
                       Write <ExternalLink size={13} />
                     </span>
                   </SpotlightCard>
@@ -164,13 +163,13 @@ export default function ContactPage() {
                         <Phone size={20} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 font-mono uppercase">Direct Phone Call</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">Direct Phone Call</p>
                         <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
                           Make a Call
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
                       Call <ExternalLink size={13} />
                     </span>
                   </SpotlightCard>
@@ -192,14 +191,14 @@ export default function ContactPage() {
                         <MessageCircle size={20} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 font-mono uppercase">WhatsApp Instant Chat</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">WhatsApp Instant Chat</p>
                         <p className="text-sm font-semibold text-white group-hover:text-emerald-400 transition">
                           Start WhatsApp Chat
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0">
-                      <span className="text-[10px] font-mono font-semibold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                      <span className="text-[10px] font-semibold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         Online
                       </span>
@@ -224,13 +223,13 @@ export default function ContactPage() {
                         <LinkedinIcon size={20} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 font-mono uppercase">LinkedIn Profile</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">LinkedIn Profile</p>
                         <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
                           Connect on LinkedIn
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
                       Profile <ExternalLink size={13} />
                     </span>
                   </SpotlightCard>
@@ -252,13 +251,13 @@ export default function ContactPage() {
                         <GithubIcon size={20} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 font-mono uppercase">GitHub Profile</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">GitHub Profile</p>
                         <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
                           Explore GitHub Profile
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
                       GitHub <ExternalLink size={13} />
                     </span>
                   </SpotlightCard>
@@ -280,13 +279,13 @@ export default function ContactPage() {
                         <MapPin size={20} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 font-mono uppercase">Location</p>
+                        <p className="text-[10px] text-gray-400 uppercase font-medium">Location</p>
                         <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
                           View on Google Maps
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs font-mono text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0">
+                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
                       Maps <ExternalLink size={13} />
                     </span>
                   </SpotlightCard>
@@ -296,7 +295,7 @@ export default function ContactPage() {
 
             {/* Availability SLA Card */}
             <SpotlightCard className="bg-[#0e131d] border border-[#1e2638] rounded-2xl p-5 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#10B981]">
+              <div className="flex items-center gap-2 text-xs text-[#10B981] font-semibold">
                 <Clock size={14} />
                 <span>Response Time SLA</span>
               </div>
@@ -325,7 +324,7 @@ export default function ContactPage() {
             <form onSubmit={handleContactSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-mono text-gray-400 uppercase mb-2">
+                  <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
                     Your Name <span className="text-[#10B981]">*</span>
                   </label>
                   <input
@@ -338,7 +337,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-mono text-gray-400 uppercase mb-2">
+                  <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
                     Your Email <span className="text-[#10B981]">*</span>
                   </label>
                   <input
@@ -353,7 +352,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-2">
+                <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
                   Subject / Inquiry Type <span className="text-[#10B981]">*</span>
                 </label>
                 <input
@@ -367,7 +366,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-2">
+                <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
                   Detailed Message <span className="text-[#10B981]">*</span>
                 </label>
                 <textarea

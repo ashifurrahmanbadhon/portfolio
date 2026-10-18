@@ -47,7 +47,7 @@ export default function ExperiencePage() {
           <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {experienceMetrics.map((ch, idx) => (
               <div key={idx}>
-                <p className="text-2xl sm:text-3xl font-extrabold text-[#10B981] font-mono">{ch.metric}</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-[#10B981]">{ch.metric}</p>
                 <p className="text-sm font-semibold text-white mt-1">{ch.label}</p>
                 {ch.subtext && <p className="text-xs text-gray-400 mt-0.5">{ch.subtext}</p>}
               </div>
@@ -59,7 +59,6 @@ export default function ExperiencePage() {
       {/* Main Experience Timeline */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-5xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Career Timeline</p>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Engineering &amp; Management Roles</h2>
           <p className="text-gray-400 text-xs sm:text-sm mt-3 max-w-xl mx-auto">
             Practical industry exposure demonstrating reliable execution, operational ownership, and technical adaptability.
@@ -83,7 +82,7 @@ export default function ExperiencePage() {
                         {exp.role}
                       </h3>
                       {exp.period && (
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        <span className="text-[10px] uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
                           {exp.period}
                         </span>
                       )}
@@ -92,7 +91,7 @@ export default function ExperiencePage() {
                   </div>
 
                   {exp.location && (
-                    <div className="flex items-center gap-1.5 text-xs font-mono text-gray-400 shrink-0">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-400 shrink-0">
                       <MapPin size={13} className="text-[#10B981]" />
                       <span>{exp.location}</span>
                     </div>
@@ -112,11 +111,11 @@ export default function ExperiencePage() {
                 {/* Tools / Core Competency Tags */}
                 {exp.tools && exp.tools.length > 0 && (
                   <div className="pt-4 border-t border-[#1e2638]/60 flex flex-wrap items-center gap-2">
-                    <span className="text-[11px] font-mono text-gray-400 mr-1">Applied Competencies:</span>
+                    <span className="text-[11px] text-gray-400 mr-1">Applied Competencies:</span>
                     {exp.tools.map((tool, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
+                        className="text-[11px] text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
                       >
                         {tool}
                       </span>

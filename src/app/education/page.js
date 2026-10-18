@@ -44,7 +44,6 @@ export default function EducationPage() {
       {/* Degree & Institutional History */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
         <div className="mb-12">
-          <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Formal Degrees</p>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Academic Qualifications</h2>
           <p className="text-gray-400 text-xs sm:text-sm mt-2 max-w-2xl">
             A solid academic foundation covering electrical theories, mathematical modeling, and engineering principles.
@@ -72,11 +71,11 @@ export default function EducationPage() {
                         {edu.degree}
                       </h3>
                       {edu.badge_text ? (
-                        <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+                        <span className="text-[10px] uppercase px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 font-semibold">
                           {edu.badge_text}
                         </span>
                       ) : idx === 0 ? (
-                        <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+                        <span className="text-[10px] uppercase px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 font-semibold">
                           Major Degree
                         </span>
                       ) : null}
@@ -88,7 +87,7 @@ export default function EducationPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs font-mono text-gray-400 shrink-0">
+                <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
                   {edu.period && (
                     <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0b0f17] border border-[#1e2638]">
                       <Calendar size={13} className="text-[#10B981]" />
@@ -114,7 +113,7 @@ export default function EducationPage() {
                   {edu.highlights.map((h, hIdx) => (
                     <span
                       key={hIdx}
-                      className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
+                      className="text-[11px] text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
                     >
                       {h}
                     </span>
@@ -131,7 +130,6 @@ export default function EducationPage() {
         <section className="relative z-10 px-6 md:px-12 py-16 bg-[#0e131d] border-y border-[#1e2638]">
           <div className="max-w-7xl mx-auto">
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Curriculum Breadth</p>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Undergraduate Engineering Coursework</h3>
               <p className="text-gray-400 text-xs sm:text-sm mt-3">
                 Theoretical rigor paired with laboratory experimentation at university.
@@ -167,7 +165,6 @@ export default function EducationPage() {
       {certifications && certifications.length > 0 && (
         <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
           <div className="mb-12">
-            <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Field &amp; Software Training</p>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Professional Certifications</h2>
             <p className="text-gray-400 text-xs sm:text-sm mt-2 max-w-2xl">
               Hands-on technical certifications proving proficiency in power software, substation protocol, and geospatial modeling.
@@ -186,7 +183,7 @@ export default function EducationPage() {
                       <ShieldCheck size={24} />
                     </div>
                     {cert.year && (
-                      <span className="text-[11px] font-mono text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 group-hover:border-[#10B981]/50 px-2.5 py-0.5 rounded-full border border-[#10B981]/20 transition">
+                      <span className="text-[11px] font-semibold text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 group-hover:border-[#10B981]/50 px-2.5 py-0.5 rounded-full border border-[#10B981]/20 transition">
                         {cert.year}
                       </span>
                     )}
@@ -196,7 +193,7 @@ export default function EducationPage() {
                     {cert.title}
                   </h4>
                   {cert.issuer && (
-                    <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-3">
+                    <p className="text-xs text-white/90 group-hover:text-[#10B981] transition mb-3">
                       {cert.issuer}
                     </p>
                   )}
@@ -207,7 +204,7 @@ export default function EducationPage() {
                   )}
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-[#1e2638]/70 flex items-center gap-1.5 text-xs text-emerald-400 font-mono">
+                <div className="mt-6 pt-4 border-t border-[#1e2638]/70 flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
                   <Check size={14} /> Verified Credential
                 </div>
               </SpotlightCard>

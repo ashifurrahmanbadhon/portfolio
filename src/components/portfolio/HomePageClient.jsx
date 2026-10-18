@@ -87,7 +87,7 @@ export default function Home() {
           
           <div className="lg:col-span-7 space-y-6">
             {heroData.badge_text && (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs font-semibold font-mono tracking-wide">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs font-semibold tracking-wide">
                 <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
                 {heroData.badge_text}
               </div>
@@ -96,7 +96,7 @@ export default function Home() {
             <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-[1.1]">
               {heroData.name || "ASHIFUR RAHMAN"}
               {heroData.title && (
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] to-teal-400 text-2xl sm:text-4xl mt-2 font-bold font-mono">
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] to-teal-400 text-2xl sm:text-4xl mt-2 font-bold">
                   {heroData.title}
                 </span>
               )}
@@ -130,7 +130,7 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent opacity-80" />
                   
                   <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-[10px] font-mono uppercase tracking-widest text-[#10B981]">
+                    <p className="text-[10px] uppercase tracking-wider text-[#10B981] font-semibold">
                       {heroData.spec_badge_label || "Specialization"}
                     </p>
                     <p className="text-xs font-bold text-white">
@@ -151,7 +151,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {highlights.map((h, i) => (
               <div key={i}>
-                <p className="text-3xl font-extrabold text-[#10B981] font-mono">{h.metric_value}</p>
+                <p className="text-3xl font-extrabold text-[#10B981]">{h.metric_value}</p>
                 <p className="text-sm font-semibold text-white mt-1">{h.metric_label}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{h.metric_subtext}</p>
               </div>
@@ -164,9 +164,6 @@ export default function Home() {
       <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5 space-y-5">
-            <p className="text-xs font-mono uppercase tracking-widest text-[#10B981]">
-              {aboutData.subtitle || "About Ashifur"}
-            </p>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white">
               {aboutData.title || "Engineering Reliability, Efficiency & Innovation"}
             </h2>
@@ -208,7 +205,7 @@ export default function Home() {
                         {pillar.title}
                       </h4>
                       {pillar.subtitle && (
-                        <p className="text-xs font-mono text-white/90 group-hover:text-[#10B981] transition mb-2">
+                        <p className="text-xs text-white/90 group-hover:text-[#10B981] transition mb-2">
                           {pillar.subtitle}
                         </p>
                       )}
@@ -230,12 +227,11 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
               <div>
-                <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Professional Experience</p>
                 <h3 className="text-3xl md:text-4xl font-extrabold text-white">Career Journey &amp; Field Work</h3>
               </div>
               <Link
                 href="/experience"
-                className="text-xs font-mono uppercase tracking-wider text-[#10B981] hover:text-emerald-300 flex items-center gap-1 group shrink-0"
+                className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
               >
                 View Full Timeline <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
@@ -252,7 +248,7 @@ export default function Home() {
                       <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">{exp.role}</h4>
                       <p className="text-xs font-semibold text-gray-300 mt-0.5">{exp.organization}</p>
                     </div>
-                    <span className="text-xs font-mono text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 px-3 py-1 rounded-full w-fit transition">
+                    <span className="text-xs text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 px-3 py-1 rounded-full w-fit transition font-medium">
                       {exp.period}
                     </span>
                   </div>
@@ -273,12 +269,11 @@ export default function Home() {
         <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
             <div>
-              <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Engineering Portfolio</p>
               <h3 className="text-3xl md:text-4xl font-extrabold text-white">Featured Engineering Projects</h3>
             </div>
             <Link
               href="/projects"
-              className="text-xs font-mono uppercase tracking-wider text-[#10B981] hover:text-emerald-300 flex items-center gap-1 group shrink-0"
+              className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
             >
               Explore All Projects ({projectsData.length}) <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
             </Link>
@@ -307,7 +302,7 @@ export default function Home() {
                   )}
 
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs font-mono font-bold text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded">
+                    <span className="text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded">
                       PROJECT #{proj.project_number || proj.id}
                     </span>
                     <FolderGit2 className="text-gray-500 group-hover:text-[#10B981] transition" size={20} />
@@ -324,7 +319,7 @@ export default function Home() {
                   {(proj.tags || []).map((tag, tIdx) => (
                     <span
                       key={tIdx}
-                      className="text-[11px] font-mono text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
+                      className="text-[11px] text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
                     >
                       {tag}
                     </span>
@@ -342,12 +337,11 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
               <div>
-                <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Technical Matrix</p>
                 <h3 className="text-3xl md:text-4xl font-extrabold text-white">Technical Skills &amp; Tools</h3>
               </div>
               <Link
                 href="/skills"
-                className="text-xs font-mono uppercase tracking-wider text-[#10B981] hover:text-emerald-300 flex items-center gap-1 group shrink-0"
+                className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
               >
                 View Full Competency Matrix <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
@@ -367,7 +361,7 @@ export default function Home() {
                       <div key={sIdx}>
                         <div className="flex justify-between text-xs font-medium mb-1">
                           <span className="text-gray-200 group-hover:text-[#10B981] transition">{skill.name}</span>
-                          <span className="text-[#10B981] font-mono">{skill.level}%</span>
+                          <span className="text-[#10B981] font-bold">{skill.level}%</span>
                         </div>
                         <div className="w-full bg-[#1e2638] rounded-full h-1.5">
                           <div className="bg-[#10B981] h-1.5 rounded-full" style={{ width: `${skill.level}%` }} />
@@ -386,12 +380,11 @@ export default function Home() {
       <section className="relative z-10 px-6 md:px-12 py-20 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
           <div>
-            <p className="text-xs font-mono uppercase tracking-widest text-[#10B981] mb-2">Academic Credentials</p>
             <h3 className="text-3xl md:text-4xl font-extrabold text-white">Education &amp; Qualifications</h3>
           </div>
           <Link
             href="/education"
-            className="text-xs font-mono uppercase tracking-wider text-[#10B981] hover:text-emerald-300 flex items-center gap-1 group shrink-0"
+            className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
           >
             View All Credentials <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
           </Link>
@@ -405,7 +398,7 @@ export default function Home() {
                 <GraduationCap size={24} />
               </div>
               <div>
-                <span className="text-xs font-mono text-[#10B981] uppercase tracking-wider">
+                <span className="text-xs text-[#10B981] uppercase tracking-wider font-semibold">
                   {educations[0].period || "Degree Completed"}
                 </span>
                 <h4 className="text-lg font-bold text-white mt-1 group-hover:text-[#10B981] transition">{educations[0].degree}</h4>
@@ -425,7 +418,7 @@ export default function Home() {
               <ShieldCheck size={24} />
             </div>
             <div>
-              <span className="text-xs font-mono text-[#10B981] uppercase tracking-wider">Certifications &amp; Training</span>
+              <span className="text-xs text-[#10B981] uppercase tracking-wider font-semibold">Certifications &amp; Training</span>
               <h4 className="text-lg font-bold text-white mt-1 group-hover:text-[#10B981] transition">Specialized Engineering Modules</h4>
               <p className="text-sm text-gray-400 mt-1">Industry Standards &amp; Practical Training</p>
             </div>
@@ -444,7 +437,7 @@ export default function Home() {
       {/* 8. CALL TO ACTION TO CONTACT (Dynamic) */}
       <section className="relative z-10 px-6 md:px-12 py-20 bg-[#0e131d] border-t border-[#1e2638]">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] text-xs font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] text-xs font-semibold">
             <Sparkles size={13} />
             <span>{ctaData.badge_text}</span>
           </div>
