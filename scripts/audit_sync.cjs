@@ -9,6 +9,17 @@ if (!databaseUrl) {
 const pg = neon(databaseUrl);
 const sqlite = new DatabaseSync('portfolio.db');
 
+async function pgQuery(sql, params = []) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      return await pg.query(sql, params);
+    } catch (err) {
+      if (attempt === 3) throw err;
+      await new Promise(r => setTimeout(r, 600 * attempt));
+    }
+  }
+}
+
 async function runDriftAudit() {
   console.log("==========================================================");
   console.log("     PORTFOLIO CMS TWO-WAY SYNC & DRIFT AUDIT VERIFICATION");
@@ -25,7 +36,7 @@ async function runDriftAudit() {
 
   for (const s of sectionsToCheck) {
     try {
-      const pgRows = await pg.query(`SELECT * FROM "${s.table}" WHERE "${s.keyField}" = $1`, [s.keyValue]);
+      const pgRows = await pgQuery(`SELECT * FROM "${s.table}" WHERE "${s.keyField}" = $1`, [s.keyValue]);
       const sqliteRow = sqlite.prepare(`SELECT * FROM ${s.table} WHERE ${s.keyField} = ?`).get(s.keyValue);
 
       if (!pgRows || pgRows.length === 0) {
@@ -61,7 +72,7 @@ async function runDriftAudit() {
   console.log("\n--- List Tables Count Check ---");
   for (const table of listTables) {
     try {
-      const pgCount = (await pg.query(`SELECT COUNT(*) as c FROM "${table}"`))[0]?.c || 0;
+      const pgCount = (await pgQuery(`SELECT COUNT(*) as c FROM "${table}"`))[0]?.c || 0;
       const sqliteCount = sqlite.prepare(`SELECT COUNT(*) as c FROM ${table}`).get()?.c || 0;
       if (Number(pgCount) !== Number(sqliteCount)) {
         console.warn(`[DRIFT MISMATCH] Table: ${table} count -> PG: ${pgCount} vs SQLite: ${sqliteCount}`);
