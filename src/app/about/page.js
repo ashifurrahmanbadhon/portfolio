@@ -139,9 +139,6 @@ export default function AboutPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17]/90 via-transparent to-transparent opacity-85" />
                     
                     <div className="absolute bottom-4 left-4 right-4">
-                      <p className="text-[10px] uppercase tracking-wider text-[#10B981] font-semibold">
-                        {heroData.spec_badge_label || "Specialization"}
-                      </p>
                       <p className="text-sm font-bold text-white">
                         {heroData.spec_badge_title || "Engineering, Management & AI"}
                       </p>
