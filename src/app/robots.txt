@@ -3,7 +3,6 @@ Allow: /
 Disallow: /admin
 Disallow: /login
 Disallow: /api/
-Disallow: /analytics
 Disallow: /settings
 Disallow: /history
 Disallow: /websites
