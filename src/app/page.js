@@ -25,6 +25,7 @@ const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Ashifur Rahman",
+  alternateName: ["Ashifur Rahman Badhon", "Badhon"],
   jobTitle: "Electrical & Electronic Engineer",
   url: "https://ashifurrahman.vercel.app",
   sameAs: [
