@@ -25,6 +25,10 @@ export const metadata = {
     card: "summary_large_image",
     images: ["/ashifur.jpeg"],
   },
+  // Google Search Console ownership verification — NEVER remove, or GSC access is lost.
+  verification: {
+    google: "HA3zZE7sqmr2f-OW02PChHvJ-DAEa2QGWe1TIJK1rPA",
+  },
 };
 
 import DashboardShell from "@/components/DashboardShell";
