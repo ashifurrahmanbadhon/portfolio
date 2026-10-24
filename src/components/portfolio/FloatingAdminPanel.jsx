@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   Shield,
   LayoutDashboard,
-  Globe,
-  BarChart3,
   Settings,
   LogOut,
   X,
@@ -150,24 +148,6 @@ export default function FloatingAdminPanel() {
           >
             <LayoutDashboard size={15} className="text-emerald-400" />
             <span>Admin Dashboard</span>
-          </Link>
-
-          <Link
-            href="/websites"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-[#161e30] transition cursor-pointer"
-          >
-            <Globe size={15} className="text-teal-400" />
-            <span>Websites</span>
-          </Link>
-
-          <Link
-            href="/analytics"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-[#161e30] transition cursor-pointer"
-          >
-            <BarChart3 size={15} className="text-sky-400" />
-            <span>Analytics</span>
           </Link>
 
           <Link
