@@ -332,7 +332,7 @@ async function auditAndFix() {
       } else if (t === 'about') {
         await runPg(`INSERT INTO about (id, subtitle, title, profile_image, updated_at) VALUES (1, 'Background & Vision', 'Engineering Precision With Analytical Rigor', '/ashifur.jpeg', $1)`, [now]);
       } else if (t === 'social_links') {
-        await runPg(`INSERT INTO social_links (id, email, phone, location, updated_at) VALUES (1, 'ashifur.badhon@gmail.com', '+880 1521 417284', 'Tangail, Dhaka, Bangladesh', $1)`, [now]);
+        await runPg(`INSERT INTO social_links (id, email, phone, location, updated_at) VALUES (1, 'ashifur.badhon@gmail.com', '+880 1521 417284', 'Tangail, Bangladesh', $1)`, [now]);
       } else if (t === 'site_settings') {
         await runPg(`INSERT INTO site_settings (id, site_title, meta_description, brand_logo, updated_at) VALUES (1, 'Ashifur Rahman Portfolio', 'Electrical & Electronic Engineer', '/ashifur.jpeg', $1)`, [now]);
       } else if (t === 'homepage_cta') {
@@ -351,7 +351,7 @@ async function auditAndFix() {
       } else if (t === 'about') {
         runSqlite(`INSERT INTO about (id, subtitle, title, profile_image, updated_at) VALUES (1, 'Background & Vision', 'Engineering Precision With Analytical Rigor', '/ashifur.jpeg', ?)`, [now]);
       } else if (t === 'social_links') {
-        runSqlite(`INSERT INTO social_links (id, email, phone, location, updated_at) VALUES (1, 'ashifur.badhon@gmail.com', '+880 1521 417284', 'Tangail, Dhaka, Bangladesh', ?)`, [now]);
+        runSqlite(`INSERT INTO social_links (id, email, phone, location, updated_at) VALUES (1, 'ashifur.badhon@gmail.com', '+880 1521 417284', 'Tangail, Bangladesh', ?)`, [now]);
       } else if (t === 'site_settings') {
         runSqlite(`INSERT INTO site_settings (id, site_title, meta_description, brand_logo, updated_at) VALUES (1, 'Ashifur Rahman Portfolio', 'Electrical & Electronic Engineer', '/ashifur.jpeg', ?)`, [now]);
       } else if (t === 'homepage_cta') {

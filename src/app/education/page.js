@@ -28,7 +28,7 @@ export default function EducationPage() {
     badge_text: "ACADEMIC BACKGROUND",
     title: "Academic Credentials &",
     highlight_word: "Certifications",
-    description: "Formal degree in Electrical & Electronic Engineering complemented by on-site utility training at DESCO and accredited CAD and GIS certifications."
+    description: "Formal degree in Electrical & Electronic Engineering complemented by on-site utility training at DESCO and CAD and GIS training."
   };
 
   return (
@@ -165,9 +165,9 @@ export default function EducationPage() {
       {certifications && certifications.length > 0 && (
         <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
           <div className="mb-12">
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Professional Certifications</h2>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Training & Certifications</h2>
             <p className="text-gray-400 text-xs sm:text-sm mt-2 max-w-2xl">
-              Hands-on technical certifications proving proficiency in power software, substation protocol, and geospatial modeling.
+              Hands-on technical training in power software, substation protocol, and geospatial modeling, plus certified learning.
             </p>
           </div>
 

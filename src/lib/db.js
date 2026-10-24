@@ -1325,144 +1325,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
   return { success: true, message: `Updated section: ${section}` };
 }
 
-// ==========================================
-// ToolGhor Hub
-// ==========================================
-export async function getToolGhorContent() {
-  const categories = (await queryAll("SELECT * FROM toolghor_categories ORDER BY sort_order ASC, id ASC")) || [];
-  const tools = (await queryAll("SELECT * FROM toolghor_tools ORDER BY sort_order ASC, id ASC")) || [];
-  const settings = (await queryOne("SELECT * FROM toolghor_settings WHERE id = 1")) || {};
 
-  return {
-    success: true,
-    categories,
-    tools,
-    settings,
-  };
-}
-
-export async function saveToolGhorTool(id, data, user = "admin") {
-  const now = new Date().toISOString();
-
-  if (id) {
-    await execute(`
-      UPDATE toolghor_tools SET
-        name = COALESCE(?, name),
-        slug = COALESCE(?, slug),
-        category_id = COALESCE(?, category_id),
-        category_name = COALESCE(?, category_name),
-        short_description = COALESCE(?, short_description),
-        full_description = COALESCE(?, full_description),
-        icon = COALESCE(?, icon),
-        url = COALESCE(?, url),
-        badge = COALESCE(?, badge),
-        is_featured = COALESCE(?, is_featured),
-        is_active = COALESCE(?, is_active),
-        sort_order = COALESCE(?, sort_order),
-        updated_at = ?
-      WHERE id = ?
-    `, [
-      data.name ?? null,
-      data.slug ?? null,
-      data.category_id ?? null,
-      data.category_name ?? null,
-      data.short_description ?? null,
-      data.full_description ?? null,
-      data.icon ?? null,
-      data.url ?? null,
-      data.badge ?? null,
-      data.is_featured !== undefined ? (data.is_featured ? 1 : 0) : null,
-      data.is_active !== undefined ? (data.is_active ? 1 : 0) : null,
-      data.sort_order ?? null,
-      now,
-      id,
-    ]);
-    await addActivityLog("Updated ToolGhor Tool", `Modified tool: ${data.name || id}`, "ToolGhor", user, 2);
-  } else {
-    await execute(`
-      INSERT INTO toolghor_tools (
-        category_id, category_name, name, slug, short_description, full_description,
-        icon, url, badge, is_featured, is_active, sort_order, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-      data.category_id || 1,
-      data.category_name || "General",
-      data.name || "New Tool",
-      data.slug || `tool-${Date.now()}`,
-      data.short_description || "",
-      data.full_description || "",
-      data.icon || "wrench",
-      data.url || "",
-      data.badge || "",
-      data.is_featured ? 1 : 0,
-      data.is_active !== undefined ? (data.is_active ? 1 : 0) : 1,
-      data.sort_order || 99,
-      now,
-      now,
-    ]);
-    await addActivityLog("Created ToolGhor Tool", `Added new tool: ${data.name}`, "ToolGhor", user, 2);
-  }
-  return { success: true };
-}
-
-export async function deleteToolGhorTool(id, user = "admin") {
-  await execute("DELETE FROM toolghor_tools WHERE id = ?", [id]);
-  await addActivityLog("Deleted ToolGhor Tool", `Removed tool ID: ${id}`, "ToolGhor", user, 2);
-  return { success: true };
-}
-
-export async function saveToolGhorCategory(id, data, user = "admin") {
-  const now = new Date().toISOString();
-  if (id) {
-    await execute(`
-      UPDATE toolghor_categories SET
-        name = COALESCE(?, name),
-        slug = COALESCE(?, slug),
-        description = COALESCE(?, description),
-        icon = COALESCE(?, icon),
-        sort_order = COALESCE(?, sort_order)
-      WHERE id = ?
-    `, [data.name ?? null, data.slug ?? null, data.description ?? null, data.icon ?? null, data.sort_order ?? null, id]);
-  } else {
-    await execute(`
-      INSERT INTO toolghor_categories (name, slug, description, icon, sort_order, created_at)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `, [data.name, data.slug, data.description || "", data.icon || "folder", data.sort_order || 99, now]);
-  }
-  await addActivityLog("Saved ToolGhor Category", `Category: ${data.name}`, "ToolGhor", user, 2);
-  return { success: true };
-}
-
-export async function deleteToolGhorCategory(id, user = "admin") {
-  await execute("DELETE FROM toolghor_categories WHERE id = ?", [id]);
-  await addActivityLog("Deleted ToolGhor Category", `Removed category ID: ${id}`, "ToolGhor", user, 2);
-  return { success: true };
-}
-
-export async function saveToolGhorSettings(data, user = "admin") {
-  const now = new Date().toISOString();
-  await execute(`
-    UPDATE toolghor_settings SET
-      site_title = COALESCE(?, site_title),
-      tagline = COALESCE(?, tagline),
-      hero_headline = COALESCE(?, hero_headline),
-      hero_subheadline = COALESCE(?, hero_subheadline),
-      announcement_banner = COALESCE(?, announcement_banner),
-      footer_text = COALESCE(?, footer_text),
-      updated_at = ?
-    WHERE id = 1
-  `, [
-    data.site_title ?? null,
-    data.tagline ?? null,
-    data.hero_headline ?? null,
-    data.hero_subheadline ?? null,
-    data.announcement_banner ?? null,
-    data.footer_text ?? null,
-    now,
-  ]);
-  await addActivityLog("Updated ToolGhor Settings", "Saved global headlines and banners.", "ToolGhor", user, 2);
-  return { success: true };
-}
 
 // ==========================================
 // Central Websites & Multi-Site Directory
@@ -1598,13 +1461,11 @@ export async function getActivityLogs({ limit = 50, category = "all", search = "
 export async function getCentralDashboard() {
   const projRow = await queryOne("SELECT COUNT(*) as count FROM projects");
   const skillsRow = await queryOne("SELECT COUNT(*) as count FROM skills");
-  const toolsRow = await queryOne("SELECT COUNT(*) as count FROM toolghor_tools");
   const sitesRow = await queryOne("SELECT COUNT(*) as count FROM websites");
   const unreadRow = await queryOne("SELECT COUNT(*) as count FROM contact_messages WHERE is_read = 0");
 
   const totalProjects = Number(projRow?.count || 0);
   const totalSkills = Number(skillsRow?.count || 0);
-  const totalTools = Number(toolsRow?.count || 0);
   const totalWebsites = Number(sitesRow?.count || 0);
   const unreadMessages = Number(unreadRow?.count || 0);
 
@@ -1616,7 +1477,6 @@ export async function getCentralDashboard() {
     stats: {
       totalProjects,
       totalSkills,
-      totalTools,
       totalWebsites,
       unreadMessages,
     },

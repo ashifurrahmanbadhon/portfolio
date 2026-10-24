@@ -133,7 +133,7 @@ export const DEFAULT_EDUCATIONS = [
     result: "Graduate",
     badge_text: "Graduated",
     description: "Comprehensive curriculum in Power Systems Analysis, High Voltage Engineering, Switchgear & Protection, Electrical Machines, Telecommunications, and Control Systems.",
-    highlights: ["Senior Engineering Capstone Project", "Power System Modeling", "AutoCAD Electrical Certification"]
+    highlights: ["Senior Engineering Capstone Project", "Power System Modeling", "AutoCAD Electrical Training"]
   },
   {
     degree: "Higher Secondary Certificate (HSC) — Science",
@@ -193,24 +193,31 @@ export const DEFAULT_COURSEWORK_PILLARS = [
 
 export const DEFAULT_CERTIFICATIONS = [
   {
-    title: "AutoCAD Electrical 2D & SLD Master Certification",
+    title: "AutoCAD Electrical 2D & SLD Training",
     issuer: "Engineering Design & CAD Academy",
     year: "2023",
     description: "Industrial Single Line Diagrams, panel wiring schematics, and substation layout drafting.",
     is_verified: true
   },
   {
-    title: "Substation Operations & High Voltage Safety Protocols",
+    title: "Substation Operations & High Voltage Safety Training (DESCO)",
     issuer: "Dhaka Electric Supply Company Ltd. (DESCO)",
     year: "2023",
     description: "Practical training on 33/11 kV transformer maintenance, circuit breaker operation, and field safety protocols.",
     is_verified: true
   },
   {
-    title: "GIS Spatial Data Analysis & Utility Network Management",
+    title: "GIS Spatial Data Analysis & Utility Network Management Training",
     issuer: "Spatial Information Systems Workshop",
     year: "2023",
     description: "Spatial geodatabases, feeder routing, and utility infrastructure asset mapping with ArcGIS/QGIS.",
+    is_verified: true
+  },
+  {
+    title: "Certificate in Artificial Intelligence (AI)",
+    issuer: "e-Learning & Earning Ltd.",
+    year: "2026",
+    description: "Certified in Artificial Intelligence — covering AI fundamentals, machine learning concepts, and hands-on use of modern AI tools to build practical, real-world solutions.",
     is_verified: true
   }
 ];
@@ -437,8 +444,8 @@ export const DEFAULT_CONTACT = {
   linkedin_url: "https://www.linkedin.com/in/ashifurrahmanbadhon",
   github: "github.com/ashifurrahmanbadhon",
   github_url: "https://github.com/ashifurrahmanbadhon",
-  location: "Tangail, Dhaka, Bangladesh",
-  maps_url: "https://maps.google.com/?q=Tangail,+Dhaka,+Bangladesh"
+  location: "Tangail, Bangladesh",
+  maps_url: "https://maps.google.com/?q=Tangail,+Bangladesh"
 };
 
 export const DEFAULT_PAGE_HEADERS = {
@@ -468,7 +475,7 @@ export const DEFAULT_PAGE_HEADERS = {
     badge_text: "ACADEMIC BACKGROUND",
     title: "Academic Credentials &",
     highlight_word: "Certifications",
-    description: "Formal degree in Electrical & Electronic Engineering complemented by on-site utility training at DESCO and accredited CAD and GIS certifications."
+    description: "Formal degree in Electrical & Electronic Engineering complemented by on-site utility training at DESCO and CAD and GIS training."
   },
   skills: {
     page_key: "skills",

@@ -9,6 +9,7 @@ import PortfolioFooter from './PortfolioFooter';
 
 const ScrollToTopButton = dynamic(() => import('./ScrollToTopButton'), { ssr: false });
 const ResumeModal = dynamic(() => import('./ResumeModal'), { ssr: false });
+const FloatingAdminPanel = dynamic(() => import('./FloatingAdminPanel'), { ssr: false });
 
 function PortfolioInnerLayout({ children }) {
   const { resumeModalOpen, closeResumeModal, openResumeModal, resumeUrl, isLoaded } = usePortfolio();
@@ -43,6 +44,9 @@ function PortfolioInnerLayout({ children }) {
 
       {/* Persistent floating scroll to top button at bottom right corner */}
       <ScrollToTopButton />
+
+      {/* Floating admin panel for authenticated sessions at bottom left */}
+      <FloatingAdminPanel />
 
       <ResumeModal
         isOpen={resumeModalOpen}

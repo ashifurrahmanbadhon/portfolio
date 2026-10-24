@@ -66,8 +66,8 @@ async function setupContactChannelsTable() {
       channel_key: 'location',
       label: 'Location',
       action_text: 'View on Google Maps',
-      value: 'Tangail, Dhaka, Bangladesh',
-      url: 'https://maps.google.com/?q=Tangail,+Dhaka,+Bangladesh',
+      value: 'Tangail, Bangladesh',
+      url: 'https://maps.google.com/?q=Tangail,+Bangladesh',
       icon: 'MapPin',
       is_active: 1,
       sort_order: 6

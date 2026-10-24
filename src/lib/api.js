@@ -206,62 +206,6 @@ export const api = {
     return res.json();
   },
 
-  // ToolGhor Hub
-  async getToolGhorContent() {
-    return cachedFetch(`${API_BASE}/api/admin/toolghor/content`, {
-      headers: getAuthHeaders(),
-    }, 25000);
-  },
-
-  async saveToolGhorTool(id, data) {
-    cache.clear();
-    const url = id ? `${API_BASE}/api/admin/toolghor/tools/${id}` : `${API_BASE}/api/admin/toolghor/tools`;
-    const res = await fetch(url, {
-      method: id ? "PUT" : "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-
-  async deleteToolGhorTool(id) {
-    cache.clear();
-    const res = await fetch(`${API_BASE}/api/admin/toolghor/tools/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-    });
-    return res.json();
-  },
-
-  async saveToolGhorCategory(id, data) {
-    cache.clear();
-    const url = id ? `${API_BASE}/api/admin/toolghor/categories/${id}` : `${API_BASE}/api/admin/toolghor/categories`;
-    const res = await fetch(url, {
-      method: id ? "PUT" : "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-
-  async deleteToolGhorCategory(id) {
-    cache.clear();
-    const res = await fetch(`${API_BASE}/api/admin/toolghor/categories/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-    });
-    return res.json();
-  },
-
-  async saveToolGhorSettings(data) {
-    cache.clear();
-    const res = await fetch(`${API_BASE}/api/admin/toolghor/settings`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
 
   // Portfolio Hub
   async getPortfolioContent(forceRefresh = false) {

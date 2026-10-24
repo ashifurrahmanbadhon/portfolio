@@ -12,8 +12,19 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Ashifur Rahman • Central CMS",
-  description: "One Login. Every Website. One Control Center.",
+  metadataBase: new URL("https://ashifurrahman.vercel.app"),
+  title: "Ashifur Rahman • Portfolio",
+  description: "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services.",
+  openGraph: {
+    type: "website",
+    siteName: "Ashifur Rahman • Portfolio",
+    locale: "en_US",
+    images: [{ url: "/ashifur.jpeg", width: 1200, height: 630, alt: "Ashifur Rahman" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/ashifur.jpeg"],
+  },
 };
 
 import DashboardShell from "@/components/DashboardShell";
