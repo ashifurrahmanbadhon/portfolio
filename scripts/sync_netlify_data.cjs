@@ -543,8 +543,8 @@ async function syncAll() {
     linkedin: "https://www.linkedin.com/in/ashifurrahmanbadhon",
     github: "https://github.com/ashifurrahmanbadhon",
     facebook: "https://facebook.com",
-    location: "Tangail, Dhaka, Bangladesh",
-    maps_url: "https://maps.google.com/?q=Tangail,+Dhaka,+Bangladesh"
+    location: "Tangail, Bangladesh",
+    maps_url: "https://maps.google.com/?q=Tangail,+Bangladesh"
   };
 
   await runPg(`

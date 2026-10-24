@@ -284,57 +284,7 @@ async function migrate() {
         );
       `
     },
-    {
-      name: 'toolghor_categories',
-      create: `
-        CREATE TABLE IF NOT EXISTS toolghor_categories (
-          id SERIAL PRIMARY KEY,
-          name TEXT NOT NULL,
-          slug TEXT UNIQUE NOT NULL,
-          description TEXT,
-          icon TEXT DEFAULT 'folder',
-          sort_order INTEGER DEFAULT 0,
-          created_at TEXT NOT NULL
-        );
-      `
-    },
-    {
-      name: 'toolghor_tools',
-      create: `
-        CREATE TABLE IF NOT EXISTS toolghor_tools (
-          id SERIAL PRIMARY KEY,
-          category_id INTEGER,
-          category_name TEXT,
-          name TEXT NOT NULL,
-          slug TEXT UNIQUE NOT NULL,
-          short_description TEXT,
-          full_description TEXT,
-          icon TEXT DEFAULT 'wrench',
-          url TEXT,
-          badge TEXT,
-          is_featured INTEGER DEFAULT 0,
-          is_active INTEGER DEFAULT 1,
-          sort_order INTEGER DEFAULT 0,
-          created_at TEXT NOT NULL,
-          updated_at TEXT NOT NULL
-        );
-      `
-    },
-    {
-      name: 'toolghor_settings',
-      create: `
-        CREATE TABLE IF NOT EXISTS toolghor_settings (
-          id SERIAL PRIMARY KEY,
-          site_title TEXT NOT NULL,
-          tagline TEXT,
-          hero_headline TEXT,
-          hero_subheadline TEXT,
-          announcement_banner TEXT,
-          footer_text TEXT,
-          updated_at TEXT NOT NULL
-        );
-      `
-    },
+
     {
       name: 'website_content_modules',
       create: `
