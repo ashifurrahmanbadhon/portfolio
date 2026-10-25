@@ -442,7 +442,7 @@ export default function RolesPage() {
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="w-full max-w-lg max-h-[92vh] overflow-y-auto my-auto bg-[#0E131F] border border-[#1E2638] rounded-2xl shadow-2xl p-6 sm:p-7 space-y-5 relative"
+            className="w-full max-w-xl max-h-[92vh] overflow-y-auto my-auto bg-[#0E131F] border border-[#1E2638] rounded-2xl shadow-2xl p-6 sm:p-7 space-y-5 relative"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3.5 border-b border-[#1E2638]">

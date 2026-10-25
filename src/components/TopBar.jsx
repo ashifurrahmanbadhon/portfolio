@@ -532,7 +532,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       {profileModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div
-            className="bg-[#0E131F] border border-[#1E2638] rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-modal-enter max-h-[92dvh] flex flex-col"
+            className="bg-[#0E131F] border border-[#1E2638] rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden animate-modal-enter max-h-[92dvh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
