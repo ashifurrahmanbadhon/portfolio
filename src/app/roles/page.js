@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import SpotlightCard from "@/components/SpotlightCard";
 import { useToast } from "@/components/Toast";
+import ImageUploadBox from "@/components/admin/ImageUploadBox";
+import LivePreviewPanel from "@/components/admin/LivePreviewPanel";
 
 const INITIAL_USERS = [
   {
@@ -240,6 +242,8 @@ export default function RolesPage() {
         </button>
       </div>
 
+      <LivePreviewPanel url="/" savedOnly={true} defaultCollapsed={true} />
+
       {/* Role Definitions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {ROLES_INFO.map((r, i) => (
@@ -453,59 +457,33 @@ export default function RolesPage() {
 
             <form onSubmit={handleSubmitUser} className="space-y-4">
               {/* User Photo Upload Section */}
-              <div className="p-3.5 rounded-xl bg-[#111622] border border-[#1E2638] flex items-center gap-3.5">
-                <div className="relative group shrink-0">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-purple-500/40 bg-[#141A29] flex items-center justify-center text-purple-300 font-bold text-sm relative shadow-md">
-                    {userForm.avatar ? (
-                      <Image src={userForm.avatar} alt={userForm.name || "User"} width={56} height={56} unoptimized className="w-full h-full object-cover" />
-                    ) : (
-                      <User className="w-6 h-6 text-slate-400" />
-                    )}
-                    <label
-                      htmlFor="role-user-photo"
-                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition text-white"
-                      title="Upload user photo"
-                    >
-                      <Camera className="w-4 h-4 text-purple-300 mb-0.5" />
-                      <span className="text-[8px] font-mono">Upload</span>
-                    </label>
-                  </div>
-                  <input
-                    id="role-user-photo"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleUserPhotoUpload}
-                    className="hidden"
-                  />
-                </div>
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-mono text-slate-300 font-semibold flex items-center gap-1.5">
-                      <Camera className="w-3.5 h-3.5 text-purple-400" />
-                      <span>User Profile Photo</span>
-                    </label>
-                    {userForm.avatar && (
-                      <button
-                        type="button"
-                        onClick={() => setUserForm((prev) => ({ ...prev, avatar: "" }))}
-                        className="text-[10px] text-rose-400 hover:text-rose-300 font-mono cursor-pointer"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-[10px] text-slate-500 font-mono">
-                    Attach a photo for this team member to display across directory & security logs.
-                  </p>
-                  <label
-                    htmlFor="role-user-photo"
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-mono cursor-pointer transition"
-                  >
-                    <Upload className="w-3 h-3" />
-                    <span>{userForm.avatar ? "Change Photo" : "Upload Photo"}</span>
-                  </label>
-                </div>
-              </div>
+              <ImageUploadBox
+                value={userForm.avatar || ""}
+                type="image"
+                label="User Profile Photo"
+                description="Attach a photo for this team member to display across directory & security logs"
+                previewAspect="1/1"
+                aspectRatio="square"
+                onPickFile={() => document.getElementById("role-user-photo")?.click()}
+                onReset={() => {
+                  setUserForm((prev) => ({ ...prev, avatar: "" }));
+                  if (showToast) showToast("User photo cleared!", "info");
+                }}
+                urlValue={userForm.avatar || ""}
+                onUrlChange={(url) => setUserForm((prev) => ({ ...prev, avatar: url }))}
+                onUrlApply={(url) => {
+                  setUserForm((prev) => ({ ...prev, avatar: url }));
+                  if (showToast) showToast("User photo URL updated!", "info");
+                }}
+              >
+                <input
+                  id="role-user-photo"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUserPhotoUpload}
+                  className="hidden"
+                />
+              </ImageUploadBox>
 
               <div>
                 <label className="block text-xs font-mono text-slate-300 mb-1">User Full Name</label>

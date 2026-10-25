@@ -45,6 +45,7 @@ import { useToast } from "@/components/Toast";
 import SpotlightCard from "@/components/SpotlightCard";
 import MediaUploader from "@/components/MediaUploader";
 import ActiveToggle from "@/components/admin/ActiveToggle";
+import LivePreviewPanel from "@/components/admin/LivePreviewPanel";
 
 const AboutPillarsManager = dynamic(() => import("@/components/admin/AboutPillarsManager"), { ssr: true });
 const AboutPrinciplesManager = dynamic(() => import("@/components/admin/AboutPrinciplesManager"), { ssr: true });
@@ -539,6 +540,12 @@ function AdminConsoleContent() {
           {/* ============================================================== */}
           {currentTab === "home" && (
         <div className="space-y-6">
+          <LivePreviewPanel
+            url="/"
+            draftSection="home"
+            getDraftData={() => ({ hero, cta: homepageCta })}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl">
             <div className="flex items-center justify-between pb-4 border-b border-[#1E2638] mb-6">
               <div>
@@ -612,6 +619,8 @@ function AdminConsoleContent() {
                   label="Hero Profile Photo (Headshot / Portrait)"
                   description="Upload your high-res profile photo or drag & drop directly from device"
                   type="image"
+                  defaultValue="/ashifur.jpeg"
+                  defaultPosition="center 15%"
                 />
               </div>
 
@@ -747,6 +756,12 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "about" && (
         <div className="space-y-6">
+          <LivePreviewPanel
+            url="/about"
+            draftSection="about"
+            getDraftData={() => ({ about, pillars: about.pillars, principles: about.principles })}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
             <div>
@@ -820,6 +835,8 @@ function AdminConsoleContent() {
                 label="About Section Showcase Photo"
                 description="Professional photo or engineering field showcase image"
                 type="image"
+                defaultValue="/ashifur.jpeg"
+                defaultPosition="center 12%"
               />
             </div>
 
@@ -898,6 +915,12 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "experience" && (
         <div className="space-y-4">
+          <LivePreviewPanel
+            url="/experience"
+            draftSection="experience"
+            getDraftData={() => ({ experiences, metrics: experienceMetrics })}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
@@ -1035,6 +1058,12 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "education" && (
         <div className="space-y-4">
+          <LivePreviewPanel
+            url="/education"
+            draftSection="education"
+            getDraftData={() => ({ educations, pillars: courseworkPillars, certifications })}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
@@ -1165,6 +1194,12 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "skills" && (
         <div className="space-y-4">
+          <LivePreviewPanel
+            url="/skills"
+            draftSection="skills"
+            getDraftData={() => ({ skills, softwareTools, badges: skillBadges })}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
@@ -1294,6 +1329,22 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "projects" && (
         <div className="space-y-4">
+          <LivePreviewPanel
+            url="/projects"
+            draftSection="projects"
+            getDraftData={() => {
+              let merged = [...projects];
+              if (modalType === "project" && editingItem) {
+                if (editingIndex >= 0 && editingIndex < merged.length) {
+                  merged[editingIndex] = { ...merged[editingIndex], ...editingItem };
+                } else if (editingItem.title) {
+                  merged = [{ ...editingItem, id: "draft-new" }, ...merged];
+                }
+              }
+              return { projects: merged, methodologies: projectMethodologies };
+            }}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
@@ -1461,6 +1512,12 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "contact" && (
         <div className="space-y-6">
+          <LivePreviewPanel
+            url="/contact"
+            draftSection="contact"
+            getDraftData={() => ({ contact: socialLinks, channels: contactChannels })}
+            defaultCollapsed={false}
+          />
           {/* Section A: Contact Details & Social Links */}
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
@@ -1651,6 +1708,7 @@ function AdminConsoleContent() {
                   description="Upload your latest PDF CV/Resume file directly from your computer"
                   type="document"
                   accept=".pdf,application/pdf"
+                  defaultValue=""
                 />
               </div>
 
@@ -1674,6 +1732,11 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "inbox" && (
         <div className="space-y-6">
+          <LivePreviewPanel
+            url="/contact"
+            savedOnly={true}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
             {/* Header and Bulk Action Toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E2638]">
@@ -1868,6 +1931,12 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {currentTab === "settings" && (
         <div className="space-y-6">
+          <LivePreviewPanel
+            url="/"
+            draftSection="settings"
+            getDraftData={() => ({ pageHeaders, resume })}
+            defaultCollapsed={false}
+          />
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
             <div>
@@ -2270,6 +2339,8 @@ function AdminConsoleContent() {
                     label="Project Media / Thumbnail (Image or Video Demo)"
                     description="Upload project demo screenshot, schematic diagram, or video showcase"
                     type="media"
+                    defaultValue=""
+                    defaultPosition="center center"
                   />
                 </div>
 

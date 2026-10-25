@@ -36,6 +36,7 @@ import { useToast } from "./Toast";
 import AnimatedLogo from "./AnimatedLogo";
 import { api } from "@/lib/api";
 import { parsePhotoPosition, formatPhotoPosition } from "@/lib/photoPosition";
+import ImageUploadBox from "@/components/admin/ImageUploadBox";
 
 export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
   const pathname = usePathname();
@@ -554,33 +555,44 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
             </div>
 
             {/* Profile Avatar & Super Admin Badge */}
-            <div className="p-5 border-b border-[#1E2638]/60 bg-[#0B0F17]/50 flex items-center gap-4">
-              <div className="relative group">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-emerald-500/15 border-2 border-emerald-500/40 shadow-lg shrink-0 relative">
-                  <Image
-                    src={editAvatar || userAvatar || "/ashifur.jpeg"}
-                    alt={displayName}
-                    width={64}
-                    height={64}
-                    unoptimized
-                    style={parsePhotoPosition(editAvatarPosition).style}
-                    className="w-full h-full object-cover select-none pointer-events-none"
-                  />
-                  {avatarUploading && (
-                    <div className="absolute inset-0 bg-black/80 rounded-2xl flex flex-col items-center justify-center z-20 animate-in fade-in duration-150">
-                      <div className="w-5 h-5 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin mb-1" />
-                      <span className="text-[10px] font-mono font-bold text-emerald-400">{avatarProgress}%</span>
-                    </div>
-                  )}
-                  <label
-                    htmlFor="admin-avatar-file-input"
-                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition text-white"
-                    title="Change Profile Photo"
-                  >
-                    <Camera className="w-5 h-5 text-emerald-400 mb-0.5" />
-                    <span className="text-[9px] font-mono">Upload</span>
-                  </label>
-                </div>
+            <div className="p-5 border-b border-[#1E2638]/60 bg-[#0B0F17]/50 space-y-4">
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-bold text-white truncate">{displayName}</h4>
+                <span className="text-[9px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono font-semibold">
+                  ACTIVE
+                </span>
+                <span className="text-[11px] text-slate-400 font-mono truncate ml-auto">{displayEmail}</span>
+              </div>
+
+              <ImageUploadBox
+                value={editAvatar || userAvatar || "/ashifur.jpeg"}
+                type="image"
+                label="Admin Avatar Profile Photo"
+                description="Profile photo displayed across the administration console"
+                previewAspect="1/1"
+                aspectRatio="square"
+                positionStyle={parsePhotoPosition(editAvatarPosition || "50% 15%").style}
+                uploading={avatarUploading}
+                uploadProgress={avatarProgress}
+                onPickFile={() => document.getElementById("admin-avatar-file-input")?.click()}
+                onReset={() => {
+                  setEditAvatar("/ashifur.jpeg");
+                  setEditAvatarPosition("50% 15%");
+                  if (typeof window !== "undefined") {
+                    localStorage.removeItem("admin_avatar_position");
+                  }
+                  if (showToast) showToast("Avatar reset to default!", "info");
+                }}
+                onOpenReposition={handleOpenExistingAvatarReposition}
+                urlValue={editAvatar || ""}
+                onUrlChange={(url) => setEditAvatar(url)}
+                onUrlApply={(url) => {
+                  if (url) {
+                    setEditAvatar(url);
+                    if (showToast) showToast("Avatar URL updated!", "info");
+                  }
+                }}
+              >
                 <input
                   id="admin-avatar-file-input"
                   type="file"
@@ -588,49 +600,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                   onChange={handlePhotoSelected}
                   className="hidden"
                 />
-                <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#0E131F]" />
-              </div>
-              <div className="min-w-0 flex-1 space-y-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-white truncate">{displayName}</h4>
-                  <span className="text-[9px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono font-semibold">
-                    ACTIVE
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 font-mono truncate">{displayEmail}</p>
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <label
-                    htmlFor="admin-avatar-file-input"
-                    className="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-mono flex items-center gap-1.5 cursor-pointer transition"
-                  >
-                    <Upload className="w-3 h-3" />
-                    <span>Upload Photo</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleOpenExistingAvatarReposition}
-                    className="px-2.5 py-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-emerald-400 border border-emerald-500/25 text-[11px] font-mono flex items-center gap-1 cursor-pointer transition"
-                  >
-                    <Move className="w-3 h-3" />
-                    <span>Reposition</span>
-                  </button>
-                  {editAvatar && editAvatar !== "/ashifur.jpeg" && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditAvatar("/ashifur.jpeg");
-                        setEditAvatarPosition("50% 15%");
-                        if (typeof window !== "undefined") {
-                          localStorage.removeItem("admin_avatar_position");
-                        }
-                      }}
-                      className="px-2 py-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white text-[10px] font-mono transition cursor-pointer"
-                    >
-                      Reset
-                    </button>
-                  )}
-                </div>
-              </div>
+              </ImageUploadBox>
             </div>
 
             {/* Form */}

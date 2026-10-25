@@ -58,10 +58,11 @@ function GithubIcon({ size = 20, className = "" }) {
 }
 
 export default function ContactPage() {
-  const { contactData, contactChannels, pageHeaders } = usePortfolio();
+  const { contactData, contactChannels, pageHeaders, isPreview } = usePortfolio();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [previewNote, setPreviewNote] = useState(false);
 
   const isChannelActive = (key) => {
     if (!contactChannels || contactChannels.length === 0) return true;
@@ -78,6 +79,10 @@ export default function ContactPage() {
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
+    if (isPreview) {
+      setPreviewNote(true);
+      return;
+    }
     setSubmitting(true);
     try {
       await fetch('/api/contact', {
@@ -378,6 +383,12 @@ export default function ContactPage() {
                   className="w-full bg-[#0b0f17] border border-[#1e2638] rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition resize-none leading-relaxed"
                 />
               </div>
+
+              {previewNote && (
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
+                  Preview mode — submissions are disabled in the admin preview.
+                </div>
+              )}
 
               <button
                 type="submit"

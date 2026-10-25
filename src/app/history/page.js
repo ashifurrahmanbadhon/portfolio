@@ -26,6 +26,7 @@ import SpotlightCard from "@/components/SpotlightCard";
 import ShimmerBadge from "@/components/ShimmerBadge";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
+import LivePreviewPanel from "@/components/admin/LivePreviewPanel";
 
 // Format ISO date to friendly string
 function formatEventTime(isoString) {
@@ -252,6 +253,8 @@ export default function ChangeHistoryPage() {
           </button>
         </div>
       </div>
+
+      <LivePreviewPanel url="/" savedOnly={true} defaultCollapsed={true} />
 
       {/* 2. Overview KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
