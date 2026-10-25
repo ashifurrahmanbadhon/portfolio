@@ -2,21 +2,35 @@ import { NextResponse } from "next/server";
 import { getPortfolioContent, updatePortfolioSection } from "@/lib/db";
 import { authenticateRequest } from "@/lib/auth";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 10;
+
+const CACHE_CONTROL_HEADER = "public, s-maxage=10, stale-while-revalidate=59";
 
 export async function GET() {
   try {
     const data = await getPortfolioContent();
     return NextResponse.json(data, {
       headers: {
-        "Cache-Control": "public, s-maxage=10, stale-while-revalidate=59",
+        "Cache-Control": CACHE_CONTROL_HEADER,
+        "CDN-Cache-Control": CACHE_CONTROL_HEADER,
+        "Vercel-CDN-Cache-Control": CACHE_CONTROL_HEADER,
       },
     });
   } catch (error) {
     console.error("GET /api/content failed:", error);
-    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
   }
+}
+
+export async function HEAD() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Cache-Control": CACHE_CONTROL_HEADER,
+      "CDN-Cache-Control": CACHE_CONTROL_HEADER,
+      "Vercel-CDN-Cache-Control": CACHE_CONTROL_HEADER,
+    },
+  });
 }
 
 export async function PUT(req) {
