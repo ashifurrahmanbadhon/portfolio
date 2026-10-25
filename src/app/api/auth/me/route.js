@@ -21,6 +21,7 @@ export async function GET(req) {
         email: admin.email || "",
         role: admin.role || "super_admin",
         avatar: admin.avatar || "/ashifur.jpeg",
+        avatar_position: admin.avatar_position || "50% 50%",
         two_factor_enabled: Boolean(admin.two_factor_enabled),
       },
     });
@@ -40,6 +41,7 @@ export async function PUT(req) {
       fullName: body.full_name,
       email: body.email,
       avatar: body.avatar,
+      avatarPosition: body.avatar_position,
       currentPassword: body.current_password,
       newPassword: body.new_password,
     });

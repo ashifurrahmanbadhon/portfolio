@@ -692,7 +692,7 @@ function AdminConsoleContent() {
                   description="Upload your high-res profile photo or drag & drop directly from device"
                   type="image"
                   defaultValue="/ashifur.jpeg"
-                  defaultPosition="center 15%"
+                  defaultPosition="50% 50%"
                 />
               </div>
 
@@ -902,7 +902,7 @@ function AdminConsoleContent() {
                 description="Professional photo or engineering field showcase image"
                 type="image"
                 defaultValue="/ashifur.jpeg"
-                defaultPosition="center 12%"
+                defaultPosition="50% 50%"
               />
             </div>
 
@@ -2371,7 +2371,7 @@ function AdminConsoleContent() {
                     description="Upload project demo screenshot, schematic diagram, or video showcase"
                     type="media"
                     defaultValue=""
-                    defaultPosition="center center"
+                    defaultPosition="50% 50%"
                   />
                 </div>
 

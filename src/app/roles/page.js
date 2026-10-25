@@ -26,7 +26,8 @@ import {
 } from "lucide-react";
 import SpotlightCard from "@/components/SpotlightCard";
 import { useToast } from "@/components/Toast";
-import ImageUploadBox from "@/components/admin/ImageUploadBox";
+import ImageUploadBox, { downscalePhotoToWebP } from "@/components/admin/ImageUploadBox";
+import { parsePhotoPosition } from "@/lib/photoPosition";
 import LivePreviewPanel from "@/components/admin/LivePreviewPanel";
 
 const INITIAL_USERS = [
@@ -39,6 +40,7 @@ const INITIAL_USERS = [
     access: ["All Websites", "Portfolio", "ToolGhor Platform"],
     status: "Active",
     avatar: "/ashifur.jpeg",
+    avatar_position: "50% 50%",
   },
   {
     id: "usr-2",
@@ -49,6 +51,7 @@ const INITIAL_USERS = [
     access: ["ToolGhor Platform"],
     status: "Active",
     avatar: null,
+    avatar_position: "50% 50%",
   },
 ];
 
@@ -124,6 +127,7 @@ export default function RolesPage() {
       siteAccess: "ToolGhor Platform",
       status: "Active",
       avatar: "",
+      avatar_position: "50% 50%",
     });
     setModalOpen(true);
   };
@@ -138,6 +142,7 @@ export default function RolesPage() {
       siteAccess: user.access[0] || "ToolGhor Platform",
       status: user.status || "Active",
       avatar: user.avatar || "",
+      avatar_position: user.avatar_position || "50% 50%",
     });
     setModalOpen(true);
   };
@@ -154,20 +159,23 @@ export default function RolesPage() {
   };
 
   // Upload photo handler for user
-  const handleUserPhotoUpload = (e) => {
+  const handleUserPhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      if (showToast) showToast("Photo size must be less than 5MB", "error");
-      return;
+    try {
+      const { dataUrl } = await downscalePhotoToWebP(file);
+      if (dataUrl) {
+        setUserForm((prev) => ({ ...prev, avatar: dataUrl }));
+        if (showToast) showToast("User photo uploaded successfully!", "success");
+      }
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result;
+        setUserForm((prev) => ({ ...prev, avatar: dataUrl }));
+      };
+      reader.readAsDataURL(file);
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result;
-      setUserForm((prev) => ({ ...prev, avatar: dataUrl }));
-      if (showToast) showToast("User photo uploaded successfully!", "info");
-    };
-    reader.readAsDataURL(file);
   };
 
   // Submit (Add or Edit)
@@ -189,6 +197,7 @@ export default function RolesPage() {
                   : [userForm.siteAccess],
                 status: userForm.status,
                 avatar: userForm.avatar || null,
+                avatar_position: userForm.avatar_position || "50% 50%",
               }
             : u
         )
@@ -209,6 +218,7 @@ export default function RolesPage() {
             : [userForm.siteAccess],
           status: userForm.status,
           avatar: userForm.avatar || null,
+          avatar_position: userForm.avatar_position || "50% 50%",
         },
       ]);
       if (showToast) {
@@ -326,7 +336,15 @@ export default function RolesPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl overflow-hidden bg-purple-500/15 border border-purple-500/30 text-purple-300 font-bold flex items-center justify-center shrink-0 text-xs">
                         {u.avatar ? (
-                          <Image src={u.avatar} alt={u.name} width={32} height={32} unoptimized className="w-full h-full object-cover" />
+                          <Image
+                            src={u.avatar}
+                            alt={u.name}
+                            width={32}
+                            height={32}
+                            unoptimized
+                            style={parsePhotoPosition(u.avatar_position || "50% 50%").style}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <span>
                             {u.name
@@ -477,9 +495,13 @@ export default function RolesPage() {
                 description="Attach a photo for this team member to display across directory & security logs"
                 previewAspect="1/1"
                 aspectRatio="square"
+                positionValue={userForm.avatar_position || "50% 50%"}
+                onPositionChange={(pos) => setUserForm((prev) => ({ ...prev, avatar_position: pos }))}
+                defaultValue=""
+                defaultPosition="50% 50%"
                 onPickFile={() => document.getElementById("role-user-photo")?.click()}
                 onReset={() => {
-                  setUserForm((prev) => ({ ...prev, avatar: "" }));
+                  setUserForm((prev) => ({ ...prev, avatar: "", avatar_position: "50% 50%" }));
                   if (showToast) showToast("User photo cleared!", "info");
                 }}
                 urlValue={userForm.avatar || ""}

@@ -103,6 +103,7 @@ export async function POST(req) {
         email: admin.email || "",
         role: admin.role || "super_admin",
         avatar: admin.avatar || "/ashifur.jpeg",
+        avatar_position: admin.avatar_position || "50% 50%",
       },
     });
   } catch (error) {
