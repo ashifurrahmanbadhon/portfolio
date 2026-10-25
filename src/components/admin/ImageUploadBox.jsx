@@ -99,9 +99,9 @@ export default function ImageUploadBox({
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      className={`p-4 sm:p-5 rounded-2xl bg-[#0A0D12] border transition-all duration-200 flex flex-col md:flex-row gap-5 items-stretch ${
+      className={`p-4 sm:p-5 rounded-2xl bg-[#0A0D12] border transition-colors duration-150 flex flex-col md:flex-row gap-5 items-stretch ${
         isDragging
-          ? "border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.2)]"
+          ? "border-emerald-400 bg-emerald-500/10"
           : "border-[#1E2638] hover:border-[#27324A]"
       }`}
     >
@@ -229,8 +229,8 @@ export default function ImageUploadBox({
 
               {/* Reposition Overlay Badge on Hover */}
               {onOpenReposition && !uploading && (
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/tile:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none">
-                  <span className="px-3 py-1.5 rounded-xl bg-black/90 backdrop-blur-md text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-1.5 shadow-2xl">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/tile:opacity-100 transition-opacity duration-150 flex items-center justify-center gap-2 pointer-events-none">
+                  <span className="px-3 py-1.5 rounded-xl bg-black/90 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-1.5">
                     <Move className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Reposition Photo</span>
                   </span>
@@ -264,7 +264,7 @@ export default function ImageUploadBox({
         <button
           type="button"
           onClick={onPickFile}
-          className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition-all cursor-pointer shadow-lg shadow-emerald-500/15 active:scale-[0.99] select-none"
+          className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition-colors duration-150 cursor-pointer active:scale-[0.99] select-none"
         >
           <Upload className="w-4 h-4 text-slate-950" />
           <span>{isPdf ? "UPLOAD PDF FROM DEVICE" : "UPLOAD FROM DEVICE"}</span>

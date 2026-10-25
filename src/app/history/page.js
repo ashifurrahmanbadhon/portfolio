@@ -254,10 +254,11 @@ export default function ChangeHistoryPage() {
         </div>
       </div>
 
-      <LivePreviewPanel url="/" savedOnly={true} defaultCollapsed={true} />
-
-      {/* 2. Overview KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* Left Column: History content as-is */}
+        <div className="flex-1 min-w-0 space-y-6 w-full">
+          {/* 2. Overview KPI Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <SpotlightCard className="p-4 interactive-card">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-medium text-slate-300">Total Logged Changes</span>
@@ -415,6 +416,18 @@ export default function ChangeHistoryPage() {
           })
         )}
       </div>
+      </div>
+
+      {/* Right Column: Live Simulation Rail */}
+      <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0">
+        <LivePreviewPanel
+          url="/"
+          savedOnly={true}
+          collapsible={false}
+          className="h-full"
+        />
+      </div>
+    </div>
     </div>
   );
 }
