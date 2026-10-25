@@ -69,13 +69,14 @@ export default function WebsitesPage() {
     } else {
       document.body.style.overflow = "unset";
     }
-    const selectedSite = websites.find((s) => s.id === selectedSiteId) || websites[0];
-  const previewUrl = selectedSite?.url || "/";
 
-  return () => {
+    return () => {
       document.body.style.overflow = "unset";
     };
   }, [modalOpen]);
+
+  const selectedSite = websites.find((s) => s.id === selectedSiteId) || websites[0];
+  const previewUrl = selectedSite?.url || "/";
 
   const handlePingAll = () => {
     setTestingPing(true);

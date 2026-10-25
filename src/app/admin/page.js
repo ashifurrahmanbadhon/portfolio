@@ -37,7 +37,8 @@ import {
   HelpCircle,
   Clock,
   Layers,
-  ChevronRight
+  ChevronRight,
+  ChevronDown
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { api } from "@/lib/api";
@@ -97,6 +98,18 @@ const DEFAULT_HIGHLIGHTS = [
   { metric_value: "6+", metric_label: "Core Software Tools", metric_subtext: "AutoCAD, ETAP, MATLAB, GIS" },
 ];
 
+const VALID_SECTION_IDS = [
+  "home",
+  "about",
+  "experience",
+  "education",
+  "skills",
+  "projects",
+  "contact",
+  "inbox",
+  "settings",
+];
+
 function AdminConsoleContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -106,7 +119,7 @@ function AdminConsoleContent() {
   // Deep-link ?tab= handling on mount and query param change
   useEffect(() => {
     const tabParam = searchParams?.get("tab");
-    if (tabParam && tabs.some((t) => t.id === tabParam)) {
+    if (tabParam && VALID_SECTION_IDS.includes(tabParam)) {
       setOpenSectionId(tabParam);
       setVisitedSections((prev) => new Set(prev).add(tabParam));
       setTimeout(() => {
@@ -462,6 +475,65 @@ function AdminConsoleContent() {
 
   const currentTabObj = tabs.find((t) => t.id === openSectionId) || tabs[0];
   const CurrentIcon = currentTabObj.icon;
+
+  const railTargetUrl =
+    openSectionId === "about"
+      ? "/about"
+      : openSectionId === "experience"
+      ? "/experience"
+      : openSectionId === "education"
+      ? "/education"
+      : openSectionId === "skills"
+      ? "/skills"
+      : openSectionId === "projects"
+      ? "/projects"
+      : openSectionId === "contact" || openSectionId === "inbox"
+      ? "/contact"
+      : "/";
+
+  const railDraftSection =
+    openSectionId === "home"
+      ? "home"
+      : openSectionId === "about"
+      ? "about"
+      : openSectionId === "experience"
+      ? "experience"
+      : openSectionId === "education"
+      ? "education"
+      : openSectionId === "skills"
+      ? "skills"
+      : openSectionId === "projects"
+      ? "projects"
+      : openSectionId === "contact"
+      ? "contact"
+      : openSectionId === "settings"
+      ? "settings"
+      : undefined;
+
+  const railSavedOnly = openSectionId === "inbox" || openSectionId === null;
+
+  const railGetDraftData = () => {
+    switch (openSectionId) {
+      case "home":
+        return { hero, cta: homepageCta };
+      case "about":
+        return { about };
+      case "experience":
+        return { experiences, metrics: experienceMetrics };
+      case "education":
+        return { educations, pillars: courseworkPillars, certifications };
+      case "skills":
+        return { skills, softwareTools, badges: skillBadges };
+      case "projects":
+        return { projects, methodologies: projectMethodologies };
+      case "contact":
+        return { contact: socialLinks, channels: contactChannels };
+      case "settings":
+        return { pageHeaders, resume };
+      default:
+        return undefined;
+    }
+  };
 
   return (
     <div className="space-y-6 pb-20">
