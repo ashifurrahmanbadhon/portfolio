@@ -75,7 +75,8 @@ function initSqliteDbIfEmpty(db) {
         totp_created_at TEXT,
         failed_2fa_attempts INTEGER DEFAULT 0,
         locked_2fa_until TEXT,
-        avatar TEXT
+        avatar TEXT,
+        avatar_position TEXT DEFAULT '50% 50%'
       );
       CREATE TABLE IF NOT EXISTS hero (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -339,6 +340,14 @@ function initSqliteDbIfEmpty(db) {
         created_at TEXT
       );
     `);
+
+    // Ensure SQLite admins table has avatar_position
+    try {
+      const adminCols = db.prepare("PRAGMA table_info(admins)").all();
+      if (adminCols && adminCols.length > 0 && !adminCols.some((c) => c.name === "avatar_position")) {
+        db.exec("ALTER TABLE admins ADD COLUMN avatar_position TEXT DEFAULT '50% 50%'");
+      }
+    } catch (_) {}
   } catch (e) {
     console.error("initSqliteDbIfEmpty error:", e);
   }
@@ -540,7 +549,7 @@ export async function recordFailed2faAttempt(adminId, maxAttempts = 5, lockoutMi
   return currentAttempts;
 }
 
-export async function updateAdminProfile(adminId, { fullName, email, avatar, currentPassword, newPassword }) {
+export async function updateAdminProfile(adminId, { fullName, email, avatar, avatarPosition, currentPassword, newPassword }) {
   const admin = await getAdminById(adminId);
   if (!admin) throw new Error("Admin not found");
 
@@ -562,20 +571,22 @@ export async function updateAdminProfile(adminId, { fullName, email, avatar, cur
       SET full_name = COALESCE(?, full_name),
           email = COALESCE(?, email),
           avatar = COALESCE(?, avatar),
+          avatar_position = COALESCE(?, avatar_position),
           password_hash = ?,
           salt = ?,
           updated_at = ?
       WHERE id = ?
-    `, [fullName || null, email || null, avatar || null, hash, salt, now, adminId]);
+    `, [fullName || null, email || null, avatar || null, avatarPosition || null, hash, salt, now, adminId]);
   } else {
     await execute(`
       UPDATE admins
       SET full_name = COALESCE(?, full_name),
           email = COALESCE(?, email),
           avatar = COALESCE(?, avatar),
+          avatar_position = COALESCE(?, avatar_position),
           updated_at = ?
       WHERE id = ?
-    `, [fullName || null, email || null, avatar || null, now, adminId]);
+    `, [fullName || null, email || null, avatar || null, avatarPosition || null, now, adminId]);
   }
 }
 
