@@ -80,6 +80,7 @@ export default function ImageUploadBox({
   const isVideo = type === "video" || (type === "media" && typeof displayUrl === "string" && (displayUrl.endsWith(".mp4") || displayUrl.endsWith(".webm")));
   const isImage = !isPdf && !isVideo;
 
+  const isSquare = aspectRatio === "square" || previewAspect === "1/1";
   const tileAspect = getInlineAspectStyle(previewAspect, aspectRatio);
 
   const handleUrlBlurOrEnter = () => {
@@ -99,14 +100,18 @@ export default function ImageUploadBox({
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      className={`p-4 sm:p-5 rounded-2xl bg-[#0A0D12] border transition-colors duration-150 flex flex-col md:flex-row gap-5 items-stretch ${
+      className={`p-4 sm:p-5 rounded-2xl bg-[#0A0D12] border transition-colors duration-150 flex flex-col sm:flex-row gap-4 sm:gap-5 items-stretch ${
         isDragging
           ? "border-emerald-400 bg-emerald-500/10"
           : "border-[#1E2638] hover:border-[#27324A]"
       }`}
     >
       {/* LEFT COLUMN: Preview Tile */}
-      <div className="w-full md:w-[260px] shrink-0 flex flex-col justify-center">
+      <div className={`shrink-0 flex flex-col justify-center ${
+        isSquare
+          ? "w-40 sm:w-[170px] md:w-[185px] mx-auto sm:mx-0"
+          : "w-full sm:w-[220px] md:w-[250px]"
+      }`}>
         <div
           style={tileAspect}
           className={`relative rounded-xl overflow-hidden border border-[#1E2638] bg-[#070A0F] flex items-center justify-center transition select-none group/tile ${
@@ -253,7 +258,7 @@ export default function ImageUploadBox({
             ) : (
               <ImageIcon className="w-4 h-4 text-emerald-400 shrink-0" />
             )}
-            <span className="truncate">{label}</span>
+            <span className="font-semibold text-slate-200">{label}</span>
           </div>
           {description && (
             <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{description}</p>
@@ -266,8 +271,8 @@ export default function ImageUploadBox({
           onClick={onPickFile}
           className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition-colors duration-150 cursor-pointer active:scale-[0.99] select-none"
         >
-          <Upload className="w-4 h-4 text-slate-950" />
-          <span>{isPdf ? "UPLOAD PDF FROM DEVICE" : "UPLOAD FROM DEVICE"}</span>
+          <Upload className="w-4 h-4 text-slate-950 shrink-0" />
+          <span className="whitespace-nowrap">{isPdf ? "UPLOAD PDF FROM DEVICE" : "UPLOAD FROM DEVICE"}</span>
         </button>
 
         {/* SECONDARY BUTTON: Reset to Default */}
@@ -276,8 +281,8 @@ export default function ImageUploadBox({
           onClick={onReset}
           className="w-full bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#1E2638] py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition cursor-pointer select-none"
         >
-          <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-          <span>RESET TO DEFAULT</span>
+          <RotateCcw className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+          <span className="whitespace-nowrap">RESET TO DEFAULT</span>
         </button>
 
         {/* URL Input Section */}
@@ -285,7 +290,7 @@ export default function ImageUploadBox({
           <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">
             {isPdf
               ? "OR ENTER FILE URL (CDN / LOCAL PATH)"
-              : "OR ENTER IMAGE URL (CDN / UNSPLASH / LOCAL PATH)"}
+              : "OR ENTER IMAGE URL (CDN / LOCAL PATH)"}
           </label>
           <input
             type="text"
