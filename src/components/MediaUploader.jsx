@@ -28,6 +28,7 @@ import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 import SpotlightCard from "@/components/SpotlightCard";
 import { parsePhotoPosition, formatPhotoPosition } from "@/lib/photoPosition";
+import ImageUploadBox from "@/components/admin/ImageUploadBox";
 
 function parsePosition(posStr) {
   if (!posStr || typeof posStr !== "string") return { x: 50, y: 15 };
@@ -201,6 +202,8 @@ export default function MediaUploader({
   maxSizeMB = 15,
   aspectRatio = "wide", // 'square' | 'portrait' | 'video' | 'wide'
   previewAspect,
+  defaultValue = "",
+  defaultPosition = "",
 }) {
   const modalAspectStyle = getPreviewAspectStyle(previewAspect, aspectRatio);
   const inlineAspectStyle = getInlineAspectStyle(previewAspect, aspectRatio);
@@ -484,301 +487,66 @@ export default function MediaUploader({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleUrlApply = () => {
-    if (onChange) onChange(urlInput.trim(), "");
+  const handleReset = () => {
+    const targetVal = defaultValue !== undefined ? defaultValue : "";
+    if (onChange) onChange(targetVal, "");
+    if (onPositionChange) {
+      onPositionChange(defaultPosition || (targetVal ? "center 15%" : "center center"));
+    }
+    setUrlInput(targetVal);
+    setTempPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    showToast("Reset to default successfully", "info");
+  };
+
+  const handleUrlApply = (appliedVal) => {
+    const val = typeof appliedVal === "string" ? appliedVal : urlInput;
+    const trimmed = val.trim();
+    setUrlInput(trimmed);
+    if (onChange) onChange(trimmed, "");
     showToast("Media URL updated!", "info");
   };
 
   return (
     <div className="space-y-2 text-xs">
-      {/* Label and mode switcher header */}
-      <div className="flex items-center justify-between">
-        <label className="font-medium text-slate-300 flex items-center gap-1.5">
-          {type === "document" ? (
-            <FileText className="w-3.5 h-3.5 text-emerald-400" />
-          ) : isVideo ? (
-            <Film className="w-3.5 h-3.5 text-emerald-400" />
-          ) : (
-            <ImageIcon className="w-3.5 h-3.5 text-emerald-400" />
-          )}
-          <span>{label}</span>
-        </label>
-
-        <button
-          type="button"
-          onClick={() => setMode(mode === "upload" ? "url" : "upload")}
-          className="text-[11px] font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition cursor-pointer"
-        >
-          {mode === "upload" ? (
-            <>
-              <Link2 className="w-3 h-3" /> Switch to URL
-            </>
-          ) : (
-            <>
-              <FolderOpen className="w-3 h-3" /> Browse / Upload File
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* Hidden File Input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={defaultAccept}
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleFilePicked(file);
-          if (e.target) e.target.value = "";
-        }}
-      />
-
-      {/* URL Input Mode */}
-      {mode === "url" && (
-        <div className="space-y-2">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              placeholder="https://... or /uploads/..."
-              className="flex-1 bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
-            />
-            <button
-              type="button"
-              onClick={handleUrlApply}
-              className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition cursor-pointer shrink-0"
-            >
-              Apply
-            </button>
-          </div>
-          {value && (
-            <p className="text-[11px] font-mono text-slate-400 truncate">
-              Current: <span className="text-emerald-400">{value}</span>
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Upload & Drag-and-Drop Mode */}
-      {mode === "upload" && (
-        <div>
-          {/* Case 1: Value exists -> Show Live Preview Card */}
-          {value ? (
-            <SpotlightCard className="bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/30 rounded-2xl p-3 sm:p-4 space-y-3 transition">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                  <span className="font-mono text-[11px] text-slate-300 truncate">
-                    {value}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <a
-                    href={value}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-1.5 rounded-lg bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638]"
-                    title="Open Full File"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                  {onPositionChange && !isPdf && !isVideo && (
-                    <button
-                      type="button"
-                      onClick={handleOpenExistingReposition}
-                      className="px-2.5 py-1.5 rounded-lg bg-[#161C2A] hover:bg-[#1E2638] text-emerald-400 font-semibold border border-emerald-500/20 text-[11px] flex items-center gap-1 transition cursor-pointer"
-                      title="Reposition Photo"
-                    >
-                      <Move className="w-3 h-3" />
-                      <span>Reposition</span>
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-2.5 py-1.5 rounded-lg bg-[#161C2A] hover:bg-[#1E2638] text-emerald-400 font-semibold border border-emerald-500/20 text-[11px] flex items-center gap-1 transition cursor-pointer"
-                    title="Replace with new file"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    <span>Replace</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleClear}
-                    className="p-1.5 rounded-lg bg-[#161C2A] hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-[#1E2638] transition cursor-pointer"
-                    title="Remove file"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Media Preview Box */}
-              <div className="relative rounded-xl overflow-hidden bg-[#070A0F] border border-[#1E2638] flex items-center justify-center p-3 sm:p-4">
-                {uploading && (
-                  <div className="absolute inset-0 z-30 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-2.5 p-4 animate-in fade-in duration-150">
-                    <div className="relative w-16 h-16 flex items-center justify-center">
-                      <svg className="w-16 h-16 transform -rotate-90">
-                        <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" className="text-slate-800" fill="transparent" />
-                        <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" strokeDasharray={163.36} strokeDashoffset={163.36 - (163.36 * uploadProgress) / 100} strokeLinecap="round" className="text-emerald-400 transition-all duration-150" fill="transparent" />
-                      </svg>
-                      <span className="absolute text-xs font-mono font-black text-emerald-300">{uploadProgress}%</span>
-                    </div>
-                    <div className="text-center space-y-1">
-                      <p className="text-xs font-bold text-white tracking-wide">Uploading Photo...</p>
-                      <div className="w-40 h-1.5 bg-[#161C2A] rounded-full overflow-hidden mx-auto border border-[#1E2638]">
-                        <div className="h-full bg-emerald-400 transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
-                      </div>
-                      <p className="text-[10px] font-mono text-emerald-400 font-semibold">{uploadProgress}% Complete</p>
-                    </div>
-                  </div>
-                )}
-                {isPdf ? (
-                  <div className="py-6 px-4 flex flex-col items-center justify-center space-y-2 text-center">
-                    <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400">
-                      <FileText className="w-8 h-8" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-white text-xs">PDF Document Loaded</p>
-                      <p className="text-[10px] font-mono text-slate-400">{(tempPreview || value).split("/").pop()}</p>
-                    </div>
-                    <a
-                      href={value}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] text-emerald-400 hover:underline pt-1 font-mono"
-                    >
-                      <Eye className="w-3 h-3" /> View / Test PDF
-                    </a>
-                  </div>
-                ) : isVideo ? (
-                  <video
-                    src={tempPreview || value}
-                    controls
-                    className="w-full max-h-60 rounded-xl object-contain bg-black"
-                  />
-                ) : (
-                  <div
-                    style={inlineAspectStyle}
-                    className={`relative rounded-2xl overflow-hidden shadow-2xl border border-[#1E2638] bg-[#0A0E18] group/preview mx-auto ${
-                      onPositionChange && !uploading ? "cursor-pointer" : ""
-                    }`}
-                    onClick={handleOpenExistingReposition}
-                    title="Click to reposition photo"
-                  >
-                    <Image
-                      src={tempPreview || value}
-                      alt="Uploaded media preview"
-                      fill
-                      unoptimized
-                      style={parsePhotoPosition(positionValue || "50% 15%").style}
-                      className="object-cover transition-all select-none"
-                    />
-
-                    {/* Hover overlay badge */}
-                    {onPositionChange && !uploading && (
-                      <div className="absolute inset-0 bg-black/45 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none">
-                        <span className="px-3.5 py-1.5 rounded-xl bg-black/90 backdrop-blur-md text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-2 shadow-2xl">
-                          <Move className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Reposition Photo</span>
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </SpotlightCard>
-          ) : (
-            /* Case 2: No value -> Show Drag & Drop Upload Zone */
-            <div
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-200 group ${
-                isDragging
-                  ? "border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.2)]"
-                  : "border-[#1E2638] hover:border-emerald-500/50 bg-[#0A0D12]/70 hover:bg-[#0A0D12]"
-              }`}
-            >
-              {uploading ? (
-                tempPreview ? (
-                  <div className="relative w-full h-44 rounded-xl overflow-hidden bg-[#070A0F] border border-emerald-500/40 flex items-center justify-center">
-                    <Image
-                      src={tempPreview}
-                      alt="Uploading preview"
-                      fill
-                      unoptimized
-                      className="object-cover blur-[1px] opacity-60"
-                    />
-                    <div className="absolute inset-0 z-30 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center space-y-2.5 p-4 animate-in fade-in duration-150">
-                      <div className="relative w-16 h-16 flex items-center justify-center">
-                        <svg className="w-16 h-16 transform -rotate-90">
-                          <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" className="text-slate-800" fill="transparent" />
-                          <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="4" strokeDasharray={163.36} strokeDashoffset={163.36 - (163.36 * uploadProgress) / 100} strokeLinecap="round" className="text-emerald-400 transition-all duration-150" fill="transparent" />
-                        </svg>
-                        <span className="absolute text-xs font-mono font-black text-emerald-300">{uploadProgress}%</span>
-                      </div>
-                      <div className="text-center space-y-1">
-                        <p className="text-xs font-bold text-white tracking-wide">Uploading Photo...</p>
-                        <div className="w-40 h-1.5 bg-[#161C2A] rounded-full overflow-hidden mx-auto border border-[#1E2638]">
-                          <div className="h-full bg-emerald-400 transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
-                        </div>
-                        <p className="text-[10px] font-mono text-emerald-400 font-semibold">{uploadProgress}% Complete</p>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3 py-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin mx-auto" />
-                    <p className="text-xs font-mono text-emerald-400 font-bold">
-                      Uploading {uploadProgress}%...
-                    </p>
-                    <div className="w-48 mx-auto h-1.5 bg-[#161C2A] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-emerald-400 transition-all duration-300"
-                        style={{ width: `${uploadProgress}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              ) : (
-                <div className="space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all">
-                    {type === "document" ? (
-                      <FileText className="w-6 h-6" />
-                    ) : type === "video" ? (
-                      <Video className="w-6 h-6" />
-                    ) : (
-                      <Upload className="w-6 h-6" />
-                    )}
-                  </div>
-
-                  <div>
-                    <p className="font-bold text-white text-xs group-hover:text-emerald-300 transition">
-                      Click to Browse or Drag &amp; Drop
-                    </p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{description}</p>
-                  </div>
-
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#161C2A] border border-[#1E2638] text-[10px] font-mono text-slate-400">
-                    <span>
-                      Max {type === "video" ? "50MB" : `${maxSizeMB}MB`}
-                    </span>
-                    <span>•</span>
-                    <span className="uppercase">
-                      {type === "document" ? "PDF" : type === "video" ? "MP4, WebM" : "JPG, PNG, WebP"}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+      <ImageUploadBox
+        value={value}
+        type={type}
+        label={label}
+        description={description}
+        previewAspect={previewAspect}
+        aspectRatio={aspectRatio}
+        positionStyle={parsePhotoPosition(positionValue || "50% 15%").style}
+        uploading={uploading}
+        uploadProgress={uploadProgress}
+        tempPreview={tempPreview}
+        onPickFile={() => fileInputRef.current?.click()}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        isDragging={isDragging}
+        onReset={handleReset}
+        onOpenReposition={onPositionChange && !isPdf && !isVideo ? handleOpenExistingReposition : null}
+        urlValue={urlInput}
+        onUrlChange={(newUrl) => setUrlInput(newUrl)}
+        onUrlApply={handleUrlApply}
+        maxSizeLabel={`Max ${type === "video" ? "50MB" : `${maxSizeMB}MB`} • ${
+          type === "document" ? "PDF" : type === "video" ? "MP4, WebM" : "JPG, PNG, WebP, SVG, GIF"
+        }`}
+      >
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={defaultAccept}
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFilePicked(file);
+            if (e.target) e.target.value = "";
+          }}
+        />
+      </ImageUploadBox>
 
       {/* Photo Reposition Modal (Direct Click & Drag Before / After Upload) */}
       {isRepositionModalOpen && (

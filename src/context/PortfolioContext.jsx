@@ -273,12 +273,75 @@ export function PortfolioProvider({ children }) {
     };
   }, [applyContentData, loadContent]);
 
+  // Live Simulation Preview hook (inert unless ?cms_preview=1 is present)
+  const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!window.location.search.includes('cms_preview=1')) return;
+
+    setIsPreview(true);
+
+    // Notify parent window that preview is ready
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'CMS_PREVIEW_READY' }, window.location.origin);
+    }
+
+    const handleMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type !== 'CMS_PREVIEW_DRAFT') return;
+
+      const { section, data } = event.data;
+      if (!data || typeof data !== 'object') return;
+
+      const payload = {};
+      if (section === 'home') {
+        if (data.hero) payload.hero = data.hero;
+        if (data.cta) payload.homepage_cta = data.cta;
+      } else if (section === 'about') {
+        if (data.about) {
+          payload.about = {
+            ...data.about,
+            pillars: data.pillars || data.about.pillars,
+            principles: data.principles || data.about.principles,
+          };
+        }
+      } else if (section === 'experience') {
+        if (data.experiences) payload.experiences = data.experiences;
+        if (data.metrics) payload.experience_metrics = data.metrics;
+      } else if (section === 'education') {
+        if (data.educations) payload.educations = data.educations;
+        if (data.pillars) payload.coursework_pillars = data.pillars;
+        if (data.certifications) payload.certifications = data.certifications;
+      } else if (section === 'skills') {
+        if (data.skills) payload.skills = data.skills;
+        if (data.softwareTools) payload.software_tools = data.softwareTools;
+        if (data.badges) payload.skill_badges = data.badges;
+      } else if (section === 'projects') {
+        if (data.projects) payload.projects = data.projects;
+        if (data.methodologies) payload.project_methodologies = data.methodologies;
+      } else if (section === 'contact') {
+        if (data.contact) payload.social_links = data.contact;
+        if (data.channels) payload.contact_channels = data.channels;
+      } else if (section === 'settings') {
+        if (data.pageHeaders) payload.page_headers = data.pageHeaders;
+        if (data.resume) payload.resume = data.resume;
+      }
+
+      applyContentData(payload);
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [applyContentData]);
+
   const openResumeModal = () => setResumeModalOpen(true);
   const closeResumeModal = () => setResumeModalOpen(false);
 
   return (
     <PortfolioContext.Provider
       value={{
+        isPreview,
         heroData,
         aboutData,
         highlights,

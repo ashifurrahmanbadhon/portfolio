@@ -18,6 +18,7 @@ import {
 import { useToast } from "@/components/Toast";
 import TwoFactorSettings from "@/components/TwoFactorSettings";
 import SpotlightCard from "@/components/SpotlightCard";
+import LivePreviewPanel from "@/components/admin/LivePreviewPanel";
 
 export default function SettingsPage() {
   const { showToast } = useToast();
@@ -79,6 +80,8 @@ export default function SettingsPage() {
           <span>{saved ? "Configuration Saved!" : "Save All Changes"}</span>
         </button>
       </div>
+
+      <LivePreviewPanel url="/" savedOnly={true} defaultCollapsed={true} />
 
       {/* Tabs list */}
       <div className="flex border-b border-[#1E2638] gap-2 overflow-x-auto">
