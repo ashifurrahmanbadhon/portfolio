@@ -200,10 +200,11 @@ export default function WebsitesPage() {
         </div>
       </div>
 
-      <LivePreviewPanel url={previewUrl} savedOnly={true} defaultCollapsed={true} />
-
-      {/* Overview Stat Badges */}
-      <div className="flex items-center gap-3 text-xs font-mono">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* Left Column: Websites content as-is */}
+        <div className="flex-1 min-w-0 space-y-6 w-full">
+          {/* Overview Stat Badges */}
+          <div className="flex items-center gap-3 text-xs font-mono">
         <span className="px-3 py-1.5 rounded-xl bg-[#111622] border border-[#1E2638] text-slate-300">
           Total: <strong className="text-white">{websites.length}</strong> Sites
         </span>
@@ -353,6 +354,18 @@ export default function WebsitesPage() {
           );
         })}
       </div>
+      </div>
+
+      {/* Right Column: Live Simulation Rail */}
+      <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0">
+        <LivePreviewPanel
+          url={previewUrl}
+          savedOnly={true}
+          collapsible={false}
+          className="h-full"
+        />
+      </div>
+    </div>
 
       {/* Modal: Add Website */}
       {modalOpen && (

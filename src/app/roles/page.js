@@ -242,10 +242,11 @@ export default function RolesPage() {
         </button>
       </div>
 
-      <LivePreviewPanel url="/" savedOnly={true} defaultCollapsed={true} />
-
-      {/* Role Definitions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* Left Column: Roles content as-is */}
+        <div className="flex-1 min-w-0 space-y-6 w-full">
+          {/* Role Definitions Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {ROLES_INFO.map((r, i) => (
           <SpotlightCard
             key={i}
@@ -421,6 +422,18 @@ export default function RolesPage() {
           ))}
         </div>
       </div>
+      </div>
+
+      {/* Right Column: Live Simulation Rail */}
+      <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0">
+        <LivePreviewPanel
+          url="/"
+          savedOnly={true}
+          collapsible={false}
+          className="h-full"
+        />
+      </div>
+    </div>
 
       {/* Modal: Add or Edit User */}
       {modalOpen && (

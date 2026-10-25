@@ -100,7 +100,33 @@ const DEFAULT_HIGHLIGHTS = [
 function AdminConsoleContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentTab = searchParams.get("tab") || "home";
+  const [openSectionId, setOpenSectionId] = useState(null); // ALL collapsed by default per specs
+  const [visitedSections, setVisitedSections] = useState(new Set());
+
+  // Deep-link ?tab= handling on mount and query param change
+  useEffect(() => {
+    const tabParam = searchParams?.get("tab");
+    if (tabParam && tabs.some((t) => t.id === tabParam)) {
+      setOpenSectionId(tabParam);
+      setVisitedSections((prev) => new Set(prev).add(tabParam));
+      setTimeout(() => {
+        const el = document.getElementById("section-" + tabParam);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 150);
+    }
+  }, [searchParams]);
+
+  const toggleSection = (id) => {
+    setOpenSectionId((prev) => {
+      const next = prev === id ? null : id;
+      if (next) {
+        setVisitedSections((v) => new Set(v).add(next));
+      }
+      return next;
+    });
+  };
   const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -434,7 +460,7 @@ function AdminConsoleContent() {
     { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
   ];
 
-  const currentTabObj = tabs.find((t) => t.id === currentTab) || tabs[0];
+  const currentTabObj = tabs.find((t) => t.id === openSectionId) || tabs[0];
   const CurrentIcon = currentTabObj.icon;
 
   return (
@@ -538,15 +564,65 @@ function AdminConsoleContent() {
           {/* ============================================================== */}
           {/* TAB 1: HOME & HERO SECTION                                     */}
           {/* ============================================================== */}
-          {currentTab === "home" && (
-        <div className="space-y-6">
-          <LivePreviewPanel
-            url="/"
-            draftSection="home"
-            getDraftData={() => ({ hero, cta: homepageCta })}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl">
+                            <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* LEFT COLUMN: Accordion stack (flex-1 min-w-0) */}
+          <div className="flex-1 min-w-0 space-y-4 w-full">
+{/* ACCORDION ITEM: HOME & HERO SECTION */}
+          <div
+            id="section-home"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "home"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("home")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "home"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <Home className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 1</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Home & Hero Section</span>
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Live editor for headline, credentials badge, introduction, and primary CTA buttons</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "home" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "home" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("home") && (
+              <div
+                style={{ display: openSectionId === "home" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl">
             <div className="flex items-center justify-between pb-4 border-b border-[#1E2638] mb-6">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -748,21 +824,69 @@ function AdminConsoleContent() {
             onSave={handleSaveSection}
             saving={saving}
           />
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB 2: ABOUT ASHIFUR PAGE                                      */}
       {/* ============================================================== */}
-      {currentTab === "about" && (
-        <div className="space-y-6">
-          <LivePreviewPanel
-            url="/about"
-            draftSection="about"
-            getDraftData={() => ({ about, pillars: about.pillars, principles: about.principles })}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
+                {/* ACCORDION ITEM: ABOUT ASHIFUR — BACKGROUND & VISION */}
+          <div
+            id="section-about"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "about"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("about")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "about"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <User className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 2</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">About Ashifur — Background & Vision</span>
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Configure personal narrative, engineering focus cards, and operating principles</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "about" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "about" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("about") && (
+              <div
+                style={{ display: openSectionId === "about" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -907,21 +1031,74 @@ function AdminConsoleContent() {
             onSave={handleSaveSection}
             saving={saving}
           />
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB 3: WORK EXPERIENCE                                         */}
       {/* ============================================================== */}
-      {currentTab === "experience" && (
-        <div className="space-y-4">
-          <LivePreviewPanel
-            url="/experience"
-            draftSection="experience"
-            getDraftData={() => ({ experiences, metrics: experienceMetrics })}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+                {/* ACCORDION ITEM: WORK EXPERIENCE & FIELD OPERATIONS */}
+          <div
+            id="section-experience"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "experience"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("experience")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "experience"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <Briefcase className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 3</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Work Experience & Field Operations</span>
+                  {experiences.length !== undefined && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161C2A] text-slate-300 border border-[#1E2638]">
+                      {experiences.length} items
+                    </span>
+                  )}
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Manage professional positions and high-voltage field roles</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "experience" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "experience" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("experience") && (
+              <div
+                style={{ display: openSectionId === "experience" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1050,21 +1227,74 @@ function AdminConsoleContent() {
             onSave={handleSaveSection}
             saving={saving}
           />
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB 4: EDUCATION & DEGREES                                     */}
       {/* ============================================================== */}
-      {currentTab === "education" && (
-        <div className="space-y-4">
-          <LivePreviewPanel
-            url="/education"
-            draftSection="education"
-            getDraftData={() => ({ educations, pillars: courseworkPillars, certifications })}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+                {/* ACCORDION ITEM: ACADEMIC BACKGROUND & CERTIFICATIONS */}
+          <div
+            id="section-education"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "education"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("education")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "education"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 4</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Academic Background & Certifications</span>
+                  {educations.length !== undefined && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161C2A] text-slate-300 border border-[#1E2638]">
+                      {educations.length} items
+                    </span>
+                  )}
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Manage accredited degrees, certifications, and coursework</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "education" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "education" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("education") && (
+              <div
+                style={{ display: openSectionId === "education" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1186,21 +1416,74 @@ function AdminConsoleContent() {
             onSave={handleSaveSection}
             saving={saving}
           />
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB 5: SKILLS MATRIX                                           */}
       {/* ============================================================== */}
-      {currentTab === "skills" && (
-        <div className="space-y-4">
-          <LivePreviewPanel
-            url="/skills"
-            draftSection="skills"
-            getDraftData={() => ({ skills, softwareTools, badges: skillBadges })}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+                {/* ACCORDION ITEM: TECHNICAL SKILLS MATRIX & SOFTWARE TOOLS */}
+          <div
+            id="section-skills"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "skills"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("skills")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "skills"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <Cpu className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 5</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Technical Skills Matrix & Software Tools</span>
+                  {skills.length !== undefined && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161C2A] text-slate-300 border border-[#1E2638]">
+                      {skills.length} items
+                    </span>
+                  )}
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Manage technical skills across 4 engineering domains</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "skills" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "skills" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("skills") && (
+              <div
+                style={{ display: openSectionId === "skills" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1321,31 +1604,74 @@ function AdminConsoleContent() {
             onSave={handleSaveSection}
             saving={saving}
           />
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB 6: PROJECTS PORTFOLIO                                      */}
       {/* ============================================================== */}
-      {currentTab === "projects" && (
-        <div className="space-y-4">
-          <LivePreviewPanel
-            url="/projects"
-            draftSection="projects"
-            getDraftData={() => {
-              let merged = [...projects];
-              if (modalType === "project" && editingItem) {
-                if (editingIndex >= 0 && editingIndex < merged.length) {
-                  merged[editingIndex] = { ...merged[editingIndex], ...editingItem };
-                } else if (editingItem.title) {
-                  merged = [{ ...editingItem, id: "draft-new" }, ...merged];
-                }
-              }
-              return { projects: merged, methodologies: projectMethodologies };
-            }}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+                {/* ACCORDION ITEM: ENGINEERING PROJECTS & CASE STUDIES */}
+          <div
+            id="section-projects"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "projects"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("projects")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "projects"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <FolderGit2 className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 6</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Engineering Projects & Case Studies</span>
+                  {projects.length !== undefined && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161C2A] text-slate-300 border border-[#1E2638]">
+                      {projects.length} items
+                    </span>
+                  )}
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Manage featured engineering case studies and simulations</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "projects" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "projects" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("projects") && (
+              <div
+                style={{ display: openSectionId === "projects" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1504,21 +1830,69 @@ function AdminConsoleContent() {
             onSave={handleSaveSection}
             saving={saving}
           />
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB 7: CONTACT, RESUME & MESSAGES                              */}
       {/* ============================================================== */}
-      {currentTab === "contact" && (
-        <div className="space-y-6">
-          <LivePreviewPanel
-            url="/contact"
-            draftSection="contact"
-            getDraftData={() => ({ contact: socialLinks, channels: contactChannels })}
-            defaultCollapsed={false}
-          />
-          {/* Section A: Contact Details & Social Links */}
+                {/* ACCORDION ITEM: CONTACT HUB & COMMUNICATION CHANNELS */}
+          <div
+            id="section-contact"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "contact"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("contact")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "contact"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <Mail className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 7</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Contact Hub & Communication Channels</span>
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Update email, phone, WhatsApp, office location, and social media channels</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "contact" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "contact" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("contact") && (
+              <div
+                style={{ display: openSectionId === "contact" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+{/* Section A: Contact Details & Social Links */}
           <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
               <div>
@@ -1724,20 +2098,79 @@ function AdminConsoleContent() {
               </div>
             </div>
           </SpotlightCard>
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB: INBOUND MESSAGES INBOX (Dedicated Page)                   */}
       {/* ============================================================== */}
-      {currentTab === "inbox" && (
-        <div className="space-y-6">
-          <LivePreviewPanel
-            url="/contact"
-            savedOnly={true}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
+                {/* ACCORDION ITEM: INBOUND MESSAGES & VISITOR INQUIRIES */}
+          <div
+            id="section-inbox"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "inbox"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("inbox")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "inbox"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Page 8</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Inbound Messages & Visitor Inquiries</span>
+                  {messages.length !== undefined && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161C2A] text-slate-300 border border-[#1E2638]">
+                      {messages.length} items
+                    </span>
+                  )}
+                  {messages.filter((m) => !m.is_read).length > 0 && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-bold">
+                      {messages.filter((m) => !m.is_read).length} new
+                    </span>
+                  )}
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">View, manage, mark, and delete direct visitor inquiries</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "inbox" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "inbox" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("inbox") && (
+              <div
+                style={{ display: openSectionId === "inbox" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
             {/* Header and Bulk Action Toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E2638]">
               <div>
@@ -1923,21 +2356,69 @@ function AdminConsoleContent() {
               </div>
             )}
           </SpotlightCard>
-        </div>
-      )}
+              </div>
+            )}
+          </div>
 
       {/* ============================================================== */}
       {/* TAB 8: PREFERENCES & SETTINGS                                  */}
       {/* ============================================================== */}
-      {currentTab === "settings" && (
-        <div className="space-y-6">
-          <LivePreviewPanel
-            url="/"
-            draftSection="settings"
-            getDraftData={() => ({ pageHeaders, resume })}
-            defaultCollapsed={false}
-          />
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
+                {/* ACCORDION ITEM: PAGE HEADERS & GLOBAL SETTINGS */}
+          <div
+            id="section-settings"
+            className={`rounded-2xl border transition-colors duration-150 overflow-hidden ${
+              openSectionId === "settings"
+                ? "bg-[#111622] border-emerald-500/40"
+                : "bg-[#0B0F17] hover:bg-[#111622]/80 border-[#1E2638]"
+            }`}
+          >
+            {/* Accordion Header */}
+            <button
+              type="button"
+              onClick={() => toggleSection("settings")}
+              className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left cursor-pointer select-none"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border transition-colors duration-150 ${
+                    openSectionId === "settings"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                      : "bg-[#141A29] text-slate-400 border-[#1E2638]"
+                  }`}
+                >
+                  <Sliders className="w-5 h-5" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-mono font-bold text-emerald-400/90 uppercase">Global</span>
+                    <span className="text-sm sm:text-base font-bold text-white truncate">Page Headers & Global Settings</span>
+                  </div>
+                  <p className="text-xs text-slate-400 truncate mt-0.5 max-w-xl">Update SEO meta descriptions, page banner titles, and collaboration CTA</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+                  {openSectionId === "settings" ? "Collapse" : "Edit Section"}
+                </span>
+                <div
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center bg-[#161C2A] border border-[#1E2638] text-slate-400 transition-transform duration-150 ${
+                    openSectionId === "settings" ? "rotate-180 text-emerald-400 border-emerald-500/30" : "rotate-0"
+                  }`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </div>
+            </button>
+
+            {/* Accordion Body: mounts on first open, stays mounted but hidden when collapsed */}
+            {visitedSections.has("settings") && (
+              <div
+                style={{ display: openSectionId === "settings" ? "block" : "none" }}
+                className="p-4 sm:p-6 border-t border-[#1E2638] space-y-6"
+              >
+<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1999,8 +2480,23 @@ function AdminConsoleContent() {
             onSave={handleSaveSection}
             saving={saving}
           />
+              </div>
+            )}
+          </div>
+          </div>
+
+          {/* RIGHT COLUMN: Live Simulation Rail (w-[400px] lg / w-[460px] xl, sticky under TopBar) */}
+          <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0">
+            <LivePreviewPanel
+              url={railTargetUrl}
+              draftSection={railDraftSection}
+              getDraftData={railGetDraftData}
+              savedOnly={railSavedOnly}
+              collapsible={false}
+              className="h-full"
+            />
+          </div>
         </div>
-      )}
         </>
       )}
 

@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 
 /**
- * LivePreviewPanel (Reference 2 Design)
- * Live Simulation preview panel with Desktop / Mobile viewport toggle,
- * traffic light browser chrome, and bidirectional live draft synchronization.
+ * LivePreviewPanel (Reference 2 Design - Compact Rail Component)
+ * Flat, lightweight live simulation preview panel with Desktop / Mobile viewport toggle,
+ * traffic light browser chrome, auto-scaling mobile frame, and bidirectional draft synchronization.
  */
 export default function LivePreviewPanel({
   url = "/",
@@ -22,15 +22,19 @@ export default function LivePreviewPanel({
   savedOnly = false,
   defaultDevice = "desktop",
   defaultCollapsed = false,
+  collapsible = true,
+  className = "",
 }) {
   const [device, setDevice] = useState(defaultDevice); // 'desktop' | 'mobile'
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
   const [iframeKey, setIframeKey] = useState(0);
   const [loading, setLoading] = useState(true);
   const iframeRef = useRef(null);
+  const stageRef = useRef(null);
+  const [mobileScale, setMobileScale] = useState(1);
   const debounceTimerRef = useRef(null);
 
-  // Strip query param for the open-in-new-tab clean link
+  // Clean URL for open-in-new-tab link (no cms_preview param)
   const cleanUrl = url.split("?")[0] || "/";
 
   // Target preview URL with cms_preview=1 param
@@ -82,64 +86,87 @@ export default function LivePreviewPanel({
     return () => window.removeEventListener("message", handleMessage);
   }, [sendDraft]);
 
+  // Auto-scale mobile frame (390x844) to fit stage without overflowing
+  useEffect(() => {
+    if (!stageRef.current || device !== "mobile" || collapsed) return;
+
+    const calculateScale = () => {
+      if (!stageRef.current) return;
+      const { clientWidth, clientHeight } = stageRef.current;
+      const targetW = 390 + 24; // 390px + margin
+      const targetH = 844 + 24; // 844px + margin
+      const scaleX = clientWidth / targetW;
+      const scaleY = clientHeight / targetH;
+      const s = Math.min(1, Math.min(scaleX, scaleY));
+      setMobileScale(Math.max(0.25, s));
+    };
+
+    calculateScale();
+    const ro = new ResizeObserver(calculateScale);
+    ro.observe(stageRef.current);
+    return () => ro.disconnect();
+  }, [device, collapsed]);
+
   const handleRefresh = () => {
     setLoading(true);
     setIframeKey((prev) => prev + 1);
   };
 
   return (
-    <div className="w-full rounded-2xl bg-[#0B0F17] border border-[#1E2638] overflow-hidden shadow-2xl transition-all duration-200 mb-6">
+    <div
+      className={`w-full rounded-2xl bg-[#0B0F17] border border-[#1E2638] overflow-hidden flex flex-col transition-colors duration-150 ${className}`}
+    >
       {/* Browser Chrome Bar */}
-      <div className="px-4 py-3 bg-[#0E131F] border-b border-[#1E2638] flex flex-wrap items-center justify-between gap-3 select-none">
+      <div className="px-3 py-2.5 bg-[#0E131F] border-b border-[#1E2638] flex items-center justify-between gap-2 select-none shrink-0">
         {/* Left: Traffic light dots & LIVE SIMULATION label */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#FF5F57] shadow-xs inline-block" />
-            <span className="w-3 h-3 rounded-full bg-[#FEBC2E] shadow-xs inline-block" />
-            <span className="w-3 h-3 rounded-full bg-[#28C840] shadow-xs inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57] inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FEBC2E] inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#28C840] inline-block" />
           </div>
 
-          <span className="text-xs font-mono font-bold text-slate-300 tracking-wider">
+          <span className="text-[10px] font-mono font-bold text-slate-300 tracking-wider">
             LIVE SIMULATION
           </span>
         </div>
 
         {/* Center: URL Pill */}
-        <div className="flex items-center justify-center flex-1 min-w-[140px] max-w-[340px] mx-auto order-3 sm:order-2">
-          <div className="w-full bg-[#070A0F] border border-[#1E2638] px-3.5 py-1 rounded-full text-[11px] font-mono text-emerald-400 text-center truncate shadow-inner">
+        <div className="flex-1 min-w-0 max-w-[160px] sm:max-w-[220px] mx-1">
+          <div className="w-full bg-[#070A0F] border border-[#1E2638] px-2.5 py-0.5 rounded-full text-[10px] font-mono text-emerald-400 text-center truncate">
             {cleanUrl}
           </div>
         </div>
 
         {/* Right: Controls (Desktop/Mobile Toggle, Refresh, Open New Tab, Collapse) */}
-        <div className="flex items-center gap-2 order-2 sm:order-3">
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Segmented Desktop / Mobile Toggle */}
-          <div className="flex items-center p-0.5 rounded-xl bg-[#070A0F] border border-[#1E2638] text-xs font-mono">
+          <div className="flex items-center p-0.5 rounded-lg bg-[#070A0F] border border-[#1E2638] text-[11px] font-mono">
             <button
               type="button"
               onClick={() => setDevice("desktop")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all cursor-pointer select-none ${
+              className={`flex items-center gap-1 px-2 py-0.5 rounded transition-colors duration-150 cursor-pointer ${
                 device === "desktop"
-                  ? "bg-emerald-500 text-slate-950 font-bold shadow-xs"
+                  ? "bg-emerald-500 text-slate-950 font-bold"
                   : "text-slate-400 hover:text-white"
               }`}
               title="Desktop View"
             >
-              <Monitor className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Desktop</span>
+              <Monitor className="w-3 h-3" />
+              <span className="hidden xl:inline text-[10px]">Desktop</span>
             </button>
             <button
               type="button"
               onClick={() => setDevice("mobile")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all cursor-pointer select-none ${
+              className={`flex items-center gap-1 px-2 py-0.5 rounded transition-colors duration-150 cursor-pointer ${
                 device === "mobile"
-                  ? "bg-emerald-500 text-slate-950 font-bold shadow-xs"
+                  ? "bg-emerald-500 text-slate-950 font-bold"
                   : "text-slate-400 hover:text-white"
               }`}
               title="Mobile View (390px)"
             >
-              <Smartphone className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Mobile</span>
+              <Smartphone className="w-3 h-3" />
+              <span className="hidden xl:inline text-[10px]">Mobile</span>
             </button>
           </div>
 
@@ -147,10 +174,10 @@ export default function LivePreviewPanel({
           <button
             type="button"
             onClick={handleRefresh}
-            className="p-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition cursor-pointer"
+            className="p-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition-colors duration-150 cursor-pointer"
             title="Reload Preview"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3 h-3" />
           </button>
 
           {/* Open in New Tab */}
@@ -158,43 +185,48 @@ export default function LivePreviewPanel({
             href={cleanUrl}
             target="_blank"
             rel="noreferrer"
-            className="p-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition cursor-pointer"
+            className="p-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition-colors duration-150 cursor-pointer"
             title="Open in New Tab"
           >
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3 h-3" />
           </a>
 
-          {/* Collapse / Expand Button */}
-          <button
-            type="button"
-            onClick={() => setCollapsed((prev) => !prev)}
-            className="p-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition cursor-pointer flex items-center gap-1"
-            title={collapsed ? "Expand Simulation" : "Collapse Simulation"}
-            aria-label={collapsed ? "Expand Simulation" : "Collapse Simulation"}
-          >
-            <ChevronDown
-              className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                collapsed ? "-rotate-90" : "rotate-0"
-              }`}
-            />
-          </button>
+          {/* Collapse / Expand Button (if collapsible) */}
+          {collapsible && (
+            <button
+              type="button"
+              onClick={() => setCollapsed((prev) => !prev)}
+              className="p-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition-colors duration-150 cursor-pointer"
+              title={collapsed ? "Expand Simulation" : "Collapse Simulation"}
+              aria-label={collapsed ? "Expand Simulation" : "Collapse Simulation"}
+            >
+              <ChevronDown
+                className={`w-3 h-3 transition-transform duration-150 ${
+                  collapsed ? "-rotate-90" : "rotate-0"
+                }`}
+              />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Stage: Iframe Viewport (collapsible) */}
+      {/* Stage: Iframe Viewport */}
       {!collapsed && (
-        <div className="relative bg-[#070A0F] p-4 sm:p-6 flex items-center justify-center overflow-auto min-h-[300px]">
-          {/* Loading Shimmer */}
+        <div
+          ref={stageRef}
+          className="flex-1 min-h-[300px] relative bg-[#070A0F] p-2.5 sm:p-3 flex items-center justify-center overflow-hidden"
+        >
+          {/* Loading Indicator */}
           {loading && (
-            <div className="absolute inset-0 z-10 bg-[#070A0F]/80 backdrop-blur-xs flex flex-col items-center justify-center gap-2 text-slate-400">
-              <Loader2 className="w-7 h-7 animate-spin text-emerald-400" />
-              <span className="text-xs font-mono">Loading live simulation...</span>
+            <div className="absolute inset-0 z-10 bg-[#070A0F]/85 flex flex-col items-center justify-center gap-1.5 text-slate-400">
+              <Loader2 className="w-5 h-5 animate-spin text-emerald-400" />
+              <span className="text-[11px] font-mono">Loading simulation...</span>
             </div>
           )}
 
           {device === "desktop" ? (
             /* DESKTOP VIEWPORT */
-            <div className="w-full h-[720px] max-h-[75vh] rounded-xl overflow-hidden border border-[#1E2638] shadow-2xl bg-[#080C14]">
+            <div className="w-full h-full rounded-xl overflow-hidden border border-[#1E2638] bg-[#080C14]">
               <iframe
                 key={`desktop-${iframeKey}-${url}`}
                 ref={iframeRef}
@@ -209,11 +241,19 @@ export default function LivePreviewPanel({
               />
             </div>
           ) : (
-            /* MOBILE VIEWPORT (Device Frame 390x844) */
-            <div className="w-[390px] h-[844px] rounded-[32px] border-[4px] border-[#1E2638] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden bg-black mx-auto relative flex flex-col">
-              {/* Speaker / Dynamic Island notch bar */}
-              <div className="w-full h-6 bg-[#0E131F] flex items-center justify-center shrink-0 border-b border-[#1E2638]/50">
-                <div className="w-20 h-3 bg-black rounded-full" />
+            /* MOBILE VIEWPORT (Device Frame 390x844 scaled to container) */
+            <div
+              style={{
+                width: 390,
+                height: 844,
+                transform: `scale(${mobileScale})`,
+                transformOrigin: "center center",
+              }}
+              className="rounded-[28px] border-[3px] border-[#1E2638] bg-black shrink-0 relative flex flex-col overflow-hidden shadow-md"
+            >
+              {/* Notch */}
+              <div className="w-full h-5 bg-[#0E131F] flex items-center justify-center shrink-0 border-b border-[#1E2638]/50">
+                <div className="w-16 h-2.5 bg-black rounded-full" />
               </div>
 
               {/* Iframe */}
@@ -231,8 +271,8 @@ export default function LivePreviewPanel({
               />
 
               {/* Bottom Home Indicator */}
-              <div className="w-full h-4 bg-[#0E131F] flex items-center justify-center shrink-0 border-t border-[#1E2638]/50">
-                <div className="w-28 h-1 bg-slate-600 rounded-full" />
+              <div className="w-full h-3.5 bg-[#0E131F] flex items-center justify-center shrink-0 border-t border-[#1E2638]/50">
+                <div className="w-24 h-1 bg-slate-600 rounded-full" />
               </div>
             </div>
           )}
