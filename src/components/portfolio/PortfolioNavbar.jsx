@@ -103,7 +103,7 @@ export default function PortfolioNavbar() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-3.5 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition ${
+                className={`block px-3.5 py-3 rounded-lg text-sm font-semibold uppercase tracking-wider transition ${
                   active
                     ? 'text-[#10B981] bg-[#10B981]/15 border border-[#10B981]/30 font-bold'
                     : 'text-gray-300 hover:text-white hover:bg-white/5'
@@ -121,7 +121,7 @@ export default function PortfolioNavbar() {
                 setMobileMenuOpen(false);
                 triggerCvDownload(e);
               }}
-              className="w-full text-left px-3.5 py-2.5 rounded-lg text-sm font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/25 flex items-center gap-2 hover:bg-[#10B981]/20 transition cursor-pointer"
+              className="w-full text-left px-3.5 py-3 rounded-lg text-sm font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/25 flex items-center gap-2 hover:bg-[#10B981]/20 transition cursor-pointer"
             >
               <Download size={16} /> Download CV
             </button>

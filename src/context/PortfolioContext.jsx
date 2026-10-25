@@ -21,6 +21,7 @@ import {
 } from '@/lib/portfolioDefaults';
 
 const CACHE_KEY = 'portfolio_cms_cache_v4';
+let inMemorySessionCache = null;
 const PortfolioContext = createContext(null);
 
 export function PortfolioProvider({ children }) {
@@ -219,12 +220,18 @@ export function PortfolioProvider({ children }) {
     }
   }, []);
 
-  // Fetch latest content from API and update local cache
-  const loadContent = useCallback(async () => {
+  // Per-session in-memory cache to prevent refetching on every page navigation
+  const loadContent = useCallback(async (force = false) => {
+    if (!force && inMemorySessionCache) {
+      applyContentData(inMemorySessionCache);
+      setIsLoaded(true);
+      return;
+    }
     try {
       const res = await fetch('/api/content');
       if (!res.ok) return;
       const data = await res.json();
+      inMemorySessionCache = data;
       applyContentData(data);
       setIsLoaded(true);
 
@@ -242,22 +249,27 @@ export function PortfolioProvider({ children }) {
 
   // Instant hydration from cache on mount + fetch background update
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (inMemorySessionCache) {
+      applyContentData(inMemorySessionCache);
+      setIsLoaded(true);
+    } else if (typeof window !== 'undefined') {
       try {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const parsed = JSON.parse(cached);
+          inMemorySessionCache = parsed;
           applyContentData(parsed);
           setIsLoaded(true);
         }
       } catch (_) {}
+      loadContent();
+    } else {
+      loadContent();
     }
-
-    loadContent();
 
     // Listen to admin update events for live sync without reload
     const handleSync = () => {
-      loadContent();
+      loadContent(true);
     };
 
     if (typeof window !== 'undefined') {
