@@ -552,11 +552,11 @@ export default function MediaUploader({
       {isRepositionModalOpen && (
         <div className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
           <div
-            className="bg-[#0D121F] border border-[#1E2638] rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="bg-[#0D121F] border border-[#1E2638] rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="px-5 py-4 border-b border-[#1E2638] flex items-center justify-between bg-[#111624]">
+            <div className="px-5 py-4 border-b border-[#1E2638] flex items-center justify-between bg-[#111624] shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   <Move className="w-4 h-4" />
@@ -580,7 +580,7 @@ export default function MediaUploader({
             </div>
 
             {/* Reposition Drag Canvas with Zoom & 2D Pan */}
-            <div className="p-5 space-y-4 flex-1 overflow-y-auto">
+            <div className="p-5 space-y-4 flex-1 min-h-0 overflow-y-auto">
               <div className="flex items-center justify-between text-[11px] font-mono">
                 <span className="text-slate-300 font-medium">Click &amp; drag photo (Up, Down, Left, Right):</span>
                 <span className="px-2 py-0.5 rounded bg-[#161C2A] text-emerald-300 border border-emerald-500/30 font-bold">
@@ -627,12 +627,6 @@ export default function MediaUploader({
                     <div />
                   </div>
                 )}
-
-                {/* Directional 4-way compass overlay pill in bottom center */}
-                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-200 pointer-events-none flex items-center gap-1.5 shadow-lg">
-                  <span className="text-emerald-400 font-bold">⇦ ⇨ ⇧ ⇩</span>
-                  <span>Drag any direction</span>
-                </div>
               </div>
 
               {/* Zoom & Pan Control Bar */}
@@ -720,7 +714,7 @@ export default function MediaUploader({
             </div>
 
             {/* Footer Buttons */}
-            <div className="px-5 py-3.5 border-t border-[#1E2638] bg-[#0A0E18] flex items-center justify-end gap-2.5">
+            <div className="px-5 py-3.5 border-t border-[#1E2638] bg-[#0A0E18] flex items-center justify-end gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={handleCancelReposition}
