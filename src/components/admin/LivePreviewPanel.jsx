@@ -32,6 +32,7 @@ export default function LivePreviewPanel({
   const iframeRef = useRef(null);
   const stageRef = useRef(null);
   const [mobileScale, setMobileScale] = useState(1);
+  const [desktopScale, setDesktopScale] = useState(1);
   const debounceTimerRef = useRef(null);
 
   // Clean URL for open-in-new-tab link (no cms_preview param)
@@ -99,6 +100,27 @@ export default function LivePreviewPanel({
       const scaleY = clientHeight / targetH;
       const s = Math.min(1, Math.min(scaleX, scaleY));
       setMobileScale(Math.max(0.25, s));
+    };
+
+    calculateScale();
+    const ro = new ResizeObserver(calculateScale);
+    ro.observe(stageRef.current);
+    return () => ro.disconnect();
+  }, [device, collapsed]);
+
+  // Auto-scale desktop frame (1440x900) to fit stage without overflowing
+  useEffect(() => {
+    if (!stageRef.current || device !== "desktop" || collapsed) return;
+
+    const calculateScale = () => {
+      if (!stageRef.current) return;
+      const { clientWidth, clientHeight } = stageRef.current;
+      const targetW = 1440 + 24; // 1440px + margin
+      const targetH = 900 + 24;  // 900px + margin
+      const scaleX = clientWidth / targetW;
+      const scaleY = clientHeight / targetH;
+      const s = Math.min(1, Math.min(scaleX, scaleY));
+      setDesktopScale(Math.max(0.2, s));
     };
 
     calculateScale();
@@ -225,20 +247,35 @@ export default function LivePreviewPanel({
           )}
 
           {device === "desktop" ? (
-            /* DESKTOP VIEWPORT */
-            <div className="w-full h-full rounded-xl overflow-hidden border border-[#1E2638] bg-[#080C14]">
-              <iframe
-                key={`desktop-${iframeKey}-${url}`}
-                ref={iframeRef}
-                src={previewUrl}
-                title="Live preview"
-                sandbox="allow-same-origin allow-scripts"
-                onLoad={() => {
-                  setLoading(false);
-                  sendDraft();
+            /* DESKTOP VIEWPORT (1440x900 logical viewport scaled to fit stage) */
+            <div
+              style={{
+                width: 1440 * desktopScale,
+                height: 900 * desktopScale,
+              }}
+              className="rounded-xl overflow-hidden border border-[#1E2638] bg-[#080C14] shrink-0 relative"
+            >
+              <div
+                style={{
+                  width: 1440,
+                  height: 900,
+                  transform: `scale(${desktopScale})`,
+                  transformOrigin: "top left",
                 }}
-                className="w-full h-full border-0"
-              />
+              >
+                <iframe
+                  key={`desktop-${iframeKey}-${url}`}
+                  ref={iframeRef}
+                  src={previewUrl}
+                  title="Live preview"
+                  sandbox="allow-same-origin allow-scripts"
+                  onLoad={() => {
+                    setLoading(false);
+                    sendDraft();
+                  }}
+                  className="w-full h-full border-0 block"
+                />
+              </div>
             </div>
           ) : (
             /* MOBILE VIEWPORT (Device Frame 390x844 scaled to container) */
