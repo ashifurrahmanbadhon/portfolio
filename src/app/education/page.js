@@ -178,7 +178,7 @@ export default function EducationPage() {
                 className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] flex flex-col justify-between"
               >
                 <div>
-                  <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638] select-none group/certimg">
+                  <div className="relative w-full aspect-[29/20] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638] select-none group/certimg">
                     <img
                       src={cert.image_url && cert.image_url.trim() ? cert.image_url : '/certs/no-image.svg'}
                       alt={cert.title || "Certificate"}
