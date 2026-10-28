@@ -138,15 +138,28 @@ export default function CertificationsManager({ certifications, setCertification
             className="bg-[#0A0D12] border border-[#1E2638] p-4 rounded-xl flex flex-col justify-between group relative transition hover:border-[#2a364f]"
           >
             <div className="space-y-3">
-              {item.image_url && (
-                <div className="h-32 w-full rounded-lg overflow-hidden bg-[#070A0F] border border-[#1E2638] flex items-center justify-center">
-                  <img
-                    src={item.image_url}
-                    alt={item.title}
-                    className="max-h-full max-w-full object-contain pointer-events-none select-none"
-                  />
-                </div>
-              )}
+              {(() => {
+                const hasImg = Boolean(item.image_url && item.image_url.trim());
+                return (
+                  <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden bg-[#070A0F] border border-[#1E2638] select-none group/adminimg">
+                    <img
+                      src={hasImg ? item.image_url : "/certs/no-image.svg"}
+                      alt={item.title || "Certificate"}
+                      className="w-full h-full object-cover pointer-events-none select-none transition-transform duration-300 group-hover/adminimg:scale-105"
+                      onError={(e) => {
+                        if (e.currentTarget.src !== "/certs/no-image.svg") {
+                          e.currentTarget.src = "/certs/no-image.svg";
+                        }
+                      }}
+                    />
+                    {!hasImg && (
+                      <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[9px] font-mono font-semibold bg-black/70 text-amber-300 border border-amber-500/30 backdrop-blur-sm">
+                        No image
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
 
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -195,9 +208,13 @@ export default function CertificationsManager({ certifications, setCertification
               <span className="flex items-center gap-1">
                 <Check className="w-3 h-3" /> Verified Credential
               </span>
-              {item.image_url && (
-                <span className="flex items-center gap-1 text-[10px] text-slate-500">
-                  <ImageIcon className="w-3 h-3 text-emerald-400/70" /> Has Photo
+              {item.image_url && item.image_url.trim() ? (
+                <span className="flex items-center gap-1 text-[10px] text-emerald-400">
+                  <ImageIcon className="w-3 h-3" /> Has Photo
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-[10px] text-amber-400/80">
+                  <ImageIcon className="w-3 h-3" /> No Photo
                 </span>
               )}
             </div>
