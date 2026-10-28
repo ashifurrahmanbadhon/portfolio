@@ -542,7 +542,6 @@ async function syncAll() {
     whatsapp: "+880 1521 417284",
     linkedin: "https://www.linkedin.com/in/ashifurrahmanbadhon",
     github: "https://github.com/ashifurrahmanbadhon",
-    facebook: "https://facebook.com",
     location: "Tangail, Bangladesh",
     maps_url: "https://maps.google.com/?q=Tangail,+Bangladesh"
   };
@@ -554,14 +553,13 @@ async function syncAll() {
       whatsapp = $3,
       linkedin = $4,
       github = $5,
-      facebook = $6,
-      location = $7,
-      maps_url = $8,
-      updated_at = $9
+      location = $6,
+      maps_url = $7,
+      updated_at = $8
     WHERE id = 1
   `, [
     social.email, social.phone, social.whatsapp, social.linkedin,
-    social.github, social.facebook, social.location, social.maps_url, now
+    social.github, social.location, social.maps_url, now
   ]);
 
   runSqlite(`
@@ -571,14 +569,13 @@ async function syncAll() {
       whatsapp = ?,
       linkedin = ?,
       github = ?,
-      facebook = ?,
       location = ?,
       maps_url = ?,
       updated_at = ?
     WHERE id = 1
   `, [
     social.email, social.phone, social.whatsapp, social.linkedin,
-    social.github, social.facebook, social.location, social.maps_url, now
+    social.github, social.location, social.maps_url, now
   ]);
 
   // 11. RESUMES

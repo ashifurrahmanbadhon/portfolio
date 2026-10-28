@@ -197,7 +197,6 @@ async function migrate() {
           whatsapp TEXT,
           linkedin TEXT,
           github TEXT,
-          facebook TEXT,
           location TEXT,
           maps_url TEXT,
           updated_at TEXT
