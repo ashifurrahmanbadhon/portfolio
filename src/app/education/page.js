@@ -182,7 +182,7 @@ export default function EducationPage() {
                     <img
                       src={cert.image_url && cert.image_url.trim() ? cert.image_url : '/certs/no-image.svg'}
                       alt={cert.title || "Certificate"}
-                      className="w-full h-full object-contain pointer-events-none select-none"
+                      className="w-full h-full object-contain transition-transform duration-500 group-hover/certimg:scale-105 pointer-events-none select-none"
                       draggable={false}
                       loading="lazy"
                       onError={(e) => {
