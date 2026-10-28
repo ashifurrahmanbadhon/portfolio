@@ -52,6 +52,10 @@ function getSqliteDb() {
       if (!hasPres) {
         sqliteInstance.prepare("INSERT INTO admin_presence (id, last_seen) VALUES (1, NULL)").run();
       }
+      const certCols = sqliteInstance.prepare("PRAGMA table_info(certifications)").all();
+      if (certCols && certCols.length > 0 && !certCols.some((c) => c.name === "image_url")) {
+        sqliteInstance.exec("ALTER TABLE certifications ADD COLUMN image_url TEXT;");
+      }
     } catch (_) {}
   }
   return sqliteInstance;
@@ -251,7 +255,8 @@ function initSqliteDbIfEmpty(db) {
         description TEXT,
         is_verified INTEGER DEFAULT 1,
         is_active INTEGER DEFAULT 1,
-        sort_order INTEGER DEFAULT 1
+        sort_order INTEGER DEFAULT 1,
+        image_url TEXT
       );
       CREATE TABLE IF NOT EXISTS experience_metrics (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1157,8 +1162,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           await execute(`
-            INSERT INTO certifications (title, issuer, year, description, is_verified, is_active, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO certifications (title, issuer, year, description, is_verified, is_active, sort_order, image_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             item.title || "",
             item.issuer || "",
@@ -1167,6 +1172,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             item.is_verified !== undefined ? (item.is_verified ? 1 : 0) : 1,
             item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1,
             idx + 1,
+            item.image_url || item.image || "",
           ]);
         }
         await addActivityLog("Updated Certifications", `Saved ${data.items.length} certificates.`, "Portfolio", user, 1);

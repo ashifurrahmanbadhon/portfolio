@@ -178,6 +178,18 @@ export default function EducationPage() {
                 className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] flex flex-col justify-between"
               >
                 <div>
+                  {cert.image_url && (
+                    <div className="h-[200px] w-full mb-5 rounded-xl overflow-hidden bg-[#111622] border border-[#1e2638] flex items-center justify-center pointer-events-none select-none">
+                      <img
+                        src={cert.image_url}
+                        alt={cert.title || "Certificate"}
+                        className="max-h-full max-w-full object-contain pointer-events-none select-none"
+                        draggable={false}
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300">
                       <ShieldCheck size={24} />
