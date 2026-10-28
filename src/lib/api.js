@@ -258,6 +258,13 @@ export const api = {
     }, 5000);
   },
 
+  async getUnreadContactCount() {
+    const res = await fetch(`${API_BASE}/api/contact?unread=1`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   async deleteContactMessage(id) {
     cache.clear();
     const res = await fetch(`${API_BASE}/api/contact?id=${id}`, {

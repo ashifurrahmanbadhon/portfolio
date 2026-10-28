@@ -1524,6 +1524,16 @@ export async function markContactMessageRead(id, isRead = 1) {
   return { success: true };
 }
 
+export async function countUnreadContactMessages() {
+  try {
+    const row = await queryOne("SELECT COUNT(*) as count FROM contact_messages WHERE is_read = 0");
+    return Number(row?.count || 0);
+  } catch (err) {
+    console.error("countUnreadContactMessages error:", err);
+    return 0;
+  }
+}
+
 // ==========================================
 // Activity & Audit Logs
 // ==========================================
