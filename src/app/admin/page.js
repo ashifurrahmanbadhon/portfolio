@@ -38,7 +38,10 @@ import {
   Clock,
   Layers,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  Send,
+  Reply,
+  Loader2
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { api } from "@/lib/api";
@@ -153,6 +156,16 @@ function AdminConsoleContent() {
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [deletingBulk, setDeletingBulk] = useState(false);
 
+  // Admin presence & online state (heartbeat ping)
+  const [adminOnline, setAdminOnline] = useState(true);
+
+  // Message reply & thread states
+  const [expandedMessageIds, setExpandedMessageIds] = useState([]);
+  const [replyDrafts, setReplyDrafts] = useState({});
+  const [sendingReplies, setSendingReplies] = useState({});
+  const [replyErrors, setReplyErrors] = useState({});
+  const [replySuccesses, setReplySuccesses] = useState({});
+
   // Dynamic time greeting & live ticking clock (12-hour format with seconds & full date bar)
   const [timeGreeting, setTimeGreeting] = useState({ text: "Good Day", emoji: "✨" });
   const [liveTime, setLiveTime] = useState("");
@@ -196,6 +209,115 @@ function AdminConsoleContent() {
     const timer = setInterval(updateClock, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Admin Presence Heartbeat: POST /api/admin/presence every 30s while visible, on mount and on visibilitychange
+  useEffect(() => {
+    let timer = null;
+
+    const pingPresence = async () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        try {
+          const res = await api.updatePresence();
+          if (res && res.success) {
+            setAdminOnline(true);
+          }
+        } catch (err) {
+          console.warn("Heartbeat error:", err);
+        }
+      }
+    };
+
+    pingPresence();
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        pingPresence();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    timer = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        pingPresence();
+      }
+    }, 30000);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      if (timer) clearInterval(timer);
+    };
+  }, []);
+
+  const formatDhakaTime = (isoString) => {
+    if (!isoString) return "";
+    try {
+      return (
+        new Date(isoString).toLocaleString("en-US", {
+          timeZone: "Asia/Dhaka",
+          dateStyle: "medium",
+          timeStyle: "short",
+        }) + " (Asia/Dhaka)"
+      );
+    } catch (_) {
+      return new Date(isoString).toLocaleString();
+    }
+  };
+
+  const toggleExpandMessage = (id) => {
+    setExpandedMessageIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSendReply = async (messageId) => {
+    const draft = (replyDrafts[messageId] || "").trim();
+    if (!draft) return;
+    if (draft.length > 4000) {
+      setReplyErrors((prev) => ({ ...prev, [messageId]: "Reply must not exceed 4000 characters." }));
+      return;
+    }
+
+    setSendingReplies((prev) => ({ ...prev, [messageId]: true }));
+    setReplyErrors((prev) => ({ ...prev, [messageId]: null }));
+    setReplySuccesses((prev) => ({ ...prev, [messageId]: false }));
+
+    try {
+      const res = await api.replyContactMessage(messageId, draft);
+      if (res && res.success) {
+        // Appends to thread without reload & marks original read
+        setMessages((prev) =>
+          prev.map((m) => {
+            if (m.id === messageId) {
+              const currentReplies = m.replies || [];
+              return {
+                ...m,
+                is_read: 1,
+                replies: [...currentReplies, res.reply],
+              };
+            }
+            return m;
+          })
+        );
+        setReplyDrafts((prev) => ({ ...prev, [messageId]: "" }));
+        setReplySuccesses((prev) => ({ ...prev, [messageId]: true }));
+        showToast("Reply sent successfully via email!", "success");
+        setTimeout(() => {
+          setReplySuccesses((prev) => ({ ...prev, [messageId]: false }));
+        }, 3000);
+      } else {
+        const errMsg = res?.error || "Failed to send email reply";
+        setReplyErrors((prev) => ({ ...prev, [messageId]: errMsg }));
+        showToast(errMsg, "error");
+      }
+    } catch (err) {
+      console.error("Reply submit error:", err);
+      const errMsg = err.message || "Failed to send reply";
+      setReplyErrors((prev) => ({ ...prev, [messageId]: errMsg }));
+      showToast(errMsg, "error");
+    } finally {
+      setSendingReplies((prev) => ({ ...prev, [messageId]: false }));
+    }
+  };
 
   const toggleSelectMessage = (id) => {
     setSelectedMessages((prev) =>
@@ -1107,6 +1229,8 @@ function AdminConsoleContent() {
           <ExperienceMetricsManager
             experienceMetrics={experienceMetrics}
             setExperienceMetrics={setExperienceMetrics}
+            metrics={experienceMetrics}
+            setMetrics={setExperienceMetrics}
             onSave={handleSaveSection}
             saving={saving}
           />
@@ -1771,192 +1895,338 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "inbox" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
-            {/* Header and Bulk Action Toolbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E2638]">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-emerald-400" />
-                    Inbox
-                  </h2>
-                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
-                    {messages.length} total
-                  </span>
-                  {messages.filter((m) => !m.is_read).length > 0 && (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30 font-bold">
-                      {messages.filter((m) => !m.is_read).length} new
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Direct visitor inquiries submitted via the <code className="text-emerald-400">/contact</code> page. Select messages to mark or delete in bulk.
-                </p>
-              </div>
-
-              {/* Action Toolbar */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                {messages.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={selectAllMessages}
-                    className={`px-3 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition cursor-pointer ${
-                      selectedMessages.length === messages.length && messages.length > 0
-                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                        : "bg-[#161C2A] text-slate-300 hover:text-white border-[#1E2638]"
-                    }`}
-                  >
-                    {selectedMessages.length === messages.length && messages.length > 0 ? (
-                      <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Square className="w-3.5 h-3.5 text-slate-400" />
-                    )}
-                    <span>
-                      {selectedMessages.length === messages.length && messages.length > 0
-                        ? "Deselect All"
-                        : `Select All (${messages.length})`}
-                    </span>
-                  </button>
-                )}
-
-                {selectedMessages.length > 0 && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={handleBulkMarkRead}
-                      className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Mark Read ({selectedMessages.length})</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleBulkDeleteMessages}
-                      disabled={deletingBulk}
-                      className="px-3.5 py-1.5 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-mono font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>{deletingBulk ? "Deleting..." : `Delete Selected (${selectedMessages.length})`}</span>
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Messages Body */}
-            {messages.length === 0 ? (
-              <div className="py-16 text-center space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-                  <MessageSquare className="w-6 h-6" />
-                </div>
-                <p className="text-white font-medium text-sm">No Inquiries Received Yet</p>
-                <p className="text-slate-400 text-xs max-w-sm mx-auto">
-                  Visitor messages submitted through the contact form will be recorded and displayed here immediately.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {messages.map((msg) => {
-                  const isSelected = selectedMessages.includes(msg.id);
-                  return (
-                    <SpotlightCard
-                      key={msg.id}
-                      onClick={(e) => {
-                        if (e.target.closest("button") || e.target.closest("a")) return;
-                        toggleSelectMessage(msg.id);
-                      }}
-                      className={`p-4 sm:p-5 rounded-xl border transition-all space-y-2.5 cursor-pointer ${
-                        isSelected
-                          ? "bg-[#0e1726] border-emerald-500/70 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/40"
-                          : msg.is_read
-                          ? "bg-[#0A0D12] border-[#1E2638] hover:border-[#2a364f]"
-                          : "bg-[#0E1524] border-emerald-500/40 shadow-sm hover:border-emerald-500/60"
-                      }`}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#1E2638] pb-2.5">
-                        <div className="flex items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleSelectMessage(msg.id);
-                            }}
-                            className="p-1 text-slate-400 hover:text-emerald-400 transition cursor-pointer"
-                            title={isSelected ? "Deselect" : "Select message"}
-                          >
-                            {isSelected ? (
-                              <CheckSquare className="w-4 h-4 text-emerald-400" />
-                            ) : (
-                              <Square className="w-4 h-4 text-slate-500 hover:text-slate-300" />
-                            )}
-                          </button>
-
-                          <span
-                            className={`w-2 h-2 rounded-full shrink-0 ${
-                              msg.is_read ? "bg-slate-600" : "bg-emerald-400 animate-pulse"
-                            }`}
-                          />
-                          <span className="font-bold text-white text-xs sm:text-sm">{msg.name}</span>
-                          <a
-                            href={`mailto:${msg.email}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-[11px] sm:text-xs font-mono text-emerald-400 hover:underline"
-                          >
-                            &lt;{msg.email}&gt;
-                          </a>
-                        </div>
-
-                        <div className="flex items-center gap-2 self-end sm:self-auto">
-                          <span className="text-[10px] font-mono text-slate-500">
-                            {msg.created_at ? new Date(msg.created_at).toLocaleString() : ""}
+                <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
+                  {/* Header and Bulk Action Toolbar */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E2638]">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                          <MessageSquare className="w-5 h-5 text-emerald-400" />
+                          Inbox
+                        </h2>
+                        <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                          {messages.length} total
+                        </span>
+                        {messages.filter((m) => !m.is_read).length > 0 && (
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30 font-bold">
+                            {messages.filter((m) => !m.is_read).length} new
                           </span>
-                          {!msg.is_read && (
-                            <button
-                              type="button"
-                              onClick={async (e) => {
-                                e.stopPropagation();
-                                await api.markContactMessageRead(msg.id, 1);
-                                setMessages(messages.map((m) => (m.id === msg.id ? { ...m, is_read: 1 } : m)));
-                                showToast("Message marked as read", "success");
-                              }}
-                              className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition cursor-pointer"
-                            >
-                              Mark Read
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              if (!window.confirm("Delete this message?")) return;
-                              await api.deleteContactMessage(msg.id);
-                              setMessages(messages.filter((m) => m.id !== msg.id));
-                              setSelectedMessages((prev) => prev.filter((id) => id !== msg.id));
-                              showToast("Message deleted", "info");
-                            }}
-                            className="p-1 text-slate-500 hover:text-red-400 transition cursor-pointer"
-                            title="Delete Message"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                        )}
                       </div>
 
-                      {msg.subject && (
-                        <p className="text-xs font-semibold text-slate-200">
-                          Subject: <span className="text-white font-normal">{msg.subject}</span>
-                        </p>
-                      )}
-                      <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed">
-                        {msg.message}
+                      {/* Small Presence Status Line */}
+                      <div className="mt-1.5 flex items-center gap-2">
+                        {adminOnline ? (
+                          <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            ● You are online — new messages appear here only
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                            <span className="w-2 h-2 rounded-full bg-slate-500" />
+                            Email alerts ON when you are away
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-xs text-slate-400 mt-1">
+                        Direct visitor inquiries submitted via the <code className="text-emerald-400">/contact</code> page. Select messages to mark or delete in bulk.
                       </p>
-                    </SpotlightCard>
-                  );
-                })}
-              </div>
-            )}
-          </SpotlightCard>
+                    </div>
+
+                    {/* Action Toolbar */}
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      {messages.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={selectAllMessages}
+                          className={`px-3 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition cursor-pointer ${
+                            selectedMessages.length === messages.length && messages.length > 0
+                              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                              : "bg-[#161C2A] text-slate-300 hover:text-white border-[#1E2638]"
+                          }`}
+                        >
+                          {selectedMessages.length === messages.length && messages.length > 0 ? (
+                            <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
+                          ) : (
+                            <Square className="w-3.5 h-3.5 text-slate-400" />
+                          )}
+                          <span>
+                            {selectedMessages.length === messages.length && messages.length > 0
+                              ? "Deselect All"
+                              : `Select All (${messages.length})`}
+                          </span>
+                        </button>
+                      )}
+
+                      {selectedMessages.length > 0 && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleBulkMarkRead}
+                            className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Mark Read ({selectedMessages.length})</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleBulkDeleteMessages}
+                            disabled={deletingBulk}
+                            className="px-3.5 py-1.5 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-mono font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>{deletingBulk ? "Deleting..." : `Delete Selected (${selectedMessages.length})`}</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Messages Body */}
+                  {messages.length === 0 ? (
+                    <div className="py-16 text-center space-y-3">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                        <MessageSquare className="w-6 h-6" />
+                      </div>
+                      <p className="text-white font-medium text-sm">No Inquiries Received Yet</p>
+                      <p className="text-slate-400 text-xs max-w-sm mx-auto">
+                        Visitor messages submitted through the contact form will be recorded and displayed here immediately.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {messages.map((msg) => {
+                        const isSelected = selectedMessages.includes(msg.id);
+                        const isExpanded = expandedMessageIds.includes(msg.id);
+                        const replies = msg.replies || [];
+                        const isSending = !!sendingReplies[msg.id];
+                        const replyError = replyErrors[msg.id];
+                        const isSentSuccess = !!replySuccesses[msg.id];
+                        const draftText = replyDrafts[msg.id] || "";
+
+                        return (
+                          <div
+                            key={msg.id}
+                            className={`p-4 sm:p-5 rounded-xl border transition-all space-y-3.5 ${
+                              isSelected
+                                ? "bg-[#0e1726] border-emerald-500/70 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/40"
+                                : msg.is_read
+                                ? "bg-[#0A0D12] border-[#1E2638] hover:border-[#2a364f]"
+                                : "bg-[#0E1524] border-emerald-500/40 shadow-sm hover:border-emerald-500/60"
+                            }`}
+                          >
+                            {/* Card Top Row */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#1E2638] pb-3">
+                              <div className="flex items-center gap-3 flex-wrap">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleSelectMessage(msg.id)}
+                                  className="p-1 text-slate-400 hover:text-emerald-400 transition cursor-pointer"
+                                  title={isSelected ? "Deselect" : "Select message"}
+                                >
+                                  {isSelected ? (
+                                    <CheckSquare className="w-4 h-4 text-emerald-400" />
+                                  ) : (
+                                    <Square className="w-4 h-4 text-slate-500 hover:text-slate-300" />
+                                  )}
+                                </button>
+
+                                <span
+                                  className={`w-2 h-2 rounded-full shrink-0 ${
+                                    msg.is_read ? "bg-slate-600" : "bg-emerald-400 animate-pulse"
+                                  }`}
+                                />
+                                <span className="font-bold text-white text-xs sm:text-sm">{msg.name}</span>
+                                <a
+                                  href={`mailto:${msg.email}`}
+                                  className="text-[11px] sm:text-xs font-mono text-emerald-400 hover:underline"
+                                >
+                                  &lt;{msg.email}&gt;
+                                </a>
+
+                                {replies.length > 0 && (
+                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">
+                                    {replies.length} {replies.length === 1 ? "reply" : "replies"}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-2 self-end sm:self-auto">
+                                <span className="text-[10px] font-mono text-slate-500">
+                                  {formatDhakaTime(msg.created_at)}
+                                </span>
+
+                                {!msg.is_read && (
+                                  <button
+                                    type="button"
+                                    onClick={async () => {
+                                      await api.markContactMessageRead(msg.id, 1);
+                                      setMessages(messages.map((m) => (m.id === msg.id ? { ...m, is_read: 1 } : m)));
+                                      showToast("Message marked as read", "success");
+                                    }}
+                                    className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition cursor-pointer"
+                                  >
+                                    Mark Read
+                                  </button>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={() => toggleExpandMessage(msg.id)}
+                                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer ${
+                                    isExpanded
+                                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                                      : "bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638] hover:border-[#2a364f]"
+                                  }`}
+                                  title="View Thread & Reply"
+                                >
+                                  <Reply className="w-3.5 h-3.5 text-emerald-400" />
+                                  <span>{isExpanded ? "Close" : replies.length > 0 ? `Thread (${replies.length})` : "Reply"}</span>
+                                  {isExpanded ? (
+                                    <ChevronDown className="w-3 h-3 text-emerald-400" />
+                                  ) : (
+                                    <ChevronRight className="w-3 h-3 text-slate-400" />
+                                  )}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    if (!window.confirm("Delete this message?")) return;
+                                    await api.deleteContactMessage(msg.id);
+                                    setMessages(messages.filter((m) => m.id !== msg.id));
+                                    setSelectedMessages((prev) => prev.filter((id) => id !== msg.id));
+                                    showToast("Message deleted", "info");
+                                  }}
+                                  className="p-1 text-slate-500 hover:text-red-400 transition cursor-pointer"
+                                  title="Delete Message"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Message Subject & Body */}
+                            {msg.subject && (
+                              <p className="text-xs font-semibold text-slate-200">
+                                Subject: <span className="text-white font-normal">{msg.subject}</span>
+                              </p>
+                            )}
+                            <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed bg-[#0c1018] p-3 rounded-xl border border-[#1E2638]/70">
+                              {msg.message}
+                            </p>
+
+                            {/* Expanded Reply Thread & Composer */}
+                            {isExpanded && (
+                              <div className="pt-3 border-t border-[#1E2638] space-y-4">
+                                {/* Reply History Thread */}
+                                {replies.length > 0 && (
+                                  <div className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                                        Reply History ({replies.length})
+                                      </span>
+                                    </div>
+                                    <div className="space-y-2.5">
+                                      {replies.map((r, rIdx) => (
+                                        <div
+                                          key={r.id || rIdx}
+                                          className="p-3.5 rounded-xl bg-[#0f1728] border border-blue-500/20 space-y-1.5"
+                                        >
+                                          <div className="flex items-center justify-between text-xs">
+                                            <div className="flex items-center gap-2">
+                                              <span className="font-semibold text-blue-300">Ashifur Rahman (Admin)</span>
+                                              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                                Email Sent
+                                              </span>
+                                            </div>
+                                            <span className="text-[10px] font-mono text-slate-400">
+                                              {formatDhakaTime(r.created_at)}
+                                            </span>
+                                          </div>
+                                          <p className="text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">
+                                            {r.body}
+                                          </p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Inline Reply Composer */}
+                                <div className="p-4 rounded-xl bg-[#0D121D] border border-emerald-500/20 space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <Reply className="w-4 h-4 text-emerald-400" />
+                                      <span className="text-xs font-semibold text-white">
+                                        Send Reply to {msg.name} (&lt;{msg.email}&gt;)
+                                      </span>
+                                    </div>
+                                    <span className="text-[10px] font-mono text-slate-500">
+                                      {draftText.length} / 4000
+                                    </span>
+                                  </div>
+
+                                  <textarea
+                                    rows={3}
+                                    maxLength={4000}
+                                    value={draftText}
+                                    onChange={(e) =>
+                                      setReplyDrafts((prev) => ({ ...prev, [msg.id]: e.target.value }))
+                                    }
+                                    placeholder={`Write your response to ${msg.name}... (Sent from onboarding@resend.dev, replies arrive in your Gmail)`}
+                                    className="w-full bg-[#080B11] border border-[#1E2638] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition resize-y font-sans"
+                                  />
+
+                                  {replyError && (
+                                    <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400 flex items-center gap-2">
+                                      <AlertCircle className="w-4 h-4 shrink-0" />
+                                      <span>{replyError}</span>
+                                    </div>
+                                  )}
+
+                                  {isSentSuccess && (
+                                    <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-400 flex items-center gap-2">
+                                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                                      <span>Reply sent successfully! It has been added to the thread above.</span>
+                                    </div>
+                                  )}
+
+                                  <div className="flex items-center justify-between pt-1">
+                                    <p className="text-[11px] text-slate-500">
+                                      Replies sent from <code className="text-emerald-400">Ashifur Rahman &lt;onboarding@resend.dev&gt;</code>
+                                    </p>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSendReply(msg.id)}
+                                      disabled={!draftText.trim() || isSending}
+                                      className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs font-mono flex items-center gap-2 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-emerald-500/20"
+                                    >
+                                      {isSending ? (
+                                        <>
+                                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                          <span>Sending Reply...</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Send className="w-3.5 h-3.5" />
+                                          <span>Send Reply</span>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </SpotlightCard>
               </div>
             )}
 
