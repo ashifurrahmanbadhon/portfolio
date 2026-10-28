@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -166,6 +166,10 @@ function AdminConsoleContent() {
   const [replyErrors, setReplyErrors] = useState({});
   const [replySuccesses, setReplySuccesses] = useState({});
 
+  // Live unread contact messages count & document title tracker
+  const [unreadContactCount, setUnreadContactCount] = useState(0);
+  const baseDocumentTitleRef = useRef(null);
+
   // Dynamic time greeting & live ticking clock (12-hour format with seconds & full date bar)
   const [timeGreeting, setTimeGreeting] = useState({ text: "Good Day", emoji: "✨" });
   const [liveTime, setLiveTime] = useState("");
@@ -248,6 +252,53 @@ function AdminConsoleContent() {
     };
   }, []);
 
+  const fetchUnreadCount = async () => {
+    try {
+      const res = await api.getUnreadContactCount();
+      if (res && res.success && typeof res.unread === "number") {
+        setUnreadContactCount(res.unread);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("unread-inbox-count", { detail: res.unread }));
+        }
+      }
+    } catch (err) {
+      // A failed fetch keeps the last shown count (no flicker to 0)
+      console.warn("Failed to fetch unread contact count:", err);
+    }
+  };
+
+  // Poll unread count every 60s while admin is mounted
+  useEffect(() => {
+    let timer = null;
+
+    fetchUnreadCount();
+
+    timer = setInterval(() => {
+      fetchUnreadCount();
+    }, 60000);
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, []);
+
+  // Update browser tab document title: prefix with ({unread}) when unread > 0, restore when 0
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    if (!baseDocumentTitleRef.current) {
+      baseDocumentTitleRef.current = document.title.replace(/^\(\d+\+?\)\s*/, "") || "Ashifur Rahman • Central CMS";
+    }
+
+    const base = baseDocumentTitleRef.current;
+    if (unreadContactCount > 0) {
+      const prefix = unreadContactCount > 99 ? "99+" : unreadContactCount;
+      document.title = `(${prefix}) ${base}`;
+    } else {
+      document.title = base;
+    }
+  }, [unreadContactCount]);
+
   const formatDhakaTime = (isoString) => {
     if (!isoString) return "";
     try {
@@ -300,6 +351,7 @@ function AdminConsoleContent() {
         );
         setReplyDrafts((prev) => ({ ...prev, [messageId]: "" }));
         setReplySuccesses((prev) => ({ ...prev, [messageId]: true }));
+        fetchUnreadCount();
         showToast("Reply sent successfully via email!", "success");
         setTimeout(() => {
           setReplySuccesses((prev) => ({ ...prev, [messageId]: false }));
@@ -346,6 +398,7 @@ function AdminConsoleContent() {
       setMessages((prev) => prev.filter((m) => !selectedMessages.includes(m.id)));
       showToast(`${selectedMessages.length} message(s) deleted successfully`, "info");
       setSelectedMessages([]);
+      fetchUnreadCount();
     } catch (err) {
       console.error("Bulk delete failed:", err);
       showToast("Failed to delete selected messages", "error");
@@ -363,6 +416,7 @@ function AdminConsoleContent() {
       );
       showToast(`${selectedMessages.length} message(s) marked as read`, "success");
       setSelectedMessages([]);
+      fetchUnreadCount();
     } catch (err) {
       console.error("Bulk mark read failed:", err);
       showToast("Failed to mark messages as read", "error");
@@ -565,7 +619,7 @@ function AdminConsoleContent() {
     { id: "skills", label: "Technical Skills", pageNum: "Page 5", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
     { id: "projects", label: "Engineering Projects", pageNum: "Page 6", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
     { id: "contact", label: "Contact Info", pageNum: "Page 7", title: "Contact Hub & Communication Channels", subtitle: "Update email, phone, WhatsApp, office location, and social media channels", icon: Mail, liveUrl: "/contact" },
-    { id: "inbox", label: "Inbox", pageNum: "Page 8", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: messages.filter((m) => !m.is_read).length, count: messages.length },
+    { id: "inbox", label: "Inbox", pageNum: "Page 8", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: unreadContactCount, count: messages.length },
     { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
   ];
 
@@ -2065,6 +2119,7 @@ function AdminConsoleContent() {
                                       await api.markContactMessageRead(msg.id, 1);
                                       setMessages(messages.map((m) => (m.id === msg.id ? { ...m, is_read: 1 } : m)));
                                       showToast("Message marked as read", "success");
+                                      fetchUnreadCount();
                                     }}
                                     className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition cursor-pointer"
                                   >
@@ -2099,6 +2154,7 @@ function AdminConsoleContent() {
                                     setMessages(messages.filter((m) => m.id !== msg.id));
                                     setSelectedMessages((prev) => prev.filter((id) => id !== msg.id));
                                     showToast("Message deleted", "info");
+                                    fetchUnreadCount();
                                   }}
                                   className="p-1 text-slate-500 hover:text-red-400 transition cursor-pointer"
                                   title="Delete Message"

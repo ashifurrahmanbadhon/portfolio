@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addContactMessage, getContactMessages, isAdminOnline } from "@/lib/db";
+import { addContactMessage, getContactMessages, isAdminOnline, countUnreadContactMessages } from "@/lib/db";
 import { authenticateRequest } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rateLimit";
 
@@ -150,6 +150,13 @@ export async function GET(req) {
     if (!user) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
+
+    const { searchParams } = new URL(req.url);
+    if (searchParams.get("unread") === "1") {
+      const unread = await countUnreadContactMessages();
+      return NextResponse.json({ success: true, unread: Number(unread) });
+    }
+
     const messages = await getContactMessages();
     return NextResponse.json({ success: true, messages });
   } catch (error) {

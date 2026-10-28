@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import {
   Home,
   User,
@@ -19,11 +19,43 @@ import {
   Sparkles,
   LayoutDashboard
 } from "lucide-react";
+import { api } from "@/lib/api";
 
 function SidebarNavigation({ collapsed, setMobileOpen }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "home";
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCount = async () => {
+      try {
+        const res = await api.getUnreadContactCount();
+        if (isMounted && res && res.success && typeof res.unread === "number") {
+          setUnreadCount(res.unread);
+        }
+      } catch (_) {}
+    };
+
+    fetchCount();
+
+    const handleUpdate = (e) => {
+      if (typeof e?.detail === "number") {
+        setUnreadCount(e.detail);
+      }
+    };
+    window.addEventListener("unread-inbox-count", handleUpdate);
+
+    const timer = setInterval(fetchCount, 60000);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("unread-inbox-count", handleUpdate);
+      clearInterval(timer);
+    };
+  }, []);
 
   const portfolioTabs = [
     { name: "Home & Hero", tab: "home", href: "/admin?tab=home", icon: Home, badge: "Page 1" },
@@ -80,21 +112,35 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
                 />
 
                 {!collapsed && (
-                  <div className="flex-1 flex items-center justify-between truncate">
+                  <div className="flex-1 flex items-center justify-between truncate gap-1.5">
                     <span className="truncate">{item.name}</span>
-                    {item.badge && (
+                    {item.tab === "inbox" && unreadCount > 0 ? (
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold text-white bg-[#FF5F57] min-w-[18px] text-center shrink-0 shadow-sm leading-tight">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    ) : item.badge ? (
                       <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#161C2A] text-slate-400 border border-[#1E2638]">
                         {item.badge}
                       </span>
-                    )}
+                    ) : null}
                   </div>
                 )}
 
                 {/* Floating tooltip when collapsed */}
                 {collapsed && (
-                  <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#111622] border border-[#1E2638] text-white text-xs font-mono rounded-lg shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50">
-                    {item.name}
-                  </div>
+                  <>
+                    {item.tab === "inbox" && unreadCount > 0 && (
+                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FF5F57] ring-2 ring-[#0B0F17]" />
+                    )}
+                    <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#111622] border border-[#1E2638] text-white text-xs font-mono rounded-lg shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 flex items-center gap-2">
+                      <span>{item.name}</span>
+                      {item.tab === "inbox" && unreadCount > 0 && (
+                        <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold text-white bg-[#FF5F57]">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  </>
                 )}
               </Link>
             );
