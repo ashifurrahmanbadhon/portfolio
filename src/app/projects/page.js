@@ -12,13 +12,165 @@ import {
   ArrowRight,
   Filter,
   CheckCircle,
-  FileCheck
+  FileCheck,
+  Download
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
 import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { parsePhotoPosition } from '@/lib/photoPosition';
+
+function GithubIcon({ size = 16, className = "" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+      <path d="M9 18c-4.51 2-5-2-7-2" />
+    </svg>
+  );
+}
+
+function ProjectCardSlider({ proj }) {
+  const slides = useMemo(() => {
+    return [proj.image_url, ...(proj.additional_images || [])].filter(Boolean);
+  }, [proj.image_url, proj.additional_images]);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState(null);
+
+  if (slides.length === 0) return null;
+
+  const photoStyle = parsePhotoPosition(proj.image_position || "center center").style;
+
+  // Single image: exact same render and style as original (no arrows, no dots)
+  if (slides.length === 1) {
+    return (
+      <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638]">
+        <Image
+          src={slides[0]}
+          alt={proj.title}
+          fill
+          className="object-cover group-hover:scale-105 transition duration-500"
+          style={photoStyle}
+          unoptimized
+        />
+      </div>
+    );
+  }
+
+  const handlePrev = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleDotClick = (idx, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentIndex(idx);
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 40) {
+      setCurrentIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    } else if (diff < -40) {
+      setCurrentIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+    }
+    setTouchStartX(null);
+  };
+
+  return (
+    <div
+      className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638] select-none group/slider"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        className="flex w-full h-full transition-transform duration-300 ease-out"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
+        {slides.map((url, idx) => (
+          <div key={idx} className="relative w-full h-full shrink-0">
+            <Image
+              src={url}
+              alt={`${proj.title} - ${idx + 1}`}
+              fill
+              className="object-cover transition duration-500"
+              style={photoStyle}
+              unoptimized
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Arrows (‹ ›) + dots below-right of frame */}
+      <div
+        className="absolute bottom-2.5 right-2.5 z-20 flex items-center gap-1.5 bg-[#070a0f]/85 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 shadow-lg text-white"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <button
+          type="button"
+          onClick={handlePrev}
+          aria-label="Previous slide"
+          className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/20 transition text-xs font-bold leading-none cursor-pointer"
+        >
+          ‹
+        </button>
+
+        <div className="flex items-center gap-1 px-0.5">
+          {slides.map((_, dotIdx) => (
+            <button
+              key={dotIdx}
+              type="button"
+              onClick={(e) => handleDotClick(dotIdx, e)}
+              aria-label={`Go to slide ${dotIdx + 1}`}
+              className={`rounded-full transition-all cursor-pointer ${
+                currentIndex === dotIdx
+                  ? 'w-3 h-1.5 bg-[#10B981]'
+                  : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
+              }`}
+            />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={handleNext}
+          aria-label="Next slide"
+          className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/20 transition text-xs font-bold leading-none cursor-pointer"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function ProjectsPage() {
   const { projectsData, projectMethodologies, pageHeaders } = usePortfolio();
@@ -100,19 +252,8 @@ export default function ProjectsPage() {
               className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 sm:p-7 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300 shadow-lg"
             >
               <div>
-                {/* Visual Thumbnail (renders if image uploaded) */}
-                {proj.image_url && (
-                  <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638]">
-                    <Image
-                      src={proj.image_url}
-                      alt={proj.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition duration-500"
-                      style={parsePhotoPosition(proj.image_position || "center center").style}
-                      unoptimized
-                    />
-                  </div>
-                )}
+                {/* Visual Thumbnail / Slider */}
+                <ProjectCardSlider proj={proj} />
 
                 {/* Header Badge */}
                 <div className="flex justify-between items-center mb-4">
@@ -128,20 +269,24 @@ export default function ProjectsPage() {
                         className="text-gray-400 hover:text-white transition"
                         title="GitHub Repository"
                       >
-                        <Github size={16} />
+                        <GithubIcon size={16} />
                       </a>
                     )}
-                    {proj.live_url && (
-                      <a
-                        href={proj.live_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-gray-400 hover:text-[#10B981] transition"
-                        title="Live Demo"
-                      >
-                        <ExternalLink size={16} />
-                      </a>
-                    )}
+                    {proj.live_url && (() => {
+                      const isApk = proj.live_url.toLowerCase().endsWith('.apk');
+                      return (
+                        <a
+                          href={proj.live_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          {...(isApk ? { download: '' } : {})}
+                          className="text-gray-400 hover:text-[#10B981] transition"
+                          title={isApk ? "Download APK" : "Live Demo"}
+                        >
+                          {isApk ? <Download size={16} /> : <ExternalLink size={16} />}
+                        </a>
+                      );
+                    })()}
                     <div className="w-8 h-8 rounded-lg bg-[#0b0f17] border border-[#1e2638] flex items-center justify-center text-gray-400 group-hover:text-[#10B981] group-hover:border-[#10B981]/30 transition">
                       <FolderGit2 size={18} />
                     </div>
