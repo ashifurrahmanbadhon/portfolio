@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addContactMessage, getContactMessages } from "@/lib/db";
+import { addContactMessage, getContactMessages, isAdminOnline } from "@/lib/db";
 import { authenticateRequest } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rateLimit";
 
@@ -55,7 +55,85 @@ export async function POST(req) {
     }
 
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "";
+    // DB insert ALWAYS happens (Inbox is the record; admin reply depends on it)
     await addContactMessage(name, email, subject, message, ip);
+
+    // Check if admin is online (presence check failure defaults to false -> fail toward notifying)
+    let isOnline = false;
+    try {
+      isOnline = await isAdminOnline();
+    } catch (presErr) {
+      console.warn("Presence check failed, defaulting to notify:", presErr);
+      isOnline = false;
+    }
+
+    // Only send email when owner is OFFLINE
+    if (!isOnline) {
+      const resendApiKey = process.env.RESEND_API_KEY;
+      if (resendApiKey) {
+        try {
+          const notifyAddress = process.env.NOTIFY_EMAIL || "ashifur.badhon@gmail.com";
+          const dhakaTime = new Date().toLocaleString("en-US", {
+            timeZone: "Asia/Dhaka",
+            dateStyle: "full",
+            timeStyle: "medium",
+          });
+          const adminUrl = process.env.NEXT_PUBLIC_APP_URL
+            ? `${process.env.NEXT_PUBLIC_APP_URL}/admin`
+            : "https://ashifurrahman.vercel.app/admin";
+
+          const emailSubject = `New portfolio message: ${subject || "No subject"} — ${name}`;
+          const textContent = `New message from ${name} (${email})\nSubject: ${subject || "No subject"}\nTime (Asia/Dhaka): ${dhakaTime}\n\nMessage:\n${message}\n\nAdmin Inbox: ${adminUrl}`;
+
+          const htmlContent = `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; color: #1a202c;">
+              <h2 style="color: #0f172a; margin-top: 0; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">New Portfolio Inquiry</h2>
+              <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Received at <strong>${dhakaTime}</strong> (Asia/Dhaka)</p>
+              <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr>
+                  <td style="padding: 8px 0; color: #64748b; width: 90px; font-weight: 600;">Name:</td>
+                  <td style="padding: 8px 0; color: #0f172a; font-weight: 500;">${name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Email:</td>
+                  <td style="padding: 8px 0;"><a href="mailto:${email}" style="color: #3b82f6; text-decoration: none;">${email}</a></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Subject:</td>
+                  <td style="padding: 8px 0; color: #0f172a;">${subject || "No subject"}</td>
+                </tr>
+              </table>
+              <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin-bottom: 24px;">
+                <p style="margin: 0; white-space: pre-wrap; font-size: 15px; line-height: 1.6; color: #334155;">${message}</p>
+              </div>
+              <div style="text-align: center; margin-top: 24px;">
+                <a href="${adminUrl}" style="background: #3b82f6; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Open Admin Inbox</a>
+              </div>
+            </div>
+          `;
+
+          await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${resendApiKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              from: "Portfolio <onboarding@resend.dev>",
+              to: [notifyAddress],
+              reply_to: email,
+              subject: emailSubject,
+              text: textContent,
+              html: htmlContent,
+            }),
+          });
+        } catch (emailErr) {
+          // Failure never fails the submission; key unset -> skip silently; log server-side only
+          console.error("Resend notify email error:", emailErr);
+        }
+      }
+    }
+
     return NextResponse.json({ success: true, message: "Inquiry saved successfully" });
   } catch (error) {
     console.error("Contact POST error:", error);

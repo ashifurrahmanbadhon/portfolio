@@ -286,6 +286,31 @@ export const api = {
     return res.json();
   },
 
+  async replyContactMessage(messageId, reply) {
+    cache.clear();
+    const res = await fetch(`${API_BASE}/api/contact/reply`, {
+      method: "POST",
+      headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({ messageId, reply }),
+    });
+    return res.json();
+  },
+
+  async getPresence() {
+    const res = await fetch(`${API_BASE}/api/admin/presence`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  async updatePresence() {
+    const res = await fetch(`${API_BASE}/api/admin/presence`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   // Roles & Users
   async getUsers() {
     return cachedFetch(`${API_BASE}/api/admin/users`, {

@@ -43,6 +43,16 @@ function getSqliteDb() {
     }
     sqliteInstance = new DatabaseSync(dbPath);
     initSqliteDbIfEmpty(sqliteInstance);
+    try {
+      sqliteInstance.exec(`
+        CREATE TABLE IF NOT EXISTS admin_presence (id INTEGER PRIMARY KEY, last_seen TEXT);
+        CREATE TABLE IF NOT EXISTS contact_replies (id INTEGER PRIMARY KEY AUTOINCREMENT, message_id INTEGER NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL);
+      `);
+      const hasPres = sqliteInstance.prepare("SELECT id FROM admin_presence WHERE id = 1").get();
+      if (!hasPres) {
+        sqliteInstance.prepare("INSERT INTO admin_presence (id, last_seen) VALUES (1, NULL)").run();
+      }
+    } catch (_) {}
   }
   return sqliteInstance;
 }
@@ -338,6 +348,16 @@ function initSqliteDbIfEmpty(db) {
         details TEXT,
         user TEXT,
         created_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS admin_presence (
+        id INTEGER PRIMARY KEY,
+        last_seen TEXT
+      );
+      CREATE TABLE IF NOT EXISTS contact_replies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        message_id INTEGER NOT NULL,
+        body TEXT NOT NULL,
+        created_at TEXT NOT NULL
       );
     `);
 
@@ -1419,7 +1439,34 @@ export async function deleteWebsite(id, user = "admin") {
 }
 
 // ==========================================
-// Contact Inbox
+// Admin Presence & Online State
+// ==========================================
+export async function isAdminOnline() {
+  try {
+    const row = await queryOne("SELECT last_seen FROM admin_presence WHERE id = 1");
+    if (!row || !row.last_seen) return false;
+    const lastSeenTime = new Date(row.last_seen).getTime();
+    if (isNaN(lastSeenTime)) return false;
+    const diffSeconds = (Date.now() - lastSeenTime) / 1000;
+    // Returns true when last_seen is within 120 seconds
+    return diffSeconds >= 0 && diffSeconds <= 120;
+  } catch (err) {
+    console.error("isAdminOnline error:", err);
+    return false;
+  }
+}
+
+export async function updateAdminPresence() {
+  const now = new Date().toISOString();
+  await execute(`
+    INSERT INTO admin_presence (id, last_seen) VALUES (1, ?)
+    ON CONFLICT(id) DO UPDATE SET last_seen = excluded.last_seen
+  `, [now]);
+  return { success: true, last_seen: now };
+}
+
+// ==========================================
+// Contact Inbox & Replies
 // ==========================================
 export async function addContactMessage(name, email, subject, message, ip = "") {
   const now = new Date().toISOString();
@@ -1432,7 +1479,39 @@ export async function addContactMessage(name, email, subject, message, ip = "") 
 }
 
 export async function getContactMessages() {
-  return (await queryAll("SELECT * FROM contact_messages ORDER BY id DESC")) || [];
+  const messages = (await queryAll("SELECT * FROM contact_messages ORDER BY id DESC")) || [];
+  if (messages.length === 0) return [];
+  try {
+    const replies = (await queryAll("SELECT * FROM contact_replies ORDER BY id ASC")) || [];
+    const replyMap = {};
+    for (const r of replies) {
+      const mid = r.message_id;
+      if (!replyMap[mid]) replyMap[mid] = [];
+      replyMap[mid].push(r);
+    }
+    return messages.map((m) => ({
+      ...m,
+      replies: replyMap[m.id] || [],
+    }));
+  } catch (err) {
+    console.warn("Could not load contact replies:", err);
+    return messages.map((m) => ({ ...m, replies: [] }));
+  }
+}
+
+export async function getContactReplies(messageId) {
+  return (await queryAll("SELECT * FROM contact_replies WHERE message_id = ? ORDER BY id ASC", [messageId])) || [];
+}
+
+export async function addContactReply(messageId, body) {
+  const now = new Date().toISOString();
+  await execute(`
+    INSERT INTO contact_replies (message_id, body, created_at)
+    VALUES (?, ?, ?)
+  `, [messageId, body, now]);
+  await execute("UPDATE contact_messages SET is_read = 1 WHERE id = ?", [messageId]);
+  await addActivityLog("Contact Message Replied", `Replied to message ID #${messageId}`, "Portfolio", "Admin", 1);
+  return { success: true, reply: { message_id: messageId, body, created_at: now } };
 }
 
 export async function deleteContactMessage(id) {

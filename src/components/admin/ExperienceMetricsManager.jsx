@@ -1,16 +1,47 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Edit2, Trash2, Sparkles, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Plus, Edit2, Trash2, Sparkles, X, Check } from "lucide-react";
 import SpotlightCard from "@/components/SpotlightCard";
 import ActiveToggle from "./ActiveToggle";
 
-export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, saving }) {
-  const list = Array.isArray(metrics) ? metrics : [];
+export default function ExperienceMetricsManager({
+  metrics,
+  experienceMetrics,
+  setMetrics,
+  setExperienceMetrics,
+  onSave,
+  saving,
+}) {
+  const list = Array.isArray(experienceMetrics)
+    ? experienceMetrics
+    : Array.isArray(metrics)
+    ? metrics
+    : [];
+  const updateList = setExperienceMetrics || setMetrics;
 
+  const [mounted, setMounted] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [form, setForm] = useState({ metric: "", label: "", subtext: "" });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && modalOpen) {
+        setModalOpen(false);
+      }
+    };
+    if (modalOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalOpen]);
 
   const openAdd = () => {
     setEditingIndex(-1);
@@ -20,7 +51,12 @@ export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, 
 
   const openEdit = (idx) => {
     setEditingIndex(idx);
-    setForm({ ...list[idx] });
+    setForm({
+      metric: list[idx]?.metric || "",
+      label: list[idx]?.label || "",
+      subtext: list[idx]?.subtext || "",
+      is_active: list[idx]?.is_active !== undefined ? list[idx].is_active : 1,
+    });
     setModalOpen(true);
   };
 
@@ -30,12 +66,12 @@ export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, 
 
     let updated;
     if (editingIndex >= 0) {
-      updated = list.map((item, idx) => (idx === editingIndex ? { ...form } : item));
+      updated = list.map((item, idx) => (idx === editingIndex ? { ...item, ...form } : item));
     } else {
-      updated = [...list, { ...form }];
+      updated = [...list, { ...form, is_active: 1, sort_order: list.length + 1 }];
     }
 
-    setMetrics(updated);
+    if (updateList) updateList(updated);
     setModalOpen(false);
     if (onSave) {
       onSave("experience_metrics", { items: updated }, "Experience metrics saved!");
@@ -48,7 +84,7 @@ export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, 
       const currentActive = item.is_active !== 0 && item.is_active !== false;
       return { ...item, is_active: currentActive ? 0 : 1 };
     });
-    setMetrics(updated);
+    if (updateList) updateList(updated);
     if (onSave) {
       const isNowActive = updated[idx].is_active === 1;
       onSave("experience_metrics", { items: updated }, `Metric marked as ${isNowActive ? "Active" : "Disabled"}!`);
@@ -56,23 +92,24 @@ export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, 
   };
 
   const handleDelete = (idx) => {
-    if (!window.confirm("Delete this metric?")) return;
+    if (!window.confirm(`Delete metric "${list[idx]?.label || list[idx]?.metric}"?`)) return;
     const updated = list.filter((_, i) => i !== idx);
-    setMetrics(updated);
+    if (updateList) updateList(updated);
     if (onSave) {
       onSave("experience_metrics", { items: updated }, "Metric removed!");
     }
   };
 
   return (
-    <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-[#1E2638] gap-4 w-full">
+    <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-emerald-400" />
             Career Highlights Metrics (Top of Experience Page)
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 mt-0.5">
             Metric counters displayed on <code className="text-emerald-400">/experience</code> (e.g. 2+ Years, 33/11 kV, 100%, 500+).
           </p>
         </div>
@@ -80,124 +117,152 @@ export default function ExperienceMetricsManager({ metrics, setMetrics, onSave, 
         <button
           type="button"
           onClick={openAdd}
-          className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
+          className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add New Metric</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-        {list.map((item, idx) => (
-          <SpotlightCard
-            key={idx}
-            className="bg-[#0A0D12] border border-[#1E2638] p-4 rounded-xl space-y-2 group relative"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-2xl font-black font-mono text-emerald-400">
-                {item.metric}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <ActiveToggle
-                  isActive={item.is_active}
-                  onToggle={() => handleToggleActive(idx)}
-                  label="Metric"
-                />
-                <button
-                  type="button"
-                  onClick={() => openEdit(idx)}
-                  className="p-1 text-slate-400 hover:text-emerald-400 transition"
-                  title="Edit"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(idx)}
-                  className="p-1 text-slate-400 hover:text-red-400 transition"
-                  title="Delete"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+      {/* Empty State */}
+      {list.length === 0 && (
+        <div className="text-center py-8 px-4 rounded-xl border border-dashed border-[#1E2638] bg-[#0A0D12]/50 text-slate-400 text-xs">
+          No metrics configured yet. Click &ldquo;Add New Metric&rdquo; above to create one.
+        </div>
+      )}
+
+      {/* Grid of Metrics */}
+      {list.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          {list.map((item, idx) => (
+            <SpotlightCard
+              key={idx}
+              className="bg-[#0A0D12] border border-[#1E2638] p-4 sm:p-5 rounded-xl space-y-3 group relative flex flex-col justify-between"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-black font-mono text-emerald-400">
+                    {item.metric}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <ActiveToggle
+                      isActive={item.is_active}
+                      onToggle={() => handleToggleActive(idx)}
+                      label="Metric"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => openEdit(idx)}
+                      className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition cursor-pointer"
+                      title="Edit Metric"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(idx)}
+                      className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
+                      title="Delete Metric"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <p className="text-xs font-bold text-white group-hover:text-emerald-300 transition">{item.label}</p>
+                {item.subtext && <p className="text-[11px] text-slate-400 leading-relaxed">{item.subtext}</p>}
               </div>
-            </div>
+            </SpotlightCard>
+          ))}
+        </div>
+      )}
 
-            <p className="text-xs font-bold text-white">{item.label}</p>
-            {item.subtext && <p className="text-[11px] text-slate-400">{item.subtext}</p>}
-          </SpotlightCard>
-        ))}
-      </div>
-
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#111622] border border-[#1E2638] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
+      {/* Portal-rendered Fullscreen Modal (Never trapped or clipped by transforms/overflow) */}
+      {modalOpen && mounted && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setModalOpen(false)}
+        >
+          <div
+            className="bg-[#111622] border border-[#1E2638] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4 relative max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#1E2638] pb-3">
-              <h3 className="text-base font-bold text-white">
-                {editingIndex >= 0 ? "Edit Metric" : "Add Experience Metric"}
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <span>{editingIndex >= 0 ? "Edit Metric" : "Add Experience Metric"}</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg hover:bg-[#1E2638] text-slate-400 hover:text-white"
+                className="p-1.5 rounded-lg hover:bg-[#1E2638] text-slate-400 hover:text-white transition cursor-pointer"
+                title="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveModal} className="space-y-3.5 text-xs">
+            {/* Modal Form */}
+            <form onSubmit={handleSaveModal} className="space-y-4 text-xs">
               <div>
-                <label className="block font-medium text-slate-300 mb-1">Metric Value (e.g. 2+ Years, 33/11 kV)</label>
+                <label className="block font-medium text-slate-300 mb-1.5">Metric Value (e.g. 2+ Years, 33/11 kV, 100%)</label>
                 <input
                   type="text"
                   required
                   value={form.metric}
                   onChange={(e) => setForm({ ...form, metric: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                  placeholder="e.g. 2+ Years"
+                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-medium text-slate-300 mb-1">Metric Label</label>
+                <label className="block font-medium text-slate-300 mb-1.5">Metric Label</label>
                 <input
                   type="text"
                   required
                   value={form.label}
                   onChange={(e) => setForm({ ...form, label: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                  placeholder="e.g. Field Experience"
+                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-medium text-slate-300 mb-1">Subtext / Detail</label>
+                <label className="block font-medium text-slate-300 mb-1.5">Subtext / Detail (optional)</label>
                 <input
                   type="text"
                   value={form.subtext}
                   onChange={(e) => setForm({ ...form, subtext: e.target.value })}
-                  placeholder="e.g. Remote team coordination & forecasting"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                  placeholder="e.g. Substation engineering & operations"
+                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#1E2638]">
+              {/* Modal Actions */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#1E2638]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638]"
+                  className="px-4 py-2 rounded-xl bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold"
+                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition cursor-pointer disabled:opacity-50"
                 >
-                  Save Metric
+                  <Check className="w-4 h-4" />
+                  <span>{saving ? "Saving..." : "Save Metric"}</span>
                 </button>
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </SpotlightCard>
+    </div>
   );
 }
