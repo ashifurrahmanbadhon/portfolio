@@ -1544,6 +1544,8 @@ function AdminConsoleContent() {
           <ProjectMethodologyManager
             projectMethodologies={projectMethodologies}
             setProjectMethodologies={setProjectMethodologies}
+            methodologies={projectMethodologies}
+            setMethodologies={setProjectMethodologies}
             onSave={handleSaveSection}
             saving={saving}
           />
