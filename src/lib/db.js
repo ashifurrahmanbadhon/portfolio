@@ -56,6 +56,13 @@ function getSqliteDb() {
       if (certCols && certCols.length > 0 && !certCols.some((c) => c.name === "image_url")) {
         sqliteInstance.exec("ALTER TABLE certifications ADD COLUMN image_url TEXT;");
       }
+      const allowedSocialCols = ['id', 'email', 'phone', 'whatsapp', 'linkedin', 'github', 'location', 'maps_url', 'updated_at'];
+      const extraSocialCols = sqliteInstance.prepare("PRAGMA table_info(social_links)").all().filter(c => !allowedSocialCols.includes(c.name));
+      for (const col of extraSocialCols) {
+        try {
+          sqliteInstance.exec(`ALTER TABLE social_links DROP COLUMN "${col.name}";`);
+        } catch (_) {}
+      }
     } catch (_) {}
   }
   return sqliteInstance;
@@ -213,7 +220,6 @@ function initSqliteDbIfEmpty(db) {
         whatsapp TEXT,
         linkedin TEXT,
         github TEXT,
-        facebook TEXT,
         location TEXT,
         maps_url TEXT,
         updated_at TEXT
@@ -1023,7 +1029,6 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           whatsapp = COALESCE(?, whatsapp),
           linkedin = COALESCE(?, linkedin),
           github = COALESCE(?, github),
-          facebook = COALESCE(?, facebook),
           location = COALESCE(?, location),
           maps_url = COALESCE(?, maps_url),
           updated_at = ?
@@ -1034,7 +1039,6 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         data.whatsapp ?? null,
         data.linkedin ?? null,
         data.github ?? null,
-        data.facebook ?? null,
         data.location ?? null,
         data.maps_url ?? null,
         now,

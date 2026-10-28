@@ -172,7 +172,6 @@ const REQUIRED_SCHEMAS = {
       { name: 'whatsapp', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'linkedin', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'github', pgType: 'TEXT', sqliteType: 'TEXT' },
-      { name: 'facebook', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'location', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'maps_url', pgType: 'TEXT', sqliteType: 'TEXT' },
       { name: 'updated_at', pgType: 'TEXT', sqliteType: 'TEXT' },
