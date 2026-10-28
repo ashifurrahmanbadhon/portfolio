@@ -93,9 +93,12 @@ export function PortfolioProvider({ children }) {
           full_description: p.full_description || '',
           image_url: p.image_url || '',
           image_position: p.image_position || 'center center',
+          additional_images: Array.isArray(p.additional_images) ? p.additional_images : [],
           tags: Array.isArray(p.tags) ? p.tags : [],
           live_url: p.live_url || '',
           github_url: p.github_url || '',
+          project_date: p.project_date || '',
+          sort_order: p.sort_order !== undefined ? p.sort_order : i + 1,
           is_featured: !!p.is_featured,
         }))
       );

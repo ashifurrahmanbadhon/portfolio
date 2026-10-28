@@ -1400,6 +1400,11 @@ function AdminConsoleContent() {
                     tags: ["AutoCAD", "Simulation"],
                     live_url: "",
                     github_url: "",
+                    image_url: "",
+                    image_position: "center center",
+                    additional_images: [],
+                    project_date: "2026",
+                    sort_order: projects.length + 1,
                     is_featured: false,
                     is_published: true,
                   });
@@ -1456,6 +1461,12 @@ function AdminConsoleContent() {
                           setEditingItem({
                             ...proj,
                             tags: Array.isArray(proj.tags) ? [...proj.tags] : [],
+                            additional_images: Array.isArray(proj.additional_images) ? [...proj.additional_images] : [],
+                            image_position: proj.image_position || "center center",
+                            project_date: proj.project_date || "2026",
+                            sort_order: proj.sort_order !== undefined ? proj.sort_order : idx + 1,
+                            is_featured: Boolean(proj.is_featured),
+                            is_published: proj.is_published !== undefined ? Boolean(proj.is_published) : (proj.is_active !== undefined ? Boolean(proj.is_active) : true),
                           });
                           setEditingIndex(idx);
                           setModalType("project");
@@ -2361,6 +2372,17 @@ function AdminConsoleContent() {
                 </div>
 
                 <div>
+                  <label className="block font-medium text-slate-300 mb-1">Full Description</label>
+                  <textarea
+                    rows={3}
+                    value={editingItem.full_description || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, full_description: e.target.value })}
+                    placeholder="Comprehensive project description, case study details, or implementation write-up"
+                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed"
+                  />
+                </div>
+
+                <div>
                   <MediaUploader
                     value={editingItem.image_url || ""}
                     onChange={(url) => setEditingItem({ ...editingItem, image_url: url })}
@@ -2373,6 +2395,111 @@ function AdminConsoleContent() {
                     defaultValue=""
                     defaultPosition="50% 50%"
                   />
+                </div>
+
+                {/* Gallery images (slider) */}
+                <div className="space-y-3 pt-2 border-t border-[#1E2638]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="block font-medium text-slate-300">
+                        Gallery images (slider)
+                      </label>
+                      <p className="text-[11px] text-slate-400">
+                        Additional slides for project card photo slider (ordered)
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const cur = Array.isArray(editingItem.additional_images) ? [...editingItem.additional_images] : [];
+                        setEditingItem({
+                          ...editingItem,
+                          additional_images: [...cur, ""],
+                        });
+                      }}
+                      className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition cursor-pointer"
+                    >
+                      <Plus className="w-3 h-3" /> Add Slide Image
+                    </button>
+                  </div>
+
+                  {(!editingItem.additional_images || editingItem.additional_images.length === 0) && (
+                    <div className="text-center py-3 px-3 rounded-xl border border-dashed border-[#1E2638] bg-[#0A0D12]/50 text-slate-400 text-xs">
+                      No gallery slides added. The project card will display the main thumbnail only.
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    {(editingItem.additional_images || []).map((slideUrl, sIdx) => (
+                      <div
+                        key={sIdx}
+                        className="p-3 rounded-xl border border-[#1E2638] bg-[#0A0D12] space-y-2.5"
+                      >
+                        <div className="flex items-center justify-between text-xs pb-1 border-b border-[#1E2638]/60">
+                          <span className="font-mono font-bold text-emerald-400">
+                            Slide #{sIdx + 2}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              disabled={sIdx === 0}
+                              onClick={() => {
+                                const arr = [...editingItem.additional_images];
+                                const tmp = arr[sIdx];
+                                arr[sIdx] = arr[sIdx - 1];
+                                arr[sIdx - 1] = tmp;
+                                setEditingItem({ ...editingItem, additional_images: arr });
+                              }}
+                              className="p-1 rounded bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                              title="Move Up"
+                            >
+                              <ArrowUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={sIdx === editingItem.additional_images.length - 1}
+                              onClick={() => {
+                                const arr = [...editingItem.additional_images];
+                                const tmp = arr[sIdx];
+                                arr[sIdx] = arr[sIdx + 1];
+                                arr[sIdx + 1] = tmp;
+                                setEditingItem({ ...editingItem, additional_images: arr });
+                              }}
+                              className="p-1 rounded bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                              title="Move Down"
+                            >
+                              <ArrowDown className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const arr = editingItem.additional_images.filter((_, i) => i !== sIdx);
+                                setEditingItem({ ...editingItem, additional_images: arr });
+                              }}
+                              className="p-1 rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 cursor-pointer ml-1"
+                              title="Remove Slide"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <MediaUploader
+                          value={slideUrl || ""}
+                          onChange={(url) => {
+                            const arr = [...editingItem.additional_images];
+                            arr[sIdx] = url;
+                            setEditingItem({ ...editingItem, additional_images: arr });
+                          }}
+                          previewAspect="16/9"
+                          label={`Slide Image ${sIdx + 1}`}
+                          description="Upload or enter URL for this gallery slide"
+                          type="image"
+                          defaultValue=""
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
@@ -2412,6 +2539,57 @@ function AdminConsoleContent() {
                       className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-300 mb-1">Project Date / Year</label>
+                    <input
+                      type="text"
+                      value={editingItem.project_date || ""}
+                      onChange={(e) => setEditingItem({ ...editingItem, project_date: e.target.value })}
+                      placeholder="e.g. 2026"
+                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-slate-300 mb-1">Sort Order</label>
+                    <input
+                      type="number"
+                      value={editingItem.sort_order !== undefined ? editingItem.sort_order : 1}
+                      onChange={(e) => setEditingItem({ ...editingItem, sort_order: parseInt(e.target.value, 10) || 0 })}
+                      placeholder="1"
+                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/40 transition">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(editingItem.is_published)}
+                      onChange={(e) => setEditingItem({ ...editingItem, is_published: e.target.checked })}
+                      className="accent-emerald-500 w-4 h-4 cursor-pointer"
+                    />
+                    <div>
+                      <span className="block font-medium text-white text-xs">Published</span>
+                      <span className="block text-[10px] text-slate-400">Visible on public /projects page</span>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/40 transition">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(editingItem.is_featured)}
+                      onChange={(e) => setEditingItem({ ...editingItem, is_featured: e.target.checked })}
+                      className="accent-emerald-500 w-4 h-4 cursor-pointer"
+                    />
+                    <div>
+                      <span className="block font-medium text-white text-xs">Featured</span>
+                      <span className="block text-[10px] text-slate-400">Highlight in showcases</span>
+                    </div>
+                  </label>
                 </div>
               </div>
             )}
@@ -2457,9 +2635,17 @@ function AdminConsoleContent() {
                     setSkills(updated);
                     handleSaveSection("skills", { items: updated }, "Skill saved!");
                   } else if (modalType === "project") {
+                    const itemToSave = {
+                      ...editingItem,
+                      additional_images: (editingItem.additional_images || []).filter(Boolean),
+                      tags: Array.isArray(editingItem.tags) ? editingItem.tags : [],
+                      sort_order: Number(editingItem.sort_order) || (editingIndex >= 0 ? editingIndex + 1 : projects.length + 1),
+                      is_published: editingItem.is_published !== undefined ? (editingItem.is_published ? 1 : 0) : 1,
+                      is_featured: editingItem.is_featured ? 1 : 0,
+                    };
                     const updated = [...projects];
-                    if (editingIndex >= 0) updated[editingIndex] = editingItem;
-                    else updated.push(editingItem);
+                    if (editingIndex >= 0) updated[editingIndex] = itemToSave;
+                    else updated.push(itemToSave);
                     setProjects(updated);
                     handleSaveSection("projects", { items: updated }, "Project saved!");
                   }

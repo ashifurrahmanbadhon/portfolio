@@ -636,7 +636,7 @@ export async function getPortfolioContent() {
     queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC"),
     queryAll("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC"),
     queryAll("SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM projects WHERE is_published = 1 ORDER BY sort_order ASC, id ASC"),
+    queryAll("SELECT * FROM projects ORDER BY sort_order ASC, id ASC"),
     queryAll("SELECT * FROM services ORDER BY sort_order ASC, id ASC"),
     queryOne("SELECT * FROM social_links WHERE id = 1"),
     queryAll("SELECT * FROM contact_channels ORDER BY sort_order ASC, id ASC").catch(() => []),
@@ -951,8 +951,13 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         for (let idx = 0; idx < data.items.length; idx++) {
           const item = data.items[idx];
           const tagsJson = JSON.stringify(item.tags || []);
-          const addImagesJson = JSON.stringify(item.additional_images || []);
-          const isAct = item.is_active !== undefined ? (item.is_active ? 1 : 0) : (item.is_published !== undefined ? (item.is_published ? 1 : 0) : 1);
+          const addImages = Array.isArray(item.additional_images) ? item.additional_images.filter(Boolean) : [];
+          const addImagesJson = JSON.stringify(addImages);
+          const isPub = item.is_published !== undefined ? (item.is_published ? 1 : 0) : 1;
+          const isAct = item.is_active !== undefined ? (item.is_active ? 1 : 0) : isPub;
+          const sortVal = item.sort_order !== undefined && item.sort_order !== null && item.sort_order !== ""
+            ? Number(item.sort_order)
+            : idx + 1;
           await execute(`
             INSERT INTO projects (
               project_number, title, short_description, full_description, image_url, image_position,
@@ -963,7 +968,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             item.project_number || String(idx + 1).padStart(2, "0"),
             item.title || "",
             item.short_description || "",
-            item.full_description || "",
+            item.full_description || item.short_description || "",
             item.image_url || "",
             item.image_position || "center center",
             addImagesJson,
@@ -973,9 +978,9 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             item.github_url || "",
             item.project_date || "2024",
             item.is_featured ? 1 : 0,
+            isPub,
             isAct,
-            isAct,
-            idx + 1,
+            sortVal,
             now,
           ]);
         }
