@@ -67,8 +67,10 @@ export async function POST(req) {
       isOnline = false;
     }
 
-    // Only send email when owner is OFFLINE
-    if (!isOnline) {
+    const isPackageInquiry = typeof subject === "string" && subject.startsWith("Package Inquiry:");
+
+    // Only send email when owner is OFFLINE, OR ALWAYS if it's a hot lead (Package Inquiry)
+    if (!isOnline || isPackageInquiry) {
       const resendApiKey = process.env.RESEND_API_KEY;
       if (resendApiKey) {
         try {

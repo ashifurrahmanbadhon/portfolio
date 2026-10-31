@@ -1,13 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
+import PackageInquiryModal from '@/components/portfolio/PackageInquiryModal';
 import { usePortfolio } from '@/context/PortfolioContext';
 
 export default function WorkPage() {
   const { workPackages, pageHeaders } = usePortfolio();
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const packagesList = Array.isArray(workPackages) ? workPackages : [];
 
@@ -105,13 +108,17 @@ export default function WorkPage() {
                     </div>
                   )}
 
-                  {/* Bottom button: Discuss This Package → (stat-box button style, NO underline) */}
-                  <Link
-                    href={`/contact?package=${encodeURIComponent(pkg.title)}`}
-                    className="stat-box w-full py-3 px-4 text-center text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] block no-underline transition"
+                  {/* Bottom button: Discuss This Package → (opens inquiry modal) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedPackage(pkg);
+                      setSelectedIndex(idx);
+                    }}
+                    className="stat-box w-full py-3 px-4 text-center text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] block no-underline transition cursor-pointer"
                   >
                     Discuss This Package &rarr;
-                  </Link>
+                  </button>
                 </div>
               </div>
             );
@@ -134,6 +141,14 @@ export default function WorkPage() {
           </Link>
         </div>
       </section>
+
+      {/* Package Inquiry Modal */}
+      <PackageInquiryModal
+        pkg={selectedPackage}
+        cardIndex={selectedIndex}
+        isOpen={!!selectedPackage}
+        onClose={() => setSelectedPackage(null)}
+      />
     </PortfolioLayout>
   );
 }
