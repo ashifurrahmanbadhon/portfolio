@@ -16,11 +16,11 @@ export default function PortfolioFooter() {
           © {new Date().getFullYear()} {fullName}. ALL RIGHTS RESERVED.
         </p>
 
-        {/* Admin Link at far right */}
+        {/* Admin Link at far right — plain mono text, no pill/box */}
         <div className="sm:ml-auto shrink-0">
           <Link
             href="/admin"
-            className="px-3 py-1.5 rounded-lg border border-[#23242B] bg-[#0A0B10] hover:border-[#F59E0B]/60 text-[#8E8B82] hover:text-[#F59E0B] text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
+            className="text-[#8E8B82] hover:text-[#F59E0B] text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
             title="Admin Console"
           >
             <Lock size={12} className="text-[#F59E0B]" /> ADMIN
