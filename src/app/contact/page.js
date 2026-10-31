@@ -103,8 +103,8 @@ export default function ContactPage() {
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
-          {/* Left Column: Bordered channel rows — left mono faint label, right masked value; hover inset ring */}
-          <div className="lg:col-span-5 max-w-xl space-y-6">
+          {/* Left Column: Bordered channel grid — compact aesthetic stat-boxes; hover inset ring */}
+          <div className="lg:col-span-5 max-w-md space-y-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA]">
                 Communication Channels
@@ -114,7 +114,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
               {channelsList.filter(c => isChannelActive(c.key)).map((ch) => (
                 <a
                   key={ch.key}
@@ -123,11 +123,11 @@ export default function ContactPage() {
                   rel={ch.url.startsWith('http') ? 'noreferrer' : undefined}
                   className="block group cursor-pointer"
                 >
-                  <div className="stat-box px-4 py-3 flex items-center justify-between">
-                    <span className="font-mono text-xs text-[#8E8B82] group-hover:text-[#F59E0B] uppercase tracking-wider font-medium transition-colors">
+                  <div className="stat-box px-3.5 py-2.5 flex items-center justify-between">
+                    <span className="font-mono text-[11px] sm:text-xs text-[#8E8B82] group-hover:text-[#F59E0B] uppercase tracking-wider font-semibold transition-colors">
                       {ch.label}
                     </span>
-                    <ExternalLink size={13} className="text-[#8E8B82] group-hover:text-[#F59E0B] transition-colors" />
+                    <ExternalLink size={12} className="text-[#8E8B82] group-hover:text-[#F59E0B] transition-colors shrink-0" />
                   </div>
                 </a>
               ))}
