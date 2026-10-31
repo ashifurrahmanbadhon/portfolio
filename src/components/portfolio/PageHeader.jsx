@@ -11,7 +11,7 @@ export default function PageHeader({
   return (
     <section className="relative z-10 pt-8 pb-10 sm:pt-12 sm:pb-14 border-b border-[#23242B] bg-[#06070B]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="border border-[#23242B] bg-[#0A0B10] p-8 sm:p-12 rounded-2xl shadow-xl space-y-4">
+        <div className="stat-box p-8 sm:p-12 shadow-xl space-y-4">
           {/* Big Uppercase Title - NO kicker or eyebrow above it */}
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-[#F5F2EA] leading-[1.08]">
             {title}{' '}

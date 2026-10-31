@@ -75,7 +75,7 @@ export default function AboutPage() {
 
       {/* Main Narrative & Profile Section: Bordered box, grid 1.32fr/.68fr, align start */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="stat-box rounded-2xl p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
+        <div className="stat-box p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
           
           {/* Left Column: All existing about fields + focus chips (hairline chips, mono) */}
           <div className="space-y-6">
@@ -129,14 +129,14 @@ export default function AboutPage() {
             <div className="pt-4 flex flex-wrap gap-4">
               <Link
                 href="/projects"
-                className="btn-amber-solid px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+                className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 View Case Studies <ArrowRight size={15} />
               </Link>
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="btn-amber-outline px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+                className="btn-amber-outline px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 <Download size={15} /> Download CV
               </button>
@@ -145,8 +145,8 @@ export default function AboutPage() {
 
           {/* Right Column: profile_image at width 86%, aspect 3/4, centered with margin, top-aligned (≈ text-block height; no full-column stretch) */}
           <div className="flex justify-center w-full">
-            <div className="w-[86%] max-w-[340px] stat-box p-2 rounded-2xl shadow-xl group">
-              <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#06070B]">
+            <div className="w-[86%] max-w-[340px] stat-box p-2 shadow-xl group">
+              <div className="relative w-full aspect-[3/4] overflow-hidden bg-[#06070B]">
                 <Image
                   src={aboutData.profile_image || "/ashifur-about.jpg"}
                   alt={heroData.name || "Ashifur Rahman"}
@@ -189,10 +189,10 @@ export default function AboutPage() {
               return (
                 <div
                   key={idx}
-                  className="stat-box rounded-2xl p-7 flex flex-col justify-between"
+                  className="stat-box p-7 flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-11 h-11 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
+                    <div className="w-11 h-11 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
                       <Icon size={22} />
                     </div>
                     <h3 className="text-base font-bold text-[#F5F2EA] mb-1.5 uppercase tracking-wide">
@@ -216,7 +216,7 @@ export default function AboutPage() {
 
       {/* CTA Bar */}
       <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
-        <div className="stat-box rounded-2xl p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div className="stat-box p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1.5">
             <h3 className="text-xl font-bold uppercase tracking-tight text-[#F5F2EA]">
               Have a Project in Mind?
@@ -228,7 +228,7 @@ export default function AboutPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/contact"
-              className="btn-amber-solid px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+              className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
             >
               Get In Touch <ArrowRight size={14} />
             </Link>

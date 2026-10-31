@@ -346,6 +346,7 @@ code, pre, kbd, samp, .font-mono {
   position: relative;
   background: #0A0B10;
   border: 1px solid #23242B;
+  border-radius: 0 !important;
   transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
   will-change: transform, box-shadow;
 }
@@ -371,6 +372,28 @@ code, pre, kbd, samp, .font-mono {
 .interactive-card:hover img {
   transform: scale(1.05);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Inputs, textareas, selects with .stat-box styling: square + no lift on hover */
+input.stat-box,
+textarea.stat-box,
+select.stat-box {
+  border-radius: 0 !important;
+  transform: none !important;
+}
+input.stat-box:hover,
+textarea.stat-box:hover,
+select.stat-box:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+input.stat-box:focus,
+textarea.stat-box:focus,
+select.stat-box:focus {
+  transform: none !important;
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 0 1px #F59E0B !important;
+  outline: none;
 }
 
 /* Button lift and amber shadow */

@@ -19,7 +19,7 @@ function PortfolioInnerLayout({ children }) {
       <div className="bg-[#06070B] text-[#F5F2EA] min-h-screen font-sans flex flex-col items-center justify-center relative overflow-hidden">
         <BackgroundGlow />
         <div className="relative z-10 flex flex-col items-center space-y-4 animate-fade-in">
-          <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center shadow-lg shadow-[#F59E0B]/10">
+          <div className="w-12 h-12 stat-box bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center shadow-lg shadow-[#F59E0B]/10">
             <span className="w-3 h-3 rounded-full bg-[#F59E0B] animate-ping" />
           </div>
           <div className="text-center font-mono">

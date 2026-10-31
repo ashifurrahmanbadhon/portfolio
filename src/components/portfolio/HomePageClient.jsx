@@ -135,14 +135,14 @@ export default function Home() {
             <div className="pt-8 flex flex-wrap items-center gap-4">
               <Link
                 href={heroData.primary_btn_link || "/contact"}
-                className="btn-amber-solid px-7 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+                className="btn-amber-solid px-7 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 <Mail size={16} /> {heroData.primary_btn_text || "Contact Me"}
               </Link>
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="btn-amber-outline px-7 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+                className="btn-amber-outline px-7 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 <Download size={16} /> {heroData.secondary_btn_text || "Download CV"}
               </button>
@@ -151,8 +151,8 @@ export default function Home() {
 
           {/* Right Column: Photo in hairline frame + padding 8px, aspect 3/4, caption row */}
           <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-[380px] stat-box p-2 rounded-2xl shadow-2xl group">
-              <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#06070B]">
+            <div className="w-full max-w-[380px] stat-box p-2 shadow-2xl group">
+              <div className="relative w-full aspect-[3/4] overflow-hidden bg-[#06070B]">
                 <Image
                   src={heroData.profile_image || "/ashifur-home.jpg"}
                   alt={heroData.name || "Ashifur Rahman"}
@@ -189,28 +189,23 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="border border-[#23242B] bg-[#0A0B10] rounded-2xl grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#23242B] overflow-hidden"
+            className="border border-[#23242B] bg-[#0A0B10] grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#23242B] overflow-hidden"
           >
             {highlights.map((h, i) => {
               const rawVal = String(h.metric_value || '').trim();
               const numMatch = rawVal.match(/^(\d+)(.*)$/);
               return (
-                <div key={i} className="stat-box border-0 p-6 sm:p-8 text-center flex flex-col justify-center">
-                  <p className="text-3xl sm:text-4xl font-black text-[#F59E0B] font-mono tracking-tight">
+                <div key={i} className="stat-box border-0 px-[22px] py-[26px] text-left flex flex-col justify-center">
+                  <p className="text-[38px] font-extrabold text-[#F5F2EA] tracking-tight leading-none">
                     {numMatch ? (
                       <CountUp to={parseInt(numMatch[1], 10)} suffix={numMatch[2]} />
                     ) : (
                       rawVal
                     )}
                   </p>
-                  <p className="text-sm font-bold text-[#F5F2EA] mt-1.5 uppercase tracking-wide">
+                  <p className="text-[11px] font-mono uppercase tracking-[0.15em] text-[#B9B5A9] mt-[8px]">
                     {h.metric_label}
                   </p>
-                  {h.metric_subtext && (
-                    <p className="text-xs text-[#8E8B82] font-mono mt-0.5">
-                      {h.metric_subtext}
-                    </p>
-                  )}
                 </div>
               );
             })}
@@ -256,9 +251,9 @@ export default function Home() {
               const Icon = resolveIcon(pillar.icon, Zap);
               return (
                 <Link key={pIdx} href="/about" className="block h-full">
-                  <div className="stat-box rounded-2xl p-6 h-full flex flex-col justify-between">
+                  <div className="stat-box p-6 h-full flex flex-col justify-between">
                     <div>
-                      <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
+                      <div className="w-10 h-10 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
                         <Icon size={20} />
                       </div>
                       <h3 className="text-base font-bold text-[#F5F2EA] mb-1.5 uppercase tracking-wide">
@@ -308,11 +303,11 @@ export default function Home() {
               {projectsData.slice(0, 3).map((proj, idx) => (
                 <div
                   key={proj.id || idx}
-                  className="stat-box rounded-2xl p-6 flex flex-col justify-between"
+                  className="stat-box p-6 flex flex-col justify-between"
                 >
                   <div>
                     {proj.image_url && (
-                      <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-[#06070B] border border-[#23242B]">
+                      <div className="relative w-full aspect-[16/9] overflow-hidden mb-4 bg-[#06070B] border border-[#23242B]">
                         <Image
                           src={proj.image_url}
                           alt={proj.title}
@@ -347,7 +342,7 @@ export default function Home() {
                     {(proj.tags || []).map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="stat-box rounded text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
+                        className="stat-box rounded-full text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
                       >
                         {tag}
                       </span>
@@ -383,7 +378,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="border border-[#23242B] bg-[#0A0B10] rounded-2xl overflow-hidden divide-y divide-[#23242B]">
+            <div className="border border-[#23242B] bg-[#0A0B10] overflow-hidden divide-y divide-[#23242B]">
               {experiences.slice(0, 2).map((exp, idx) => (
                 <div
                   key={idx}
@@ -442,7 +437,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {skillsData.map((cat, idx) => (
-                <div key={idx} className="stat-box rounded-2xl p-6 space-y-4">
+                <div key={idx} className="stat-box p-6 space-y-4">
                   <div className="flex items-center gap-3 pb-3 border-b border-[#23242B]">
                     <span className="font-mono text-xs text-[#F59E0B] font-bold">
                       0{idx + 1} /
@@ -495,7 +490,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {educations && educations.length > 0 && (
-              <div className="stat-box rounded-2xl p-8 space-y-4">
+              <div className="stat-box p-8 space-y-4">
                 <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
                   {educations[0].period || "Degree Completed"}
                 </span>
@@ -513,7 +508,7 @@ export default function Home() {
               </div>
             )}
 
-            <div className="stat-box rounded-2xl p-8 space-y-4">
+            <div className="stat-box p-8 space-y-4">
               <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
                 Certifications &amp; Training
               </span>
@@ -555,9 +550,9 @@ export default function Home() {
               {services.map((srv, idx) => {
                 const Icon = resolveIcon(srv.icon, Zap);
                 return (
-                  <div key={srv.id || idx} className="stat-box rounded-2xl p-6 flex flex-col justify-between">
+                  <div key={srv.id || idx} className="stat-box p-6 flex flex-col justify-between">
                     <div>
-                      <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
+                      <div className="w-10 h-10 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
                         <Icon size={20} />
                       </div>
                       <h3 className="text-base font-bold text-[#F5F2EA] mb-2 uppercase tracking-wide">
@@ -593,7 +588,7 @@ export default function Home() {
             {HOW_I_WORK_STEPS.map((step) => (
               <div
                 key={step.num}
-                className="stat-box rounded-2xl p-7 flex flex-col justify-between"
+                className="stat-box p-7 flex flex-col justify-between"
               >
                 <div>
                   <div className="font-mono text-4xl sm:text-5xl font-black text-stroke-numeral mb-4">
@@ -619,7 +614,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="stat-box rounded-2xl p-10 sm:p-14 text-center space-y-6"
+          className="stat-box p-10 sm:p-14 text-center space-y-6"
         >
           <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight max-w-2xl mx-auto leading-tight">
             {ctaData.title}
@@ -630,14 +625,14 @@ export default function Home() {
           <div className="pt-3 flex flex-wrap justify-center gap-4">
             <Link
               href={ctaData.primary_btn_link}
-              className="btn-amber-solid px-8 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+              className="btn-amber-solid px-8 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <Mail size={16} /> {ctaData.primary_btn_text}
             </Link>
             <button
               type="button"
               onClick={triggerCvDownload}
-              className="btn-amber-outline px-8 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+              className="btn-amber-outline px-8 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <Download size={16} /> {ctaData.secondary_btn_text || "Download CV"}
             </button>
