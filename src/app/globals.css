@@ -535,3 +535,122 @@ select.stat-box:focus {
     transform: none !important;
   }
 }
+
+/* =================================================== */
+/* 10. PORTFOLIO ADMIN — STAT-BOX FINISH SYSTEM        */
+/* =================================================== */
+
+/* Scope: .admin-shell covers all admin dashboard pages, sidebar, topbar & modals */
+.admin-shell,
+.admin-shell * {
+  --admin-bg-box: #0A0B10;
+  --admin-border-box: #23242B;
+}
+
+/* 1. All rectangular containers in admin become sharp stat-boxes (radius: 0) */
+.admin-shell div:not(.rounded-full):not([class*="rounded-full"]):not(.profile-avatar),
+.admin-shell aside,
+.admin-shell section,
+.admin-shell form,
+.admin-shell article,
+.admin-shell header,
+.admin-shell main,
+.admin-shell table,
+.admin-shell thead,
+.admin-shell tbody,
+.admin-shell tr,
+.admin-shell th,
+.admin-shell td,
+.admin-shell button:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell a:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell input:not([type="checkbox"]):not([type="radio"]):not(.rounded-full),
+.admin-shell textarea,
+.admin-shell select,
+.admin-shell [role="dialog"],
+.admin-shell .stat-box {
+  border-radius: 0 !important;
+}
+
+/* Keep round ONLY: avatars, status dots, count/unread pills, toggle switches, radio/checkbox circles */
+.admin-shell .rounded-full,
+.admin-shell [class*="rounded-full"],
+.admin-shell input[type="radio"],
+.admin-shell .status-dot {
+  border-radius: 9999px !important;
+}
+
+/* 2. Hover feedback = Website Style (NO background fill change) */
+/* Stat-boxes and cards in admin: background remains constant, hover adds full amber frame */
+.admin-shell .stat-box:hover {
+  background-color: #0A0B10 !important;
+  border-color: #F59E0B !important;
+  box-shadow: inset 0 0 0 1.5px #F59E0B, 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  transform: translateY(-2px);
+}
+
+/* Non-card stat-boxes like inputs, textareas, selects don't lift on hover */
+.admin-shell input.stat-box,
+.admin-shell textarea.stat-box,
+.admin-shell select.stat-box,
+.admin-shell input:not([type="checkbox"]):not([type="radio"]),
+.admin-shell textarea,
+.admin-shell select {
+  transform: none !important;
+  background-color: #06070B !important;
+  border: 1px solid #23242B !important;
+  border-radius: 0 !important;
+}
+
+.admin-shell input:not([type="checkbox"]):not([type="radio"]):hover,
+.admin-shell textarea:hover,
+.admin-shell select:hover {
+  transform: none !important;
+  background-color: #06070B !important;
+  border-color: #F59E0B !important;
+  box-shadow: inset 0 0 0 1.5px #F59E0B !important;
+}
+
+.admin-shell input:not([type="checkbox"]):not([type="radio"]):focus,
+.admin-shell textarea:focus,
+.admin-shell select:focus {
+  transform: none !important;
+  background-color: #06070B !important;
+  border-color: #F59E0B !important;
+  box-shadow: inset 0 0 0 1.5px #F59E0B !important;
+  outline: none !important;
+}
+
+/* Rectangular buttons in admin: radius 0, hairline border, NO bg change on hover */
+.admin-shell button:not(.btn-amber-solid):not([class*="bg-[#F59E0B]"]):not(.rounded-full):hover,
+.admin-shell a:not(.btn-amber-solid):not([class*="bg-[#F59E0B]"]):not(.rounded-full):hover {
+  background-color: transparent !important;
+  border-color: #F59E0B !important;
+  box-shadow: inset 0 0 0 1.5px #F59E0B !important;
+}
+
+/* Primary amber buttons keep their amber fill + lift */
+.admin-shell .btn-amber-solid,
+.admin-shell button[class*="bg-[#F59E0B]"],
+.admin-shell a[class*="bg-[#F59E0B]"] {
+  background-color: #F59E0B !important;
+  color: #06070B !important;
+  border: 1px solid #F59E0B !important;
+  border-radius: 0 !important;
+}
+.admin-shell .btn-amber-solid:hover,
+.admin-shell button[class*="bg-[#F59E0B]"]:hover,
+.admin-shell a[class*="bg-[#F59E0B]"]:hover {
+  background-color: #FBBF24 !important;
+  border-color: #FBBF24 !important;
+  box-shadow: inset 0 0 0 1.5px #FBBF24, 0 6px 18px rgba(245, 158, 11, 0.25) !important;
+  transform: translateY(-2px);
+}
+
+/* Active sidebar item: amber text + amber frame/left bar — NO filled tint background */
+.admin-shell aside .stat-box {
+  transform: none !important;
+}
+.admin-shell aside .stat-box:hover {
+  transform: none !important;
+  background-color: transparent !important;
+}

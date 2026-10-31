@@ -138,15 +138,15 @@ function SidebarNavigation({ setMobileOpen }) {
                   key={item.tab}
                   href={item.href}
                   onClick={() => setMobileOpen?.(false)}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors duration-150 select-none ${
+                  className={`stat-box group flex items-center gap-2.5 px-3 py-2 text-xs transition-all select-none border ${
                     isActive
-                      ? "bg-[rgba(245,158,11,0.13)] text-[#FBBF24] font-semibold"
-                      : "text-[#B9B5A9] hover:bg-[#12131A] hover:text-[#F5F2EA]"
+                      ? "border-l-2 border-l-[#F59E0B] border-t border-b border-r border-[#23242B] text-[#F59E0B] font-semibold bg-transparent shadow-[inset_0_0_0_1px_#F59E0B]"
+                      : "border-transparent text-[#B9B5A9] hover:text-[#F5F2EA] hover:border-[#F59E0B] hover:shadow-[inset_0_0_0_1.5px_#F59E0B] bg-transparent"
                   }`}
                 >
                   <Icon
                     className={`w-4 h-4 shrink-0 transition-colors ${
-                      isActive ? "text-[#F59E0B]" : "text-[#8E8B82] group-hover:text-[#F5F2EA]"
+                      isActive ? "text-[#F59E0B]" : "text-[#8E8B82] group-hover:text-[#F59E0B]"
                     }`}
                   />
 
@@ -167,7 +167,7 @@ function SidebarNavigation({ setMobileOpen }) {
                       {item.count}
                     </span>
                   ) : item.badge ? (
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#161B26] text-[#8E8B82] border border-[#23242B]">
+                    <span className="stat-box text-[9px] font-mono px-1.5 py-0.5 bg-[#0A0B10] text-[#8E8B82] border border-[#23242B]">
                       {item.badge}
                     </span>
                   ) : null}
@@ -201,7 +201,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
         {/* Brand row: amber avatar "A" + "Ashifur Rahman / Portfolio Admin" */}
         <div className="p-4 border-b border-[#23242B] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#F59E0B] text-[#06070B] font-black text-sm flex items-center justify-center shrink-0 font-mono shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-[#F59E0B] text-[#06070B] font-black text-sm flex items-center justify-center shrink-0 font-mono shadow-sm">
               A
             </div>
             <div className="min-w-0">
@@ -238,7 +238,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-2 px-3 border border-[#23242B] hover:border-[#F59E0B] rounded-lg text-xs font-mono text-[#B9B5A9] hover:text-[#FBBF24] flex items-center justify-center gap-2 transition cursor-pointer bg-[#06070B]"
+            className="stat-box w-full py-2.5 px-3 border border-[#23242B] text-xs font-mono text-[#B9B5A9] hover:text-[#FBBF24] flex items-center justify-center gap-2 transition cursor-pointer bg-[#0A0B10]"
           >
             <span>View Website</span>
             <ExternalLink size={12} className="text-[#F59E0B]" />

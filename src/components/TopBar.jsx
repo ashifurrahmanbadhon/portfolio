@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   LogOut,
   KeyRound,
+  Key,
+  Mail,
   X,
   Check,
   Eye,
@@ -21,7 +23,8 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "./Toast";
 import { parsePhotoPosition } from "@/lib/photoPosition";
-import ImageUploadBox from "@/components/admin/ImageUploadBox";
+import ImageUploadBox, { downscalePhotoToWebP } from "@/components/admin/ImageUploadBox";
+import { api } from "@/lib/api";
 
 const BREADCRUMB_MAP = {
   dashboard: { group: "Overview", tab: "Dashboard" },
@@ -287,12 +290,12 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
             </button>
 
             {profileOpen && (
-              <div className="animate-dropdown absolute right-0 mt-2 w-64 bg-[#0A0B10] border border-[#23242B] rounded-xl shadow-2xl py-2 z-50 text-xs">
+              <div className="stat-box animate-dropdown absolute right-0 mt-2 w-64 bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs">
                 {/* Header Profile Badge */}
                 <div className="px-4 py-2.5 border-b border-[#23242B]">
                   <div className="flex items-center justify-between">
                     <p className="font-bold text-[#F5F2EA] truncate text-sm">{displayName}</p>
-                    <span className="text-[9px] bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/30 font-mono px-1.5 py-0.5 rounded font-semibold">
+                    <span className="stat-box text-[9px] bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/30 font-mono px-1.5 py-0.5 font-semibold">
                       ROOT ADMIN
                     </span>
                   </div>
@@ -306,13 +309,13 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                       setProfileOpen(false);
                       setProfileModalOpen(true);
                     }}
-                    className="w-full flex items-center justify-between px-4 py-2 text-[#B9B5A9] hover:text-[#F5F2EA] hover:bg-[#12131A] transition-colors cursor-pointer text-left"
+                    className="stat-box w-full flex items-center justify-between px-4 py-2 text-[#B9B5A9] hover:text-[#FBBF24] border border-transparent transition-all cursor-pointer text-left"
                   >
                     <div className="flex items-center gap-2.5">
                       <User className="w-3.5 h-3.5 text-[#F59E0B]" />
                       <span className="font-medium">Edit Profile</span>
                     </div>
-                    <span className="text-[10px] bg-[#161B26] text-[#8E8B82] border border-[#23242B] px-1.5 py-0.5 rounded font-mono">
+                    <span className="stat-box text-[10px] bg-[#0A0B10] text-[#8E8B82] border border-[#23242B] px-1.5 py-0.5 font-mono">
                       Edit
                     </span>
                   </button>
@@ -323,13 +326,13 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                       setProfileOpen(false);
                       setProfileModalOpen(true);
                     }}
-                    className="w-full flex items-center justify-between px-4 py-2 text-[#B9B5A9] hover:text-[#F5F2EA] hover:bg-[#12131A] transition-colors cursor-pointer text-left"
+                    className="stat-box w-full flex items-center justify-between px-4 py-2 text-[#B9B5A9] hover:text-[#FBBF24] border border-transparent transition-all cursor-pointer text-left"
                   >
                     <div className="flex items-center gap-2.5">
                       <KeyRound className="w-3.5 h-3.5 text-[#F59E0B]" />
                       <span className="font-medium">Change Password</span>
                     </div>
-                    <span className="text-[10px] bg-[#161B26] text-[#8E8B82] border border-[#23242B] px-1.5 py-0.5 rounded font-mono">
+                    <span className="stat-box text-[10px] bg-[#0A0B10] text-[#8E8B82] border border-[#23242B] px-1.5 py-0.5 font-mono">
                       Key
                     </span>
                   </button>
@@ -340,7 +343,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                       setProfileOpen(false);
                       logout();
                     }}
-                    className="w-full flex items-center gap-2.5 px-4 py-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors border-t border-[#23242B] mt-1 pt-2 font-mono text-xs cursor-pointer text-left"
+                    className="stat-box w-full flex items-center gap-2.5 px-4 py-2 text-rose-400 hover:text-rose-300 border border-transparent border-t-[#23242B] mt-1 pt-2 font-mono text-xs cursor-pointer text-left"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Sign Out</span>
@@ -356,13 +359,13 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       {profileModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div
-            className="bg-[#0A0B10] border border-[#23242B] rounded-xl max-w-xl w-full shadow-2xl overflow-hidden max-h-[92dvh] flex flex-col"
+            className="stat-box bg-[#0A0B10] border border-[#23242B] max-w-xl w-full shadow-2xl overflow-hidden max-h-[92dvh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-[#23242B] flex items-center justify-between bg-[#06070B] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                <div className="p-1.5 bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
                   <User className="w-4 h-4" />
                 </div>
                 <div>
@@ -372,7 +375,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
               </div>
               <button
                 onClick={() => setProfileModalOpen(false)}
-                className="p-1.5 rounded-lg text-[#8E8B82] hover:text-[#F5F2EA] hover:bg-[#12131A] transition cursor-pointer"
+                className="stat-box p-1.5 text-[#8E8B82] hover:text-[#F5F2EA] border border-transparent transition cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -384,7 +387,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
               <div className="p-5 border-b border-[#23242B] bg-[#06070B]/50 space-y-4">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-[#F5F2EA] truncate">{displayName}</h4>
-                  <span className="text-[9px] bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/30 px-1.5 py-0.5 rounded font-mono font-semibold">
+                  <span className="stat-box text-[9px] bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/30 px-1.5 py-0.5 font-mono font-semibold">
                     ACTIVE
                   </span>
                   <span className="text-[11px] text-[#8E8B82] font-mono truncate ml-auto">{displayEmail}</span>
@@ -430,7 +433,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
               {/* Form Body */}
               <div className="p-5 space-y-4">
                 {formError && (
-                  <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono">
+                  <div className="stat-box p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono">
                     {formError}
                   </div>
                 )}
@@ -445,7 +448,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-lg text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition"
+                    className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition"
                     placeholder="Full Name"
                     required
                   />
@@ -461,7 +464,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                     type="email"
                     value={editEmail}
                     onChange={(e) => setEditEmail(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-lg text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
+                    className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
                     placeholder="ashifur.badhon@gmail.com"
                     required
                   />
@@ -490,7 +493,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                         type={showPassword ? "text" : "password"}
                         value={currentPw}
                         onChange={(e) => setCurrentPw(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-lg text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
+                        className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
                         placeholder="Current Password (optional for super admin)"
                       />
                     </div>
@@ -499,7 +502,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                         type={showPassword ? "text" : "password"}
                         value={newPw}
                         onChange={(e) => setNewPw(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-lg text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
+                        className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
                         placeholder="New Password (min. 6 characters)"
                       />
                     </div>
@@ -508,7 +511,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                         type={showPassword ? "text" : "password"}
                         value={confirmPw}
                         onChange={(e) => setConfirmPw(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-lg text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
+                        className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
                         placeholder="Confirm New Password"
                       />
                     </div>
@@ -525,7 +528,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
               <button
                 type="button"
                 onClick={() => setProfileModalOpen(false)}
-                className="px-3.5 py-2 text-xs font-mono text-[#8E8B82] hover:text-[#F5F2EA] rounded-lg hover:bg-[#12131A] transition cursor-pointer"
+                className="stat-box px-3.5 py-2 text-xs font-mono text-[#8E8B82] hover:text-[#F5F2EA] transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -533,7 +536,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                 type="submit"
                 form="admin-profile-form"
                 disabled={savingProfile}
-                className="px-4 py-2 bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold rounded-lg text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                className="stat-box px-4 py-2 bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               >
                 {savingProfile ? (
                   <>

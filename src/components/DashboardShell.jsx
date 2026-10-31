@@ -47,7 +47,7 @@ function ShellContent({ children }) {
 
   // 3. Authenticated: Render Left Sidebar (248px) + Main Content with TopBar
   return (
-    <div className="min-h-screen bg-[#06070B] text-[#F5F2EA] flex flex-col font-sans selection:bg-[#F59E0B]/20 selection:text-[#FBBF24]">
+    <div className="min-h-screen bg-[#06070B] text-[#F5F2EA] flex flex-col font-sans admin-shell selection:bg-[#F59E0B]/20 selection:text-[#FBBF24]">
       <Sidebar
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
