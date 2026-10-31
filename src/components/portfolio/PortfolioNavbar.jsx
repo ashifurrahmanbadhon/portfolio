@@ -6,10 +6,9 @@ import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
-  { name: 'Experience', href: '/experience' },
   { name: 'Projects', href: '/projects' },
+  { name: 'Experience', href: '/experience' },
   { name: 'Skills', href: '/skills' },
   { name: 'Education', href: '/education' },
   { name: 'Contact', href: '/contact' },
@@ -68,9 +67,6 @@ export default function PortfolioNavbar() {
   const pathname = usePathname();
 
   const isLinkActive = (href) => {
-    if (href === '/') {
-      return pathname === '/';
-    }
     return pathname === href || pathname?.startsWith(href + '/');
   };
 
@@ -86,18 +82,18 @@ export default function PortfolioNavbar() {
           </span>
         </Link>
 
-        {/* Center: Existing nav links, JetBrains Mono uppercase 12px letterspaced, muted -> hover amber */}
-        <div className="hidden lg:flex items-center gap-1 xl:gap-2 text-[12px] font-mono uppercase tracking-wider">
+        {/* Center: Strip pills -> plain text, gap-[34px], tracking-[0.18em], muted -> hover amber, active amber only */}
+        <div className="hidden lg:flex items-center gap-[34px] text-[12px] font-mono uppercase tracking-[0.18em]">
           {NAV_ITEMS.map((item) => {
             const active = isLinkActive(item.href);
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-1.5 rounded-md transition-all duration-200 ${
+                className={`transition-colors duration-200 ${
                   active
-                    ? 'text-[#F59E0B] font-bold bg-[#F59E0B]/10 border border-[#F59E0B]/30'
-                    : 'text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5 border border-transparent'
+                    ? 'text-[#F59E0B]'
+                    : 'text-[#B9B5A9] hover:text-[#F59E0B]'
                 }`}
               >
                 {item.name}
@@ -121,9 +117,9 @@ export default function PortfolioNavbar() {
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Dropdown Menu — plain full-width text links */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0A0B10] border-b border-[#23242B] px-6 py-5 space-y-2 animate-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden bg-[#0A0B10] border-b border-[#23242B] px-6 py-5 space-y-3 animate-in slide-in-from-top-2 duration-200">
           <div className="pb-3 border-b border-[#23242B] flex justify-between items-center">
             <span className="font-mono text-xs text-[#8E8B82]">STATUS:</span>
             <TypewriterBadge />
@@ -136,10 +132,10 @@ export default function PortfolioNavbar() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-3.5 py-2.5 rounded-lg text-xs font-mono uppercase tracking-wider transition ${
+                className={`block py-2 text-xs font-mono uppercase tracking-[0.18em] transition-colors ${
                   active
-                    ? 'text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 font-bold'
-                    : 'text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5'
+                    ? 'text-[#F59E0B]'
+                    : 'text-[#B9B5A9] hover:text-[#F59E0B]'
                 }`}
               >
                 {item.name}
