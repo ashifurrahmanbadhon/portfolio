@@ -18,7 +18,7 @@ function ShellContent({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Public portfolio routes that do not require admin CMS authentication
-  const publicRoutes = ["/", "/about", "/experience", "/projects", "/skills", "/education", "/contact"];
+  const publicRoutes = ["/", "/about", "/experience", "/projects", "/skills", "/education", "/contact", "/work"];
   const isPublicRoute = publicRoutes.some((route) => pathname === route || (route !== "/" && pathname.startsWith(route + "/")));
 
   if (isPublicRoute) {
