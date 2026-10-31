@@ -366,8 +366,8 @@ export default function ImageUploadBox({
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      className={`p-4 sm:p-5 rounded-2xl bg-[#0A0D12] border transition-colors duration-150 flex flex-col sm:flex-row gap-4 sm:gap-5 items-stretch ${
-        isDragging ? "border-emerald-400 bg-emerald-500/10" : "border-[#1E2638] hover:border-[#27324A]"
+      className={`p-4 sm:p-5 rounded-2xl bg-[#06070B] border transition-colors duration-150 flex flex-col sm:flex-row gap-4 sm:gap-5 items-stretch ${
+        isDragging ? "border-emerald-400 bg-[#F59E0B]/10" : "border-[#23242B] hover:border-[#27324A]"
       }`}
     >
       {/* LEFT COLUMN: Preview Tile */}
@@ -378,7 +378,7 @@ export default function ImageUploadBox({
       >
         <div
           style={tileAspect}
-          className={`relative rounded-xl overflow-hidden border border-[#1E2638] bg-[#070A0F] flex items-center justify-center transition select-none group/tile ${
+          className={`relative rounded-xl overflow-hidden border border-[#23242B] bg-[#070A0F] flex items-center justify-center transition select-none group/tile ${
             !uploading && isImage && displayUrl ? "cursor-pointer" : ""
           }`}
           onClick={() => {
@@ -411,16 +411,16 @@ export default function ImageUploadBox({
                     strokeDasharray={138.23}
                     strokeDashoffset={138.23 - (138.23 * uploadProgress) / 100}
                     strokeLinecap="round"
-                    className="text-emerald-400 transition-all duration-150"
+                    className="text-[#F59E0B] transition-all duration-150"
                     fill="transparent"
                   />
                 </svg>
-                <span className="absolute text-[11px] font-mono font-black text-emerald-300">
+                <span className="absolute text-[11px] font-mono font-black text-[#FBBF24]">
                   {uploadProgress}%
                 </span>
               </div>
               <p className="text-[11px] font-bold text-white tracking-wide">Uploading...</p>
-              <div className="w-28 h-1 bg-[#161C2A] rounded-full overflow-hidden mt-1.5 border border-[#1E2638]">
+              <div className="w-28 h-1 bg-[#12131A] rounded-full overflow-hidden mt-1.5 border border-[#23242B]">
                 <div
                   className="h-full bg-emerald-400 transition-all duration-150"
                   style={{ width: `${uploadProgress}%` }}
@@ -437,7 +437,7 @@ export default function ImageUploadBox({
                 e.stopPropagation();
                 handleOpenRepositionModal();
               }}
-              className="absolute top-2 right-2 z-20 p-1.5 rounded-lg bg-black/75 hover:bg-black text-slate-300 hover:text-emerald-400 border border-[#1E2638] transition cursor-pointer shadow-md"
+              className="absolute top-2 right-2 z-20 p-1.5 rounded-lg bg-black/75 hover:bg-black text-slate-300 hover:text-[#F59E0B] border border-[#23242B] transition cursor-pointer shadow-md"
               title="Reposition photo"
             >
               <Move className="w-3.5 h-3.5" />
@@ -469,7 +469,7 @@ export default function ImageUploadBox({
                 target="_blank"
                 rel="noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 text-[11px] text-emerald-400 hover:underline pt-0.5 font-mono"
+                className="inline-flex items-center gap-1 text-[11px] text-[#F59E0B] hover:underline pt-0.5 font-mono"
               >
                 <Eye className="w-3 h-3" /> View / Test PDF
               </a>
@@ -496,8 +496,8 @@ export default function ImageUploadBox({
               {/* Reposition Overlay Badge on Hover */}
               {!uploading && (
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/tile:opacity-100 transition-opacity duration-150 flex items-center justify-center gap-2 pointer-events-none">
-                  <span className="px-3 py-1.5 rounded-xl bg-black/90 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-bold flex items-center gap-1.5">
-                    <Move className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="px-3 py-1.5 rounded-xl bg-black/90 text-[#FBBF24] border border-[#F59E0B]/40 text-xs font-mono font-bold flex items-center gap-1.5">
+                    <Move className="w-3.5 h-3.5 text-[#F59E0B]" />
                     <span>Reposition Photo</span>
                   </span>
                 </div>
@@ -513,11 +513,11 @@ export default function ImageUploadBox({
         <div>
           <div className="flex items-center gap-2 text-xs font-mono font-semibold text-slate-200">
             {isPdf ? (
-              <FileText className="w-4 h-4 text-emerald-400 shrink-0" />
+              <FileText className="w-4 h-4 text-[#F59E0B] shrink-0" />
             ) : isVideo ? (
-              <Film className="w-4 h-4 text-emerald-400 shrink-0" />
+              <Film className="w-4 h-4 text-[#F59E0B] shrink-0" />
             ) : (
-              <ImageIcon className="w-4 h-4 text-emerald-400 shrink-0" />
+              <ImageIcon className="w-4 h-4 text-[#F59E0B] shrink-0" />
             )}
             <span className="font-semibold text-slate-200">{label}</span>
           </div>
@@ -532,7 +532,7 @@ export default function ImageUploadBox({
           <button
             type="button"
             onClick={handlePickFileClick}
-            className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition-colors duration-150 cursor-pointer active:scale-[0.99] select-none shadow-md shadow-emerald-500/10"
+            className="w-full bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition-colors duration-150 cursor-pointer active:scale-[0.99] select-none shadow-md shadow-amber-500/10"
           >
             <Upload className="w-4 h-4 text-slate-950 shrink-0" />
             <span className="whitespace-nowrap">
@@ -546,7 +546,7 @@ export default function ImageUploadBox({
               type="button"
               onClick={handleOpenRepositionModal}
               disabled={!displayUrl || uploading}
-              className="w-full bg-[#161C2A] hover:bg-[#1E2638] disabled:opacity-40 disabled:cursor-not-allowed text-slate-300 hover:text-white border border-[#1E2638] py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition cursor-pointer select-none"
+              className="w-full bg-[#12131A] hover:bg-[#1E2638] disabled:opacity-40 disabled:cursor-not-allowed text-slate-300 hover:text-white border border-[#23242B] py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition cursor-pointer select-none"
             >
               <Move className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <span className="whitespace-nowrap">Reposition</span>
@@ -558,7 +558,7 @@ export default function ImageUploadBox({
             type="button"
             onClick={handleResetToDefault}
             disabled={uploading}
-            className="w-full bg-[#161C2A] hover:bg-[#1E2638] disabled:opacity-40 text-slate-300 hover:text-white border border-[#1E2638] py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition cursor-pointer select-none"
+            className="w-full bg-[#12131A] hover:bg-[#1E2638] disabled:opacity-40 text-slate-300 hover:text-white border border-[#23242B] py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition cursor-pointer select-none"
           >
             <RotateCcw className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span className="whitespace-nowrap">RESET TO DEFAULT</span>
@@ -575,7 +575,7 @@ export default function ImageUploadBox({
             value={internalUrl}
             onChange={handleUrlInputChange}
             placeholder="https://... or /images/..."
-            className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono placeholder:text-slate-600 transition"
+            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-xs text-white outline-none font-mono placeholder:text-slate-600 transition"
           />
         </div>
 
@@ -592,7 +592,7 @@ export default function ImageUploadBox({
               {!isPdf && (
                 <>
                   {" "}
-                  <span className="text-emerald-400 font-mono font-semibold">
+                  <span className="text-[#F59E0B] font-mono font-semibold">
                     [{posObj.x}% {posObj.y}%]
                   </span>
                 </>
@@ -623,13 +623,13 @@ export default function ImageUploadBox({
           onClick={handleCloseRepositionModal}
         >
           <div
-            className="bg-[#0D121F] border border-[#1E2638] rounded-2xl max-w-[420px] w-full shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
+            className="bg-[#0D121F] border border-[#23242B] rounded-2xl max-w-[420px] w-full shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="px-5 py-4 border-b border-[#1E2638] flex items-center justify-between bg-[#111624] shrink-0">
+            <div className="px-5 py-4 border-b border-[#23242B] flex items-center justify-between bg-[#111624] shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                <div className="p-2 rounded-xl bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 shrink-0">
                   <Move className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
@@ -644,7 +644,7 @@ export default function ImageUploadBox({
               <button
                 type="button"
                 onClick={handleCloseRepositionModal}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#161C2A] transition cursor-pointer shrink-0 ml-2"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#12131A] transition cursor-pointer shrink-0 ml-2"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -654,7 +654,7 @@ export default function ImageUploadBox({
             <div className="p-5 space-y-4 flex-1 min-h-0 overflow-y-auto">
               <div className="flex items-center justify-between text-[11px] font-mono">
                 <span className="text-slate-300 font-medium">Pan position:</span>
-                <span className="px-2 py-0.5 rounded bg-[#161C2A] text-emerald-300 border border-emerald-500/30 font-bold">
+                <span className="px-2 py-0.5 rounded bg-[#12131A] text-[#FBBF24] border border-[#F59E0B]/30 font-bold">
                   {panX}% {panY}% {zoom > 1 ? `• ${Number(zoom).toFixed(2)}x` : ""}
                 </span>
               </div>
@@ -667,7 +667,7 @@ export default function ImageUploadBox({
                 className={`relative rounded-2xl overflow-hidden bg-[#070A0F] border select-none transition-all ${
                   isDraggingPan
                     ? "border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.35)] cursor-grabbing"
-                    : "border-emerald-500/40 hover:border-emerald-400 cursor-grab"
+                    : "border-[#F59E0B]/40 hover:border-emerald-400 cursor-grab"
                 }`}
               >
                 <Image
@@ -686,7 +686,7 @@ export default function ImageUploadBox({
 
                 {/* 3x3 Grid Lines on Drag */}
                 {isDraggingPan && (
-                  <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/50 bg-emerald-500/10 animate-in fade-in duration-100">
+                  <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 border border-emerald-400/50 bg-[#F59E0B]/10 animate-in fade-in duration-100">
                     <div className="border-r border-b border-emerald-400/30" />
                     <div className="border-r border-b border-emerald-400/30" />
                     <div className="border-b border-emerald-400/30" />
@@ -701,12 +701,12 @@ export default function ImageUploadBox({
               </div>
 
               {/* Zoom Slider Bar */}
-              <div className="p-3.5 rounded-xl bg-[#090D15] border border-[#1E2638] space-y-2.5">
+              <div className="p-3.5 rounded-xl bg-[#090D15] border border-[#23242B] space-y-2.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center gap-1.5 text-slate-300">
-                    <ZoomIn className="w-3.5 h-3.5 text-emerald-400" />
+                    <ZoomIn className="w-3.5 h-3.5 text-[#F59E0B]" />
                     <span>Zoom:</span>
-                    <span className="font-bold text-emerald-300">{Number(zoom).toFixed(2)}x</span>
+                    <span className="font-bold text-[#FBBF24]">{Number(zoom).toFixed(2)}x</span>
                   </div>
                   <button
                     type="button"
@@ -722,7 +722,7 @@ export default function ImageUploadBox({
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(1, Math.round((z - 0.05) * 100) / 100))}
-                    className="p-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
+                    className="p-1.5 rounded-lg bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
                     title="Zoom Out"
                   >
                     <ZoomOut className="w-3.5 h-3.5" />
@@ -734,12 +734,12 @@ export default function ImageUploadBox({
                     step="0.01"
                     value={zoom}
                     onChange={(e) => setZoom(parseFloat(e.target.value))}
-                    className="flex-1 accent-emerald-500 cursor-pointer h-1.5 bg-[#161C2A] rounded-lg"
+                    className="flex-1 accent-[#F59E0B] cursor-pointer h-1.5 bg-[#12131A] rounded-lg"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(2, Math.round((z + 0.05) * 100) / 100))}
-                    className="p-1.5 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
+                    className="p-1.5 rounded-lg bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
                     title="Zoom In"
                   >
                     <ZoomIn className="w-3.5 h-3.5" />
@@ -749,18 +749,18 @@ export default function ImageUploadBox({
             </div>
 
             {/* Footer Buttons */}
-            <div className="px-5 py-3.5 border-t border-[#1E2638] bg-[#0A0E18] flex items-center justify-end gap-2.5 shrink-0">
+            <div className="px-5 py-3.5 border-t border-[#23242B] bg-[#0A0E18] flex items-center justify-end gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={handleCloseRepositionModal}
-                className="px-4 py-2 rounded-xl bg-[#141A29] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#12131A] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleApplyReposition}
-                className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Apply</span>

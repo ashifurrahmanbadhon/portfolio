@@ -101,23 +101,23 @@ export default function ExperienceMetricsManager({
   };
 
   return (
-    <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+    <div className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-4 w-full">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#23242B] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <Sparkles className="w-4 h-4 text-[#F59E0B]" />
             Career Highlights Metrics (Top of Experience Page)
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            Metric counters displayed on <code className="text-emerald-400">/experience</code> (e.g. 2+ Years, 33/11 kV, 100%, 500+).
+            Metric counters displayed on <code className="text-[#F59E0B]">/experience</code> (e.g. 2+ Years, 33/11 kV, 100%, 500+).
           </p>
         </div>
 
         <button
           type="button"
           onClick={openAdd}
-          className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 self-start sm:self-auto"
+          className="px-3.5 py-2 rounded-xl bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add New Metric</span>
@@ -126,7 +126,7 @@ export default function ExperienceMetricsManager({
 
       {/* Empty State */}
       {list.length === 0 && (
-        <div className="text-center py-8 px-4 rounded-xl border border-dashed border-[#1E2638] bg-[#0A0D12]/50 text-slate-400 text-xs">
+        <div className="text-center py-8 px-4 rounded-xl border border-dashed border-[#23242B] bg-[#06070B]/50 text-slate-400 text-xs">
           No metrics configured yet. Click &ldquo;Add New Metric&rdquo; above to create one.
         </div>
       )}
@@ -137,11 +137,11 @@ export default function ExperienceMetricsManager({
           {list.map((item, idx) => (
             <SpotlightCard
               key={idx}
-              className="bg-[#0A0D12] border border-[#1E2638] p-4 sm:p-5 rounded-xl space-y-3 group relative flex flex-col justify-between"
+              className="bg-[#06070B] border border-[#23242B] p-4 sm:p-5 rounded-xl space-y-3 group relative flex flex-col justify-between"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-black font-mono text-emerald-400">
+                  <span className="text-2xl font-black font-mono text-[#F59E0B]">
                     {item.metric}
                   </span>
                   <div className="flex items-center gap-1.5">
@@ -153,7 +153,7 @@ export default function ExperienceMetricsManager({
                     <button
                       type="button"
                       onClick={() => openEdit(idx)}
-                      className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition cursor-pointer"
+                      className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-[#F59E0B] hover:bg-[#F59E0B]/10 transition cursor-pointer"
                       title="Edit Metric"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -161,7 +161,7 @@ export default function ExperienceMetricsManager({
                     <button
                       type="button"
                       onClick={() => handleDelete(idx)}
-                      className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
+                      className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
                       title="Delete Metric"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -169,7 +169,7 @@ export default function ExperienceMetricsManager({
                   </div>
                 </div>
 
-                <p className="text-xs font-bold text-white group-hover:text-emerald-300 transition">{item.label}</p>
+                <p className="text-xs font-bold text-white group-hover:text-[#FBBF24] transition">{item.label}</p>
                 {item.subtext && <p className="text-[11px] text-slate-400 leading-relaxed">{item.subtext}</p>}
               </div>
             </SpotlightCard>
@@ -184,13 +184,13 @@ export default function ExperienceMetricsManager({
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="bg-[#111622] border border-[#1E2638] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4 relative max-h-[90vh] overflow-y-auto"
+            className="bg-[#0A0B10] border border-[#23242B] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4 relative max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#1E2638] pb-3">
+            <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <Sparkles className="w-4 h-4 text-[#F59E0B]" />
                 <span>{editingIndex >= 0 ? "Edit Metric" : "Add Experience Metric"}</span>
               </h3>
               <button
@@ -213,7 +213,7 @@ export default function ExperienceMetricsManager({
                   value={form.metric}
                   onChange={(e) => setForm({ ...form, metric: e.target.value })}
                   placeholder="e.g. 2+ Years"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -225,7 +225,7 @@ export default function ExperienceMetricsManager({
                   value={form.label}
                   onChange={(e) => setForm({ ...form, label: e.target.value })}
                   placeholder="e.g. Field Experience"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2.5 text-white outline-none"
                 />
               </div>
 
@@ -236,23 +236,23 @@ export default function ExperienceMetricsManager({
                   value={form.subtext}
                   onChange={(e) => setForm({ ...form, subtext: e.target.value })}
                   placeholder="e.g. Substation engineering & operations"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2.5 text-white outline-none"
                 />
               </div>
 
               {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#1E2638]">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#23242B]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono transition cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#23242B] text-xs font-mono transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition cursor-pointer disabled:opacity-50"
                 >
                   <Check className="w-4 h-4" />
                   <span>{saving ? "Saving..." : "Save Metric"}</span>

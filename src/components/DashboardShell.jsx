@@ -28,11 +28,13 @@ function ShellContent({ children }) {
   // 1. Loading state while checking token
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080C14] bg-dot-pattern flex flex-col items-center justify-center space-y-4">
-        <AnimatedLogo size={42} showText={false} />
-        <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 live-pulse"></span>
-          <span>Verifying Admin Console Session...</span>
+      <div className="min-h-screen bg-[#06070B] flex flex-col items-center justify-center space-y-4">
+        <div className="w-10 h-10 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] font-bold font-mono">
+          A
+        </div>
+        <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B]">
+          <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-pulse"></span>
+          <span>Verifying Admin Session...</span>
         </div>
       </div>
     );
@@ -43,32 +45,22 @@ function ShellContent({ children }) {
     return <CentralLoginPanel />;
   }
 
-  // 3. Authenticated: Render TopBar across top, Sidebar and Content below
+  // 3. Authenticated: Render Left Sidebar (248px) + Main Content with TopBar
   return (
-    <div className="min-h-screen bg-[#080C14] bg-dot-pattern text-slate-100 flex flex-col selection:bg-emerald-500/20 selection:text-emerald-300">
-      <TopBar
+    <div className="min-h-screen bg-[#06070B] text-[#F5F2EA] flex flex-col font-sans selection:bg-[#F59E0B]/20 selection:text-[#FBBF24]">
+      <Sidebar
+        mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
-        setCollapsed={setCollapsed}
-        collapsed={collapsed}
       />
 
-      <div className="flex-1 flex relative">
-        <Sidebar
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          mobileOpen={mobileOpen}
+      <div className="lg:pl-[248px] flex-1 flex flex-col min-w-0 transition-all duration-200">
+        <TopBar
           setMobileOpen={setMobileOpen}
         />
 
-        <div
-          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            collapsed ? "lg:ml-20" : "lg:ml-64"
-          }`}
-        >
-          <main className="flex-1 p-3 sm:p-5 md:p-8 max-w-7xl 2xl:max-w-[1536px] w-full mx-auto animate-fade-in overflow-x-hidden">
-            {children}
-          </main>
-        </div>
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl 2xl:max-w-[1536px] w-full mx-auto overflow-x-hidden">
+          {children}
+        </main>
       </div>
     </div>
   );

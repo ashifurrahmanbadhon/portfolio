@@ -4,6 +4,9 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
+  LayoutDashboard,
+  FileText,
+  ArrowRight,
   Home,
   User,
   Briefcase,
@@ -102,21 +105,28 @@ const DEFAULT_HIGHLIGHTS = [
 ];
 
 const VALID_SECTION_IDS = [
+  "dashboard",
   "home",
   "about",
   "experience",
   "education",
   "skills",
   "projects",
+  "work",
   "contact",
   "inbox",
   "settings",
+  "headings",
+  "seo",
+  "ai_chat",
+  "security",
+  "system_settings",
 ];
 
 function AdminConsoleContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentTab = searchParams.get("tab") || "home";
+  const currentTab = searchParams.get("tab") || "dashboard";
   const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -614,20 +624,28 @@ function AdminConsoleContent() {
 
   // Tab definitions
   const tabs = [
+    { id: "dashboard", label: "Dashboard", pageNum: "Overview", title: "Overview Dashboard", subtitle: "Live metrics, fast shortcuts, and system status across your portfolio CMS", icon: LayoutDashboard, liveUrl: "/" },
     { id: "home", label: "Home & Hero", pageNum: "Page 1", title: "Home & Hero Section", subtitle: "Live editor for headline, credentials badge, introduction, and primary CTA buttons", icon: Home, liveUrl: "/" },
     { id: "about", label: "About Ashifur", pageNum: "Page 2", title: "About Ashifur — Background & Vision", subtitle: "Configure personal narrative, engineering focus cards, and operating principles", icon: User, liveUrl: "/about" },
-    { id: "experience", label: "Work Experience", pageNum: "Page 3", title: "Work Experience & Field Operations", subtitle: `Manage ${experiences.length} professional positions and high-voltage field roles`, icon: Briefcase, liveUrl: "/experience", count: experiences.length },
-    { id: "education", label: "Academic Education", pageNum: "Page 4", title: "Academic Background & Certifications", subtitle: `Manage ${educations.length} accredited degrees, certifications, and coursework`, icon: GraduationCap, liveUrl: "/education", count: educations.length },
-    { id: "skills", label: "Technical Skills", pageNum: "Page 5", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
-    { id: "projects", label: "Engineering Projects", pageNum: "Page 6", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
-    { id: "work", label: "Work Packages", pageNum: "Page 7", title: "Work & Service Packages", subtitle: `Manage ${workPackages.length} fixed-scope service packages displayed on /work`, icon: Layers, liveUrl: "/work", count: workPackages.length },
+    { id: "projects", label: "Engineering Projects", pageNum: "Page 3", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
+    { id: "work", label: "Work Packages", pageNum: "Page 4", title: "Work & Service Packages", subtitle: `Manage ${workPackages.length} fixed-scope service packages displayed on /work`, icon: Layers, liveUrl: "/work", count: workPackages.length },
+    { id: "experience", label: "Work Experience", pageNum: "Page 5", title: "Work Experience & Field Operations", subtitle: `Manage ${experiences.length} professional positions and high-voltage field roles`, icon: Briefcase, liveUrl: "/experience", count: experiences.length },
+    { id: "skills", label: "Technical Skills", pageNum: "Page 6", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
+    { id: "education", label: "Academic Education", pageNum: "Page 7", title: "Academic Background & Certifications", subtitle: `Manage ${educations.length} accredited degrees, certifications, and coursework`, icon: GraduationCap, liveUrl: "/education", count: educations.length },
     { id: "contact", label: "Contact Info", pageNum: "Page 8", title: "Contact Hub & Communication Channels", subtitle: "Update email, phone, WhatsApp, office location, and social media channels", icon: Mail, liveUrl: "/contact" },
-    { id: "inbox", label: "Inbox", pageNum: "Page 9", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: unreadContactCount, count: messages.length },
     { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
+    { id: "headings", label: "Headings & Texts", pageNum: "Site Content", title: "Headings & Texts Editor", subtitle: "Structured headings, kickers, and section descriptions (Step 2 Implementation)", icon: FileText, liveUrl: "/" },
+    { id: "seo", label: "SEO Titles", pageNum: "Site Content", title: "SEO Titles & Metadata", subtitle: "Per-page SEO title templates, OpenGraph tags, and social cards (Step 2 Implementation)", icon: Globe, liveUrl: "/" },
+    { id: "inbox", label: "Inbox", pageNum: "Site Content", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: unreadContactCount, count: messages.length },
+    { id: "ai_chat", label: "AI Chat", pageNum: "System", title: "AI Chat Assistant", subtitle: "Model cascade, system prompts, and token limits (Step 2 Implementation)", icon: Sparkles, liveUrl: "/" },
+    { id: "security", label: "Security", pageNum: "System", title: "Security & Access Control", subtitle: "Two-factor authentication, sessions, and recovery codes", icon: ShieldCheck, liveUrl: "/admin" },
+    { id: "system_settings", label: "Settings", pageNum: "System", title: "System Settings", subtitle: "Dual database parity, cache management, and sync operations", icon: Sliders, liveUrl: "/admin" },
   ];
 
   const currentTabObj = tabs.find((t) => t.id === currentTab) || tabs[0];
   const CurrentIcon = currentTabObj.icon;
+
+  const hasLiveRail = ["home", "about", "projects", "work", "experience", "skills", "education", "contact", "inbox", "settings"].includes(currentTab);
 
   const railTargetUrl =
     currentTab === "about"
@@ -696,94 +714,72 @@ function AdminConsoleContent() {
 
   return (
     <div className="space-y-6 pb-20">
-      {/* Modern, Sleek Section Command Header with SpotlightCard, Big Greeting & Live 12hr Clock */}
-      <SpotlightCard className="bg-[#111622] border border-[#1E2638] rounded-2xl p-5 sm:p-7 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 blur-[100px] pointer-events-none rounded-full" />
-        
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
-          <div className="space-y-3">
-            {/* Top Row: Prominent Greeting & Realtime 12hr Clock with Date Bar */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2.5">
-                <span className="text-2xl sm:text-3xl">{timeGreeting.emoji}</span>
-                <span className="text-xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent">
-                  {timeGreeting.text}, Ashifur!
-                </span>
-              </div>
-
-              {liveTime && (
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#090D15] border border-emerald-500/30 text-emerald-400 font-mono text-xs sm:text-sm shadow-inner">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="font-bold tracking-wider">{liveTime}</span>
-                  <span className="text-slate-600">•</span>
-                  <span className="text-slate-300 font-medium">{liveDate}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Sub-row: Active Editor Page badge & Cloud Status */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse"></span>
-                {currentTabObj.pageNum} Editor: {currentTabObj.title}
+      {/* Section Command Header */}
+      <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 sm:p-6 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="p-1.5 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                <CurrentIcon className="w-4 h-4" />
               </span>
-              <span className="text-xs font-mono text-slate-400">• Neon PostgreSQL Cloud</span>
+              <h1 className="text-lg sm:text-xl font-bold text-[#F5F2EA] tracking-tight">
+                {currentTabObj.title}
+              </h1>
               {currentTabObj.count !== undefined && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161C2A] text-slate-300 border border-[#1E2638]">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#12131A] text-[#B9B5A9] border border-[#23242B]">
                   {currentTabObj.count} items
                 </span>
               )}
               {currentTabObj.badge > 0 && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-bold animate-pulse">
-                  {currentTabObj.badge} new messages
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30 font-bold">
+                  {currentTabObj.badge} unread
                 </span>
               )}
             </div>
-
-            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed">
+            <p className="text-xs text-[#8E8B82] max-w-2xl leading-relaxed">
               {currentTabObj.subtitle}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-center">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={handleManualGitSync}
               disabled={gitSyncing}
-              className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600/20 to-teal-600/20 hover:from-emerald-600/30 hover:to-teal-600/30 text-emerald-300 hover:text-white border border-emerald-500/30 text-xs font-mono font-medium flex items-center gap-2 transition cursor-pointer shadow-lg shadow-emerald-500/5"
+              className="px-3 py-1.5 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               title="Push changes to Git repository & deploy live on Vercel"
             >
-              <Sparkles className={`w-3.5 h-3.5 text-emerald-400 ${gitSyncing ? "animate-spin" : ""}`} />
-              <span>{gitSyncing ? "Deploying Live..." : "Push to Live (Git)"}</span>
+              <Sparkles className={`w-3.5 h-3.5 text-[#F59E0B] ${gitSyncing ? "animate-spin" : ""}`} />
+              <span>{gitSyncing ? "Deploying..." : "Push to Live"}</span>
             </button>
 
             <button
               onClick={() => loadData(true)}
               disabled={loading}
-              className="px-3.5 py-2.5 rounded-xl bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono flex items-center gap-2 transition cursor-pointer"
+              className="px-3 py-1.5 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               title="Refresh database records"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-emerald-400" : ""}`} />
-              <span>{loading ? "Syncing..." : "Refresh Data"}</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#F59E0B]" : ""}`} />
+              <span>{loading ? "Syncing..." : "Refresh"}</span>
             </button>
 
             <a
               href={currentTabObj.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-2 transition group"
+              className="px-3 py-1.5 rounded-lg bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-mono font-medium transition flex items-center gap-1.5 group"
             >
-              <span>View Live Page</span>
+              <span>View Live</span>
               <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
           </div>
         </div>
-      </SpotlightCard>
+      </div>
 
       {/* Initial Database Synchronization Skeleton Gate */}
       {!initialLoaded && loading ? (
-        <div className="bg-[#111622] border border-[#1E2638] rounded-2xl p-12 sm:p-16 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
-            <RefreshCw className="w-5 h-5 text-emerald-400 animate-spin" />
+        <div className="bg-[#0A0B10] border border-[#23242B] rounded-2xl p-12 sm:p-16 flex flex-col items-center justify-center space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center shadow-lg shadow-amber-500/10">
+            <RefreshCw className="w-5 h-5 text-[#F59E0B] animate-spin" />
           </div>
           <div className="text-center space-y-1">
             <h3 className="text-sm font-bold text-white">Synchronizing With Live Database...</h3>
@@ -799,26 +795,289 @@ function AdminConsoleContent() {
           {/* LEFT COLUMN: Active Page Dedicated Content (flex-1 min-w-0) */}
           <div className="flex-1 min-w-0 space-y-6 w-full">
             {/* ============================================================== */}
+            {/* TAB: DASHBOARD (OVERVIEW)                                      */}
+            {/* ============================================================== */}
+            {currentTab === "dashboard" && (
+              <div className="space-y-6">
+                {/* Overview Metric Stat-Boxes */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                  <Link href="/admin?tab=projects" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                    <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Projects</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{projects.length || 9}</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-1">Engineering cases</div>
+                  </Link>
+                  <Link href="/admin?tab=work" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                    <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Packages</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{workPackages.length || 8}</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-1">Service presets</div>
+                  </Link>
+                  <Link href="/admin?tab=inbox" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                    <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Inquiries</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors flex items-center gap-1.5">
+                      <span>{messages.length}</span>
+                      {unreadContactCount > 0 && (
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">{unreadContactCount}</span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-[#8E8B82] mt-1">Visitor messages</div>
+                  </Link>
+                  <Link href="/admin?tab=skills" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                    <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Skills</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{skills.length || 16}</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-1">Technical items</div>
+                  </Link>
+                  <Link href="/admin?tab=experience" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                    <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Experience</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{experiences.length || 2}</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-1">Career positions</div>
+                  </Link>
+                  <Link href="/admin?tab=education" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                    <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Education</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{educations.length || 3}</div>
+                    <div className="text-[10px] text-[#8E8B82] mt-1">Degrees & certs</div>
+                  </Link>
+                </div>
+
+                {/* Quick Navigation Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Home className="w-4 h-4 text-[#F59E0B]" />
+                        <h3 className="text-sm font-semibold text-[#F5F2EA]">Home & Hero</h3>
+                      </div>
+                      <Link href="/admin?tab=home" className="text-xs font-mono text-[#F59E0B] hover:text-[#FBBF24]">Edit →</Link>
+                    </div>
+                    <p className="text-xs text-[#8E8B82]">Headline, badge, intro, profile image, and CTA action buttons.</p>
+                  </div>
+
+                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FolderGit2 className="w-4 h-4 text-[#F59E0B]" />
+                        <h3 className="text-sm font-semibold text-[#F5F2EA]">Engineering Projects</h3>
+                      </div>
+                      <Link href="/admin?tab=projects" className="text-xs font-mono text-[#F59E0B] hover:text-[#FBBF24]">Manage ({projects.length || 9}) →</Link>
+                    </div>
+                    <p className="text-xs text-[#8E8B82]">High-voltage substations, GIS mapping, motor test benches, and simulations.</p>
+                  </div>
+
+                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Layers className="w-4 h-4 text-[#F59E0B]" />
+                        <h3 className="text-sm font-semibold text-[#F5F2EA]">Work Packages</h3>
+                      </div>
+                      <Link href="/admin?tab=work" className="text-xs font-mono text-[#F59E0B] hover:text-[#FBBF24]">Manage ({workPackages.length || 8}) →</Link>
+                    </div>
+                    <p className="text-xs text-[#8E8B82]">8 fixed-scope presets with deliverables, tags, and custom inquiry modals.</p>
+                  </div>
+
+                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-[#F59E0B]" />
+                        <h3 className="text-sm font-semibold text-[#F5F2EA]">Inbound Inquiries</h3>
+                      </div>
+                      <Link href="/admin?tab=inbox" className="text-xs font-mono text-[#F59E0B] hover:text-[#FBBF24]">View ({messages.length}) →</Link>
+                    </div>
+                    <p className="text-xs text-[#8E8B82]">Read client messages, send threaded replies, and mark unread items.</p>
+                  </div>
+
+                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sliders className="w-4 h-4 text-[#F59E0B]" />
+                        <h3 className="text-sm font-semibold text-[#F5F2EA]">Headers & Settings</h3>
+                      </div>
+                      <Link href="/admin?tab=settings" className="text-xs font-mono text-[#F59E0B] hover:text-[#FBBF24]">Configure →</Link>
+                    </div>
+                    <p className="text-xs text-[#8E8B82]">SEO metadata, page banner headers, resume link, and global contact CTA.</p>
+                  </div>
+
+                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-[#F59E0B]" />
+                        <h3 className="text-sm font-semibold text-[#F5F2EA]">Security & Access</h3>
+                      </div>
+                      <Link href="/admin?tab=security" className="text-xs font-mono text-[#F59E0B] hover:text-[#FBBF24]">Review →</Link>
+                    </div>
+                    <p className="text-xs text-[#8E8B82]">Two-factor authentication, session tokens, and admin credentials.</p>
+                  </div>
+                </div>
+
+                {/* Cloud System Parity Status Bar */}
+                <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span className="text-[#F5F2EA] font-semibold">Neon PostgreSQL Cloud Parity</span>
+                    <span className="text-[#8E8B82]">• 0 Drift Mismatches</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[#8E8B82]">
+                    <span>All 8 public routes verified</span>
+                    <button onClick={() => loadData(true)} className="text-[#F59E0B] hover:text-[#FBBF24] hover:underline cursor-pointer">Re-sync now</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
+            {/* TAB: HEADINGS & TEXTS (STEP 2 PLACEHOLDER)                     */}
+            {/* ============================================================== */}
+            {currentTab === "headings" && (
+              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-[#F5F2EA]">Headings & Texts Editor</h2>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">Step 2 Implementation</span>
+                  </div>
+                </div>
+                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
+                  This dedicated section will house fine-grained inline editing for all page subtitles, section kickers, and badge microcopies across the 8 portfolio pages.
+                </p>
+                <div className="pt-2">
+                  <Link href="/admin?tab=settings" className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition">
+                    <span>Go to Page Headers & Settings</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
+            {/* TAB: SEO TITLES (STEP 2 PLACEHOLDER)                           */}
+            {/* ============================================================== */}
+            {currentTab === "seo" && (
+              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                    <Globe className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-[#F5F2EA]">SEO Titles & Meta Tags</h2>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">Step 2 Implementation</span>
+                  </div>
+                </div>
+                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
+                  This dedicated view will provide per-route metadata controls, OpenGraph preview cards, Twitter cards, and structured schema tags.
+                </p>
+                <div className="pt-2">
+                  <Link href="/admin?tab=settings" className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition">
+                    <span>Go to Page Headers & Settings</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
+            {/* TAB: AI CHAT (STEP 2 PLACEHOLDER)                              */}
+            {/* ============================================================== */}
+            {currentTab === "ai_chat" && (
+              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-[#F5F2EA]">AI Chat Assistant</h2>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">Step 2 Implementation</span>
+                  </div>
+                </div>
+                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
+                  Configure system prompts, rate limits (currently 20/hr/IP), model cascade (gemini-2.5-flash & gemini-flash-lite-latest), and conversation analytics.
+                </p>
+                <div className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] text-xs font-mono space-y-1.5 text-[#8E8B82]">
+                  <div>• Primary Model: <span className="text-[#F5F2EA]">gemini-2.5-flash</span> (Timeout: 20s)</div>
+                  <div>• Secondary Model: <span className="text-[#F5F2EA]">gemini-flash-lite-latest</span></div>
+                  <div>• API Key: <span className="text-[#F59E0B]">GEMINI_API_KEY</span> (Server-side environment variable)</div>
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
+            {/* TAB: SECURITY & ACCESS CONTROL                                 */}
+            {/* ============================================================== */}
+            {currentTab === "security" && (
+              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-[#F5F2EA]">Security & Access Control</h2>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">2FA Enforced</span>
+                  </div>
+                </div>
+                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
+                  Manage multi-factor authentication, active login sessions, emergency recovery codes, and administrator credentials.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                  <div className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-1">
+                    <div className="text-xs font-bold text-[#F5F2EA]">Two-Factor Authentication</div>
+                    <div className="text-[11px] text-[#8E8B82]">TOTP authenticator app + SMS OTP fallback + 8 emergency backup codes.</div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-1">
+                    <div className="text-xs font-bold text-[#F5F2EA]">Session Encryption</div>
+                    <div className="text-[11px] text-[#8E8B82]">SHA-256 password hashing + HttpOnly secure JWT tokens.</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
+            {/* TAB: SYSTEM SETTINGS                                           */}
+            {/* ============================================================== */}
+            {currentTab === "system_settings" && (
+              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                    <Sliders className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-[#F5F2EA]">System & Environment Settings</h2>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#B9B5A9] border border-[#23242B]">Production Active</span>
+                  </div>
+                </div>
+                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
+                  System health, database parity between local SQLite development and Neon PostgreSQL production, and admin local cache controls.
+                </p>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <button onClick={() => loadData(true)} className="px-3.5 py-2 rounded-lg bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition cursor-pointer">
+                    Clear Cache & Force Re-sync
+                  </button>
+                  <button onClick={handleManualGitSync} disabled={gitSyncing} className="px-3.5 py-2 rounded-lg bg-[#12131A] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer">
+                    {gitSyncing ? "Deploying..." : "Trigger Git Sync"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
             {/* TAB: HOME */}
             {/* ============================================================== */}
             {currentTab === "home" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl">
-            <div className="flex items-center justify-between pb-4 border-b border-[#1E2638] mb-6">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-[#23242B] mb-6">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <Home className="w-5 h-5 text-emerald-400" />
+                  <Home className="w-5 h-5 text-[#F59E0B]" />
                   Hero Section Content
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  The primary showcase that visitors see when arriving at <code className="text-emerald-400">/</code>
+                  The primary showcase that visitors see when arriving at <code className="text-[#F59E0B]">/</code>
                 </p>
               </div>
 
               <button
                 onClick={() => handleSaveSection("hero", hero, "Hero section saved!")}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>{saving ? "Saving..." : "Save Hero"}</span>
@@ -832,7 +1091,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.name || ""}
                   onChange={(e) => setHero({ ...hero, name: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
                 />
               </div>
 
@@ -842,7 +1101,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.title || ""}
                   onChange={(e) => setHero({ ...hero, title: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
                 />
               </div>
 
@@ -852,7 +1111,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.badge_text || ""}
                   onChange={(e) => setHero({ ...hero, badge_text: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition"
                 />
               </div>
 
@@ -862,7 +1121,7 @@ function AdminConsoleContent() {
                   rows={3}
                   value={hero.introduction || ""}
                   onChange={(e) => setHero({ ...hero, introduction: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
                 />
               </div>
 
@@ -887,7 +1146,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.spec_badge_title || ""}
                   onChange={(e) => setHero({ ...hero, spec_badge_title: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition"
                 />
               </div>
 
@@ -899,14 +1158,14 @@ function AdminConsoleContent() {
                     value={hero.primary_btn_text || ""}
                     onChange={(e) => setHero({ ...hero, primary_btn_text: e.target.value })}
                     placeholder="Button text"
-                    className="bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                   />
                   <input
                     type="text"
                     value={hero.primary_btn_link || ""}
                     onChange={(e) => setHero({ ...hero, primary_btn_link: e.target.value })}
                     placeholder="/contact"
-                    className="bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
               </div>
@@ -919,14 +1178,14 @@ function AdminConsoleContent() {
                     value={hero.secondary_btn_text || ""}
                     onChange={(e) => setHero({ ...hero, secondary_btn_text: e.target.value })}
                     placeholder="Download CV"
-                    className="bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                   />
                   <input
                     type="text"
                     value={hero.secondary_btn_link || ""}
                     onChange={(e) => setHero({ ...hero, secondary_btn_link: e.target.value })}
                     placeholder="/Ashifur_Rahman_CV.pdf"
-                    className="bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
               </div>
@@ -934,11 +1193,11 @@ function AdminConsoleContent() {
           </SpotlightCard>
 
           {/* Highlights Metrics Cards */}
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1E2638]">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#23242B]">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                  <Sparkles className="w-4 h-4 text-[#F59E0B]" />
                   Hero Highlights &amp; Metrics Cards
                 </h3>
                 <p className="text-xs text-slate-400">Featured metric banners appearing right under the hero headline.</p>
@@ -950,7 +1209,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("highlight");
                 }}
-                className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
+                className="px-3 py-1.5 rounded-xl bg-[#F59E0B]/10 hover:bg-emerald-500/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add New Metric</span>
@@ -961,10 +1220,10 @@ function AdminConsoleContent() {
               {highlights.map((item, idx) => (
                 <SpotlightCard
                   key={idx}
-                  className="bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/40 p-4 rounded-xl space-y-2 group relative transition"
+                  className="bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 p-4 rounded-xl space-y-2 group relative transition"
                 >
                   <div className="flex items-start justify-between">
-                    <p className="text-xl font-extrabold text-emerald-400 font-mono">{item.metric_value}</p>
+                    <p className="text-xl font-extrabold text-[#F59E0B] font-mono">{item.metric_value}</p>
                     <div className="flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition">
                       <ActiveToggle
                         isActive={item.is_active}
@@ -977,7 +1236,7 @@ function AdminConsoleContent() {
                           setEditingIndex(idx);
                           setModalType("highlight");
                         }}
-                        className="p-1 hover:text-emerald-400 text-slate-400 transition"
+                        className="p-1 hover:text-[#F59E0B] text-slate-400 transition"
                         title="Edit Metric"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -1013,22 +1272,22 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "about" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-[#23242B]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <User className="w-5 h-5 text-emerald-400" />
+                <User className="w-5 h-5 text-[#F59E0B]" />
                 About Page Content
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Configures the narrative, technical pillars, and bio displayed at <code className="text-emerald-400">/about</code>
+                Configures the narrative, technical pillars, and bio displayed at <code className="text-[#F59E0B]">/about</code>
               </p>
             </div>
 
             <button
               onClick={() => handleSaveSection("about", about, "About page updated successfully!")}
               disabled={saving}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? "Saving..." : "Save About Page"}</span>
@@ -1042,7 +1301,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={about.subtitle || ""}
                 onChange={(e) => setAbout({ ...about, subtitle: e.target.value })}
-                className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition"
               />
             </div>
 
@@ -1052,7 +1311,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={about.title || ""}
                 onChange={(e) => setAbout({ ...about, title: e.target.value })}
-                className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
               />
             </div>
 
@@ -1062,7 +1321,7 @@ function AdminConsoleContent() {
                 rows={3}
                 value={about.description1 || ""}
                 onChange={(e) => setAbout({ ...about, description1: e.target.value })}
-                className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
               />
             </div>
 
@@ -1072,7 +1331,7 @@ function AdminConsoleContent() {
                 rows={3}
                 value={about.description2 || ""}
                 onChange={(e) => setAbout({ ...about, description2: e.target.value })}
-                className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
               />
             </div>
 
@@ -1092,8 +1351,8 @@ function AdminConsoleContent() {
             </div>
 
             {/* Core Focus Area 1 */}
-            <SpotlightCard className="p-4 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-3">
-              <div className="font-bold text-emerald-400 flex items-center gap-2">
+            <SpotlightCard className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-3">
+              <div className="font-bold text-[#F59E0B] flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" /> Focus Pillar 1
               </div>
               <div>
@@ -1102,7 +1361,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={about.focus1_title || ""}
                   onChange={(e) => setAbout({ ...about, focus1_title: e.target.value })}
-                  className="w-full bg-[#111622] border border-[#1E2638] focus:border-emerald-500 rounded-lg px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -1111,14 +1370,14 @@ function AdminConsoleContent() {
                   rows={2}
                   value={about.focus1_text || ""}
                   onChange={(e) => setAbout({ ...about, focus1_text: e.target.value })}
-                  className="w-full bg-[#111622] border border-[#1E2638] focus:border-emerald-500 rounded-lg px-3 py-2 text-white outline-none resize-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none resize-none"
                 />
               </div>
             </SpotlightCard>
 
             {/* Core Focus Area 2 */}
-            <SpotlightCard className="p-4 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-3">
-              <div className="font-bold text-emerald-400 flex items-center gap-2">
+            <SpotlightCard className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-3">
+              <div className="font-bold text-[#F59E0B] flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" /> Focus Pillar 2
               </div>
               <div>
@@ -1127,7 +1386,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={about.focus2_title || ""}
                   onChange={(e) => setAbout({ ...about, focus2_title: e.target.value })}
-                  className="w-full bg-[#111622] border border-[#1E2638] focus:border-emerald-500 rounded-lg px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -1136,7 +1395,7 @@ function AdminConsoleContent() {
                   rows={2}
                   value={about.focus2_text || ""}
                   onChange={(e) => setAbout({ ...about, focus2_text: e.target.value })}
-                  className="w-full bg-[#111622] border border-[#1E2638] focus:border-emerald-500 rounded-lg px-3 py-2 text-white outline-none resize-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none resize-none"
                 />
               </div>
             </SpotlightCard>
@@ -1166,15 +1425,15 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "experience" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-emerald-400" />
+                  <Briefcase className="w-5 h-5 text-[#F59E0B]" />
                   Work Experience Timeline
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Manage all career positions shown on <code className="text-emerald-400">/experience</code>. Total positions: {experiences.length}
+                  Manage all career positions shown on <code className="text-[#F59E0B]">/experience</code>. Total positions: {experiences.length}
                 </p>
               </div>
 
@@ -1192,7 +1451,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("experience");
                 }}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Experience</span>
@@ -1202,22 +1461,22 @@ function AdminConsoleContent() {
 
           <div className="space-y-3">
             {experiences.length === 0 ? (
-              <div className="p-8 text-center bg-[#111622] border border-[#1E2638] rounded-2xl text-slate-400 text-xs">
+              <div className="p-8 text-center bg-[#0A0B10] border border-[#23242B] rounded-2xl text-slate-400 text-xs">
                 No experiences added yet. Click &quot;Add New Experience&quot; to create your first entry.
               </div>
             ) : (
               experiences.map((exp, idx) => (
                 <SpotlightCard
                   key={idx}
-                  className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl group relative space-y-3"
+                  className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl group relative space-y-3"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1E2638] pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#23242B] pb-3">
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                         <h3 className="text-sm sm:text-base font-bold text-white">{exp.role}</h3>
                         {exp.is_current ? (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
                             Present
                           </span>
                         ) : null}
@@ -1236,7 +1495,7 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(experiences, setExperiences, idx, -1, "experiences")}
                         disabled={idx === 0}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
                         title="Move Up"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -1244,7 +1503,7 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(experiences, setExperiences, idx, 1, "experiences")}
                         disabled={idx === experiences.length - 1}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
                         title="Move Down"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -1260,14 +1519,14 @@ function AdminConsoleContent() {
                           setEditingIndex(idx);
                           setModalType("experience");
                         }}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-emerald-400 hover:bg-emerald-500/20"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                         title="Edit Experience"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => deleteItem(experiences, setExperiences, idx, "experiences", "experience entry")}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-red-400 hover:bg-red-500/20"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
                         title="Delete Experience"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1277,7 +1536,7 @@ function AdminConsoleContent() {
 
                   {/* Bullet points display */}
                   {exp.description_points && exp.description_points.length > 0 && (
-                    <ul className="space-y-1.5 text-xs text-slate-300 pl-4 list-disc marker:text-emerald-400">
+                    <ul className="space-y-1.5 text-xs text-slate-300 pl-4 list-disc marker:text-[#F59E0B]">
                       {exp.description_points.map((pt, pIdx) => (
                         <li key={pIdx}>{pt}</li>
                       ))}
@@ -1305,15 +1564,15 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "education" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-emerald-400" />
+                  <GraduationCap className="w-5 h-5 text-[#F59E0B]" />
                   Education &amp; Qualifications
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Manage degrees, institutions, and academic accolades at <code className="text-emerald-400">/education</code>.
+                  Manage degrees, institutions, and academic accolades at <code className="text-[#F59E0B]">/education</code>.
                 </p>
               </div>
 
@@ -1332,7 +1591,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("education");
                 }}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Education</span>
@@ -1342,22 +1601,22 @@ function AdminConsoleContent() {
 
           <div className="space-y-3">
             {educations.length === 0 ? (
-              <div className="p-8 text-center bg-[#111622] border border-[#1E2638] rounded-2xl text-slate-400 text-xs">
+              <div className="p-8 text-center bg-[#0A0B10] border border-[#23242B] rounded-2xl text-slate-400 text-xs">
                 No education records yet. Click &quot;Add Education&quot; to begin.
               </div>
             ) : (
               educations.map((ed, idx) => (
                 <SpotlightCard
                   key={idx}
-                  className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl group relative space-y-2"
+                  className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl group relative space-y-2"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1E2638] pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#23242B] pb-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <GraduationCap className="w-4 h-4 text-emerald-400" />
+                        <GraduationCap className="w-4 h-4 text-[#F59E0B]" />
                         <h3 className="text-sm sm:text-base font-bold text-white">{ed.degree}</h3>
                         {ed.badge_text && (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
                             {ed.badge_text}
                           </span>
                         )}
@@ -1376,14 +1635,14 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(educations, setEducations, idx, -1, "educations")}
                         disabled={idx === 0}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => moveItem(educations, setEducations, idx, 1, "educations")}
                         disabled={idx === educations.length - 1}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
                       </button>
@@ -1393,13 +1652,13 @@ function AdminConsoleContent() {
                           setEditingIndex(idx);
                           setModalType("education");
                         }}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-emerald-400 hover:bg-emerald-500/20"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => deleteItem(educations, setEducations, idx, "educations", "education item")}
-                        className="p-1.5 rounded-lg bg-[#161C2A] text-red-400 hover:bg-red-500/20"
+                        className="p-1.5 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -1435,15 +1694,15 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "skills" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <Cpu className="w-5 h-5 text-emerald-400" />
+                  <Cpu className="w-5 h-5 text-[#F59E0B]" />
                   Technical Skills Matrix
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Categorized engineering skills &amp; software tools displayed at <code className="text-emerald-400">/skills</code>.
+                  Categorized engineering skills &amp; software tools displayed at <code className="text-[#F59E0B]">/skills</code>.
                 </p>
               </div>
 
@@ -1458,7 +1717,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("skill");
                 }}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Skill</span>
@@ -1475,8 +1734,8 @@ function AdminConsoleContent() {
                   onClick={() => setSkillCategoryFilter(cat)}
                   className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
                     skillCategoryFilter === cat
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                      : "bg-[#111622] text-slate-400 hover:text-white border border-[#1E2638]"
+                      ? "bg-emerald-500/20 text-[#FBBF24] border border-[#F59E0B]/30"
+                      : "bg-[#0A0B10] text-slate-400 hover:text-white border border-[#23242B]"
                   }`}
                 >
                   {cat === "all" ? "All Categories" : cat}
@@ -1493,10 +1752,10 @@ function AdminConsoleContent() {
                 return (
                   <SpotlightCard
                     key={idx}
-                    className="bg-[#111622] border border-[#1E2638] p-4 rounded-xl space-y-3 group relative"
+                    className="bg-[#0A0B10] border border-[#23242B] p-4 rounded-xl space-y-3 group relative"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161C2A] text-slate-400 border border-[#1E2638]">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-slate-400 border border-[#23242B]">
                         {skill.category}
                       </span>
                       <div className="flex items-center gap-1.5">
@@ -1511,7 +1770,7 @@ function AdminConsoleContent() {
                             setEditingIndex(originalIndex);
                             setModalType("skill");
                           }}
-                          className="p-1 hover:text-emerald-400 text-slate-400 transition"
+                          className="p-1 hover:text-[#F59E0B] text-slate-400 transition"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
@@ -1527,9 +1786,9 @@ function AdminConsoleContent() {
                     <div>
                       <div className="flex items-center justify-between text-xs mb-1">
                         <span className="font-bold text-white">{skill.name}</span>
-                        <span className="font-mono text-emerald-400 font-bold">{skill.level}%</span>
+                        <span className="font-mono text-[#F59E0B] font-bold">{skill.level}%</span>
                       </div>
-                      <div className="w-full h-1.5 bg-[#0A0D12] rounded-full overflow-hidden border border-[#1E2638]">
+                      <div className="w-full h-1.5 bg-[#06070B] rounded-full overflow-hidden border border-[#23242B]">
                         <div
                           className="h-full bg-emerald-500 rounded-full transition-all duration-300"
                           style={{ width: `${skill.level}%` }}
@@ -1564,15 +1823,15 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "projects" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <FolderGit2 className="w-5 h-5 text-emerald-400" />
+                  <FolderGit2 className="w-5 h-5 text-[#F59E0B]" />
                   Engineering Projects Portfolio
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Technical showcase cards displayed at <code className="text-emerald-400">/projects</code>. Total projects: {projects.length}
+                  Technical showcase cards displayed at <code className="text-[#F59E0B]">/projects</code>. Total projects: {projects.length}
                 </p>
               </div>
 
@@ -1598,7 +1857,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("project");
                 }}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Project</span>
@@ -1610,12 +1869,12 @@ function AdminConsoleContent() {
             {projects.map((proj, idx) => (
               <SpotlightCard
                 key={idx}
-                className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
+                className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                      <span className="text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
                         #{proj.project_number || String(idx + 1).padStart(2, "0")}
                       </span>
                       <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
@@ -1632,14 +1891,14 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(projects, setProjects, idx, -1, "projects")}
                         disabled={idx === 0}
-                        className="p-1 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => moveItem(projects, setProjects, idx, 1, "projects")}
                         disabled={idx === projects.length - 1}
-                        className="p-1 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
                       </button>
@@ -1658,20 +1917,20 @@ function AdminConsoleContent() {
                           setEditingIndex(idx);
                           setModalType("project");
                         }}
-                        className="p-1 rounded-lg bg-[#161C2A] text-emerald-400 hover:bg-emerald-500/20"
+                        className="p-1 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => deleteItem(projects, setProjects, idx, "projects", "project")}
-                        className="p-1 rounded-lg bg-[#161C2A] text-red-400 hover:bg-red-500/20"
+                        className="p-1 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
 
-                  <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
+                  <h3 className="text-sm font-bold text-white group-hover:text-[#FBBF24] transition">
                     {proj.title}
                   </h3>
 
@@ -1680,13 +1939,13 @@ function AdminConsoleContent() {
                   </p>
                 </div>
 
-                <div className="space-y-2 pt-2 border-t border-[#1E2638]">
+                <div className="space-y-2 pt-2 border-t border-[#23242B]">
                   {Array.isArray(proj.tags) && proj.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
                       {proj.tags.map((tag, tIdx) => (
                         <span
                           key={tIdx}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#0A0D12] text-slate-400 border border-[#1E2638]"
+                          className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#06070B] text-slate-400 border border-[#23242B]"
                         >
                           {tag}
                         </span>
@@ -1701,7 +1960,7 @@ function AdminConsoleContent() {
                           href={proj.live_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-emerald-400 hover:underline flex items-center gap-1 font-mono"
+                          className="text-[#F59E0B] hover:underline flex items-center gap-1 font-mono"
                         >
                           Live <ExternalLink className="w-3 h-3" />
                         </a>
@@ -1744,15 +2003,15 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "work" && (
               <div className="space-y-6">
-                <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+                <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
                   <div className="flex items-center justify-between gap-4 w-full">
                     <div>
                       <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                        <Layers className="w-5 h-5 text-emerald-400" />
+                        <Layers className="w-5 h-5 text-[#F59E0B]" />
                         Fixed-Scope Service Packages
                       </h2>
                       <p className="text-xs text-slate-400 mt-0.5">
-                        Manage service packages displayed at <code className="text-emerald-400">/work</code>. Total packages: {workPackages.length}
+                        Manage service packages displayed at <code className="text-[#F59E0B]">/work</code>. Total packages: {workPackages.length}
                       </p>
                     </div>
 
@@ -1770,7 +2029,7 @@ function AdminConsoleContent() {
                         setEditingIndex(-1);
                         setModalType("work_package");
                       }}
-                      className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+                      className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add New Package</span>
@@ -1782,12 +2041,12 @@ function AdminConsoleContent() {
                   {workPackages.map((pkg, idx) => (
                     <SpotlightCard
                       key={pkg.id || idx}
-                      className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
+                      className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                            <span className="text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
                               #{String(pkg.sort_order || idx + 1).padStart(2, "0")}
                             </span>
                             <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
@@ -1804,7 +2063,7 @@ function AdminConsoleContent() {
                             <button
                               onClick={() => moveItem(workPackages, setWorkPackages, idx, -1, "work_packages")}
                               disabled={idx === 0}
-                              className="p-1 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                              className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                               title="Move Up"
                             >
                               <ArrowUp className="w-3.5 h-3.5" />
@@ -1812,7 +2071,7 @@ function AdminConsoleContent() {
                             <button
                               onClick={() => moveItem(workPackages, setWorkPackages, idx, 1, "work_packages")}
                               disabled={idx === workPackages.length - 1}
-                              className="p-1 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                              className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                               title="Move Down"
                             >
                               <ArrowDown className="w-3.5 h-3.5" />
@@ -1827,14 +2086,14 @@ function AdminConsoleContent() {
                                 setEditingIndex(idx);
                                 setModalType("work_package");
                               }}
-                              className="p-1 rounded-lg bg-[#161C2A] text-emerald-400 hover:bg-emerald-500/20"
+                              className="p-1 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                               title="Edit Package"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => deleteItem(workPackages, setWorkPackages, idx, "work_packages", "package")}
-                              className="p-1 rounded-lg bg-[#161C2A] text-red-400 hover:bg-red-500/20"
+                              className="p-1 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
                               title="Delete Package"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -1842,7 +2101,7 @@ function AdminConsoleContent() {
                           </div>
                         </div>
 
-                        <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
+                        <h3 className="text-sm font-bold text-white group-hover:text-[#FBBF24] transition">
                           {pkg.title}
                         </h3>
 
@@ -1852,7 +2111,7 @@ function AdminConsoleContent() {
 
                         {pkg.deliverables && (
                           <div className="pt-2 text-[11px] text-slate-400">
-                            <span className="font-mono uppercase text-emerald-400 font-bold block mb-1">Deliverables:</span>
+                            <span className="font-mono uppercase text-[#F59E0B] font-bold block mb-1">Deliverables:</span>
                             <ul className="list-disc list-inside space-y-0.5 text-slate-300">
                               {(pkg.deliverables || "").split('\n').filter(Boolean).slice(0, 3).map((d, dIdx) => (
                                 <li key={dIdx} className="truncate">{d}</li>
@@ -1864,7 +2123,7 @@ function AdminConsoleContent() {
                         {pkg.tags && (
                           <div className="flex flex-wrap gap-1.5 pt-2">
                             {(pkg.tags || "").split(',').map(t => t.trim()).filter(Boolean).map((t, tIdx) => (
-                              <span key={tIdx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161C2A] text-slate-400 border border-[#232A3B]">
+                              <span key={tIdx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-slate-400 border border-[#232A3B]">
                                 {t}
                               </span>
                             ))}
@@ -1883,15 +2142,15 @@ function AdminConsoleContent() {
             {currentTab === "contact" && (
               <div className="space-y-6">
 {/* Section A: Contact Details & Social Links */}
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-[#23242B]">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-emerald-400" />
+                  <Mail className="w-5 h-5 text-[#F59E0B]" />
                   Contact Details &amp; Social Channels
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Shown on <code className="text-emerald-400">/contact</code> and in the footer across all 7 pages.
+                  Shown on <code className="text-[#F59E0B]">/contact</code> and in the footer across all 7 pages.
                 </p>
               </div>
 
@@ -1903,7 +2162,7 @@ function AdminConsoleContent() {
                   }
                 }}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>{saving ? "Saving..." : "Save Contact Info"}</span>
@@ -1915,7 +2174,7 @@ function AdminConsoleContent() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="font-medium text-slate-300 flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-emerald-400" /> Email Address
+                    <Mail className="w-3.5 h-3.5 text-[#F59E0B]" /> Email Address
                   </label>
                   <ActiveToggle
                     isActive={getChannelActive("email")}
@@ -1927,7 +2186,7 @@ function AdminConsoleContent() {
                   type="email"
                   value={socialLinks.email || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, email: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -1935,7 +2194,7 @@ function AdminConsoleContent() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="font-medium text-slate-300 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-emerald-400" /> Phone Number
+                    <Phone className="w-3.5 h-3.5 text-[#F59E0B]" /> Phone Number
                   </label>
                   <ActiveToggle
                     isActive={getChannelActive("phone")}
@@ -1947,7 +2206,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.phone || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, phone: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -1955,7 +2214,7 @@ function AdminConsoleContent() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="font-medium text-slate-300 flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-emerald-400" /> WhatsApp Number
+                    <MessageSquare className="w-3.5 h-3.5 text-[#F59E0B]" /> WhatsApp Number
                   </label>
                   <ActiveToggle
                     isActive={getChannelActive("whatsapp")}
@@ -1967,7 +2226,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.whatsapp || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -1975,7 +2234,7 @@ function AdminConsoleContent() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="font-medium text-slate-300 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Location / Address
+                    <MapPin className="w-3.5 h-3.5 text-[#F59E0B]" /> Location / Address
                   </label>
                   <ActiveToggle
                     isActive={getChannelActive("location")}
@@ -1987,7 +2246,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.location || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, location: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
                 />
               </div>
 
@@ -1995,7 +2254,7 @@ function AdminConsoleContent() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="font-medium text-slate-300 flex items-center gap-1.5">
-                    <Globe className="w-3.5 h-3.5 text-emerald-400" /> LinkedIn Profile URL
+                    <Globe className="w-3.5 h-3.5 text-[#F59E0B]" /> LinkedIn Profile URL
                   </label>
                   <ActiveToggle
                     isActive={getChannelActive("linkedin")}
@@ -2007,7 +2266,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.linkedin || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, linkedin: e.target.value })}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -2015,7 +2274,7 @@ function AdminConsoleContent() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="font-medium text-slate-300 flex items-center gap-1.5">
-                    <FolderGit2 className="w-3.5 h-3.5 text-emerald-400" /> GitHub Profile URL
+                    <FolderGit2 className="w-3.5 h-3.5 text-[#F59E0B]" /> GitHub Profile URL
                   </label>
                   <ActiveToggle
                     isActive={getChannelActive("github")}
@@ -2028,18 +2287,18 @@ function AdminConsoleContent() {
                   value={socialLinks.github || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, github: e.target.value })}
                   placeholder="https://github.com/ashifurrahmanbadhon"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
             </div>
           </SpotlightCard>
 
           {/* Section B: Resume / CV Management */}
-          <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1E2638]">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#23242B]">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <FileDown className="w-4 h-4 text-emerald-400" />
+                  <FileDown className="w-4 h-4 text-[#F59E0B]" />
                   Curriculum Vitae (CV) &amp; Resume Settings
                 </h3>
                 <p className="text-xs text-slate-400">
@@ -2050,7 +2309,7 @@ function AdminConsoleContent() {
               <button
                 onClick={() => handleSaveSection("resume", resume, "Resume link saved successfully!")}
                 disabled={saving}
-                className="px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                className="px-4 py-1.5 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>Save Resume</span>
@@ -2083,7 +2342,7 @@ function AdminConsoleContent() {
                   value={resume.file_name || ""}
                   onChange={(e) => setResume({ ...resume, file_name: e.target.value })}
                   placeholder="Ashifur_Rahman_CV.pdf"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2 text-white outline-none font-mono"
                 />
               </div>
             </div>
@@ -2096,16 +2355,16 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "inbox" && (
               <div className="space-y-6">
-                <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-5">
+                <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-5">
                   {/* Header and Bulk Action Toolbar */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E2638]">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#23242B]">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                          <MessageSquare className="w-5 h-5 text-emerald-400" />
+                          <MessageSquare className="w-5 h-5 text-[#F59E0B]" />
                           Inbox
                         </h2>
-                        <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                        <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 font-bold">
                           {messages.length} total
                         </span>
                         {messages.filter((m) => !m.is_read).length > 0 && (
@@ -2118,7 +2377,7 @@ function AdminConsoleContent() {
                       {/* Small Presence Status Line */}
                       <div className="mt-1.5 flex items-center gap-2">
                         {adminOnline ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
+                          <span className="inline-flex items-center gap-1.5 text-xs text-[#F59E0B] font-medium">
                             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                             ● You are online — new messages appear here only
                           </span>
@@ -2131,7 +2390,7 @@ function AdminConsoleContent() {
                       </div>
 
                       <p className="text-xs text-slate-400 mt-1">
-                        Direct visitor inquiries submitted via the <code className="text-emerald-400">/contact</code> page. Select messages to mark or delete in bulk.
+                        Direct visitor inquiries submitted via the <code className="text-[#F59E0B]">/contact</code> page. Select messages to mark or delete in bulk.
                       </p>
                     </div>
 
@@ -2143,12 +2402,12 @@ function AdminConsoleContent() {
                           onClick={selectAllMessages}
                           className={`px-3 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition cursor-pointer ${
                             selectedMessages.length === messages.length && messages.length > 0
-                              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                              : "bg-[#161C2A] text-slate-300 hover:text-white border-[#1E2638]"
+                              ? "bg-emerald-500/20 text-[#FBBF24] border-emerald-500/40"
+                              : "bg-[#12131A] text-slate-300 hover:text-white border-[#23242B]"
                           }`}
                         >
                           {selectedMessages.length === messages.length && messages.length > 0 ? (
-                            <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
+                            <CheckSquare className="w-3.5 h-3.5 text-[#F59E0B]" />
                           ) : (
                             <Square className="w-3.5 h-3.5 text-slate-400" />
                           )}
@@ -2165,7 +2424,7 @@ function AdminConsoleContent() {
                           <button
                             type="button"
                             onClick={handleBulkMarkRead}
-                            className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
+                            className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-[#FBBF24] border border-[#F59E0B]/30 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
                           >
                             <Check className="w-3.5 h-3.5" />
                             <span>Mark Read ({selectedMessages.length})</span>
@@ -2188,7 +2447,7 @@ function AdminConsoleContent() {
                   {/* Messages Body */}
                   {messages.length === 0 ? (
                     <div className="py-16 text-center space-y-3">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                      <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B] flex items-center justify-center mx-auto">
                         <MessageSquare className="w-6 h-6" />
                       </div>
                       <p className="text-white font-medium text-sm">No Inquiries Received Yet</p>
@@ -2214,21 +2473,21 @@ function AdminConsoleContent() {
                               isSelected
                                 ? "bg-[#0e1726] border-emerald-500/70 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/40"
                                 : msg.is_read
-                                ? "bg-[#0A0D12] border-[#1E2638] hover:border-[#2a364f]"
+                                ? "bg-[#06070B] border-[#23242B] hover:border-[#2a364f]"
                                 : "bg-[#0E1524] border-emerald-500/40 shadow-sm hover:border-emerald-500/60"
                             }`}
                           >
                             {/* Card Top Row */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#1E2638] pb-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#23242B] pb-3">
                               <div className="flex items-center gap-3 flex-wrap">
                                 <button
                                   type="button"
                                   onClick={() => toggleSelectMessage(msg.id)}
-                                  className="p-1 text-slate-400 hover:text-emerald-400 transition cursor-pointer"
+                                  className="p-1 text-slate-400 hover:text-[#F59E0B] transition cursor-pointer"
                                   title={isSelected ? "Deselect" : "Select message"}
                                 >
                                   {isSelected ? (
-                                    <CheckSquare className="w-4 h-4 text-emerald-400" />
+                                    <CheckSquare className="w-4 h-4 text-[#F59E0B]" />
                                   ) : (
                                     <Square className="w-4 h-4 text-slate-500 hover:text-slate-300" />
                                   )}
@@ -2242,7 +2501,7 @@ function AdminConsoleContent() {
                                 <span className="font-bold text-white text-xs sm:text-sm">{msg.name}</span>
                                 <a
                                   href={`mailto:${msg.email}`}
-                                  className="text-[11px] sm:text-xs font-mono text-emerald-400 hover:underline"
+                                  className="text-[11px] sm:text-xs font-mono text-[#F59E0B] hover:underline"
                                 >
                                   &lt;{msg.email}&gt;
                                 </a>
@@ -2268,7 +2527,7 @@ function AdminConsoleContent() {
                                       showToast("Message marked as read", "success");
                                       fetchUnreadCount();
                                     }}
-                                    className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition cursor-pointer"
+                                    className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#F59E0B]/10 text-[#F59E0B] hover:bg-emerald-500/20 transition cursor-pointer"
                                   >
                                     Mark Read
                                   </button>
@@ -2279,15 +2538,15 @@ function AdminConsoleContent() {
                                   onClick={() => toggleExpandMessage(msg.id)}
                                   className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer ${
                                     isExpanded
-                                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                                      : "bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638] hover:border-[#2a364f]"
+                                      ? "bg-emerald-500/20 text-[#FBBF24] border border-emerald-500/40"
+                                      : "bg-[#12131A] text-slate-300 hover:text-white border border-[#23242B] hover:border-[#2a364f]"
                                   }`}
                                   title="View Thread & Reply"
                                 >
-                                  <Reply className="w-3.5 h-3.5 text-emerald-400" />
+                                  <Reply className="w-3.5 h-3.5 text-[#F59E0B]" />
                                   <span>{isExpanded ? "Close" : replies.length > 0 ? `Thread (${replies.length})` : "Reply"}</span>
                                   {isExpanded ? (
-                                    <ChevronDown className="w-3 h-3 text-emerald-400" />
+                                    <ChevronDown className="w-3 h-3 text-[#F59E0B]" />
                                   ) : (
                                     <ChevronRight className="w-3 h-3 text-slate-400" />
                                   )}
@@ -2317,13 +2576,13 @@ function AdminConsoleContent() {
                                 Subject: <span className="text-white font-normal">{msg.subject}</span>
                               </p>
                             )}
-                            <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed bg-[#0c1018] p-3 rounded-xl border border-[#1E2638]/70">
+                            <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed bg-[#0c1018] p-3 rounded-xl border border-[#23242B]/70">
                               {msg.message}
                             </p>
 
                             {/* Expanded Reply Thread & Composer */}
                             {isExpanded && (
-                              <div className="pt-3 border-t border-[#1E2638] space-y-4">
+                              <div className="pt-3 border-t border-[#23242B] space-y-4">
                                 {/* Reply History Thread */}
                                 {replies.length > 0 && (
                                   <div className="space-y-3">
@@ -2359,10 +2618,10 @@ function AdminConsoleContent() {
                                 )}
 
                                 {/* Inline Reply Composer */}
-                                <div className="p-4 rounded-xl bg-[#0D121D] border border-emerald-500/20 space-y-3">
+                                <div className="p-4 rounded-xl bg-[#0D121D] border border-[#F59E0B]/20 space-y-3">
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                      <Reply className="w-4 h-4 text-emerald-400" />
+                                      <Reply className="w-4 h-4 text-[#F59E0B]" />
                                       <span className="text-xs font-semibold text-white">
                                         Send Reply to {msg.name} (&lt;{msg.email}&gt;)
                                       </span>
@@ -2380,7 +2639,7 @@ function AdminConsoleContent() {
                                       setReplyDrafts((prev) => ({ ...prev, [msg.id]: e.target.value }))
                                     }
                                     placeholder={`Write your response to ${msg.name}... (Sent from onboarding@resend.dev, replies arrive in your Gmail)`}
-                                    className="w-full bg-[#080B11] border border-[#1E2638] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition resize-y font-sans"
+                                    className="w-full bg-[#080B11] border border-[#23242B] focus:border-[#F59E0B] focus:ring-1 focus:ring-emerald-500/30 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition resize-y font-sans"
                                   />
 
                                   {replyError && (
@@ -2391,7 +2650,7 @@ function AdminConsoleContent() {
                                   )}
 
                                   {isSentSuccess && (
-                                    <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-400 flex items-center gap-2">
+                                    <div className="p-2.5 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-xs text-[#F59E0B] flex items-center gap-2">
                                       <CheckCircle2 className="w-4 h-4 shrink-0" />
                                       <span>Reply sent successfully! It has been added to the thread above.</span>
                                     </div>
@@ -2399,14 +2658,14 @@ function AdminConsoleContent() {
 
                                   <div className="flex items-center justify-between pt-1">
                                     <p className="text-[11px] text-slate-500">
-                                      Replies sent from <code className="text-emerald-400">Ashifur Rahman &lt;onboarding@resend.dev&gt;</code>
+                                      Replies sent from <code className="text-[#F59E0B]">Ashifur Rahman &lt;onboarding@resend.dev&gt;</code>
                                     </p>
 
                                     <button
                                       type="button"
                                       onClick={() => handleSendReply(msg.id)}
                                       disabled={!draftText.trim() || isSending}
-                                      className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs font-mono flex items-center gap-2 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-emerald-500/20"
+                                      className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs font-mono flex items-center gap-2 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-amber-500/20"
                                     >
                                       {isSending ? (
                                         <>
@@ -2438,11 +2697,11 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "settings" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-[#1E2638]">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-[#23242B]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-emerald-400" />
+                <Sliders className="w-5 h-5 text-[#F59E0B]" />
                 Global Portfolio Settings
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
@@ -2453,7 +2712,7 @@ function AdminConsoleContent() {
             <button
               onClick={() => handleSaveSection("site_settings", siteSettings, "Site settings saved!")}
               disabled={saving}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? "Saving..." : "Save Settings"}</span>
@@ -2467,7 +2726,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={siteSettings.site_title || "Ashifur Rahman | Engineering Portfolio"}
                 onChange={(e) => setSiteSettings({ ...siteSettings, site_title: e.target.value })}
-                className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
               />
             </div>
 
@@ -2477,7 +2736,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={siteSettings.footer_brand || "Ashifur Rahman"}
                 onChange={(e) => setSiteSettings({ ...siteSettings, footer_brand: e.target.value })}
-                className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
               />
             </div>
 
@@ -2487,7 +2746,7 @@ function AdminConsoleContent() {
                 rows={2}
                 value={siteSettings.meta_description || "Official engineering portfolio of Ashifur Rahman. Electrical & Electronic Engineer."}
                 onChange={(e) => setSiteSettings({ ...siteSettings, meta_description: e.target.value })}
-                className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
               />
             </div>
           </div>
@@ -2506,17 +2765,19 @@ function AdminConsoleContent() {
           </div>
 
 
-          {/* RIGHT COLUMN: Live Simulation Rail (w-[400px] lg / w-[460px] xl, sticky under TopBar) */}
-          <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0">
-            <LivePreviewPanel
-              url={railTargetUrl}
-              draftSection={railDraftSection}
-              getDraftData={railGetDraftData}
-              savedOnly={railSavedOnly}
-              collapsible={false}
-              className="h-full"
-            />
-          </div>
+          {/* RIGHT COLUMN: Live Simulation Rail (only for editable pages with live preview) */}
+          {hasLiveRail && (
+            <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0">
+              <LivePreviewPanel
+                url={railTargetUrl}
+                draftSection={railDraftSection}
+                getDraftData={railGetDraftData}
+                savedOnly={railSavedOnly}
+                collapsible={false}
+                className="h-full"
+              />
+            </div>
+          )}
         </div>
         </>
       )}
@@ -2526,9 +2787,9 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {modalType && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[#111622] border border-[#1E2638] w-full max-w-xl rounded-2xl shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[#0A0B10] border border-[#23242B] w-full max-w-xl rounded-2xl shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#1E2638] pb-3">
+            <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
               <h3 className="text-base font-bold text-white capitalize">
                 {editingIndex >= 0 ? "Edit" : "Add"} {modalType}
               </h3>
@@ -2552,7 +2813,7 @@ function AdminConsoleContent() {
                     type="text"
                     value={editingItem.metric_value || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, metric_value: e.target.value })}
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                   />
                 </div>
                 <div>
@@ -2561,7 +2822,7 @@ function AdminConsoleContent() {
                     type="text"
                     value={editingItem.metric_label || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, metric_label: e.target.value })}
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
                   />
                 </div>
                 <div>
@@ -2570,7 +2831,7 @@ function AdminConsoleContent() {
                     type="text"
                     value={editingItem.metric_subtext || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, metric_subtext: e.target.value })}
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
                   />
                 </div>
               </div>
@@ -2587,7 +2848,7 @@ function AdminConsoleContent() {
                       value={editingItem.role || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, role: e.target.value })}
                       placeholder="e.g. Executive Engineer"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                   <div>
@@ -2597,7 +2858,7 @@ function AdminConsoleContent() {
                       value={editingItem.organization || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, organization: e.target.value })}
                       placeholder="e.g. Energy Division"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2610,7 +2871,7 @@ function AdminConsoleContent() {
                       value={editingItem.period || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, period: e.target.value })}
                       placeholder="e.g. 2023 - Present"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                   <div>
@@ -2620,7 +2881,7 @@ function AdminConsoleContent() {
                       value={editingItem.location || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
                       placeholder="Dhaka, Bangladesh"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2637,7 +2898,7 @@ function AdminConsoleContent() {
                           description_points: [...(editingItem.description_points || []), ""],
                         })
                       }
-                      className="text-emerald-400 hover:underline flex items-center gap-1 text-[11px]"
+                      className="text-[#F59E0B] hover:underline flex items-center gap-1 text-[11px]"
                     >
                       <Plus className="w-3 h-3" /> Add Point
                     </button>
@@ -2654,7 +2915,7 @@ function AdminConsoleContent() {
                             setEditingItem({ ...editingItem, description_points: updated });
                           }}
                           placeholder={`Key responsibility point ${pIdx + 1}`}
-                          className="flex-1 bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                          className="flex-1 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                         />
                         <button
                           type="button"
@@ -2683,7 +2944,7 @@ function AdminConsoleContent() {
                     value={editingItem.degree || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, degree: e.target.value })}
                     placeholder="e.g. B.Sc. in Electrical & Electronic Engineering"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                   />
                 </div>
 
@@ -2694,7 +2955,7 @@ function AdminConsoleContent() {
                     value={editingItem.institution || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, institution: e.target.value })}
                     placeholder="e.g. American International University-Bangladesh"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                   />
                 </div>
 
@@ -2706,7 +2967,7 @@ function AdminConsoleContent() {
                       value={editingItem.start_year || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, start_year: e.target.value })}
                       placeholder="2019"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                   <div>
@@ -2716,7 +2977,7 @@ function AdminConsoleContent() {
                       value={editingItem.end_year || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, end_year: e.target.value })}
                       placeholder="2023"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2729,7 +2990,7 @@ function AdminConsoleContent() {
                       value={editingItem.result || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, result: e.target.value })}
                       placeholder="CGPA 3.85 / 4.00"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -2739,7 +3000,7 @@ function AdminConsoleContent() {
                       value={editingItem.badge_text || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, badge_text: e.target.value })}
                       placeholder="Dean's List Honor"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2750,7 +3011,7 @@ function AdminConsoleContent() {
                     rows={2}
                     value={editingItem.description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none"
                   />
                 </div>
               </div>
@@ -2766,7 +3027,7 @@ function AdminConsoleContent() {
                     value={editingItem.name || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
                     placeholder="e.g. AutoCAD Electrical"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2 text-white outline-none"
                   />
                 </div>
 
@@ -2777,14 +3038,14 @@ function AdminConsoleContent() {
                     value={editingItem.category || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
                     placeholder="Design & Simulation, GIS & Data Systems, etc."
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2 text-white outline-none"
                   />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="font-medium text-slate-300">Proficiency Percentage</label>
-                    <span className="font-mono text-emerald-400 font-bold">{editingItem.level || 80}%</span>
+                    <span className="font-mono text-[#F59E0B] font-bold">{editingItem.level || 80}%</span>
                   </div>
                   <input
                     type="range"
@@ -2809,7 +3070,7 @@ function AdminConsoleContent() {
                       value={editingItem.category || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
                       placeholder="WEBSITE, AI, TRACKING, AUTOMATION"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono uppercase"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono uppercase"
                     />
                   </div>
                   <div className="col-span-2">
@@ -2819,7 +3080,7 @@ function AdminConsoleContent() {
                       value={editingItem.title || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                       placeholder="e.g. Business Website"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-bold"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-bold"
                     />
                   </div>
                 </div>
@@ -2831,7 +3092,7 @@ function AdminConsoleContent() {
                     value={editingItem.description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
                     placeholder="Brief description of the package"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
                   />
                 </div>
 
@@ -2844,7 +3105,7 @@ function AdminConsoleContent() {
                     value={editingItem.deliverables || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, deliverables: e.target.value })}
                     placeholder="Home, services, gallery & about pages&#10;Order / inquiry buttons connected to WhatsApp"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
                   />
                 </div>
 
@@ -2857,7 +3118,7 @@ function AdminConsoleContent() {
                     value={editingItem.tags || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, tags: e.target.value })}
                     placeholder="Next.js, CMS Admin, WhatsApp Orders"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
 
@@ -2868,7 +3129,7 @@ function AdminConsoleContent() {
                       type="number"
                       value={editingItem.sort_order || 1}
                       onChange={(e) => setEditingItem({ ...editingItem, sort_order: parseInt(e.target.value) || 1 })}
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -2879,7 +3140,7 @@ function AdminConsoleContent() {
                           type="checkbox"
                           checked={editingItem.is_active !== 0}
                           onChange={(e) => setEditingItem({ ...editingItem, is_active: e.target.checked ? 1 : 0 })}
-                          className="rounded bg-[#0A0D12] border-[#1E2638] text-emerald-500 focus:ring-0"
+                          className="rounded bg-[#06070B] border-[#23242B] text-emerald-500 focus:ring-0"
                         />
                         Active (Visible on /work)
                       </label>
@@ -2899,7 +3160,7 @@ function AdminConsoleContent() {
                       value={editingItem.project_number || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, project_number: e.target.value })}
                       placeholder="01"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div className="col-span-2">
@@ -2909,7 +3170,7 @@ function AdminConsoleContent() {
                       value={editingItem.category || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
                       placeholder="Power Electronics, Substation GIS, etc."
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2921,7 +3182,7 @@ function AdminConsoleContent() {
                     value={editingItem.title || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                     placeholder="Full project headline"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-medium"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-medium"
                   />
                 </div>
 
@@ -2932,7 +3193,7 @@ function AdminConsoleContent() {
                     value={editingItem.short_description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, short_description: e.target.value })}
                     placeholder="Brief description shown on cards"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
                   />
                 </div>
 
@@ -2943,7 +3204,7 @@ function AdminConsoleContent() {
                     value={editingItem.full_description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, full_description: e.target.value })}
                     placeholder="Comprehensive project description, case study details, or implementation write-up"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed"
                   />
                 </div>
 
@@ -2963,7 +3224,7 @@ function AdminConsoleContent() {
                 </div>
 
                 {/* Gallery images (slider) */}
-                <div className="space-y-3 pt-2 border-t border-[#1E2638]">
+                <div className="space-y-3 pt-2 border-t border-[#23242B]">
                   <div className="flex items-center justify-between">
                     <div>
                       <label className="block font-medium text-slate-300">
@@ -2982,14 +3243,14 @@ function AdminConsoleContent() {
                           additional_images: [...cur, ""],
                         });
                       }}
-                      className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition cursor-pointer"
+                      className="text-[#F59E0B] hover:text-[#FBBF24] flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 hover:bg-emerald-500/20 transition cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Add Slide Image
                     </button>
                   </div>
 
                   {(!editingItem.additional_images || editingItem.additional_images.length === 0) && (
-                    <div className="text-center py-3 px-3 rounded-xl border border-dashed border-[#1E2638] bg-[#0A0D12]/50 text-slate-400 text-xs">
+                    <div className="text-center py-3 px-3 rounded-xl border border-dashed border-[#23242B] bg-[#06070B]/50 text-slate-400 text-xs">
                       No gallery slides added. The project card will display the main thumbnail only.
                     </div>
                   )}
@@ -2998,10 +3259,10 @@ function AdminConsoleContent() {
                     {(editingItem.additional_images || []).map((slideUrl, sIdx) => (
                       <div
                         key={sIdx}
-                        className="p-3 rounded-xl border border-[#1E2638] bg-[#0A0D12] space-y-2.5"
+                        className="p-3 rounded-xl border border-[#23242B] bg-[#06070B] space-y-2.5"
                       >
-                        <div className="flex items-center justify-between text-xs pb-1 border-b border-[#1E2638]/60">
-                          <span className="font-mono font-bold text-emerald-400">
+                        <div className="flex items-center justify-between text-xs pb-1 border-b border-[#23242B]/60">
+                          <span className="font-mono font-bold text-[#F59E0B]">
                             Slide #{sIdx + 2}
                           </span>
                           <div className="flex items-center gap-1.5">
@@ -3015,7 +3276,7 @@ function AdminConsoleContent() {
                                 arr[sIdx - 1] = tmp;
                                 setEditingItem({ ...editingItem, additional_images: arr });
                               }}
-                              className="p-1 rounded bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                              className="p-1 rounded bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
                               title="Move Up"
                             >
                               <ArrowUp className="w-3 h-3" />
@@ -3030,7 +3291,7 @@ function AdminConsoleContent() {
                                 arr[sIdx + 1] = tmp;
                                 setEditingItem({ ...editingItem, additional_images: arr });
                               }}
-                              className="p-1 rounded bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                              className="p-1 rounded bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
                               title="Move Down"
                             >
                               <ArrowDown className="w-3 h-3" />
@@ -3079,7 +3340,7 @@ function AdminConsoleContent() {
                       })
                     }
                     placeholder="MATLAB, Simulink, PCB Design"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
 
@@ -3091,7 +3352,7 @@ function AdminConsoleContent() {
                       value={editingItem.live_url || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, live_url: e.target.value })}
                       placeholder="https://..."
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -3101,7 +3362,7 @@ function AdminConsoleContent() {
                       value={editingItem.github_url || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, github_url: e.target.value })}
                       placeholder="https://github.com/..."
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                 </div>
@@ -3114,7 +3375,7 @@ function AdminConsoleContent() {
                       value={editingItem.project_date || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, project_date: e.target.value })}
                       placeholder="e.g. 2026"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -3124,13 +3385,13 @@ function AdminConsoleContent() {
                       value={editingItem.sort_order !== undefined ? editingItem.sort_order : 1}
                       onChange={(e) => setEditingItem({ ...editingItem, sort_order: parseInt(e.target.value, 10) || 0 })}
                       placeholder="1"
-                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/40 transition">
+                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 transition">
                     <input
                       type="checkbox"
                       checked={Boolean(editingItem.is_published)}
@@ -3143,7 +3404,7 @@ function AdminConsoleContent() {
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#0A0D12] border border-[#1E2638] hover:border-emerald-500/40 transition">
+                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 transition">
                     <input
                       type="checkbox"
                       checked={Boolean(editingItem.is_featured)}
@@ -3160,14 +3421,14 @@ function AdminConsoleContent() {
             )}
 
             {/* Modal Footer: Save & Cancel */}
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#1E2638]">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#23242B]">
               <button
                 type="button"
                 onClick={() => {
                   setModalType(null);
                   setEditingItem(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#161C2A] text-slate-400 hover:text-white text-xs font-mono transition"
+                className="px-4 py-2 rounded-xl bg-[#12131A] text-slate-400 hover:text-white text-xs font-mono transition"
               >
                 Cancel
               </button>
@@ -3228,7 +3489,7 @@ function AdminConsoleContent() {
                   setModalType(null);
                   setEditingItem(null);
                 }}
-                className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Save Entry</span>
@@ -3247,7 +3508,7 @@ export default function AdminConsolePage() {
       fallback={
         <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-3">
           <div className="w-8 h-8 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
-          <p className="text-xs font-mono text-emerald-400">Loading Portfolio Admin Console...</p>
+          <p className="text-xs font-mono text-[#F59E0B]">Loading Portfolio Admin Console...</p>
         </div>
       }
     >

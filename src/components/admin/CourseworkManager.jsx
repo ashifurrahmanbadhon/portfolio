@@ -79,22 +79,22 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
   };
 
   return (
-    <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-[#1E2638] gap-4 w-full">
+    <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+      <div className="flex items-center justify-between pb-3 border-b border-[#23242B] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-emerald-400" />
+            <BookOpen className="w-4 h-4 text-[#F59E0B]" />
             Undergraduate Coursework Breakdown
           </h3>
           <p className="text-xs text-slate-400">
-            Curriculum pillars shown on <code className="text-emerald-400">/education</code> (e.g. Power Systems, Electronics, Control & Computing).
+            Curriculum pillars shown on <code className="text-[#F59E0B]">/education</code> (e.g. Power Systems, Electronics, Control & Computing).
           </p>
         </div>
 
         <button
           type="button"
           onClick={openAdd}
-          className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
+          className="px-3 py-1.5 rounded-xl bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add New Curriculum Pillar</span>
@@ -105,10 +105,10 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
         {list.map((item, idx) => (
           <SpotlightCard
             key={idx}
-            className="bg-[#0A0D12] border border-[#1E2638] p-4 rounded-xl space-y-3 group relative"
+            className="bg-[#06070B] border border-[#23242B] p-4 rounded-xl space-y-3 group relative"
           >
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-white group-hover:text-emerald-400 transition">
+              <h4 className="text-xs font-bold text-white group-hover:text-[#F59E0B] transition">
                 {item.title}
               </h4>
               <div className="flex items-center gap-1.5">
@@ -120,7 +120,7 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
                 <button
                   type="button"
                   onClick={() => openEdit(idx)}
-                  className="p-1 text-slate-400 hover:text-emerald-400 transition"
+                  className="p-1 text-slate-400 hover:text-[#F59E0B] transition"
                   title="Edit"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
@@ -139,7 +139,7 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
             <ul className="space-y-1.5 text-xs text-slate-300">
               {(item.courses || []).map((c, cIdx) => (
                 <li key={cIdx} className="flex items-start gap-1.5 text-[11px]">
-                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <Check className="w-3.5 h-3.5 text-[#F59E0B] shrink-0 mt-0.5" />
                   <span>{c}</span>
                 </li>
               ))}
@@ -150,8 +150,8 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#111622] border border-[#1E2638] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#1E2638] pb-3">
+          <div className="bg-[#0A0B10] border border-[#23242B] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
               <h3 className="text-base font-bold text-white">
                 {editingIndex >= 0 ? "Edit Curriculum Pillar" : "Add Curriculum Pillar"}
               </h3>
@@ -173,7 +173,7 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   placeholder="e.g. Power & High Voltage Systems"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
                 />
               </div>
 
@@ -187,22 +187,22 @@ export default function CourseworkManager({ courseworkPillars, setCourseworkPill
                   value={form.coursesStr}
                   onChange={(e) => setForm({ ...form, coursesStr: e.target.value })}
                   placeholder="Power System Analysis & Grid Stability&#10;High Voltage Engineering&#10;Switchgear Protection"
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed font-mono"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#1E2638]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#23242B]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#161C2A] text-slate-300 hover:text-white border border-[#1E2638]"
+                  className="px-4 py-2 rounded-xl bg-[#12131A] text-slate-300 hover:text-white border border-[#23242B]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold"
+                  className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold"
                 >
                   Save Pillar
                 </button>
