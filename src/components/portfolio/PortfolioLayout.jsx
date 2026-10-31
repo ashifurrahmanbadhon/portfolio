@@ -7,7 +7,6 @@ import BackgroundGlow from './BackgroundGlow';
 import PortfolioNavbar from './PortfolioNavbar';
 import PortfolioFooter from './PortfolioFooter';
 
-const ScrollToTopButton = dynamic(() => import('./ScrollToTopButton'), { ssr: false });
 const ResumeModal = dynamic(() => import('./ResumeModal'), { ssr: false });
 const FloatingAdminPanel = dynamic(() => import('./FloatingAdminPanel'), { ssr: false });
 const AiChat = dynamic(() => import('./AiChat'), { ssr: false });
@@ -32,19 +31,16 @@ function PortfolioInnerLayout({ children }) {
   }
 
   return (
-    <div className="bg-[#06070B] text-[#F5F2EA] min-h-screen font-sans selection:bg-[#F59E0B] selection:text-[#1A1202] flex flex-col relative overflow-x-hidden animate-fade-in">
+    <div className="bg-[#06070B] text-[#F5F2EA] min-h-screen font-sans selection:bg-[#F59E0B] selection:text-[#1A1202] flex flex-col relative overflow-x-clip animate-fade-in">
       <BackgroundGlow />
       <PortfolioNavbar onOpenResume={openResumeModal} />
       
-      {/* pt-20 ensures page content starts smoothly below the fixed top navbar */}
-      <main className="flex-1 relative z-10 pt-20">
+      {/* Content wrapper: position:relative; z-index:1; background:transparent */}
+      <main className="flex-1 relative z-10 pt-[68px] bg-transparent">
         {children}
       </main>
 
       <PortfolioFooter />
-
-      {/* Persistent floating scroll to top button */}
-      <ScrollToTopButton />
 
       {/* Additive AI Assistant Chat Widget on public pages */}
       <AiChat />

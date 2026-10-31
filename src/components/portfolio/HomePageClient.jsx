@@ -114,7 +114,7 @@ export default function Home() {
           
           {/* Left Column: Name & Intro */}
           <div className="flex flex-col justify-start">
-            <h1 className="text-5xl sm:text-7xl lg:text-[88px] font-black uppercase tracking-tight leading-[0.92] select-none">
+            <h1 className="text-5xl sm:text-7xl lg:text-[88px] font-black uppercase tracking-tight leading-[0.92]">
               <span className="block text-[#F5F2EA]">{firstName}</span>
               <span className="block text-stroke-hero">{lastName}</span>
             </h1>
@@ -181,26 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. MARQUEE UNDER HERO: 26s linear infinite, alternate words outline-stroked */}
-      <section className="relative z-10 border-y border-[#23242B] bg-[#0A0B10] py-4 overflow-hidden select-none">
-        <div className="animate-marquee font-mono text-sm sm:text-base font-black tracking-widest uppercase">
-          {/* Loop x2 for seamless CSS animation */}
-          {[1, 2].map((loopIdx) => (
-            <div key={loopIdx} className="flex items-center gap-8 shrink-0 pr-8">
-              <span className="text-[#F5F2EA]">POWER SYSTEMS</span>
-              <span className="text-[#F59E0B]">✦</span>
-              <span className="text-stroke-marquee">SUBSTATION DESIGN</span>
-              <span className="text-[#F59E0B]">✦</span>
-              <span className="text-[#F5F2EA]">GIS MAPPING</span>
-              <span className="text-[#F59E0B]">✦</span>
-              <span className="text-stroke-marquee">AI AUTOMATION</span>
-              <span className="text-[#F59E0B]">✦</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 3. HIGHLIGHTS: Bordered 4-cell grid, CountUp for numeric values */}
+      {/* 2. HIGHLIGHTS: Bordered 4-cell grid, CountUp for numeric values */}
       {highlights && highlights.length > 0 && (
         <section className="relative z-10 px-6 md:px-12 py-12 max-w-7xl mx-auto">
           <motion.div
@@ -615,7 +596,7 @@ export default function Home() {
                 className="luxury-box p-7 flex flex-col justify-between"
               >
                 <div>
-                  <div className="font-mono text-4xl sm:text-5xl font-black text-stroke-numeral mb-4 select-none">
+                  <div className="font-mono text-4xl sm:text-5xl font-black text-stroke-numeral mb-4">
                     {step.num}
                   </div>
                   <h3 className="text-lg font-bold text-[#F5F2EA] mb-2 uppercase tracking-wide">

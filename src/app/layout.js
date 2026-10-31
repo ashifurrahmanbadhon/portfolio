@@ -32,7 +32,6 @@ export const metadata = {
 };
 
 import DashboardShell from "@/components/DashboardShell";
-import CursorSpotlight from "@/components/CursorSpotlight";
 
 export default function RootLayout({ children }) {
   return (
@@ -45,7 +44,6 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
         className="min-h-full bg-[#06070B] text-[#F5F2EA] selection:bg-[#F59E0B] selection:text-[#1A1202]"
       >
-        <CursorSpotlight />
         <DashboardShell>{children}</DashboardShell>
       </body>
     </html>

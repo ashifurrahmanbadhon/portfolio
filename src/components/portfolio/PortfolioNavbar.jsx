@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Download } from 'lucide-react';
-import { triggerCvDownload } from '@/lib/downloadCv';
+import { Menu, X } from 'lucide-react';
 
 const NAV_ITEMS = [
   { name: 'Home', href: '/' },
@@ -56,8 +55,8 @@ function TypewriterBadge() {
   }, []);
 
   return (
-    <div className="flex items-center justify-end min-w-[160px] text-right font-mono text-xs tracking-wider text-[#F5F2EA] select-none">
-      <span className="w-2 h-2 rounded-full bg-emerald-400 mr-2 shrink-0 animate-pulse" />
+    <div className="flex items-center justify-end min-w-[160px] text-right font-mono text-xs tracking-wider text-[#F59E0B]">
+      <span className="w-2 h-2 rounded-full bg-[#F59E0B] mr-2 shrink-0 animate-pulse" />
       <span>{displayText}</span>
       <span className="ml-1 inline-block w-1.5 h-3 bg-[#F59E0B] animate-pulse" />
     </div>
@@ -76,19 +75,19 @@ export default function PortfolioNavbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-md bg-[#06070B]/90 border-b border-[#23242B] transition-colors">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-md bg-[#06070B]/85 border-b border-[#23242B] transition-colors">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 h-[68px] flex items-center justify-between">
         
-        {/* Left Name */}
-        <Link href="/" className="flex items-center gap-2 group select-none shrink-0 mr-6">
-          <span className="font-mono text-xs text-[#F59E0B] font-bold">✦</span>
-          <span className="text-base sm:text-lg font-black tracking-widest text-[#F5F2EA] uppercase group-hover:text-[#F59E0B] transition duration-200">
-            ASHIFUR RAHMAN
+        {/* Left: Name — first word #F5F2EA, last word amber #F59E0B, Inter Tight 800 uppercase */}
+        <Link href="/" className="flex items-center shrink-0 mr-6">
+          <span className="text-base sm:text-lg font-extrabold tracking-wider uppercase font-sans">
+            <span className="text-[#F5F2EA]">ASHIFUR</span>{' '}
+            <span className="text-[#F59E0B]">RAHMAN</span>
           </span>
         </Link>
 
-        {/* Center Links (keep existing links) */}
-        <div className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-mono uppercase tracking-wider">
+        {/* Center: Existing nav links, JetBrains Mono uppercase 12px letterspaced, muted -> hover amber */}
+        <div className="hidden lg:flex items-center gap-1 xl:gap-2 text-[12px] font-mono uppercase tracking-wider">
           {NAV_ITEMS.map((item) => {
             const active = isLinkActive(item.href);
             return (
@@ -98,7 +97,7 @@ export default function PortfolioNavbar() {
                 className={`px-3 py-1.5 rounded-md transition-all duration-200 ${
                   active
                     ? 'text-[#F59E0B] font-bold bg-[#F59E0B]/10 border border-[#F59E0B]/30'
-                    : 'text-[#B9B5A9] hover:text-[#F5F2EA] hover:bg-white/5 border border-transparent'
+                    : 'text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5 border border-transparent'
                 }`}
               >
                 {item.name}
@@ -107,17 +106,9 @@ export default function PortfolioNavbar() {
           })}
         </div>
 
-        {/* Right Typewriter + CV download action */}
-        <div className="hidden md:flex items-center gap-4 shrink-0">
+        {/* Right: Typewriter ONLY — ● + "OPEN FOR WORK" in amber #F59E0B */}
+        <div className="hidden md:flex items-center justify-end shrink-0">
           <TypewriterBadge />
-          <button
-            type="button"
-            onClick={triggerCvDownload}
-            className="px-3 py-1.5 rounded-lg border border-[#23242B] bg-[#0A0B10] text-[#B9B5A9] hover:text-[#F59E0B] hover:border-[#F59E0B]/60 font-mono text-xs flex items-center gap-1.5 transition cursor-pointer"
-            title="Download CV"
-          >
-            <Download size={13} className="text-[#F59E0B]" /> CV
-          </button>
         </div>
 
         {/* Mobile menu hamburger button */}
@@ -148,26 +139,13 @@ export default function PortfolioNavbar() {
                 className={`block px-3.5 py-2.5 rounded-lg text-xs font-mono uppercase tracking-wider transition ${
                   active
                     ? 'text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 font-bold'
-                    : 'text-[#B9B5A9] hover:text-[#F5F2EA] hover:bg-white/5'
+                    : 'text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5'
                 }`}
               >
                 {item.name}
               </Link>
             );
           })}
-          
-          <div className="pt-3 mt-3 border-t border-[#23242B] flex flex-col gap-2.5">
-            <button
-              type="button"
-              onClick={(e) => {
-                setMobileMenuOpen(false);
-                triggerCvDownload(e);
-              }}
-              className="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center gap-2 hover:bg-[#F59E0B]/20 transition cursor-pointer"
-            >
-              <Download size={14} /> Download Official CV
-            </button>
-          </div>
         </div>
       )}
     </nav>

@@ -103,20 +103,20 @@ export default function AiChat() {
   return (
     <>
       {/* 62px circle trigger button at bottom-right */}
-      <div className="fixed bottom-6 right-6 z-[99] select-none">
+      <div className="fixed bottom-6 right-6 z-[99]">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Close AI Chat" : "Open AI Assistant"}
-          className="relative w-[62px] h-[62px] rounded-full bg-gradient-to-br from-[#FBBF24] to-[#F59E0B] text-[#1A1202] flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer"
+          className="relative w-[62px] h-[62px] rounded-full bg-[#F59E0B] hover:bg-[#FBBF24] text-[#1A1202] flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
         >
           {/* Soft pulse ring */}
           {!isOpen && (
             <span className="absolute -inset-1 rounded-full bg-[#F59E0B]/35 animate-ping pointer-events-none" />
           )}
 
-          {/* Green online dot */}
-          <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#06070B]" />
+          {/* Amber online dot */}
+          <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-[#F59E0B] border-2 border-[#06070B]" />
 
           {isOpen ? (
             <X size={24} className="stroke-[2.5]" />
@@ -150,8 +150,8 @@ export default function AiChat() {
                   Ashifur — AI Assistant
                   <Sparkles size={12} className="text-[#F59E0B]" />
                 </h4>
-                <p className="font-mono text-[10px] text-emerald-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <p className="font-mono text-[10px] text-[#F59E0B] flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] animate-pulse" />
                   ONLINE — REPLIES INSTANTLY
                 </p>
               </div>
