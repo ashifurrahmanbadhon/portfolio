@@ -252,7 +252,7 @@ export default function CentralLoginPanel() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative z-50 bg-[#06070B] overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative z-50 bg-[#06070B] overflow-hidden admin-shell">
       {/* Background ambient warm glowing mesh */}
       <div className="absolute w-96 h-96 bg-[#F59E0B]/5 blur-[140px] rounded-full pointer-events-none -top-24 -left-24"></div>
       <div className="absolute w-80 h-80 bg-[#F59E0B]/5 blur-[120px] rounded-full pointer-events-none -bottom-20 -right-20"></div>
