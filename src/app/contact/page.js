@@ -63,37 +63,31 @@ export default function ContactPage() {
     {
       key: 'email',
       label: 'Email',
-      value: contactData.email || 'ashifur.badhon@gmail.com',
       url: `mailto:${contactData.email || 'ashifur.badhon@gmail.com'}`
     },
     {
       key: 'phone',
       label: 'Phone',
-      value: contactData.phone || '+880 1521 417284',
       url: `tel:${(contactData.phone || '+8801521417284').replace(/\s+/g, '')}`
     },
     {
       key: 'whatsapp',
       label: 'WhatsApp',
-      value: contactData.phone || '+880 1521 417284',
       url: contactData.whatsapp_url || `https://wa.me/${(contactData.phone || '+8801521417284').replace(/[^0-9]/g, '')}`
     },
     {
       key: 'linkedin',
       label: 'LinkedIn',
-      value: 'ashifurrahmanbadhon',
       url: contactData.linkedin_url || contactData.linkedin || 'https://www.linkedin.com/in/ashifurrahmanbadhon'
     },
     {
       key: 'github',
       label: 'GitHub',
-      value: 'ashifurrahmanbadhon',
       url: contactData.github_url || contactData.github || 'https://github.com/ashifurrahmanbadhon'
     },
     {
       key: 'location',
       label: 'Location',
-      value: contactData.location || 'Tangail, Bangladesh',
       url: contactData.maps_url || 'https://maps.google.com/?q=Tangail,+Bangladesh'
     }
   ];
@@ -109,7 +103,7 @@ export default function ContactPage() {
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
-          {/* Left Column: Bordered channel rows — left mono faint label, right bold value; hover inset ring */}
+          {/* Left Column: Bordered channel rows — left mono faint label, right masked value; hover inset ring */}
           <div className="lg:col-span-5 space-y-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA]">
@@ -133,8 +127,8 @@ export default function ContactPage() {
                     <span className="font-mono text-xs text-[#8E8B82] uppercase tracking-wider font-medium">
                       {ch.label}
                     </span>
-                    <span className="text-[#F5F2EA] font-bold text-sm tracking-wide group-hover:text-[#F59E0B] transition flex items-center gap-1.5">
-                      {ch.value}
+                    <span className="font-mono text-xs sm:text-sm tracking-widest text-[#8E8B82] group-hover:text-[#F59E0B] transition flex items-center gap-2">
+                      <span>••••••••••</span>
                       <ExternalLink size={12} className="text-[#8E8B82] group-hover:text-[#F59E0B]" />
                     </span>
                   </div>

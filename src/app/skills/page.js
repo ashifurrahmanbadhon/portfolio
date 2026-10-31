@@ -39,12 +39,12 @@ export default function SkillsPage() {
           </p>
         </div>
 
-        {/* 2-col hairline grid */}
-        <div className="bg-[#23242B] p-[1px] grid grid-cols-1 md:grid-cols-2 gap-[1px] overflow-hidden shadow-xl mb-16">
+        {/* Domain Competency Ratings */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
           {skillsData.map((category, idx) => (
             <div
               key={idx}
-              className="stat-box border-0 p-6 sm:p-10 flex flex-col justify-between"
+              className="stat-box bg-[#0A0B10] p-6 sm:p-10 flex flex-col justify-between"
             >
               <div>
                 {/* Group title uppercase with mono amber index */}
