@@ -1,520 +1,452 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --bg-main: #06070B;
-    --bg-card: #0A0B10;
-    --bg-panel: #0A0B10;
-    --bg-surface: #0E1017;
-    --border-main: #23242B;
-    --border-hairline: #23242B;
-    --text-main: #F5F2EA;
-    --text-muted: #B9B5A9;
-    --text-faint: #8E8B82;
-    --primary: #F59E0B;
-    --primary-light: #FBBF24;
-    --accent: #F59E0B;
-    --on-accent: #1A1202;
-    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  }
+:root {
+  /* Site Design System Colors */
+  --site-bg: #06070B;
+  --panel-bg: #0A0B10;
+  --hairline-border: #23242B;
+  --site-amber: #F59E0B;
+  --site-amber-light: #FBBF24;
+  --site-text: #F5F2EA;
+  --site-muted: #B9B5A9;
+  --site-faint: #8E8B82;
 
-  body {
-    background-color: #06070B;
-    color: #F5F2EA;
-    font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
+  --background: var(--site-bg);
+  --foreground: var(--site-text);
+  --primary: var(--site-amber);
+  --primary-glow: #fbbf24;
+  --dark-surface: var(--panel-bg);
+  --dark-border: var(--hairline-border);
 }
 
-/* Inter Tight as body/heading font across all pages */
-body, button, input, select, textarea, p, h1, h2, h3, h4, h5, h6, a, div, li, td, th {
-  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-glow: var(--primary-glow);
+  --color-dark-surface: var(--dark-surface);
+  --color-dark-border: var(--dark-border);
+  --font-sans: var(--font-inter-tight), "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
 }
 
-/* JetBrains Mono for labels, codes, numbers */
-code, pre, kbd, samp, .font-mono {
-  font-family: var(--font-mono), monospace !important;
+html {
+  scroll-behavior: smooth;
 }
 
-/* Selection: amber bg */
-::selection {
-  background-color: #F59E0B;
-  color: #1A1202;
+body {
+  background: var(--site-bg);
+  color: var(--site-text);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  position: relative;
+  letter-spacing: -0.01em;
 }
 
-/* Custom Minimal Scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #06070B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2A2B33;
-  border-radius: 9999px;
-  transition: background 0.2s ease;
+  background: #23242B;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #F59E0B;
 }
 
-/* =================================================== */
-/* 1. BACKGROUND PATTERNS (Subtle SaaS Aesthetics)     */
-/* =================================================== */
-.bg-dot-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+/* Grain Background Overlay */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Clean, crisp typography utilities */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
+}
+
+.mono-tag {
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+
+/* Subtle border utility */
+.subtle-border {
+  border-color: #23242B;
+}
+
+/* Glowing primary effects */
+.glow-primary {
+  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.25);
+}
+
+.glow-primary-sm {
+  box-shadow: 0 0 15px -3px rgba(245, 158, 11, 0.2);
+}
+
+.glow-text {
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
+/* Card hover animation with subtle border highlight */
+.interactive-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7),
+              0 0 20px -5px rgba(245, 158, 11, 0.15);
+}
+
+/* High-tech grid lines subtle overlay */
+.bg-tech-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(35, 36, 43, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(35, 36, 43, 0.35) 1px, transparent 1px);
+}
+
+/* Circuit trace accent line */
+.circuit-line {
+  background: linear-gradient(90deg, transparent, #F59E0B, transparent);
+  height: 1px;
+}
+
+/* Glass panel */
+.glass-panel {
+  background: rgba(10, 11, 16, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(35, 36, 43, 0.8);
+}
+
+/* Admin Specific Overrides */
+.admin-shell {
+  font-family: var(--font-sans);
+}
+
+.admin-card {
+  background-color: #0A0B10;
+  border: 1px solid #23242B;
+}
+
+/* Engineering schematic dots pattern */
+.schematic-dots {
+  background-image: radial-gradient(rgba(35, 36, 43, 0.8) 1px, transparent 0);
   background-size: 24px 24px;
 }
 
-.bg-radial-gradient {
-  background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+/* Code block / terminal styling */
+pre, code {
+  font-family: var(--font-mono);
 }
 
-/* =================================================== */
-/* 2. ANIMATED LOGO KEYFRAMES (Subtle & Clean)         */
-/* =================================================== */
-@keyframes logoReveal {
-  0% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* Hide scrollbar for tabs navigation */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-@keyframes logoOrbit {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Hardware-grade border effects */
+.hw-border {
+  border: 1px solid #23242B;
+  position: relative;
 }
 
-@keyframes logoPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.94;
-  }
-  50% {
-    transform: scale(1.03);
-    opacity: 1;
-  }
+.hw-border-glow:hover {
+  border-color: #F59E0B;
+  box-shadow: 0 0 20px -5px rgba(245, 158, 11, 0.3);
 }
 
-.logo-container-reveal {
-  animation: logoReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Amber pulse for system active indicators */
+@keyframes amber-ping {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(1.8); opacity: 0; }
 }
 
-.logo-orbit-ring {
-  transform-origin: center;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease;
+.animate-amber-ping {
+  animation: amber-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-.logo-core {
-  transform-origin: center;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
 
-/* =================================================== */
-/* 3. ENTRANCE & PAGE TRANSITION ANIMATIONS            */
-/* =================================================== */
-@keyframes pageEnter {
-  0% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-page-enter {
-  animation: pageEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeUp {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes scaleIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-fade-up {
-  opacity: 0;
-  animation: fadeUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.2s ease-out forwards;
-}
-
-.animate-scale-in {
-  opacity: 0;
-  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Stagger Delays */
-.delay-50  { animation-delay: 50ms; }
-.delay-100 { animation-delay: 100ms; }
-.delay-150 { animation-delay: 150ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-250 { animation-delay: 250ms; }
-.delay-300 { animation-delay: 300ms; }
-
-/* =================================================== */
-/* 4. SHIMMER & MAGIC UI EFFECTS                       */
-/* =================================================== */
-@keyframes shimmerSweep {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.shimmer-mask {
+.shimmer {
   position: relative;
   overflow: hidden;
 }
 
-.shimmer-mask::after {
+.shimmer::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0) 0,
+    rgba(245, 158, 11, 0.06) 50%,
+    rgba(245, 158, 11, 0) 100%
+  );
+  animation: shimmer 2s infinite;
+  content: '';
+}
+
+/* Modern stat box display (Reference-inspired) */
+.stat-box {
+  background: #0A0B10;
+  border: 1px solid #23242B;
+  position: relative;
+}
+
+.stat-box::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    transparent 100%
-  );
-  transform: translateX(-100%);
-  animation: shimmerSweep 3s infinite cubic-bezier(0.4, 0, 0.6, 1);
+  width: 2px;
+  height: 0;
+  background: #F59E0B;
+  transition: height 0.25s ease;
+}
+
+.stat-box:hover::before {
+  height: 100%;
+}
+
+/* Breadcrumb separator styling */
+.breadcrumb-sep::after {
+  content: "/";
+  margin: 0 0.5rem;
+  color: #8E8B82;
+}
+
+/* Mobile responsive menu animation */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-menu-anim {
+  animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Status indicator pulse animation */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Engineering CAD crosshair corner accents */
+.crosshair-corner {
+  position: relative;
+}
+
+.crosshair-corner::before,
+.crosshair-corner::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-color: #F59E0B;
   pointer-events: none;
 }
 
-/* Skeleton Loading Pulse */
-@keyframes skeletonPulse {
-  0%, 100% {
-    opacity: 0.6;
+.crosshair-corner::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.crosshair-corner::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* Live Simulation Panel Styles */
+.simulation-stage {
+  perspective: 1200px;
+}
+
+.simulation-device-desktop {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.simulation-device-mobile {
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 30px -5px rgba(245, 158, 11, 0.15);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom Checkbox/Toggle styling for admin */
+.switch-track {
+  background: #23242B;
+  transition: background 0.2s ease;
+}
+
+.switch-track.active {
+  background: #F59E0B;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
   }
-  50% {
-    opacity: 0.25;
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
   }
 }
 
-.animate-skeleton {
-  animation: skeletonPulse 1.8s ease-in-out infinite;
-  background: linear-gradient(90deg, #111622 25%, #1a2234 50%, #111622 75%);
-  background-size: 200% 100%;
+/* Selection Color */
+::selection {
+  background: #F59E0B;
+  color: #06070B;
 }
 
 /* =================================================== */
-/* 5. MICRO-INTERACTION ANIMATIONS                     */
+/* 9. GLOBAL HOVER FEEDBACK SYSTEM                    */
 /* =================================================== */
 
-/* Dropdown Reveal */
-@keyframes dropdownReveal {
-  0% {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* Universal interactive elements transition */
+a, button, input, textarea, select, 
+.interactive-card, .stat-box, 
+[role="button"], [tabindex="0"] {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-duration: 180ms;
 }
 
-.animate-dropdown {
-  transform-origin: top right;
-  animation: dropdownReveal 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Modal Animations */
-@keyframes modalBackdrop {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes modalContent {
-  0% {
-    opacity: 0;
-    transform: scale(0.96) translateY(6px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.animate-modal-backdrop {
-  animation: modalBackdrop 0.18s ease-out forwards;
-}
-
-.animate-modal-content {
-  animation: modalContent 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Feedback Animations: Toast Slide, Success Pop */
-@keyframes toastSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-toast {
-  animation: toastSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes popIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  70% {
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-pop {
-  animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Pulse Beacon Effect */
-.live-pulse {
-  position: relative;
-}
-.live-pulse::after {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: inherit;
-  opacity: 0.55;
-  animation: livePing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes livePing {
-  75%, 100% {
-    transform: scale(1.75);
-    opacity: 0;
-  }
-}
-
-/* =================================================== */
-/* =================================================== */
-/* 6. TACTILE INTERACTIVE CLASSES & LUXURY TOKENS      */
-/* =================================================== */
-.stat-box,
-.luxury-box,
-.interactive-card {
-  position: relative;
-  background: #0A0B10;
-  border: 1px solid #23242B;
-  border-radius: 0 !important;
-  transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-  will-change: transform, box-shadow;
-}
-
-/* Hover: box-shadow: inset 0 0 0 1.5px #F59E0B, 0 12px 26px rgba(0,0,0,.5);
-   background: rgba(245,158,11,.04) [over base bg];
-   transform: translateY(-3px); cursor: pointer;
-   (Border turns FULL solid amber on hover — exactly like the demo stat card in the owner's screenshot.)
-*/
-.stat-box:hover,
-.luxury-box:hover,
-.interactive-card:hover {
-  border-color: #F59E0B;
-  box-shadow: inset 0 0 0 1.5px #F59E0B, 0 12px 26px rgba(0, 0, 0, 0.5);
-  background: color-mix(in srgb, #0A0B10, #F59E0B 4%);
-  background-color: color-mix(in srgb, #0A0B10, #F59E0B 4%);
-  transform: translateY(-3px);
-  cursor: pointer;
-}
-
-.stat-box:hover img,
-.luxury-box:hover img,
-.interactive-card:hover img {
-  transform: scale(1.05);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Inputs, textareas, selects with .stat-box styling: square + no lift on hover */
-input.stat-box,
-textarea.stat-box,
-select.stat-box {
-  border-radius: 0 !important;
-  transform: none !important;
-}
-input.stat-box:hover,
-textarea.stat-box:hover,
-select.stat-box:hover {
-  transform: none !important;
-  box-shadow: none !important;
-}
-input.stat-box:focus,
-textarea.stat-box:focus,
-select.stat-box:focus {
-  transform: none !important;
-  border-color: #F59E0B !important;
-  box-shadow: 0 0 0 1px #F59E0B !important;
-  outline: none;
-}
-
-/* Passive, copyable tags whose color follows the parent box */
-.tag-plain {
-  transition: border-color 0.3s ease, color 0.3s ease;
-  cursor: text;
-  user-select: text;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Button lift and amber shadow */
-.btn-amber-solid {
-  background-color: #F59E0B;
-  color: #1A1202;
-  font-weight: 700;
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.18s ease,
-              background-color 0.18s ease;
-  will-change: transform, box-shadow;
-}
-.btn-amber-solid:hover {
-  transform: translateY(-2px);
-  background-color: #FBBF24;
-  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
-  cursor: pointer;
-}
-.btn-amber-solid:active {
-  transform: translateY(0);
-}
-
-.btn-amber-outline {
-  border: 1px solid #23242B;
-  color: #F5F2EA;
-  background-color: transparent;
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.18s ease,
-              border-color 0.18s ease,
-              color 0.18s ease;
-  will-change: transform;
-}
-.btn-amber-outline:hover {
-  transform: translateY(-2px);
-  border-color: rgba(245, 158, 11, 0.7);
+/* Standard site links hover - amber color shift, no background */
+a:hover:not([class*="bg-"]):not([class*="btn"]):not([class*="button"]) {
   color: #F59E0B;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
-}
-.btn-amber-outline:active {
-  transform: translateY(0);
 }
 
-.interactive-btn {
-  transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.14s ease,
-              border-color 0.14s ease,
-              box-shadow 0.14s ease,
-              color 0.14s ease;
-  will-change: transform;
+/* Nav links hover feedback with bottom amber accent indicator */
+nav a:hover {
+  color: #F59E0B;
 }
 
-.interactive-btn:hover {
+/* All outline / ghost buttons hover - crisp amber outline + glow, no background fill */
+button:not([class*="bg-[#F59E0B]"]):not([class*="bg-amber"]):not([class*="bg-red"]):not([class*="bg-emerald"]):hover,
+.btn-outline:hover {
+  border-color: #F59E0B !important;
+  color: #F59E0B !important;
+  box-shadow: 0 0 14px -3px rgba(245, 158, 11, 0.25);
+}
+
+/* Primary solid amber buttons hover - brightness lift + focused shadow */
+button[class*="bg-[#F59E0B]"]:hover,
+button[class*="bg-amber-500"]:hover,
+a[class*="bg-[#F59E0B]"]:hover,
+.btn-primary:hover {
+  background-color: #FBBF24 !important;
+  box-shadow: 0 0 24px -2px rgba(245, 158, 11, 0.45);
   transform: translateY(-1px);
 }
 
-.interactive-btn:active {
-  transform: scale(0.97) translateY(0);
+/* Secondary dark button hover - hairline amber border + slight lift */
+button[class*="bg-[#0A0B10]"]:hover,
+button[class*="bg-[#12131A]"]:hover,
+button[class*="bg-[#161B26]"]:hover,
+button[class*="bg-[#23242B]"]:hover {
+  border-color: #F59E0B !important;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 0 12px -3px rgba(245, 158, 11, 0.2);
+  transform: translateY(-1px);
 }
 
-/* Switch Animation */
-.switch-track {
-  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-}
-.switch-thumb {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* =================================================== */
-/* 7. KEYFRAMES FOR DRIFT                              */
-/* =================================================== */
-@keyframes amberDrift1 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(-9vw, 7vh, 0) scale(1.12);
-  }
+/* Form input, textarea, select focus & hover - hairline amber glow */
+input:not([type="checkbox"]):not([type="radio"]):hover,
+textarea:hover,
+select:hover {
+  border-color: rgba(245, 158, 11, 0.45) !important;
 }
 
-@keyframes amberDrift2 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(8vw, -6vh, 0) scale(0.95);
-  }
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15), 0 0 16px -3px rgba(245, 158, 11, 0.25) !important;
+  outline: none !important;
 }
 
-.animate-glow-drift-1 {
-  animation: amberDrift1 30s ease-in-out infinite alternate;
-  will-change: transform;
+/* Stat boxes / metric cards hover feedback */
+.stat-box:hover {
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.6), 0 0 16px -4px rgba(245, 158, 11, 0.2);
+  transform: translateY(-2px);
 }
 
-.animate-glow-drift-2 {
-  animation: amberDrift2 38s ease-in-out infinite alternate;
-  will-change: transform;
+/* Interactive list rows hover feedback */
+.interactive-row {
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.interactive-row:hover {
+  background-color: rgba(245, 158, 11, 0.03);
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
-/* Text outline strokes */
-.text-stroke-hero {
-  -webkit-text-stroke: 2px #F5F2EA;
-  color: transparent;
-}
-.text-stroke-numeral {
-  -webkit-text-stroke: 1.5px #F59E0B;
-  color: transparent;
+/* Icon button hover feedback - scale up slightly, amber color */
+.icon-btn:hover {
+  color: #F59E0B;
+  transform: scale(1.08);
 }
 
-/* =================================================== */
-/* 9. ACCESSIBILITY: PREFERS-REDUCED-MOTION            */
-/* =================================================== */
+/* Social icons & badges hover */
+.badge-interactive:hover {
+  border-color: #F59E0B !important;
+  color: #F59E0B !important;
+  background-color: rgba(245, 158, 11, 0.05);
+}
+
+/* Tags / skill chips hover */
+.tag-chip {
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tag-chip:hover {
+  border-color: #F59E0B !important;
+  color: #F59E0B !important;
+  box-shadow: 0 0 12px -3px rgba(245, 158, 11, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Accessible focus visible ring across keyboard navigation */
+:focus-visible {
+  outline: 2px solid #F59E0B !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
@@ -522,16 +454,9 @@ select.stat-box:focus {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
-  .animate-glow-drift-1,
-  .animate-glow-drift-2,
-  .logo-orbit-ring,
-  .logo-core,
-  .live-pulse::after,
-  .animate-spin,
-  .shimmer-mask::after,
-  .animate-skeleton {
-    animation: none !important;
+  .interactive-card:hover,
+  .stat-box:hover,
+  button:hover {
     transform: none !important;
   }
 }
@@ -581,43 +506,43 @@ select.stat-box:focus {
 
 /* 2. All cards, tiles, list rows, form sections, and boxes in admin transition smoothly */
 .admin-shell .stat-box,
-.admin-shell [class*="bg-[#0A0B10]"]:not(header):not(aside):not(main),
-.admin-shell [class*="bg-[#06070B]"]:not(body):not(.min-h-screen),
-.admin-shell [class*="bg-[#12131A]"]:not(.rounded-full):not([class*="rounded-full"]),
-.admin-shell [class*="bg-[#161B26]"]:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell [class*="bg-[#0A0B10]"]:not(header):not(aside):not(main):not(.live-preview-panel):not(.live-preview-panel *):not([data-live-simulation]):not([data-live-simulation] *),
+.admin-shell [class*="bg-[#06070B]"]:not(body):not(.min-h-screen):not(.live-preview-panel):not(.live-preview-panel *):not([data-live-simulation]):not([data-live-simulation] *),
+.admin-shell [class*="bg-[#12131A]"]:not(.rounded-full):not([class*="rounded-full"]):not(.live-preview-panel *),
+.admin-shell [class*="bg-[#161B26]"]:not(.rounded-full):not([class*="rounded-full"]):not(.live-preview-panel *),
 .admin-shell [class*="bg-[#0e1726]"],
 .admin-shell [class*="bg-[#0E1524]"],
-.admin-shell div[class*="border-[#23242B]"]:not(header):not(aside):not(main):not([role="dialog"]),
-.admin-shell [class*="rounded-2xl"][class*="border"]:not(header):not(aside):not(main),
-.admin-shell [class*="rounded-xl"][class*="border"]:not(header):not(aside):not(main),
-.admin-shell [class*="rounded-lg"][class*="border"]:not(header):not(aside):not(main) {
+.admin-shell div[class*="border-[#23242B]"]:not(header):not(aside):not(main):not([role="dialog"]):not(.live-preview-panel):not(.live-preview-panel *):not([data-live-simulation]):not([data-live-simulation] *),
+.admin-shell [class*="rounded-2xl"][class*="border"]:not(header):not(aside):not(main):not(.live-preview-panel):not(.live-preview-panel *),
+.admin-shell [class*="rounded-xl"][class*="border"]:not(header):not(aside):not(main):not(.live-preview-panel):not(.live-preview-panel *),
+.admin-shell [class*="rounded-lg"][class*="border"]:not(header):not(aside):not(main):not(.live-preview-panel):not(.live-preview-panel *) {
   transition: border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* 3. Hover feedback = Website Style (NO background fill change) */
 /* Every box (card, tile, panel, list item, table row) gets full solid amber frame on hover */
 .admin-shell .stat-box:hover,
-.admin-shell [class*="bg-[#0A0B10]"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
-.admin-shell [class*="bg-[#06070B]"]:hover:not(body):not(.min-h-screen):not(header):not(aside):not(main),
-.admin-shell [class*="bg-[#12131A]"]:hover:not(.rounded-full):not([class*="rounded-full"]),
-.admin-shell [class*="bg-[#161B26]"]:hover:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell [class*="bg-[#0A0B10]"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *):not([data-live-simulation]):not([data-live-simulation] *),
+.admin-shell [class*="bg-[#06070B]"]:hover:not(body):not(.min-h-screen):not(header):not(aside):not(main):not(.live-preview-panel):not(.live-preview-panel *):not([data-live-simulation]):not([data-live-simulation] *),
+.admin-shell [class*="bg-[#12131A]"]:hover:not(.rounded-full):not([class*="rounded-full"]):not(.live-preview-panel *),
+.admin-shell [class*="bg-[#161B26]"]:hover:not(.rounded-full):not([class*="rounded-full"]):not(.live-preview-panel *),
 .admin-shell [class*="bg-[#0e1726]"]:hover,
 .admin-shell [class*="bg-[#0E1524]"]:hover,
-.admin-shell div[class*="border-[#23242B]"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
-.admin-shell [class*="rounded-2xl"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
-.admin-shell [class*="rounded-xl"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
-.admin-shell [class*="rounded-lg"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell div[class*="border-[#23242B]"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *):not([data-live-simulation]):not([data-live-simulation] *),
+.admin-shell [class*="rounded-2xl"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *),
+.admin-shell [class*="rounded-xl"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *),
+.admin-shell [class*="rounded-lg"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *),
 .admin-shell tbody tr:hover {
   border-color: #F59E0B !important;
   box-shadow: inset 0 0 0 1.5px #F59E0B, 0 8px 24px rgba(0, 0, 0, 0.45) !important;
 }
 
 /* Clickable / interactive cards and buttons lift slightly on hover */
-.admin-shell a[href]:hover:not(.rounded-full):not([class*="rounded-full"]),
-.admin-shell button:hover:not(.rounded-full):not([class*="rounded-full"]):not([class*="bg-[#F59E0B]"]):not(aside button),
-.admin-shell .cursor-pointer:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]),
-.admin-shell [class*="cursor-pointer"]:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]),
-.admin-shell [class*="group"]:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]) {
+.admin-shell a[href]:hover:not(.rounded-full):not([class*="rounded-full"]):not(.live-preview-panel *),
+.admin-shell button:hover:not(.rounded-full):not([class*="rounded-full"]):not([class*="bg-[#F59E0B]"]):not(aside button):not(.live-preview-panel *),
+.admin-shell .cursor-pointer:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *),
+.admin-shell [class*="cursor-pointer"]:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *),
+.admin-shell [class*="group"]:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]):not(.live-preview-panel):not(.live-preview-panel *) {
   transform: translateY(-2px);
 }
 
@@ -637,13 +562,12 @@ select.stat-box:focus {
 }
 
 /* Nested hover suppression: When hovering a child bordered box, suppress parent container's glow */
-.admin-shell div:has(> [class*="border"]:hover),
-.admin-shell div:has(> * > [class*="border"]:hover),
-.admin-shell div:has(a:hover),
-.admin-shell div:has(button:hover) {
+.admin-shell div:not(.live-preview-panel):not([data-live-simulation]):has(> [class*="border"]:hover),
+.admin-shell div:not(.live-preview-panel):not([data-live-simulation]):has(> * > [class*="border"]:hover),
+.admin-shell div:not(.live-preview-panel):not([data-live-simulation]):has(a:hover),
+.admin-shell div:not(.live-preview-panel):not([data-live-simulation]):has(button:hover) {
   border-color: #23242B !important;
   box-shadow: none !important;
-  transform: none !important;
 }
 
 /* Non-card stat-boxes like inputs, textareas, selects don't lift on hover */
@@ -722,4 +646,52 @@ select.stat-box:focus {
 }
 .admin-shell div.fixed > div:hover {
   transform: none !important;
+}
+
+/* =================================================== */
+/* 11. LIVE SIMULATION PANEL — ZERO HOVER EFFECT & LOCK */
+/* =================================================== */
+/* Turn OFF all hover glows, border changes, and translateY on live simulation */
+.admin-shell .live-preview-panel,
+.admin-shell .live-preview-panel *,
+.admin-shell [data-live-simulation],
+.admin-shell [data-live-simulation] * {
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+.admin-shell .live-preview-panel:hover,
+.admin-shell .live-preview-panel *:hover,
+.admin-shell [data-live-simulation]:hover,
+.admin-shell [data-live-simulation] *:hover {
+  border-color: #23242B !important;
+  box-shadow: none !important;
+  transform: none;
+}
+
+/* Chrome bar controls hover: subtle border on buttons only */
+.admin-shell .live-preview-panel button:hover,
+.admin-shell .live-preview-panel a:hover {
+  border-color: #F59E0B !important;
+}
+
+/* Hard-lock scaled simulation frames: absolutely prevent zoom-in or scale reset on hover */
+.admin-shell [data-preview-frame="desktop"],
+.admin-shell [data-preview-frame="desktop"]:hover,
+.admin-shell .live-preview-panel [data-preview-frame="desktop"],
+.admin-shell .live-preview-panel [data-preview-frame="desktop"]:hover {
+  transform: scale(var(--desktop-scale, 1)) !important;
+  transform-origin: top left !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+.admin-shell [data-preview-frame="mobile"],
+.admin-shell [data-preview-frame="mobile"]:hover,
+.admin-shell .live-preview-panel [data-preview-frame="mobile"],
+.admin-shell .live-preview-panel [data-preview-frame="mobile"]:hover {
+  transform: scale(var(--mobile-scale, 1)) !important;
+  transform-origin: top left !important;
+  box-shadow: none !important;
+  border-color: #23242B !important;
 }

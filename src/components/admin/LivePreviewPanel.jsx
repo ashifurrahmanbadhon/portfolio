@@ -176,7 +176,8 @@ export default function LivePreviewPanel({
 
   return (
     <div
-      className={`w-full bg-[#0A0B10] border border-[#23242B] overflow-hidden flex flex-col transition-colors duration-150 ${className}`}
+      data-live-simulation="true"
+      className={`live-preview-panel w-full bg-[#0A0B10] border border-[#23242B] overflow-hidden flex flex-col ${className}`}
     >
       {/* Browser Chrome Bar */}
       <div className="px-3 py-2.5 bg-[#06070B] border-b border-[#23242B] flex items-center justify-between gap-2 select-none shrink-0">
@@ -282,7 +283,8 @@ export default function LivePreviewPanel({
       {!collapsed && (
         <div
           ref={stageRef}
-          className="flex-1 min-h-0 relative bg-[#06070B] p-2.5 sm:p-3 flex items-center justify-center overflow-hidden w-full"
+          data-live-simulation="true"
+          className="live-stage flex-1 min-h-0 relative bg-[#06070B] p-2.5 sm:p-3 flex items-center justify-center overflow-hidden w-full"
         >
           {/* Fitting placeholder: Never render unscaled iframe before scale is ready */}
           {!isScaleReady ? (
@@ -307,12 +309,14 @@ export default function LivePreviewPanel({
                     width: Math.round(1440 * desktopScale),
                     height: Math.round(900 * desktopScale),
                   }}
-                  className="border border-[#23242B] bg-[#06070B] shrink-0 relative overflow-hidden"
+                  className="live-preview-box border border-[#23242B] bg-[#06070B] shrink-0 relative overflow-hidden"
                 >
                   <div
+                    data-preview-frame="desktop"
                     style={{
                       width: 1440,
                       height: 900,
+                      "--desktop-scale": desktopScale,
                       transform: `scale(${desktopScale})`,
                       transformOrigin: "top left",
                     }}
@@ -338,12 +342,14 @@ export default function LivePreviewPanel({
                     width: Math.round(390 * mobileScale),
                     height: Math.round(844 * mobileScale),
                   }}
-                  className="shrink-0 relative overflow-hidden"
+                  className="live-preview-box shrink-0 relative overflow-hidden"
                 >
                   <div
+                    data-preview-frame="mobile"
                     style={{
                       width: 390,
                       height: 844,
+                      "--mobile-scale": mobileScale,
                       transform: `scale(${mobileScale})`,
                       transformOrigin: "top left",
                     }}
