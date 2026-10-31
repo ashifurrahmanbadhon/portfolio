@@ -104,7 +104,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
           {/* Left Column: Bordered channel rows — left mono faint label, right masked value; hover inset ring */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 max-w-xl space-y-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA]">
                 Communication Channels
@@ -114,7 +114,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               {channelsList.filter(c => isChannelActive(c.key)).map((ch) => (
                 <a
                   key={ch.key}
@@ -123,11 +123,11 @@ export default function ContactPage() {
                   rel={ch.url.startsWith('http') ? 'noreferrer' : undefined}
                   className="block group cursor-pointer"
                 >
-                  <div className="stat-box p-4 sm:p-4.5 flex items-center justify-between">
+                  <div className="stat-box px-4 py-3 flex items-center justify-between">
                     <span className="font-mono text-xs text-[#8E8B82] uppercase tracking-wider font-medium">
                       {ch.label}
                     </span>
-                    <span className="font-mono text-xs sm:text-sm tracking-widest text-[#8E8B82] group-hover:text-[#F59E0B] transition flex items-center gap-2">
+                    <span className="font-mono text-xs tracking-widest text-[#8E8B82] group-hover:text-[#F59E0B] transition flex items-center gap-2">
                       <span>••••••••••</span>
                       <ExternalLink size={12} className="text-[#8E8B82] group-hover:text-[#F59E0B]" />
                     </span>

@@ -56,7 +56,7 @@ export default function ExperiencePage() {
         </div>
 
         {/* Separate role boxes */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           {experiences.map((exp, idx) => (
             <div
               key={idx}
