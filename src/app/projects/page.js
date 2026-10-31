@@ -240,7 +240,7 @@ export default function ProjectsPage() {
           {filteredProjects.map((proj, idx) => (
             <div
               key={proj.id || idx}
-              className="stat-box p-6 sm:p-7 flex flex-col justify-between"
+              className="stat-box group p-6 sm:p-7 flex flex-col justify-between"
             >
               <div>
                 {/* Visual Thumbnail / Slider */}
@@ -302,7 +302,7 @@ export default function ProjectsPage() {
                     {proj.tags.map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="stat-box rounded-full text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
+                        className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] rounded-full text-[10px] font-mono px-2.5 py-1"
                       >
                         {tag}
                       </span>
@@ -315,7 +315,7 @@ export default function ProjectsPage() {
                     <FileCheck size={13} className="text-[#F59E0B]" /> VERIFIED
                   </span>
                   {proj.category && (
-                    <span className="text-[10px] uppercase text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/25 px-2 py-0.5 rounded-full font-semibold">
+                    <span className="tag-plain text-[10px] uppercase text-[#F59E0B] group-hover:text-[#FBBF24] bg-[#F59E0B]/10 border border-[#F59E0B]/25 group-hover:border-[#F59E0B]/70 px-2 py-0.5 rounded-full font-semibold">
                       {proj.category}
                     </span>
                   )}

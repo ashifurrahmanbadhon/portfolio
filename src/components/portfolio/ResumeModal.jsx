@@ -32,17 +32,17 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/Ashifur_Rah
           <button
             type="button"
             onClick={triggerCvDownload}
-            className="w-full py-3.5 rounded-full bg-[#F59E0B] text-[#1A1202] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#FBBF24] hover:shadow-[0_8px_24px_rgba(245,158,11,0.35)] transition cursor-pointer"
+            className="stat-box text-[#F5F2EA] w-full py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Download size={15} /> Download Official PDF CV
+            <Download size={15} className="text-[#F59E0B]" /> Download Official PDF CV
           </button>
           <a
             href={resumeUrl}
             target="_blank"
             rel="noreferrer"
-            className="w-full py-3.5 rounded-full bg-[#06070B] text-[#F5F2EA] border border-[#23242B] hover:border-[#F59E0B]/60 font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition hover:bg-white/5"
+            className="stat-box text-[#F5F2EA] w-full py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
           >
-            <ExternalLink size={15} /> View CV in Browser Tab
+            <ExternalLink size={15} className="text-[#F59E0B]" /> View CV in Browser Tab
           </a>
           <a
             href="mailto:ashifur.badhon@gmail.com?subject=Request%20for%20Ashifur%20Rahman%20Full%20Resume"

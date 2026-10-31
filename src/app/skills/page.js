@@ -86,7 +86,7 @@ export default function SkillsPage() {
 
         {/* Software Tools = chips row; chip hover: amber border + amber text */}
         {softwareTools && softwareTools.length > 0 && (
-          <div className="stat-box p-6 sm:p-10 space-y-6 shadow-xl mb-16">
+          <div className="stat-box group p-6 sm:p-10 space-y-6 shadow-xl mb-16">
             <div>
               <h3 className="text-xl font-bold uppercase tracking-tight text-[#F5F2EA]">
                 Engineering Software &amp; Tool Stack
@@ -103,11 +103,11 @@ export default function SkillsPage() {
                 return (
                   <span
                     key={idx}
-                    className="stat-box rounded-full px-3.5 py-2 text-xs font-mono text-[#B9B5A9] flex items-center gap-2"
+                    className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] rounded-full px-3.5 py-2 text-xs font-mono flex items-center gap-2"
                   >
                     <span className="text-[#F59E0B]">✦</span>
                     <span>{name}</span>
-                    {cat && <span className="text-[10px] text-[#8E8B82]">({cat})</span>}
+                    {cat && <span className="text-[10px] text-[#8E8B82] group-hover:text-[#FBBF24]/70">({cat})</span>}
                   </span>
                 );
               })}
@@ -117,7 +117,7 @@ export default function SkillsPage() {
 
         {/* Skill Badges if available */}
         {skillBadges && skillBadges.length > 0 && (
-          <div className="stat-box p-6 sm:p-10 space-y-4 shadow-xl mb-16">
+          <div className="stat-box group p-6 sm:p-10 space-y-4 shadow-xl mb-16">
             <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
               Core Competencies
             </h3>
@@ -125,7 +125,7 @@ export default function SkillsPage() {
               {skillBadges.map((badge, bIdx) => (
                 <span
                   key={bIdx}
-                  className="stat-box rounded-full font-mono text-xs px-3 py-1.5 text-[#B9B5A9] inline-flex items-center"
+                  className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] rounded-full font-mono text-xs px-3 py-1.5 inline-flex items-center"
                 >
                   {badge}
                 </span>
@@ -147,16 +147,16 @@ export default function SkillsPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/contact"
-              className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+              className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
-              Discuss Requirement <ArrowRight size={15} />
+              Discuss Requirement <ArrowRight size={15} className="text-[#F59E0B]" />
             </Link>
             <button
               type="button"
               onClick={triggerCvDownload}
-              className="btn-amber-outline px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+              className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
-              <Download size={15} /> Download CV
+              <Download size={15} className="text-[#F59E0B]" /> Download CV
             </button>
           </div>
         </div>
