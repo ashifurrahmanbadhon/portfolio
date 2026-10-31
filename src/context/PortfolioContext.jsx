@@ -23,11 +23,12 @@ import {
   DEFAULT_SITE_TEXTS
 } from '@/lib/portfolioDefaults';
 
-const CACHE_KEY = 'portfolio_cms_cache_v7';
-let inMemorySessionCache = null;
+const PLACEHOLDER_KEY = 'portfolio_cms_placeholder_data';
 const PortfolioContext = createContext(null);
 
 export function PortfolioProvider({ children }) {
+  const currentVersionRef = React.useRef(null);
+  const isFetchingRef = React.useRef(false);
   const [heroData, setHeroData] = useState(DEFAULT_HERO);
   const [aboutData, setAboutData] = useState(DEFAULT_ABOUT);
   const [highlights, setHighlights] = useState(DEFAULT_HIGHLIGHTS);
@@ -258,68 +259,114 @@ export function PortfolioProvider({ children }) {
     }
   }, []);
 
-  // Per-session in-memory cache to prevent refetching on every page navigation
-  const loadContent = useCallback(async (force = false) => {
-    if (!force && inMemorySessionCache) {
-      applyContentData(inMemorySessionCache);
-      setIsLoaded(true);
-      return;
-    }
+  // Fetch 100% fresh content from DB (≤1s freshness, no CDN holding)
+  const fetchFreshContent = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     try {
-      const res = await fetch('/api/content');
+      const res = await fetch(`/api/content?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          Pragma: 'no-cache',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+        },
+      });
       if (!res.ok) return;
       const data = await res.json();
-      inMemorySessionCache = data;
+      const ver = Number(data.content_version || data.site_settings?.content_version) || 1;
+      currentVersionRef.current = ver;
       applyContentData(data);
       setIsLoaded(true);
 
-      // Persist latest snapshot to localStorage for instantaneous future paints
+      // Save latest snapshot as placeholder for instantaneous first paint on next load
       if (typeof window !== 'undefined') {
         try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+          localStorage.setItem(PLACEHOLDER_KEY, JSON.stringify(data));
         } catch (_) {}
       }
     } catch (err) {
-      console.log('Portfolio content loaded from resilient snapshot:', err);
+      console.warn('Portfolio fresh content fetch fallback:', err);
       setIsLoaded(true);
+    } finally {
+      isFetchingRef.current = false;
     }
   }, [applyContentData]);
 
-  // Instant hydration from cache on mount + fetch background update
+  // Fast version check via HEAD to catch up without waiting for full payload if unchanged
+  const checkVersionAndRefresh = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/content?_t=${Date.now()}`, {
+        method: 'HEAD',
+        cache: 'no-store',
+        headers: {
+          Pragma: 'no-cache',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+        },
+      });
+      const serverVer = res.headers.get('x-content-version');
+      if (!serverVer || serverVer !== String(currentVersionRef.current)) {
+        await fetchFreshContent();
+      }
+    } catch (_) {
+      await fetchFreshContent();
+    }
+  }, [fetchFreshContent]);
+
+  // Instant hydration from placeholder on mount + ALWAYS fetch fresh DB content on same load
   useEffect(() => {
-    if (inMemorySessionCache) {
-      applyContentData(inMemorySessionCache);
-      setIsLoaded(true);
-    } else if (typeof window !== 'undefined') {
+    // 1. Placeholder hydration for instant initial paint (zero blank loading screen)
+    if (typeof window !== 'undefined') {
       try {
-        const cached = localStorage.getItem(CACHE_KEY);
+        const cached = localStorage.getItem(PLACEHOLDER_KEY);
         if (cached) {
           const parsed = JSON.parse(cached);
-          inMemorySessionCache = parsed;
           applyContentData(parsed);
           setIsLoaded(true);
+          if (parsed.content_version || parsed.site_settings?.content_version) {
+            currentVersionRef.current = Number(parsed.content_version || parsed.site_settings?.content_version);
+          }
         }
       } catch (_) {}
     }
-    loadContent(true);
 
-    // Listen to admin update events for live sync without reload
-    const handleSync = () => {
-      loadContent(true);
+    // 2. ALWAYS fetch fresh DB content on mount
+    fetchFreshContent();
+
+    // 3. Auto refetch on window focus and on visibilitychange (tab becomes visible)
+    const handleFocus = () => {
+      checkVersionAndRefresh();
+    };
+
+    const handleVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        checkVersionAndRefresh();
+      }
+    };
+
+    const handleAdminSync = () => {
+      fetchFreshContent();
     };
 
     if (typeof window !== 'undefined') {
-      window.addEventListener('portfolio_content_updated', handleSync);
-      window.addEventListener('storage', handleSync);
+      window.addEventListener('focus', handleFocus);
+      document.addEventListener('visibilitychange', handleVisibility);
+      window.addEventListener('portfolio_content_updated', handleAdminSync);
+      window.addEventListener('storage', handleAdminSync);
     }
+
+    // 4. Background check every 12 seconds so already-open tabs catch up even without manual focus
+    const pollTimer = setInterval(checkVersionAndRefresh, 12000);
 
     return () => {
       if (typeof window !== 'undefined') {
-        window.removeEventListener('portfolio_content_updated', handleSync);
-        window.removeEventListener('storage', handleSync);
+        window.removeEventListener('focus', handleFocus);
+        document.removeEventListener('visibilitychange', handleVisibility);
+        window.removeEventListener('portfolio_content_updated', handleAdminSync);
+        window.removeEventListener('storage', handleAdminSync);
       }
+      clearInterval(pollTimer);
     };
-  }, [applyContentData, loadContent]);
+  }, [applyContentData, fetchFreshContent, checkVersionAndRefresh]);
 
   // Live Simulation Preview hook (inert unless ?cms_preview=1 is present)
   const [isPreview, setIsPreview] = useState(false);
@@ -418,7 +465,8 @@ export function PortfolioProvider({ children }) {
         resumeModalOpen,
         openResumeModal,
         closeResumeModal,
-        reloadContent: loadContent,
+        reloadContent: fetchFreshContent,
+        loadContent: fetchFreshContent,
         isLoaded,
       }}
     >

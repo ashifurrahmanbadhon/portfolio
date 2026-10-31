@@ -1,25 +1,41 @@
 import HomePageClient from "@/components/portfolio/HomePageClient";
+import { getPortfolioContent } from "@/lib/db";
 
-export const metadata = {
-  title: "Ashifur Rahman • Portfolio",
-  description: "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Ashifur Rahman • Portfolio",
-    description: "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services.",
-    url: "/",
-    type: "website",
-    siteName: "Ashifur Rahman • Portfolio",
-    locale: "en_US",
-    images: [{ url: "/ashifur.jpeg", width: 1200, height: 630, alt: "Ashifur Rahman" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Ashifur Rahman • Portfolio",
-    description: "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services.",
-    images: ["/ashifur.jpeg"],
-  },
-};
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export async function generateMetadata() {
+  const content = await getPortfolioContent().catch(() => null);
+  const homeHeader = content?.page_headers?.home;
+  const siteSettings = content?.site_settings;
+  const title = homeHeader?.seo_title || siteSettings?.site_title || "Ashifur Rahman • Portfolio";
+  const description =
+    homeHeader?.seo_description ||
+    siteSettings?.meta_description ||
+    "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services.";
+  const ogImage = siteSettings?.og_image_url || "/ashifur.jpeg";
+
+  return {
+    title,
+    description,
+    alternates: { canonical: "/" },
+    openGraph: {
+      title,
+      description,
+      url: "/",
+      type: "website",
+      siteName: siteSettings?.site_title || "Ashifur Rahman • Portfolio",
+      locale: "en_US",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: "Ashifur Rahman" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
+}
 
 const personSchema = {
   "@context": "https://schema.org",
