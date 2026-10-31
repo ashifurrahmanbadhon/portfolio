@@ -8,7 +8,7 @@ import PackageInquiryModal from '@/components/portfolio/PackageInquiryModal';
 import { usePortfolio } from '@/context/PortfolioContext';
 
 export default function WorkPage() {
-  const { workPackages, pageHeaders } = usePortfolio();
+  const { workPackages, pageHeaders, siteTexts } = usePortfolio();
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -128,16 +128,16 @@ export default function WorkPage() {
         {/* Bottom CTA stat-box */}
         <div className="stat-box p-8 sm:p-12 text-center max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA] mb-4">
-            Need something different?
+            {siteTexts?.work_bottom_cta_title || "Need something different?"}
           </h2>
           <p className="text-sm sm:text-base text-[#B9B5A9] max-w-2xl mx-auto mb-8 leading-relaxed">
-            If your requirement does not match a package, describe it in a few lines — I will tell you honestly if I can do it, how long it takes, and what it costs.
+            {siteTexts?.work_bottom_cta_desc || "If your requirement does not match a package, describe it in a few lines — I will tell you honestly if I can do it, how long it takes, and what it costs."}
           </p>
           <Link
             href="/contact"
             className="stat-box inline-block py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
           >
-            Contact Me
+            {siteTexts?.work_bottom_cta_btn || "Contact Me"}
           </Link>
         </div>
       </section>

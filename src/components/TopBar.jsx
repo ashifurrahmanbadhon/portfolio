@@ -120,7 +120,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       try {
         const { dataUrl } = await downscalePhotoToWebP(file);
         if (dataUrl) setEditAvatar(dataUrl);
-      } catch (_) {}
+      } catch (_) { }
     } finally {
       setTimeout(() => {
         setAvatarUploading(false);
@@ -201,7 +201,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       if (newPw) {
         try {
           localStorage.setItem("cms_admin_pw", newPw);
-        } catch (e) {}
+        } catch (e) { }
       }
 
       setSavingProfile(false);
