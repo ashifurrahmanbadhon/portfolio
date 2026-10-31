@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { exec } from "child_process";
 import { neon } from "@neondatabase/serverless";
 import { DatabaseSync } from "node:sqlite";
+import { DEFAULT_WORK_PACKAGES } from "./portfolioDefaults.js";
 
 // ==========================================
 // Database Connection Strategy
@@ -47,10 +48,30 @@ function getSqliteDb() {
       sqliteInstance.exec(`
         CREATE TABLE IF NOT EXISTS admin_presence (id INTEGER PRIMARY KEY, last_seen TEXT);
         CREATE TABLE IF NOT EXISTS contact_replies (id INTEGER PRIMARY KEY AUTOINCREMENT, message_id INTEGER NOT NULL, body TEXT NOT NULL, created_at TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS work_packages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          category TEXT,
+          title TEXT,
+          description TEXT,
+          deliverables TEXT,
+          tags TEXT,
+          sort_order INTEGER,
+          is_active INTEGER DEFAULT 1
+        );
       `);
       const hasPres = sqliteInstance.prepare("SELECT id FROM admin_presence WHERE id = 1").get();
       if (!hasPres) {
         sqliteInstance.prepare("INSERT INTO admin_presence (id, last_seen) VALUES (1, NULL)").run();
+      }
+      const wpCount = sqliteInstance.prepare("SELECT COUNT(*) as c FROM work_packages").get()?.c || 0;
+      if (wpCount === 0 && Array.isArray(DEFAULT_WORK_PACKAGES)) {
+        const stmt = sqliteInstance.prepare(`
+          INSERT INTO work_packages (category, title, description, deliverables, tags, sort_order, is_active)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `);
+        for (const p of DEFAULT_WORK_PACKAGES) {
+          stmt.run(p.category, p.title, p.description, p.deliverables, p.tags, p.sort_order, p.is_active);
+        }
       }
       const certCols = sqliteInstance.prepare("PRAGMA table_info(certifications)").all();
       if (certCols && certCols.length > 0 && !certCols.some((c) => c.name === "image_url")) {
@@ -658,7 +679,8 @@ export async function getPortfolioContent() {
     software_tools,
     project_methodologies,
     phRows,
-    homepage_cta_res
+    homepage_cta_res,
+    work_packages_res
   ] = await Promise.all([
     queryOne("SELECT * FROM hero WHERE id = 1"),
     queryOne("SELECT * FROM about WHERE id = 1"),
@@ -679,7 +701,8 @@ export async function getPortfolioContent() {
     queryAll("SELECT * FROM software_tools ORDER BY sort_order ASC, id ASC"),
     queryAll("SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC"),
     queryAll("SELECT * FROM page_headers"),
-    queryOne("SELECT * FROM homepage_cta WHERE id = 1")
+    queryOne("SELECT * FROM homepage_cta WHERE id = 1"),
+    queryAll("SELECT * FROM work_packages WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => [])
   ]);
 
   const hero = heroRes || {};
@@ -787,6 +810,7 @@ export async function getPortfolioContent() {
     site_settings,
     page_headers,
     homepage_cta,
+    work_packages: (work_packages_res && work_packages_res.length > 0) ? work_packages_res : DEFAULT_WORK_PACKAGES,
   };
 
   portfolioCache = result;
@@ -1359,6 +1383,33 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         data.secondary_btn_link ?? null,
       ]);
       await addActivityLog("Updated Homepage CTA", "Modified collaboration callout texts.", "Portfolio", user, 1);
+      break;
+    }
+
+    case "work_packages": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM work_packages");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          const isAct = item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1;
+          const sortVal = item.sort_order !== undefined && item.sort_order !== null && item.sort_order !== ""
+            ? Number(item.sort_order)
+            : idx + 1;
+          await execute(`
+            INSERT INTO work_packages (category, title, description, deliverables, tags, sort_order, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `, [
+            item.category || "WEBSITE",
+            item.title || "",
+            item.description || "",
+            item.deliverables || "",
+            item.tags || "",
+            sortVal,
+            isAct
+          ]);
+        }
+        await addActivityLog("Updated Work Packages", `Saved ${data.items.length} service packages.`, "Portfolio", user, 1);
+      }
       break;
     }
 
