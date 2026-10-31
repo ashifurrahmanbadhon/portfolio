@@ -138,9 +138,9 @@ ${contextText}`;
       }
     };
 
-    // 6. Call Google Gemini API (model cascade: gemini-3.5-flash -> gemini-flash-lite-latest -> gemini-2.5-flash)
+    // 6. Call Google Gemini API (model cascade: gemini-2.5-flash -> gemini-flash-lite-latest)
     // Never pass apiKey in logs; pass via header x-goog-api-key and URL query for maximum compatibility
-    const modelsToTry = ["gemini-3.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash"];
+    const modelsToTry = ["gemini-2.5-flash", "gemini-flash-lite-latest"];
     let replyText = null;
 
     for (const model of modelsToTry) {
@@ -153,7 +153,7 @@ ${contextText}`;
             "x-goog-api-key": apiKey
           },
           body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(10000)
+          signal: AbortSignal.timeout(20000)
         });
 
         if (apiRes.ok) {
