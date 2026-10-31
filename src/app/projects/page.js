@@ -237,7 +237,7 @@ export default function ProjectsPage() {
           {filteredProjects.map((proj, idx) => (
             <div
               key={proj.id || idx}
-              className="luxury-box p-6 sm:p-7 flex flex-col justify-between"
+              className="stat-box rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
             >
               <div>
                 {/* Visual Thumbnail / Slider */}
@@ -299,7 +299,7 @@ export default function ProjectsPage() {
                     {proj.tags.map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[10px] font-mono text-[#8E8B82] bg-[#06070B] px-2.5 py-1 rounded border border-[#23242B]"
+                        className="stat-box rounded text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
                       >
                         {tag}
                       </span>
@@ -338,7 +338,7 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
               {projectMethodologies.map((step, idx) => (
-                <div key={idx} className="luxury-box p-6 space-y-3">
+                <div key={idx} className="stat-box rounded-2xl p-6 space-y-3">
                   <span className="text-2xl font-black text-[#F59E0B] font-mono">
                     {step.step_number || String(idx + 1).padStart(2, "0")}
                   </span>

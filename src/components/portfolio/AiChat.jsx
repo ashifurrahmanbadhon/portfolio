@@ -175,7 +175,7 @@ export default function AiChat() {
                 type="button"
                 onClick={() => handleChipClick(chip)}
                 disabled={loading}
-                className="shrink-0 px-2.5 py-1 rounded-full border border-[#23242B] bg-[#0A0B10] text-[#B9B5A9] hover:text-[#F59E0B] hover:border-[#F59E0B]/50 text-[11px] font-mono transition cursor-pointer disabled:opacity-50"
+                className="stat-box shrink-0 px-2.5 py-1 rounded-full text-[#B9B5A9] text-[11px] font-mono cursor-pointer disabled:opacity-50"
               >
                 {chip}
               </button>

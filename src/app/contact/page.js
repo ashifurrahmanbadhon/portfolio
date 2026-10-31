@@ -129,7 +129,7 @@ export default function ContactPage() {
                   rel={ch.url.startsWith('http') ? 'noreferrer' : undefined}
                   className="block group cursor-pointer"
                 >
-                  <div className="luxury-box p-4 sm:p-4.5 flex items-center justify-between transition-all">
+                  <div className="stat-box rounded-xl p-4 sm:p-4.5 flex items-center justify-between">
                     <span className="font-mono text-xs text-[#8E8B82] uppercase tracking-wider font-medium">
                       {ch.label}
                     </span>
@@ -143,7 +143,7 @@ export default function ContactPage() {
             </div>
 
             {/* SLA Card */}
-            <div className="border border-[#23242B] bg-[#0A0B10] rounded-xl p-5 space-y-2">
+            <div className="stat-box rounded-xl p-5 space-y-2">
               <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] font-semibold">
                 <Clock size={13} />
                 <span>RESPONSE TIME SLA</span>
@@ -155,7 +155,7 @@ export default function ContactPage() {
           </div>
 
           {/* Right Column: Form (SAME fields, validation, submit, success behavior; restyled) */}
-          <div className="lg:col-span-7 luxury-box p-8 sm:p-10 shadow-2xl relative">
+          <div className="lg:col-span-7 stat-box rounded-2xl p-8 sm:p-10 shadow-2xl relative">
             <div className="mb-6">
               <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-2">
                 Send a Direct Message
