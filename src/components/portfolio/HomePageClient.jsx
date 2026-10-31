@@ -86,6 +86,8 @@ export default function Home() {
     certifications,
     services,
     workPackages,
+    processSteps,
+    siteTexts,
     contactData,
     homepageCta
   } = usePortfolio();
@@ -121,6 +123,14 @@ export default function Home() {
     }
     return projectsData.slice(0, 3);
   }, [projectsData]);
+
+  const stepsToRender = (processSteps && processSteps.length > 0)
+    ? processSteps.map((s, idx) => ({
+        num: String(s.sort_order || idx + 1).padStart(2, "0"),
+        title: s.title,
+        desc: s.description || s.desc
+      }))
+    : HOW_I_WORK_STEPS;
 
   return (
     <PortfolioLayout>
@@ -304,14 +314,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
               <div>
                 <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                  Featured Engineering Projects
+                  {siteTexts?.home_featured_projects_heading || "Featured Engineering Projects"}
                 </h2>
               </div>
               <Link
                 href="/projects"
                 className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
               >
-                Explore All Projects ({projectsData.length}) <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                {siteTexts?.home_featured_projects_btn || "Explore All Projects"} ({projectsData.length}) <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
             </div>
 
@@ -383,14 +393,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
               <div>
                 <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                  Career Journey &amp; Field Work
+                  {siteTexts?.home_experience_heading || "Career Journey & Field Work"}
                 </h2>
               </div>
               <Link
                 href="/experience"
                 className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
               >
-                View Full Timeline <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                {siteTexts?.home_experience_btn || "View Full Timeline"} <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
             </div>
 
@@ -440,14 +450,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
               <div>
                 <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                  Technical Skills &amp; Tools
+                  {siteTexts?.home_skills_heading || "Technical Skills & Tools"}
                 </h2>
               </div>
               <Link
                 href="/skills"
                 className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
               >
-                View Full Matrix <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                {siteTexts?.home_skills_btn || "View Full Matrix"} <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
             </div>
 
@@ -493,14 +503,14 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
             <div>
               <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                Education &amp; Credentials
+                {siteTexts?.home_education_heading || "Education & Credentials"}
               </h2>
             </div>
             <Link
               href="/education"
               className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
             >
-              View All Credentials <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+              {siteTexts?.home_education_btn || "View All Credentials"} <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
             </Link>
           </div>
 
@@ -558,7 +568,7 @@ export default function Home() {
           >
             <div className="mb-10">
               <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                Engineering Services
+                {siteTexts?.home_services_heading || "Engineering Services"}
               </h2>
             </div>
 
@@ -597,7 +607,7 @@ export default function Home() {
           >
             <div className="mb-10">
               <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                Digital Services
+                {siteTexts?.home_packages_heading || "Digital Services"}
               </h2>
             </div>
 
@@ -641,7 +651,7 @@ export default function Home() {
                 href="/work"
                 className="stat-box inline-block py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
               >
-                View All Packages &rarr;
+                {siteTexts?.home_packages_btn || "View All Packages →"}
               </Link>
             </div>
           </motion.div>
@@ -658,12 +668,12 @@ export default function Home() {
         >
           <div className="mb-10">
             <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-              How I Work
+              {siteTexts?.home_how_i_work_heading || "How I Work"}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {HOW_I_WORK_STEPS.map((step) => (
+            {stepsToRender.map((step) => (
               <div
                 key={step.num}
                 className="stat-box p-7 flex flex-col justify-between"

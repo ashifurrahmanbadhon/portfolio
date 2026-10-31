@@ -64,6 +64,11 @@ const SkillBadgesManager = dynamic(() => import("@/components/admin/SkillBadgesM
 const ProjectMethodologyManager = dynamic(() => import("@/components/admin/ProjectMethodologyManager"), { ssr: true });
 const PageHeadersManager = dynamic(() => import("@/components/admin/PageHeadersManager"), { ssr: true });
 const HomepageCtaManager = dynamic(() => import("@/components/admin/HomepageCtaManager"), { ssr: true });
+const HeadingsTextsEditor = dynamic(() => import("@/components/admin/HeadingsTextsEditor"), { ssr: true });
+const SeoTitlesEditor = dynamic(() => import("@/components/admin/SeoTitlesEditor"), { ssr: true });
+const AiChatEditor = dynamic(() => import("@/components/admin/AiChatEditor"), { ssr: true });
+
+import { DEFAULT_PROCESS_STEPS, DEFAULT_SITE_TEXTS } from "@/lib/portfolioDefaults";
 
 // Default fallbacks matching portfolio initial state
 const DEFAULT_HERO = {
@@ -158,6 +163,8 @@ function AdminConsoleContent() {
   const [projectMethodologies, setProjectMethodologies] = useState([]);
   const [pageHeaders, setPageHeaders] = useState({});
   const [homepageCta, setHomepageCta] = useState({});
+  const [siteTexts, setSiteTexts] = useState(DEFAULT_SITE_TEXTS);
+  const [processSteps, setProcessSteps] = useState(DEFAULT_PROCESS_STEPS);
 
   // Active category filter for skills & projects
   const [skillCategoryFilter, setSkillCategoryFilter] = useState("all");
@@ -465,6 +472,8 @@ function AdminConsoleContent() {
     if (Array.isArray(res.project_methodologies)) setProjectMethodologies(res.project_methodologies);
     if (res.page_headers) setPageHeaders(res.page_headers);
     if (res.homepage_cta) setHomepageCta(res.homepage_cta);
+    if (Array.isArray(res.process_steps) && res.process_steps.length > 0) setProcessSteps(res.process_steps);
+    if (res.site_texts) setSiteTexts(res.site_texts);
   };
 
   // Load content from API
@@ -923,80 +932,41 @@ function AdminConsoleContent() {
             )}
 
             {/* ============================================================== */}
-            {/* TAB: HEADINGS & TEXTS (STEP 2 PLACEHOLDER)                     */}
+            {/* TAB: HEADINGS & TEXTS (TOTAL EDITABLE COVERAGE)                */}
             {/* ============================================================== */}
             {currentTab === "headings" && (
-              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-bold text-[#F5F2EA]">Headings & Texts Editor</h2>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">Step 2 Implementation</span>
-                  </div>
-                </div>
-                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
-                  This dedicated section will house fine-grained inline editing for all page subtitles, section kickers, and badge microcopies across the 8 portfolio pages.
-                </p>
-                <div className="pt-2">
-                  <Link href="/admin?tab=settings" className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition">
-                    <span>Go to Page Headers & Settings</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
+              <HeadingsTextsEditor
+                siteTexts={siteTexts}
+                setSiteTexts={setSiteTexts}
+                processSteps={processSteps}
+                setProcessSteps={setProcessSteps}
+                onSave={handleSaveSection}
+                saving={saving}
+              />
             )}
 
             {/* ============================================================== */}
-            {/* TAB: SEO TITLES (STEP 2 PLACEHOLDER)                           */}
+            {/* TAB: SEO TITLES (8 PAGES WITH LIVE SERP PREVIEW)               */}
             {/* ============================================================== */}
             {currentTab === "seo" && (
-              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
-                    <Globe className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-bold text-[#F5F2EA]">SEO Titles & Meta Tags</h2>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">Step 2 Implementation</span>
-                  </div>
-                </div>
-                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
-                  This dedicated view will provide per-route metadata controls, OpenGraph preview cards, Twitter cards, and structured schema tags.
-                </p>
-                <div className="pt-2">
-                  <Link href="/admin?tab=settings" className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition">
-                    <span>Go to Page Headers & Settings</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
+              <SeoTitlesEditor
+                pageHeaders={pageHeaders}
+                setPageHeaders={setPageHeaders}
+                onSave={handleSaveSection}
+                saving={saving}
+              />
             )}
 
             {/* ============================================================== */}
-            {/* TAB: AI CHAT (STEP 2 PLACEHOLDER)                              */}
+            {/* TAB: AI CHAT (WELCOME GREETING & CHIPS MANAGER)                */}
             {/* ============================================================== */}
             {currentTab === "ai_chat" && (
-              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-bold text-[#F5F2EA]">AI Chat Assistant</h2>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">Step 2 Implementation</span>
-                  </div>
-                </div>
-                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
-                  Configure system prompts, rate limits (currently 20/hr/IP), model cascade (gemini-2.5-flash & gemini-flash-lite-latest), and conversation analytics.
-                </p>
-                <div className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] text-xs font-mono space-y-1.5 text-[#8E8B82]">
-                  <div>• Primary Model: <span className="text-[#F5F2EA]">gemini-2.5-flash</span> (Timeout: 20s)</div>
-                  <div>• Secondary Model: <span className="text-[#F5F2EA]">gemini-flash-lite-latest</span></div>
-                  <div>• API Key: <span className="text-[#F59E0B]">GEMINI_API_KEY</span> (Server-side environment variable)</div>
-                </div>
-              </div>
+              <AiChatEditor
+                siteTexts={siteTexts}
+                setSiteTexts={setSiteTexts}
+                onSave={handleSaveSection}
+                saving={saving}
+              />
             )}
 
             {/* ============================================================== */}
@@ -3122,6 +3092,52 @@ function AdminConsoleContent() {
                   />
                 </div>
 
+                {/* Inquiry Modal Customization */}
+                <div className="pt-2 border-t border-[#23242B] space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-[#F59E0B] font-bold uppercase tracking-wider bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
+                      Inquiry Modal Configuration
+                    </span>
+                    <span className="text-[10px] text-slate-400">Customized inquiry fields for this package</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-medium text-slate-300 mb-1">Inquiry Field Label</label>
+                      <input
+                        type="text"
+                        value={editingItem.inquiry_field_label || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, inquiry_field_label: e.target.value })}
+                        placeholder="e.g. WHICH DESIGN DO YOU NEED?"
+                        className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono uppercase"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium text-slate-300 mb-1">Inquiry Field Placeholder</label>
+                      <input
+                        type="text"
+                        value={editingItem.inquiry_field_placeholder || ""}
+                        onChange={(e) => setEditingItem({ ...editingItem, inquiry_field_placeholder: e.target.value })}
+                        placeholder="e.g. Email Template / YouTube Thumbnail"
+                        className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-slate-300 mb-1">
+                      Inquiry Prefilled Textarea Template ("Tell Me About It")
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={editingItem.inquiry_template || ""}
+                      onChange={(e) => setEditingItem({ ...editingItem, inquiry_template: e.target.value })}
+                      placeholder="e.g. Design type:&#10;Text / content:&#10;Quantity needed:"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
+                    />
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block font-medium text-slate-300 mb-1">Sort Order</label>
@@ -3479,6 +3495,9 @@ function AdminConsoleContent() {
                       ...editingItem,
                       sort_order: Number(editingItem.sort_order) || (editingIndex >= 0 ? editingIndex + 1 : workPackages.length + 1),
                       is_active: editingItem.is_active !== undefined ? (editingItem.is_active ? 1 : 0) : 1,
+                      inquiry_field_label: editingItem.inquiry_field_label || "",
+                      inquiry_field_placeholder: editingItem.inquiry_field_placeholder || "",
+                      inquiry_template: editingItem.inquiry_template || "",
                     };
                     const updated = [...workPackages];
                     if (editingIndex >= 0) updated[editingIndex] = itemToSave;

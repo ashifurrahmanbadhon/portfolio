@@ -54,8 +54,20 @@ const DEFAULT_CONFIG = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function resolvePackageConfig(pkg) {
+  if (!pkg) return DEFAULT_CONFIG;
+  const hardcoded = PACKAGE_CONFIGS[pkg.title] || DEFAULT_CONFIG;
+  return {
+    fieldLabel: (pkg.inquiry_field_label && pkg.inquiry_field_label.trim()) || hardcoded.fieldLabel || DEFAULT_CONFIG.fieldLabel,
+    fieldPlaceholder: (pkg.inquiry_field_placeholder !== undefined && pkg.inquiry_field_placeholder !== null && pkg.inquiry_field_placeholder !== '')
+      ? pkg.inquiry_field_placeholder
+      : (hardcoded.fieldPlaceholder || DEFAULT_CONFIG.fieldPlaceholder),
+    template: (pkg.inquiry_template && pkg.inquiry_template.trim()) || hardcoded.template || DEFAULT_CONFIG.template
+  };
+}
+
 export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClose }) {
-  const config = pkg ? (PACKAGE_CONFIGS[pkg.title] || DEFAULT_CONFIG) : DEFAULT_CONFIG;
+  const config = resolvePackageConfig(pkg);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -69,7 +81,7 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
 
   useEffect(() => {
     if (pkg) {
-      const cfg = PACKAGE_CONFIGS[pkg.title] || DEFAULT_CONFIG;
+      const cfg = resolvePackageConfig(pkg);
       setFormData({
         name: '',
         email: '',

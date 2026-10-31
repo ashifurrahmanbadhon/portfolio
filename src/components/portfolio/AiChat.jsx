@@ -5,26 +5,50 @@ import Image from 'next/image';
 import { MessageSquare, X, Send, Sparkles } from 'lucide-react';
 import { usePortfolio } from '@/context/PortfolioContext';
 
-const QUICK_CHIPS = [
-  'Skills?',
-  'Projects',
-  'Experience?',
-  'Hire him'
+const DEFAULT_CHIPS = [
+  { label: 'Skills?', question: 'What are your core engineering skills and software tools?' },
+  { label: 'Projects', question: 'Can you highlight your top engineering projects?' },
+  { label: 'Experience?', question: 'What is your background and work experience?' },
+  { label: 'Hire him', question: 'How can I hire or contact Ashifur for engineering work?' }
 ];
 
 export default function AiChat() {
-  const { heroData } = usePortfolio();
+  const { heroData, siteTexts } = usePortfolio();
   const [isOpen, setIsOpen] = useState(false);
+  const welcomeText = siteTexts?.chat_welcome || "Hello! I am Ashifur's AI Assistant. Ask me anything about his electrical engineering background, substation operations, AutoCAD & GIS skills, or projects.";
+  
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
       role: 'assistant',
-      text: "Hello! I am Ashifur's AI Assistant. Ask me anything about his electrical engineering background, substation operations, AutoCAD & GIS skills, or projects."
+      text: welcomeText
     }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Sync welcome message if changed via admin
+  useEffect(() => {
+    if (welcomeText) {
+      setMessages((prev) => {
+        if (prev.length === 1 && prev[0].id === 'welcome' && prev[0].text !== welcomeText) {
+          return [{ id: 'welcome', role: 'assistant', text: welcomeText }];
+        }
+        return prev;
+      });
+    }
+  }, [welcomeText]);
+
+  let chips = DEFAULT_CHIPS;
+  if (siteTexts?.chat_chips) {
+    try {
+      const parsed = typeof siteTexts.chat_chips === 'string' ? JSON.parse(siteTexts.chat_chips) : siteTexts.chat_chips;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        chips = parsed.map((c) => (typeof c === 'string' ? { label: c, question: c } : c));
+      }
+    } catch (_) {}
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -91,12 +115,8 @@ export default function AiChat() {
     }
   };
 
-  const handleChipClick = (chip) => {
-    let question = chip;
-    if (chip === 'Skills?') question = 'What are your core engineering skills and software tools?';
-    if (chip === 'Projects') question = 'Can you highlight your top engineering projects?';
-    if (chip === 'Experience?') question = 'What is your background and work experience?';
-    if (chip === 'Hire him') question = 'How can I hire or contact Ashifur for engineering work?';
+  const handleChipClick = (chipItem) => {
+    const question = chipItem.question || chipItem.label || chipItem;
     handleSendMessage(question);
   };
 
@@ -169,15 +189,15 @@ export default function AiChat() {
 
           {/* Quick Chips Bar */}
           <div className="px-3.5 py-2.5 bg-[#06070B] border-b border-[#23242B] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            {QUICK_CHIPS.map((chip) => (
+            {chips.map((chipItem, cIdx) => (
               <button
-                key={chip}
+                key={chipItem.label || cIdx}
                 type="button"
-                onClick={() => handleChipClick(chip)}
+                onClick={() => handleChipClick(chipItem)}
                 disabled={loading}
                 className="stat-box shrink-0 px-2.5 py-1 rounded-full text-[#B9B5A9] text-[11px] font-mono cursor-pointer disabled:opacity-50"
               >
-                {chip}
+                {chipItem.label}
               </button>
             ))}
           </div>

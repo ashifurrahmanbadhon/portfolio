@@ -18,7 +18,9 @@ import {
   DEFAULT_CONTACT,
   DEFAULT_PAGE_HEADERS,
   DEFAULT_HOMEPAGE_CTA,
-  DEFAULT_WORK_PACKAGES
+  DEFAULT_WORK_PACKAGES,
+  DEFAULT_PROCESS_STEPS,
+  DEFAULT_SITE_TEXTS
 } from '@/lib/portfolioDefaults';
 
 const CACHE_KEY = 'portfolio_cms_cache_v7';
@@ -43,6 +45,8 @@ export function PortfolioProvider({ children }) {
   const [contactChannels, setContactChannels] = useState([]);
   const [services, setServices] = useState([]);
   const [workPackages, setWorkPackages] = useState(DEFAULT_WORK_PACKAGES);
+  const [processSteps, setProcessSteps] = useState(DEFAULT_PROCESS_STEPS);
+  const [siteTexts, setSiteTexts] = useState(DEFAULT_SITE_TEXTS);
   const [pageHeaders, setPageHeaders] = useState(DEFAULT_PAGE_HEADERS);
   const [homepageCta, setHomepageCta] = useState(DEFAULT_HOMEPAGE_CTA);
   const [resumeUrl, setResumeUrl] = useState('/Ashifur_Rahman_CV.pdf');
@@ -240,6 +244,15 @@ export function PortfolioProvider({ children }) {
       setWorkPackages(activePackages);
     }
 
+    if (Array.isArray(data.process_steps)) {
+      const activeSteps = data.process_steps.filter(ps => ps.is_active !== 0 && ps.is_active !== false);
+      setProcessSteps(activeSteps);
+    }
+
+    if (data.site_texts && typeof data.site_texts === 'object') {
+      setSiteTexts((prev) => ({ ...prev, ...data.site_texts }));
+    }
+
     if (data.resume && data.resume.file_url) {
       setResumeUrl(data.resume.file_url);
     }
@@ -361,6 +374,9 @@ export function PortfolioProvider({ children }) {
       } else if (section === 'settings') {
         if (data.pageHeaders) payload.page_headers = data.pageHeaders;
         if (data.resume) payload.resume = data.resume;
+      } else if (section === 'headings' || section === 'site_texts') {
+        if (data.site_texts) payload.site_texts = data.site_texts;
+        if (data.process_steps) payload.process_steps = data.process_steps;
       }
 
       applyContentData(payload);
@@ -392,6 +408,8 @@ export function PortfolioProvider({ children }) {
         certifications,
         services,
         workPackages,
+        processSteps,
+        siteTexts,
         contactData,
         contactChannels,
         pageHeaders,

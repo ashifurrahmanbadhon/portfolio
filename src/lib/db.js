@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { exec } from "child_process";
 import { neon } from "@neondatabase/serverless";
 import { DatabaseSync } from "node:sqlite";
-import { DEFAULT_WORK_PACKAGES } from "./portfolioDefaults.js";
+import { DEFAULT_WORK_PACKAGES, DEFAULT_PROCESS_STEPS, DEFAULT_SITE_TEXTS } from "./portfolioDefaults.js";
 
 // ==========================================
 // Database Connection Strategy
@@ -56,12 +56,32 @@ function getSqliteDb() {
           deliverables TEXT,
           tags TEXT,
           sort_order INTEGER,
+          is_active INTEGER DEFAULT 1,
+          inquiry_field_label TEXT,
+          inquiry_field_placeholder TEXT,
+          inquiry_template TEXT
+        );
+        CREATE TABLE IF NOT EXISTS process_steps (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          description TEXT,
+          sort_order INTEGER,
           is_active INTEGER DEFAULT 1
         );
       `);
       const hasPres = sqliteInstance.prepare("SELECT id FROM admin_presence WHERE id = 1").get();
       if (!hasPres) {
         sqliteInstance.prepare("INSERT INTO admin_presence (id, last_seen) VALUES (1, NULL)").run();
+      }
+      const psCount = sqliteInstance.prepare("SELECT COUNT(*) as c FROM process_steps").get()?.c || 0;
+      if (psCount === 0 && Array.isArray(DEFAULT_PROCESS_STEPS)) {
+        const stmt = sqliteInstance.prepare(`
+          INSERT INTO process_steps (title, description, sort_order, is_active)
+          VALUES (?, ?, ?, ?)
+        `);
+        for (const s of DEFAULT_PROCESS_STEPS) {
+          stmt.run(s.title, s.description, s.sort_order, s.is_active);
+        }
       }
       const wpCount = sqliteInstance.prepare("SELECT COUNT(*) as c FROM work_packages").get()?.c || 0;
       if (wpCount === 0 && Array.isArray(DEFAULT_WORK_PACKAGES)) {
@@ -691,7 +711,8 @@ export async function getPortfolioContent() {
     project_methodologies,
     phRows,
     homepage_cta_res,
-    work_packages_res
+    work_packages_res,
+    process_steps_res
   ] = await Promise.all([
     queryOne("SELECT * FROM hero WHERE id = 1"),
     queryOne("SELECT * FROM about WHERE id = 1"),
@@ -713,7 +734,8 @@ export async function getPortfolioContent() {
     queryAll("SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC"),
     queryAll("SELECT * FROM page_headers"),
     queryOne("SELECT * FROM homepage_cta WHERE id = 1"),
-    queryAll("SELECT * FROM work_packages WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => [])
+    queryAll("SELECT * FROM work_packages WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => []),
+    queryAll("SELECT * FROM process_steps WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => [])
   ]);
 
   const hero = heroRes || {};
@@ -822,6 +844,17 @@ export async function getPortfolioContent() {
     }
   }
 
+  const processStepsData = (process_steps_res && process_steps_res.length > 0)
+    ? process_steps_res
+    : DEFAULT_PROCESS_STEPS;
+
+  const site_texts = {
+    ...DEFAULT_SITE_TEXTS,
+    ...Object.fromEntries(
+      Object.keys(DEFAULT_SITE_TEXTS).map((k) => [k, site_settings[k] ?? DEFAULT_SITE_TEXTS[k]])
+    )
+  };
+
   const result = {
     success: true,
     hero,
@@ -843,6 +876,8 @@ export async function getPortfolioContent() {
     contact_channels,
     resume,
     site_settings,
+    site_texts,
+    process_steps: processStepsData,
     page_headers,
     homepage_cta,
     work_packages: workPackagesData,
@@ -1350,50 +1385,91 @@ export async function updatePortfolioSection(section, data, user = "admin") {
     }
 
     case "page_headers": {
-      if (data.page_key) {
+      const saveHeader = async (key, val) => {
+        if (!key || !val) return;
         if (neonSql) {
           await neonSql.query(`
-            INSERT INTO page_headers (page_key, badge_text, title, highlight_word, description)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO page_headers (page_key, badge_text, title, highlight_word, description, seo_title, seo_description)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (page_key) DO UPDATE SET
-              badge_text = EXCLUDED.badge_text,
-              title = EXCLUDED.title,
-              highlight_word = EXCLUDED.highlight_word,
-              description = EXCLUDED.description
-          `, [data.page_key, data.badge_text || "", data.title || "", data.highlight_word || "", data.description || ""]);
+              badge_text = COALESCE(EXCLUDED.badge_text, page_headers.badge_text),
+              title = COALESCE(EXCLUDED.title, page_headers.title),
+              highlight_word = COALESCE(EXCLUDED.highlight_word, page_headers.highlight_word),
+              description = COALESCE(EXCLUDED.description, page_headers.description),
+              seo_title = COALESCE(EXCLUDED.seo_title, page_headers.seo_title),
+              seo_description = COALESCE(EXCLUDED.seo_description, page_headers.seo_description)
+          `, [key, val.badge_text || null, val.title || null, val.highlight_word || null, val.description || null, val.seo_title || null, val.seo_description || null]);
         }
         try {
           const db = getSqliteDb();
           db.prepare(`
-            INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
-            VALUES (?, ?, ?, ?, ?)
-          `).run(data.page_key, data.badge_text || "", data.title || "", data.highlight_word || "", data.description || "");
+            INSERT INTO page_headers (page_key, badge_text, title, highlight_word, description, seo_title, seo_description)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (page_key) DO UPDATE SET
+              badge_text = COALESCE(excluded.badge_text, page_headers.badge_text),
+              title = COALESCE(excluded.title, page_headers.title),
+              highlight_word = COALESCE(excluded.highlight_word, page_headers.highlight_word),
+              description = COALESCE(excluded.description, page_headers.description),
+              seo_title = COALESCE(excluded.seo_title, page_headers.seo_title),
+              seo_description = COALESCE(excluded.seo_description, page_headers.seo_description)
+          `).run(key, val.badge_text || null, val.title || null, val.highlight_word || null, val.description || null, val.seo_title || null, val.seo_description || null);
         } catch (_) { }
+      };
+
+      if (data.page_key) {
+        await saveHeader(data.page_key, data);
+      } else if (Array.isArray(data.items)) {
+        for (const item of data.items) {
+          await saveHeader(item.page_key, item);
+        }
       } else if (typeof data === "object") {
         for (const [key, val] of Object.entries(data)) {
           if (val && typeof val === "object") {
-            if (neonSql) {
-              await neonSql.query(`
-                INSERT INTO page_headers (page_key, badge_text, title, highlight_word, description)
-                VALUES ($1, $2, $3, $4, $5)
-                ON CONFLICT (page_key) DO UPDATE SET
-                  badge_text = EXCLUDED.badge_text,
-                  title = EXCLUDED.title,
-                  highlight_word = EXCLUDED.highlight_word,
-                  description = EXCLUDED.description
-              `, [key, val.badge_text || "", val.title || "", val.highlight_word || "", val.description || ""]);
-            }
-            try {
-              const db = getSqliteDb();
-              db.prepare(`
-                INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
-                VALUES (?, ?, ?, ?, ?)
-              `).run(key, val.badge_text || "", val.title || "", val.highlight_word || "", val.description || "");
-            } catch (_) { }
+            await saveHeader(key, val);
           }
         }
       }
       await addActivityLog("Updated Page Header Banners", "Saved header titles and descriptions.", "Portfolio", user, 1);
+      break;
+    }
+
+    case "seo":
+    case "seo_titles": {
+      const saveSeo = async (key, seo_title, seo_description) => {
+        if (!key) return;
+        if (neonSql) {
+          await neonSql.query(`
+            INSERT INTO page_headers (page_key, seo_title, seo_description)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (page_key) DO UPDATE SET
+              seo_title = EXCLUDED.seo_title,
+              seo_description = EXCLUDED.seo_description
+          `, [key, seo_title || "", seo_description || ""]);
+        }
+        try {
+          const db = getSqliteDb();
+          db.prepare(`
+            INSERT INTO page_headers (page_key, seo_title, seo_description)
+            VALUES (?, ?, ?)
+            ON CONFLICT (page_key) DO UPDATE SET
+              seo_title = excluded.seo_title,
+              seo_description = excluded.seo_description
+          `).run(key, seo_title || "", seo_description || "");
+        } catch (_) { }
+      };
+
+      if (Array.isArray(data.items)) {
+        for (const item of data.items) {
+          await saveSeo(item.page_key, item.seo_title, item.seo_description);
+        }
+      } else if (data.pages && typeof data.pages === "object") {
+        for (const [key, val] of Object.entries(data.pages)) {
+          await saveSeo(key, val.seo_title, val.seo_description);
+        }
+      } else if (data.page_key) {
+        await saveSeo(data.page_key, data.seo_title, data.seo_description);
+      }
+      await addActivityLog("Updated SEO Metadata", "Saved SEO titles and meta descriptions for pages.", "Portfolio", user, 1);
       break;
     }
 
@@ -1431,8 +1507,8 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             ? Number(item.sort_order)
             : idx + 1;
           await execute(`
-            INSERT INTO work_packages (category, title, description, deliverables, tags, sort_order, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO work_packages (category, title, description, deliverables, tags, sort_order, is_active, inquiry_field_label, inquiry_field_placeholder, inquiry_template)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             item.category || "WEBSITE",
             item.title || "",
@@ -1440,10 +1516,77 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             item.deliverables || "",
             item.tags || "",
             sortVal,
-            isAct
+            isAct,
+            item.inquiry_field_label || "",
+            item.inquiry_field_placeholder || "",
+            item.inquiry_template || ""
           ]);
         }
         await addActivityLog("Updated Work Packages", `Saved ${data.items.length} service packages.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "process_steps": {
+      if (Array.isArray(data.items)) {
+        await execute("DELETE FROM process_steps");
+        for (let idx = 0; idx < data.items.length; idx++) {
+          const item = data.items[idx];
+          const isAct = item.is_active !== undefined ? (item.is_active ? 1 : 0) : 1;
+          const sortVal = item.sort_order !== undefined && item.sort_order !== null && item.sort_order !== ""
+            ? Number(item.sort_order)
+            : idx + 1;
+          await execute(`
+            INSERT INTO process_steps (title, description, sort_order, is_active)
+            VALUES (?, ?, ?, ?)
+          `, [
+            item.title || "",
+            item.description || "",
+            sortVal,
+            isAct
+          ]);
+        }
+        await addActivityLog("Updated Process Steps", `Saved ${data.items.length} process steps.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "headings":
+    case "site_texts": {
+      const keys = Object.keys(DEFAULT_SITE_TEXTS);
+      const updates = [];
+      const values = [];
+      for (const k of keys) {
+        if (data[k] !== undefined) {
+          updates.push(`${k} = ?`);
+          values.push(data[k]);
+        }
+      }
+      if (updates.length > 0) {
+        updates.push("updated_at = ?");
+        values.push(now);
+        await execute(`UPDATE site_settings SET ${updates.join(", ")} WHERE id = 1`, values);
+        await addActivityLog("Updated Site Texts", `Updated ${updates.length - 1} text strings.`, "Portfolio", user, 1);
+      }
+      break;
+    }
+
+    case "ai_chat": {
+      const updates = [];
+      const values = [];
+      if (data.chat_welcome !== undefined) {
+        updates.push("chat_welcome = ?");
+        values.push(data.chat_welcome);
+      }
+      if (data.chat_chips !== undefined) {
+        updates.push("chat_chips = ?");
+        values.push(typeof data.chat_chips === "string" ? data.chat_chips : JSON.stringify(data.chat_chips));
+      }
+      if (updates.length > 0) {
+        updates.push("updated_at = ?");
+        values.push(now);
+        await execute(`UPDATE site_settings SET ${updates.join(", ")} WHERE id = 1`, values);
+        await addActivityLog("Updated AI Chat Settings", "Saved chat welcome and suggestion chips.", "Portfolio", user, 1);
       }
       break;
     }
