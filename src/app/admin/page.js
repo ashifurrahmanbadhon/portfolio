@@ -810,17 +810,17 @@ function AdminConsoleContent() {
               <div className="space-y-6">
                 {/* Overview Metric Stat-Boxes */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                  <Link href="/admin?tab=projects" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                  <Link href="/admin?tab=projects" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Projects</div>
                     <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{projects.length || 9}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Engineering cases</div>
                   </Link>
-                  <Link href="/admin?tab=work" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                  <Link href="/admin?tab=work" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Packages</div>
                     <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{workPackages.length || 8}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Service presets</div>
                   </Link>
-                  <Link href="/admin?tab=inbox" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                  <Link href="/admin?tab=inbox" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Inquiries</div>
                     <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors flex items-center gap-1.5">
                       <span>{messages.length}</span>
@@ -830,17 +830,17 @@ function AdminConsoleContent() {
                     </div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Visitor messages</div>
                   </Link>
-                  <Link href="/admin?tab=skills" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                  <Link href="/admin?tab=skills" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Skills</div>
                     <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{skills.length || 16}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Technical items</div>
                   </Link>
-                  <Link href="/admin?tab=experience" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                  <Link href="/admin?tab=experience" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Experience</div>
                     <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{experiences.length || 2}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Career positions</div>
                   </Link>
-                  <Link href="/admin?tab=education" className="bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 rounded-xl p-4 transition group">
+                  <Link href="/admin?tab=education" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Education</div>
                     <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{educations.length || 3}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Degrees & certs</div>
@@ -849,7 +849,7 @@ function AdminConsoleContent() {
 
                 {/* Quick Navigation Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                  <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Home className="w-4 h-4 text-[#F59E0B]" />
@@ -860,7 +860,7 @@ function AdminConsoleContent() {
                     <p className="text-xs text-[#8E8B82]">Headline, badge, intro, profile image, and CTA action buttons.</p>
                   </div>
 
-                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                  <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <FolderGit2 className="w-4 h-4 text-[#F59E0B]" />
@@ -871,7 +871,7 @@ function AdminConsoleContent() {
                     <p className="text-xs text-[#8E8B82]">High-voltage substations, GIS mapping, motor test benches, and simulations.</p>
                   </div>
 
-                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                  <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Layers className="w-4 h-4 text-[#F59E0B]" />
@@ -882,7 +882,7 @@ function AdminConsoleContent() {
                     <p className="text-xs text-[#8E8B82]">8 fixed-scope presets with deliverables, tags, and custom inquiry modals.</p>
                   </div>
 
-                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                  <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-[#F59E0B]" />
@@ -893,7 +893,7 @@ function AdminConsoleContent() {
                     <p className="text-xs text-[#8E8B82]">Read client messages, send threaded replies, and mark unread items.</p>
                   </div>
 
-                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                  <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Sliders className="w-4 h-4 text-[#F59E0B]" />
@@ -904,7 +904,7 @@ function AdminConsoleContent() {
                     <p className="text-xs text-[#8E8B82]">SEO metadata, page banner headers, resume link, and global contact CTA.</p>
                   </div>
 
-                  <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 space-y-3">
+                  <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="w-4 h-4 text-[#F59E0B]" />
@@ -917,7 +917,7 @@ function AdminConsoleContent() {
                 </div>
 
                 {/* Cloud System Parity Status Bar */}
-                <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+                <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                     <span className="text-[#F5F2EA] font-semibold">Neon PostgreSQL Cloud Parity</span>
@@ -973,25 +973,25 @@ function AdminConsoleContent() {
             {/* TAB: SECURITY & ACCESS CONTROL                                 */}
             {/* ============================================================== */}
             {currentTab === "security" && (
-              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
+              <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-6 sm:p-8 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <div>
                     <h2 className="text-base font-bold text-[#F5F2EA]">Security & Access Control</h2>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#F59E0B] border border-[#23242B]">2FA Enforced</span>
+                    <span className="stat-box text-[10px] font-mono px-2 py-0.5 bg-[#12131A] text-[#F59E0B] border border-[#23242B]">2FA Enforced</span>
                   </div>
                 </div>
                 <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
                   Manage multi-factor authentication, active login sessions, emergency recovery codes, and administrator credentials.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-                  <div className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-1">
+                  <div className="stat-box p-4 bg-[#06070B] border border-[#23242B] space-y-1">
                     <div className="text-xs font-bold text-[#F5F2EA]">Two-Factor Authentication</div>
                     <div className="text-[11px] text-[#8E8B82]">TOTP authenticator app + SMS OTP fallback + 8 emergency backup codes.</div>
                   </div>
-                  <div className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-1">
+                  <div className="stat-box p-4 bg-[#06070B] border border-[#23242B] space-y-1">
                     <div className="text-xs font-bold text-[#F5F2EA]">Session Encryption</div>
                     <div className="text-[11px] text-[#8E8B82]">SHA-256 password hashing + HttpOnly secure JWT tokens.</div>
                   </div>
@@ -1003,7 +1003,7 @@ function AdminConsoleContent() {
             {/* TAB: SYSTEM SETTINGS                                           */}
             {/* ============================================================== */}
             {currentTab === "system_settings" && (
-              <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-6 sm:p-8 space-y-4">
+              <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-6 sm:p-8 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
                     <Sliders className="w-5 h-5" />
@@ -2439,12 +2439,12 @@ function AdminConsoleContent() {
                         return (
                           <div
                             key={msg.id}
-                            className={`p-4 sm:p-5 rounded-xl border transition-all space-y-3.5 ${
+                            className={`stat-box p-4 sm:p-5 border transition-all space-y-3.5 ${
                               isSelected
                                 ? "bg-[#0e1726] border-emerald-500/70 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/40"
                                 : msg.is_read
-                                ? "bg-[#06070B] border-[#23242B] hover:border-[#2a364f]"
-                                : "bg-[#0E1524] border-emerald-500/40 shadow-sm hover:border-emerald-500/60"
+                                ? "bg-[#06070B] border-[#23242B]"
+                                : "bg-[#0E1524] border-emerald-500/40 shadow-sm"
                             }`}
                           >
                             {/* Card Top Row */}

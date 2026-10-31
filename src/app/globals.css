@@ -579,13 +579,71 @@ select.stat-box:focus {
   border-radius: 9999px !important;
 }
 
-/* 2. Hover feedback = Website Style (NO background fill change) */
-/* Stat-boxes and cards in admin: background remains constant, hover adds full amber frame */
-.admin-shell .stat-box:hover {
-  background-color: #0A0B10 !important;
+/* 2. All cards, tiles, list rows, form sections, and boxes in admin transition smoothly */
+.admin-shell .stat-box,
+.admin-shell [class*="bg-[#0A0B10]"]:not(header):not(aside):not(main),
+.admin-shell [class*="bg-[#06070B]"]:not(body):not(.min-h-screen),
+.admin-shell [class*="bg-[#12131A]"]:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell [class*="bg-[#161B26]"]:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell [class*="bg-[#0e1726]"],
+.admin-shell [class*="bg-[#0E1524]"],
+.admin-shell div[class*="border-[#23242B]"]:not(header):not(aside):not(main):not([role="dialog"]),
+.admin-shell [class*="rounded-2xl"][class*="border"]:not(header):not(aside):not(main),
+.admin-shell [class*="rounded-xl"][class*="border"]:not(header):not(aside):not(main),
+.admin-shell [class*="rounded-lg"][class*="border"]:not(header):not(aside):not(main) {
+  transition: border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* 3. Hover feedback = Website Style (NO background fill change) */
+/* Every box (card, tile, panel, list item, table row) gets full solid amber frame on hover */
+.admin-shell .stat-box:hover,
+.admin-shell [class*="bg-[#0A0B10]"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell [class*="bg-[#06070B]"]:hover:not(body):not(.min-h-screen):not(header):not(aside):not(main),
+.admin-shell [class*="bg-[#12131A]"]:hover:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell [class*="bg-[#161B26]"]:hover:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell [class*="bg-[#0e1726]"]:hover,
+.admin-shell [class*="bg-[#0E1524]"]:hover,
+.admin-shell div[class*="border-[#23242B]"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell [class*="rounded-2xl"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell [class*="rounded-xl"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell [class*="rounded-lg"][class*="border"]:hover:not(header):not(aside):not(main):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell tbody tr:hover {
   border-color: #F59E0B !important;
   box-shadow: inset 0 0 0 1.5px #F59E0B, 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Clickable / interactive cards and buttons lift slightly on hover */
+.admin-shell a[href]:hover:not(.rounded-full):not([class*="rounded-full"]),
+.admin-shell button:hover:not(.rounded-full):not([class*="rounded-full"]):not([class*="bg-[#F59E0B]"]):not(aside button),
+.admin-shell .cursor-pointer:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell [class*="cursor-pointer"]:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]),
+.admin-shell [class*="group"]:hover:not(header):not(aside):not([role="dialog"]):not([class*="fixed"]) {
   transform: translateY(-2px);
+}
+
+/* Ensure background does NOT change on hover (no background fill) */
+.admin-shell [class*="bg-[#0A0B10]"]:hover:not([class*="bg-[#F59E0B]"]) {
+  background-color: #0A0B10 !important;
+}
+.admin-shell [class*="bg-[#06070B]"]:hover:not([class*="bg-[#F59E0B]"]) {
+  background-color: #06070B !important;
+}
+.admin-shell [class*="bg-[#12131A]"]:hover:not([class*="bg-[#F59E0B]"]):not(.rounded-full) {
+  background-color: #12131A !important;
+}
+.admin-shell a:hover:not([class*="bg-[#F59E0B]"]):not(.btn-amber-solid):not(aside *),
+.admin-shell button:hover:not([class*="bg-[#F59E0B]"]):not(.btn-amber-solid):not([class*="text-rose-"]):not([class*="text-red-"]):not(aside *) {
+  background-color: transparent !important;
+}
+
+/* Nested hover suppression: When hovering a child bordered box, suppress parent container's glow */
+.admin-shell div:has(> [class*="border"]:hover),
+.admin-shell div:has(> * > [class*="border"]:hover),
+.admin-shell div:has(a:hover),
+.admin-shell div:has(button:hover) {
+  border-color: #23242B !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 /* Non-card stat-boxes like inputs, textareas, selects don't lift on hover */
@@ -646,11 +704,22 @@ select.stat-box:focus {
   transform: translateY(-2px);
 }
 
-/* Active sidebar item: amber text + amber frame/left bar — NO filled tint background */
+/* Sidebar item: amber text + amber frame/left bar — NO lift, NO filled tint background */
 .admin-shell aside .stat-box {
   transform: none !important;
 }
-.admin-shell aside .stat-box:hover {
+.admin-shell aside .stat-box:hover,
+.admin-shell aside a:hover,
+.admin-shell aside button:hover {
   transform: none !important;
   background-color: transparent !important;
+}
+
+/* Modal dialog wrappers: never lift on hover */
+.admin-shell [role="dialog"],
+.admin-shell [role="dialog"] * {
+  --modal-bg: #0A0B10;
+}
+.admin-shell div.fixed > div:hover {
+  transform: none !important;
 }

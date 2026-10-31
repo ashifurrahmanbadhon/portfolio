@@ -101,7 +101,7 @@ export default function ExperienceMetricsManager({
   };
 
   return (
-    <div className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+    <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 space-y-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#23242B] gap-4 w-full">
         <div>
