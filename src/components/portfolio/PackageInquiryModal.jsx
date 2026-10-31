@@ -329,3 +329,4 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
     </div>
   );
 }
+
