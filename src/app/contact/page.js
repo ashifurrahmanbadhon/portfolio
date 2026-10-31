@@ -129,7 +129,7 @@ export default function ContactPage() {
                   rel={ch.url.startsWith('http') ? 'noreferrer' : undefined}
                   className="block group cursor-pointer"
                 >
-                  <div className="stat-box rounded-xl p-4 sm:p-4.5 flex items-center justify-between">
+                  <div className="stat-box p-4 sm:p-4.5 flex items-center justify-between">
                     <span className="font-mono text-xs text-[#8E8B82] uppercase tracking-wider font-medium">
                       {ch.label}
                     </span>
@@ -143,7 +143,7 @@ export default function ContactPage() {
             </div>
 
             {/* SLA Card */}
-            <div className="stat-box rounded-xl p-5 space-y-2">
+            <div className="stat-box p-5 space-y-2">
               <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] font-semibold">
                 <Clock size={13} />
                 <span>RESPONSE TIME SLA</span>
@@ -155,7 +155,7 @@ export default function ContactPage() {
           </div>
 
           {/* Right Column: Form (SAME fields, validation, submit, success behavior; restyled) */}
-          <div className="lg:col-span-7 stat-box rounded-2xl p-8 sm:p-10 shadow-2xl relative">
+          <div className="lg:col-span-7 stat-box p-8 sm:p-10 shadow-2xl relative">
             <div className="mb-6">
               <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-2">
                 Send a Direct Message
@@ -166,7 +166,7 @@ export default function ContactPage() {
             </div>
 
             {formSubmitted && (
-              <div className="mb-6 p-4 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#F59E0B] text-xs sm:text-sm font-semibold flex items-center gap-3 animate-in fade-in duration-300">
+              <div className="mb-6 p-4 bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#F59E0B] text-xs sm:text-sm font-semibold flex items-center gap-3 animate-in fade-in duration-300">
                 <Check size={18} className="shrink-0" />
                 <span>Inquiry recorded! Opening your default email client to finalize dispatch...</span>
               </div>
@@ -184,7 +184,7 @@ export default function ContactPage() {
                     placeholder="e.g. Engr. Tanvir Ahmed"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition"
+                    className="w-full stat-box bg-[#06070B] px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none transition"
                   />
                 </div>
                 <div>
@@ -197,7 +197,7 @@ export default function ContactPage() {
                     placeholder="e.g. tanvir@powercorp.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition"
+                    className="w-full stat-box bg-[#06070B] px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none transition"
                   />
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function ContactPage() {
                   placeholder="e.g. Substation SLD Consultation / GIS Project / Recruitment"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition"
+                  className="w-full stat-box bg-[#06070B] px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none transition"
                 />
               </div>
 
@@ -226,12 +226,12 @@ export default function ContactPage() {
                   placeholder="Detail your engineering specifications, project timeline, location, or opportunity details..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition resize-none leading-relaxed"
+                  className="w-full stat-box bg-[#06070B] px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none transition resize-none leading-relaxed"
                 />
               </div>
 
               {previewNote && (
-                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
+                <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono">
                   Preview mode — submissions are disabled in the admin preview.
                 </div>
               )}
@@ -239,7 +239,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-amber-solid w-full py-4 rounded-xl uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                className="btn-amber-solid w-full py-4 rounded-full uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
               >
                 <Send size={15} /> {submitting ? "Recording & Dispatching..." : "Send Direct Message"}
               </button>

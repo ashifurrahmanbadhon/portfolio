@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 
 const NAV_ITEMS = [
+  { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
   { name: 'Projects', href: '/projects' },
   { name: 'Experience', href: '/experience' },
@@ -67,6 +68,9 @@ export default function PortfolioNavbar() {
   const pathname = usePathname();
 
   const isLinkActive = (href) => {
+    if (href === '/') {
+      return pathname === '/';
+    }
     return pathname === href || pathname?.startsWith(href + '/');
   };
 
@@ -110,7 +114,7 @@ export default function PortfolioNavbar() {
         {/* Mobile menu hamburger button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 text-[#B9B5A9] hover:text-white rounded-lg hover:bg-[#0A0B10] border border-transparent hover:border-[#23242B] transition cursor-pointer"
+          className="lg:hidden p-2 text-[#B9B5A9] hover:text-white hover:bg-[#0A0B10] border border-transparent hover:border-[#23242B] transition cursor-pointer"
           aria-label="Toggle Menu"
         >
           {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}

@@ -47,7 +47,7 @@ function ProjectCardSlider({ proj }) {
 
   if (slides.length === 1) {
     return (
-      <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#06070B] border border-[#23242B]">
+      <div className="relative w-full aspect-[16/9] overflow-hidden mb-5 bg-[#06070B] border border-[#23242B]">
         <Image
           src={slides[0]}
           alt={proj.title}
@@ -96,7 +96,7 @@ function ProjectCardSlider({ proj }) {
 
   return (
     <div
-      className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#06070B] border border-[#23242B] select-none group/slider"
+      className="relative w-full aspect-[16/9] overflow-hidden mb-5 bg-[#06070B] border border-[#23242B] select-none group/slider"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -210,7 +210,7 @@ export default function ProjectsPage() {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`text-xs font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-lg whitespace-nowrap transition cursor-pointer font-semibold ${
+                className={`text-xs font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full whitespace-nowrap transition cursor-pointer font-semibold ${
                   selectedCategory === cat
                     ? 'bg-[#F59E0B] text-[#1A1202] font-bold shadow-[0_0_15px_rgba(245,158,11,0.35)]'
                     : 'bg-[#0A0B10] text-[#B9B5A9] hover:text-[#F5F2EA] border border-[#23242B] hover:border-[#F59E0B]/50'
@@ -237,7 +237,7 @@ export default function ProjectsPage() {
           {filteredProjects.map((proj, idx) => (
             <div
               key={proj.id || idx}
-              className="stat-box rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
+              className="stat-box p-6 sm:p-7 flex flex-col justify-between"
             >
               <div>
                 {/* Visual Thumbnail / Slider */}
@@ -275,7 +275,7 @@ export default function ProjectsPage() {
                         </a>
                       );
                     })()}
-                    <div className="w-7 h-7 rounded-lg bg-[#06070B] border border-[#23242B] flex items-center justify-center text-[#8E8B82] group-hover:text-[#F59E0B] transition">
+                    <div className="w-7 h-7 bg-[#06070B] border border-[#23242B] flex items-center justify-center text-[#8E8B82] group-hover:text-[#F59E0B] transition">
                       <FolderGit2 size={15} />
                     </div>
                   </div>
@@ -299,7 +299,7 @@ export default function ProjectsPage() {
                     {proj.tags.map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="stat-box rounded text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
+                        className="stat-box rounded-full text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
                       >
                         {tag}
                       </span>
@@ -312,7 +312,7 @@ export default function ProjectsPage() {
                     <FileCheck size={13} className="text-[#F59E0B]" /> VERIFIED
                   </span>
                   {proj.category && (
-                    <span className="text-[10px] uppercase text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/25 px-2 py-0.5 rounded font-semibold">
+                    <span className="text-[10px] uppercase text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/25 px-2 py-0.5 rounded-full font-semibold">
                       {proj.category}
                     </span>
                   )}
@@ -338,7 +338,7 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
               {projectMethodologies.map((step, idx) => (
-                <div key={idx} className="stat-box rounded-2xl p-6 space-y-3">
+                <div key={idx} className="stat-box p-6 space-y-3">
                   <span className="text-2xl font-black text-[#F59E0B] font-mono">
                     {step.step_number || String(idx + 1).padStart(2, "0")}
                   </span>

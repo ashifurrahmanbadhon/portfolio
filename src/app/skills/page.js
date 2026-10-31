@@ -40,7 +40,7 @@ export default function SkillsPage() {
         </div>
 
         {/* 2-col hairline grid */}
-        <div className="bg-[#23242B] p-[1px] rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-[1px] overflow-hidden shadow-xl mb-16">
+        <div className="bg-[#23242B] p-[1px] grid grid-cols-1 md:grid-cols-2 gap-[1px] overflow-hidden shadow-xl mb-16">
           {skillsData.map((category, idx) => (
             <div
               key={idx}
@@ -86,7 +86,7 @@ export default function SkillsPage() {
 
         {/* Software Tools = chips row; chip hover: amber border + amber text */}
         {softwareTools && softwareTools.length > 0 && (
-          <div className="border border-[#23242B] bg-[#0A0B10] rounded-2xl p-6 sm:p-10 space-y-6 shadow-xl mb-16">
+          <div className="stat-box p-6 sm:p-10 space-y-6 shadow-xl mb-16">
             <div>
               <h3 className="text-xl font-bold uppercase tracking-tight text-[#F5F2EA]">
                 Engineering Software &amp; Tool Stack
@@ -103,7 +103,7 @@ export default function SkillsPage() {
                 return (
                   <span
                     key={idx}
-                    className="stat-box rounded-lg px-3.5 py-2 text-xs font-mono text-[#B9B5A9] flex items-center gap-2"
+                    className="stat-box rounded-full px-3.5 py-2 text-xs font-mono text-[#B9B5A9] flex items-center gap-2"
                   >
                     <span className="text-[#F59E0B]">✦</span>
                     <span>{name}</span>
@@ -117,7 +117,7 @@ export default function SkillsPage() {
 
         {/* Skill Badges if available */}
         {skillBadges && skillBadges.length > 0 && (
-          <div className="border border-[#23242B] bg-[#0A0B10] rounded-2xl p-6 sm:p-10 space-y-4 shadow-xl mb-16">
+          <div className="stat-box p-6 sm:p-10 space-y-4 shadow-xl mb-16">
             <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
               Core Competencies
             </h3>
@@ -135,7 +135,7 @@ export default function SkillsPage() {
         )}
 
         {/* CTA Bar */}
-        <div className="stat-box rounded-2xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div className="stat-box p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1">
             <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
               Require Custom Technical Simulation or Mapping?
@@ -147,14 +147,14 @@ export default function SkillsPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/contact"
-              className="btn-amber-solid px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+              className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
             >
               Discuss Requirement <ArrowRight size={15} />
             </Link>
             <button
               type="button"
               onClick={triggerCvDownload}
-              className="btn-amber-outline px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+              className="btn-amber-outline px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
               <Download size={15} /> Download CV
             </button>

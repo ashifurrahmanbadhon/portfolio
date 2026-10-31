@@ -49,10 +49,10 @@ export default function EducationPage() {
           {educations.map((edu, idx) => (
             <div
               key={idx}
-              className="stat-box rounded-2xl p-7 sm:p-8 flex flex-col justify-between"
+              className="stat-box p-7 sm:p-8 flex flex-col justify-between"
             >
               <div>
-                <div className="w-11 h-11 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
+                <div className="w-11 h-11 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
                   <GraduationCap size={22} />
                 </div>
 
@@ -76,7 +76,7 @@ export default function EducationPage() {
 
                 {edu.result && (
                   <div className="mt-3">
-                    <span className="font-mono text-[11px] px-2.5 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/25 font-bold">
+                    <span className="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/25 font-bold">
                       {edu.result}
                     </span>
                   </div>
@@ -94,7 +94,7 @@ export default function EducationPage() {
                   {edu.highlights.map((h, hIdx) => (
                     <span
                       key={hIdx}
-                      className="stat-box rounded text-[10px] font-mono text-[#8E8B82] px-2 py-0.5"
+                      className="stat-box rounded-full text-[10px] font-mono text-[#8E8B82] px-2 py-0.5"
                     >
                       {h}
                     </span>
@@ -121,9 +121,9 @@ export default function EducationPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {courseworkPillars.map((pillar, idx) => (
-                <div key={idx} className="stat-box rounded-2xl p-7 flex flex-col justify-between">
+                <div key={idx} className="stat-box p-7 flex flex-col justify-between">
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
+                    <div className="w-10 h-10 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
                       <BookOpen size={20} />
                     </div>
                     <h4 className="font-bold text-[#F5F2EA] text-base uppercase tracking-wide mb-3 pb-3 border-b border-[#23242B]">
@@ -162,11 +162,11 @@ export default function EducationPage() {
             {certifications.map((cert, idx) => (
               <div
                 key={idx}
-                className="stat-box rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
+                className="stat-box p-6 sm:p-7 flex flex-col justify-between"
               >
                 <div>
                   {/* Certificate frame: aspect-[29/20], object-contain, bg-[#0C0D13], no lightbox */}
-                  <div className="relative w-full aspect-[29/20] rounded-xl overflow-hidden mb-5 bg-[#0C0D13] border border-[#23242B] group/certimg">
+                  <div className="relative w-full aspect-[29/20] overflow-hidden mb-5 bg-[#0C0D13] border border-[#23242B] group/certimg">
                     <img
                       src={cert.image_url && cert.image_url.trim() ? cert.image_url : '/certs/no-image.svg'}
                       alt={cert.title || "Certificate"}
@@ -182,11 +182,11 @@ export default function EducationPage() {
                   </div>
 
                   <div className="flex items-center justify-between mb-3 font-mono text-xs">
-                    <div className="w-8 h-8 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B]">
+                    <div className="w-8 h-8 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B]">
                       <ShieldCheck size={16} />
                     </div>
                     {cert.year && (
-                      <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2.5 py-0.5 rounded border border-[#F59E0B]/25">
+                      <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2.5 py-0.5 rounded-full border border-[#F59E0B]/25">
                         {cert.year}
                       </span>
                     )}
@@ -215,7 +215,7 @@ export default function EducationPage() {
           </div>
 
           {/* CTA Bar */}
-          <div className="mt-16 stat-box rounded-2xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <div className="mt-16 stat-box p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div className="space-y-1">
               <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
                 Interested in Reviewing Verified Academic Transcripts?
@@ -228,13 +228,13 @@ export default function EducationPage() {
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="btn-amber-solid px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
                 <Download size={15} /> Download Official CV
               </button>
               <Link
                 href="/contact"
-                className="btn-amber-outline px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+                className="btn-amber-outline px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 Get In Touch <ArrowRight size={15} />
               </Link>
