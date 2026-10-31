@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getPortfolioContent } from "@/lib/db";
 import { checkRateLimit } from "@/lib/rateLimit";
 
+const FALLBACK_REPLY = "Chat is not configured yet — please reach me from the Contact page.";
+
 export async function POST(req) {
   try {
     // 1. Rate Limiting: 20 req/hour/IP via existing rateLimit.js
@@ -25,15 +27,13 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing message parameter" }, { status: 400 });
     }
 
-    // 3. Check for GEMINI_API_KEY in environment
-    const apiKey = process.env.GEMINI_API_KEY;
+    // 3. Read GEMINI_API_KEY ONLY from server-side environment variable
+    const apiKey = (process.env.GEMINI_API_KEY || "").trim();
     if (!apiKey) {
-      return NextResponse.json({
-        reply: "Chat is not configured yet — please reach me from the Contact page."
-      });
+      return NextResponse.json({ reply: FALLBACK_REPLY }, { status: 200 });
     }
 
-    // 4. Build context ONLY from the same content source as /api/content
+    // 4. Build context ONLY from the verified portfolio content source
     const content = await getPortfolioContent();
     const hero = content.hero || {};
     const about = content.about || {};
@@ -106,7 +106,6 @@ ${contextText}`;
     for (const item of historySlice) {
       if (item && item.content && typeof item.content === 'string') {
         const role = item.role === 'assistant' ? 'model' : 'user';
-        // Avoid consecutive items with the same role in Gemini API
         if (contents.length > 0 && contents[contents.length - 1].role === role) {
           contents[contents.length - 1].parts[0].text += `\n${item.content}`;
         } else {
@@ -128,8 +127,6 @@ ${contextText}`;
       });
     }
 
-    // 6. Call Google Gemini API
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     const payload = {
       systemInstruction: {
         parts: [{ text: systemPrompt }]
@@ -141,48 +138,52 @@ ${contextText}`;
       }
     };
 
-    const apiRes = await fetch(geminiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    // 6. Call Google Gemini API (model cascade: gemini-3.5-flash -> gemini-flash-lite-latest -> gemini-2.5-flash)
+    // Never pass apiKey in logs; pass via header x-goog-api-key and URL query for maximum compatibility
+    const modelsToTry = ["gemini-3.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash"];
+    let replyText = null;
 
-    if (!apiRes.ok) {
-      // Fallback try with gemini-1.5-flash if 2.5 is not accessible with key
-      const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-      const fallbackRes = await fetch(fallbackUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (fallbackRes.ok) {
-        const fbJson = await fallbackRes.json();
-        const replyText = fbJson.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (replyText) {
-          return NextResponse.json({ reply: replyText.trim() });
+    for (const model of modelsToTry) {
+      try {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        const apiRes = await fetch(geminiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey
+          },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(10000)
+        });
+
+        if (apiRes.ok) {
+          const resJson = await apiRes.json();
+          const candidateText = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (candidateText && candidateText.trim()) {
+            replyText = candidateText.trim();
+            break;
+          }
+        } else {
+          // If 400/401/403, key is rejected or invalid — no need to keep hammering other models
+          if ([400, 401, 403].includes(apiRes.status)) {
+            break;
+          }
         }
+      } catch {
+        // Individual model attempt timed out or failed, continue to fallback model
       }
-      console.warn("Gemini API call failed with status:", apiRes.status);
-      return NextResponse.json({
-        reply: "I am having trouble connecting right now. Please reach out to Ashifur directly through the Contact page."
-      });
     }
-
-    const resJson = await apiRes.json();
-    const replyText = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!replyText) {
-      return NextResponse.json({
-        reply: "I am having trouble connecting right now. Please reach out to Ashifur directly through the Contact page."
-      });
+      return NextResponse.json({ reply: FALLBACK_REPLY }, { status: 200 });
     }
 
-    return NextResponse.json({ reply: replyText.trim() });
+    return NextResponse.json({ reply: replyText }, { status: 200 });
   } catch (error) {
-    console.error("POST /api/chat error:", error);
+    // Graceful failure: NEVER log the key or URL, never return 500 or stack trace to visitor
     return NextResponse.json(
-      { reply: "An error occurred while answering. Please feel free to reach Ashifur via the Contact page." },
-      { status: 500 }
+      { reply: FALLBACK_REPLY },
+      { status: 200 }
     );
   }
 }
