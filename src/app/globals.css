@@ -396,6 +396,15 @@ select.stat-box:focus {
   outline: none;
 }
 
+/* Passive, copyable tags whose color follows the parent box */
+.tag-plain {
+  transition: border-color 0.3s ease, color 0.3s ease;
+  cursor: text;
+  user-select: text;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* Button lift and amber shadow */
 .btn-amber-solid {
   background-color: #F59E0B;

@@ -49,7 +49,7 @@ export default function EducationPage() {
           {educations.map((edu, idx) => (
             <div
               key={idx}
-              className="stat-box p-7 sm:p-8 flex flex-col justify-between"
+              className="stat-box group p-7 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 <div className="w-11 h-11 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
@@ -76,7 +76,7 @@ export default function EducationPage() {
 
                 {edu.result && (
                   <div className="mt-3">
-                    <span className="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/25 font-bold">
+                    <span className="tag-plain font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/25 group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] font-bold">
                       {edu.result}
                     </span>
                   </div>
@@ -94,7 +94,7 @@ export default function EducationPage() {
                   {edu.highlights.map((h, hIdx) => (
                     <span
                       key={hIdx}
-                      className="stat-box rounded-full text-[10px] font-mono text-[#8E8B82] px-2 py-0.5"
+                      className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] rounded-full text-[10px] font-mono px-2 py-0.5"
                     >
                       {h}
                     </span>
@@ -162,7 +162,7 @@ export default function EducationPage() {
             {certifications.map((cert, idx) => (
               <div
                 key={idx}
-                className="stat-box p-6 sm:p-7 flex flex-col justify-between"
+                className="stat-box group p-6 sm:p-7 flex flex-col justify-between"
               >
                 <div>
                   {/* Certificate frame: aspect-[29/20], object-contain, bg-[#0C0D13], no lightbox */}
@@ -186,7 +186,7 @@ export default function EducationPage() {
                       <ShieldCheck size={16} />
                     </div>
                     {cert.year && (
-                      <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2.5 py-0.5 rounded-full border border-[#F59E0B]/25">
+                      <span className="tag-plain text-[#F59E0B] group-hover:text-[#FBBF24] font-bold bg-[#F59E0B]/10 px-2.5 py-0.5 rounded-full border border-[#F59E0B]/25 group-hover:border-[#F59E0B]/70">
                         {cert.year}
                       </span>
                     )}
@@ -228,15 +228,15 @@ export default function EducationPage() {
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
-                <Download size={15} /> Download Official CV
+                <Download size={15} className="text-[#F59E0B]" /> Download Official CV
               </button>
               <Link
                 href="/contact"
-                className="btn-amber-outline px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+                className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
-                Get In Touch <ArrowRight size={15} />
+                Get In Touch <ArrowRight size={15} className="text-[#F59E0B]" />
               </Link>
             </div>
           </div>

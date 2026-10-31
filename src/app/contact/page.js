@@ -233,9 +233,9 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-amber-solid w-full py-4 rounded-full uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                className="stat-box text-[#F5F2EA] w-full py-4 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
               >
-                <Send size={15} /> {submitting ? "Recording & Dispatching..." : "Send Direct Message"}
+                <Send size={15} className="text-[#F59E0B]" /> {submitting ? "Recording & Dispatching..." : "Send Direct Message"}
               </button>
             </form>
           </div>

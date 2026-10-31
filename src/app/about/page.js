@@ -75,7 +75,7 @@ export default function AboutPage() {
 
       {/* Main Narrative & Profile Section: Bordered box, grid 1.32fr/.68fr, align start */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="stat-box p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
+        <div className="stat-box group p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
           
           {/* Left Column: All existing about fields + focus chips (hairline chips, mono) */}
           <div className="space-y-6">
@@ -105,21 +105,21 @@ export default function AboutPage() {
               </p>
               <div className="flex flex-wrap gap-2.5">
                 {aboutData.focus1_title && (
-                  <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
+                  <span className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] px-3.5 py-1.5 rounded-full font-mono text-xs flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
                     {aboutData.focus1_title}
                   </span>
                 )}
                 {aboutData.focus2_title && (
-                  <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
+                  <span className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] px-3.5 py-1.5 rounded-full font-mono text-xs flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
                     {aboutData.focus2_title}
                   </span>
                 )}
-                <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
+                <span className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] px-3.5 py-1.5 rounded-full font-mono text-xs">
                   IEEE &amp; BNBC Standards
                 </span>
-                <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
+                <span className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] px-3.5 py-1.5 rounded-full font-mono text-xs">
                   ArcGIS &amp; QGIS
                 </span>
               </div>
@@ -129,16 +129,16 @@ export default function AboutPage() {
             <div className="pt-4 flex flex-wrap gap-4">
               <Link
                 href="/projects"
-                className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+                className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
-                View Case Studies <ArrowRight size={15} />
+                View Case Studies <ArrowRight size={15} className="text-[#F59E0B]" />
               </Link>
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="btn-amber-outline px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+                className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
-                <Download size={15} /> Download CV
+                <Download size={15} className="text-[#F59E0B]" /> Download CV
               </button>
             </div>
           </div>
@@ -228,9 +228,9 @@ export default function AboutPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/contact"
-              className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+              className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
-              Get In Touch <ArrowRight size={14} />
+              Get In Touch <ArrowRight size={14} className="text-[#F59E0B]" />
             </Link>
           </div>
         </div>

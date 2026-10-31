@@ -135,16 +135,16 @@ export default function Home() {
             <div className="pt-8 flex flex-wrap items-center gap-4">
               <Link
                 href={heroData.primary_btn_link || "/contact"}
-                className="btn-amber-solid px-7 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+                className="stat-box text-[#F5F2EA] px-7 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
-                <Mail size={16} /> {heroData.primary_btn_text || "Contact Me"}
+                <Mail size={16} className="text-[#F59E0B]" /> {heroData.primary_btn_text || "Contact Me"}
               </Link>
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="btn-amber-outline px-7 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+                className="stat-box text-[#F5F2EA] px-7 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
-                <Download size={16} /> {heroData.secondary_btn_text || "Download CV"}
+                <Download size={16} className="text-[#F59E0B]" /> {heroData.secondary_btn_text || "Download CV"}
               </button>
             </div>
           </div>
@@ -303,7 +303,7 @@ export default function Home() {
               {projectsData.slice(0, 3).map((proj, idx) => (
                 <div
                   key={proj.id || idx}
-                  className="stat-box p-6 flex flex-col justify-between"
+                  className="stat-box group p-6 flex flex-col justify-between"
                 >
                   <div>
                     {proj.image_url && (
@@ -325,7 +325,7 @@ export default function Home() {
                       <span className="text-[#F59E0B] font-bold">
                         / {String(proj.project_number || idx + 1).padStart(2, '0')}
                       </span>
-                      <span className="text-[#8E8B82] uppercase text-[11px]">
+                      <span className="text-[#8E8B82] group-hover:text-[#FBBF24] transition-colors uppercase text-[11px]">
                         {proj.category}
                       </span>
                     </div>
@@ -342,7 +342,7 @@ export default function Home() {
                     {(proj.tags || []).map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="stat-box rounded-full text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
+                        className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] rounded-full text-[10px] font-mono px-2.5 py-1"
                       >
                         {tag}
                       </span>
@@ -625,16 +625,16 @@ export default function Home() {
           <div className="pt-3 flex flex-wrap justify-center gap-4">
             <Link
               href={ctaData.primary_btn_link}
-              className="btn-amber-solid px-8 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+              className="stat-box text-[#F5F2EA] px-8 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
-              <Mail size={16} /> {ctaData.primary_btn_text}
+              <Mail size={16} className="text-[#F59E0B]" /> {ctaData.primary_btn_text}
             </Link>
             <button
               type="button"
               onClick={triggerCvDownload}
-              className="btn-amber-outline px-8 py-4 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+              className="stat-box text-[#F5F2EA] px-8 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
-              <Download size={16} /> {ctaData.secondary_btn_text || "Download CV"}
+              <Download size={16} className="text-[#F59E0B]" /> {ctaData.secondary_btn_text || "Download CV"}
             </button>
           </div>
         </motion.div>

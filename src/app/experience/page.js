@@ -60,7 +60,7 @@ export default function ExperiencePage() {
           {experiences.map((exp, idx) => (
             <div
               key={idx}
-              className="stat-box p-6 sm:p-10 grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-start"
+              className="stat-box group p-6 sm:p-10 grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-start"
             >
               {/* Left Col: Period (mono amber) + organization (faint) */}
               <div>
@@ -97,7 +97,7 @@ export default function ExperiencePage() {
                     {exp.tools.map((tool, tIdx) => (
                       <span
                         key={tIdx}
-                        className="stat-box rounded-full text-[11px] font-mono text-[#8E8B82] px-2.5 py-1"
+                        className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] rounded-full text-[11px] font-mono px-2.5 py-1"
                       >
                         {tool}
                       </span>
@@ -123,15 +123,15 @@ export default function ExperiencePage() {
             <button
               type="button"
               onClick={triggerCvDownload}
-              className="btn-amber-solid px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+              className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
-              <Download size={15} /> Download Official CV
+              <Download size={15} className="text-[#F59E0B]" /> Download Official CV
             </button>
             <Link
               href="/contact"
-              className="btn-amber-outline px-6 py-3.5 rounded-full text-xs uppercase tracking-wider flex items-center gap-2"
+              className="stat-box text-[#F5F2EA] px-6 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
-              Get In Touch <ArrowRight size={15} />
+              Get In Touch <ArrowRight size={15} className="text-[#F59E0B]" />
             </Link>
           </div>
         </div>
