@@ -124,13 +124,10 @@ export default function ContactPage() {
                   className="block group cursor-pointer"
                 >
                   <div className="stat-box px-4 py-3 flex items-center justify-between">
-                    <span className="font-mono text-xs text-[#8E8B82] uppercase tracking-wider font-medium">
+                    <span className="font-mono text-xs text-[#8E8B82] group-hover:text-[#F59E0B] uppercase tracking-wider font-medium transition-colors">
                       {ch.label}
                     </span>
-                    <span className="font-mono text-xs tracking-widest text-[#8E8B82] group-hover:text-[#F59E0B] transition flex items-center gap-2">
-                      <span>••••••••••</span>
-                      <ExternalLink size={12} className="text-[#8E8B82] group-hover:text-[#F59E0B]" />
-                    </span>
+                    <ExternalLink size={13} className="text-[#8E8B82] group-hover:text-[#F59E0B] transition-colors" />
                   </div>
                 </a>
               ))}
