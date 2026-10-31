@@ -586,7 +586,7 @@ export default function Home() {
           >
             <div className="mb-10">
               <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                Service Packages
+                Digital Services
               </h2>
             </div>
 
