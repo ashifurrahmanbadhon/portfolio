@@ -1,5 +1,6 @@
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from '@vercel/analytics/next';
 
 const interTight = Inter_Tight({
   variable: "--font-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({ children }) {
         className="min-h-full bg-[#06070B] text-[#F5F2EA] selection:bg-[#F59E0B] selection:text-[#1A1202]"
       >
         <DashboardShell>{children}</DashboardShell>
+        <Analytics />
       </body>
     </html>
   );
