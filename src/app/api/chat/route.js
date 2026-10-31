@@ -43,6 +43,7 @@ export async function POST(req) {
     const skills = content.skills || [];
     const softwareTools = content.software_tools || [];
     const services = content.services || [];
+    const workPackages = content.work_packages || [];
     const projects = content.projects || [];
     const social = content.social_links || {};
     const contactChannels = content.contact_channels || [];
@@ -81,6 +82,9 @@ Software Tools: ${softwareTools.map(t => (typeof t === 'object' ? t.name : t)).j
 
 SERVICES OFFERED:
 ${services.map(s => `- ${s.title}: ${s.description}`).join("\n")}
+
+WORK & SERVICE PACKAGES:
+${workPackages.map(wp => `- Package: ${wp.title} (${wp.category}) — ${wp.description}. Deliverables: ${(wp.deliverables || "").replace(/\n/g, "; ")}`).join("\n")}
 
 PROJECTS:
 ${projects.map(p => `- Project #${p.project_number || p.id}: ${p.title} (${p.category}). ${p.short_description || p.full_description || ""}. Tags: ${(p.tags || []).join(", ")}`).join("\n")}

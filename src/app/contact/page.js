@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Send,
   Check,
@@ -17,6 +17,20 @@ export default function ContactPage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [previewNote, setPreviewNote] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const pkg = params.get('package');
+      if (pkg) {
+        setFormData(prev => ({
+          ...prev,
+          subject: `Package Inquiry: ${pkg}`,
+          message: `I'm interested in: ${pkg}.\n\n`
+        }));
+      }
+    }
+  }, []);
 
   const isChannelActive = (key) => {
     if (!contactChannels || contactChannels.length === 0) return true;

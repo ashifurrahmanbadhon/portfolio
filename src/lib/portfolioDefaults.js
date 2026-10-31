@@ -539,8 +539,88 @@ export const DEFAULT_PAGE_HEADERS = {
     title: "Let's Discuss Engineering &",
     highlight_word: "Technical Solutions",
     description: "Reach out directly for substation engineering consultations, AutoCAD schematics, GIS asset mapping, operational analytics, or technology collaborations."
+  },
+  work: {
+    page_key: "work",
+    badge_text: "SERVICE PACKAGES",
+    title: "Work & Service",
+    highlight_word: "Packages",
+    description: "Fixed-scope packages for businesses that want results without agency drama. Pick the one you need — every package clearly lists what is included before we start."
   }
 };
+
+export const DEFAULT_WORK_PACKAGES = [
+  {
+    id: 1,
+    category: "WEBSITE",
+    title: "Business Website",
+    description: "A complete online home for your business — present your services properly, look trustworthy, and turn visitors into inquiries, orders and calls.",
+    deliverables: "Home, services, gallery & about pages\nOrder / inquiry buttons connected to WhatsApp\nPrice list or product showcase section\nYou can update text & photos yourself later",
+    tags: "Next.js, CMS Admin, WhatsApp Orders",
+    sort_order: 1,
+    is_active: 1
+  },
+  {
+    id: 2,
+    category: "WEBSITE",
+    title: "Portfolio Website",
+    description: "Your CV, upgraded into a website — projects, skills and experience presented in a way that makes clients and employers take you seriously.",
+    deliverables: "Project showcase with photos & details\nSkills, experience & education pages\nMessages land directly in your admin inbox\nEdit everything yourself — no coding needed",
+    tags: "Next.js, Admin Panel, Contact Inbox",
+    sort_order: 2,
+    is_active: 1
+  },
+  {
+    id: 3,
+    category: "WEBSITE",
+    title: "Landing Page",
+    description: "One focused page for one goal — a product launch, a campaign, or collecting leads from your Facebook ads without distractions.",
+    deliverables: "Headline & offer written around your goal\nLead form + WhatsApp chat button\nLoads fast even on slow mobile networks\nReady for ad traffic: pixel can be added anytime",
+    tags: "Ad Campaigns, Lead Form, Fast Load",
+    sort_order: 3,
+    is_active: 1
+  },
+  {
+    id: 4,
+    category: "AI",
+    title: "AI Chatbot for Business",
+    description: "Your website answers customers while you sleep — prices, services, delivery, common questions — in your own business's words.",
+    deliverables: "Answers built from your real business info\nHandles price / service / timing questions 24/7\nCustomer details collected for follow-up\nYou can reach out personally when it matters",
+    tags: "Gemini / OpenAI, Website Widget, Lead Capture",
+    sort_order: 4,
+    is_active: 1
+  },
+  {
+    id: 5,
+    category: "TRACKING",
+    title: "Meta Pixel + Conversions API Setup",
+    description: "Stop guessing which ads work. Browser + server tracking together, so every sale and lead is counted — even the ones ad-blockers hide.",
+    deliverables: "Pixel installed with all key events\nServer-side Conversions API for missed events\nDuplicate events removed, data cleaned\nFinal check together in Events Manager",
+    tags: "Meta Pixel, Server-Side CAPI, Event Deduplication",
+    sort_order: 5,
+    is_active: 1
+  },
+  {
+    id: 6,
+    category: "TRACKING",
+    title: "Tracking Audit",
+    description: "Already running ads but the numbers feel wrong? I go through your whole setup, find the leaks, fix them, and explain it in simple words.",
+    deliverables: "Pixel, GA4 & GTM checked end to end\nMissing / duplicate events found & repaired\niOS & consent-related data loss reviewed\nSimple written summary of what was fixed",
+    tags: "Pixel Check, GA4, Fix Report",
+    sort_order: 6,
+    is_active: 1
+  },
+  {
+    id: 7,
+    category: "AUTOMATION",
+    title: "n8n Workflow Automation",
+    description: "The boring repeat work — copying orders to sheets, sending confirmations, following up — done automatically, exactly the same way, every time.",
+    deliverables: "Orders & inquiries saved to Google Sheets / CRM\nAutomatic confirmation messages to customers\nDaily summary or instant alerts to you\nFull setup explained so you are never locked in",
+    tags: "n8n, Google Sheets, Auto Notifications",
+    sort_order: 7,
+    is_active: 1
+  }
+];
 
 export const DEFAULT_HOMEPAGE_CTA = {
   badge_text: "Open for Engineering & AI Opportunities",

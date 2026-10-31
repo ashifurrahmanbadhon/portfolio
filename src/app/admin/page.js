@@ -132,6 +132,7 @@ function AdminConsoleContent() {
   const [educations, setEducations] = useState([]);
   const [skills, setSkills] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [workPackages, setWorkPackages] = useState([]);
   const [socialLinks, setSocialLinks] = useState({});
   const [contactChannels, setContactChannels] = useState([]);
   const [resume, setResume] = useState({});
@@ -438,6 +439,7 @@ function AdminConsoleContent() {
     if (Array.isArray(res.educations)) setEducations(res.educations);
     if (Array.isArray(res.skills)) setSkills(res.skills);
     if (Array.isArray(res.projects)) setProjects(res.projects);
+    if (Array.isArray(res.work_packages)) setWorkPackages(res.work_packages);
     if (res.social_links) setSocialLinks(res.social_links);
     if (Array.isArray(res.contact_channels)) setContactChannels(res.contact_channels);
     if (res.resume) setResume(res.resume);
@@ -618,8 +620,9 @@ function AdminConsoleContent() {
     { id: "education", label: "Academic Education", pageNum: "Page 4", title: "Academic Background & Certifications", subtitle: `Manage ${educations.length} accredited degrees, certifications, and coursework`, icon: GraduationCap, liveUrl: "/education", count: educations.length },
     { id: "skills", label: "Technical Skills", pageNum: "Page 5", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
     { id: "projects", label: "Engineering Projects", pageNum: "Page 6", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
-    { id: "contact", label: "Contact Info", pageNum: "Page 7", title: "Contact Hub & Communication Channels", subtitle: "Update email, phone, WhatsApp, office location, and social media channels", icon: Mail, liveUrl: "/contact" },
-    { id: "inbox", label: "Inbox", pageNum: "Page 8", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: unreadContactCount, count: messages.length },
+    { id: "work", label: "Work Packages", pageNum: "Page 7", title: "Work & Service Packages", subtitle: `Manage ${workPackages.length} fixed-scope service packages displayed on /work`, icon: Layers, liveUrl: "/work", count: workPackages.length },
+    { id: "contact", label: "Contact Info", pageNum: "Page 8", title: "Contact Hub & Communication Channels", subtitle: "Update email, phone, WhatsApp, office location, and social media channels", icon: Mail, liveUrl: "/contact" },
+    { id: "inbox", label: "Inbox", pageNum: "Page 9", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: unreadContactCount, count: messages.length },
     { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
   ];
 
@@ -637,6 +640,8 @@ function AdminConsoleContent() {
       ? "/skills"
       : currentTab === "projects"
       ? "/projects"
+      : currentTab === "work"
+      ? "/work"
       : currentTab === "contact" || currentTab === "inbox"
       ? "/contact"
       : "/";
@@ -654,6 +659,8 @@ function AdminConsoleContent() {
       ? "skills"
       : currentTab === "projects"
       ? "projects"
+      : currentTab === "work"
+      ? "work_packages"
       : currentTab === "contact"
       ? "contact"
       : currentTab === "settings"
@@ -676,6 +683,8 @@ function AdminConsoleContent() {
         return { skills, softwareTools, badges: skillBadges };
       case "projects":
         return { projects, methodologies: projectMethodologies };
+      case "work":
+        return { workPackages };
       case "contact":
         return { contact: socialLinks, channels: contactChannels };
       case "settings":
@@ -1731,6 +1740,144 @@ function AdminConsoleContent() {
             )}
 
             {/* ============================================================== */}
+            {/* TAB: WORK PACKAGES */}
+            {/* ============================================================== */}
+            {currentTab === "work" && (
+              <div className="space-y-6">
+                <SpotlightCard className="bg-[#111622] border border-[#1E2638] p-5 sm:p-6 rounded-2xl">
+                  <div className="flex items-center justify-between gap-4 w-full">
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                        <Layers className="w-5 h-5 text-emerald-400" />
+                        Fixed-Scope Service Packages
+                      </h2>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Manage service packages displayed at <code className="text-emerald-400">/work</code>. Total packages: {workPackages.length}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setEditingItem({
+                          category: "WEBSITE",
+                          title: "",
+                          description: "",
+                          deliverables: "",
+                          tags: "",
+                          sort_order: workPackages.length + 1,
+                          is_active: 1
+                        });
+                        setEditingIndex(-1);
+                        setModalType("work_package");
+                      }}
+                      className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer shrink-0 ml-auto"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add New Package</span>
+                    </button>
+                  </div>
+                </SpotlightCard>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {workPackages.map((pkg, idx) => (
+                    <SpotlightCard
+                      key={pkg.id || idx}
+                      className="bg-[#111622] border border-[#1E2638] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                              #{String(pkg.sort_order || idx + 1).padStart(2, "0")}
+                            </span>
+                            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+                              {pkg.category}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <ActiveToggle
+                              isActive={pkg.is_active}
+                              onToggle={() => toggleItemActive(workPackages, setWorkPackages, idx, "work_packages", "Package")}
+                              label="Package"
+                            />
+                            <button
+                              onClick={() => moveItem(workPackages, setWorkPackages, idx, -1, "work_packages")}
+                              disabled={idx === 0}
+                              className="p-1 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                              title="Move Up"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => moveItem(workPackages, setWorkPackages, idx, 1, "work_packages")}
+                              disabled={idx === workPackages.length - 1}
+                              className="p-1 rounded-lg bg-[#161C2A] text-slate-400 hover:text-white disabled:opacity-30"
+                              title="Move Down"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingItem({
+                                  ...pkg,
+                                  sort_order: pkg.sort_order !== undefined ? pkg.sort_order : idx + 1,
+                                  is_active: pkg.is_active !== undefined ? pkg.is_active : 1
+                                });
+                                setEditingIndex(idx);
+                                setModalType("work_package");
+                              }}
+                              className="p-1 rounded-lg bg-[#161C2A] text-emerald-400 hover:bg-emerald-500/20"
+                              title="Edit Package"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => deleteItem(workPackages, setWorkPackages, idx, "work_packages", "package")}
+                              className="p-1 rounded-lg bg-[#161C2A] text-red-400 hover:bg-red-500/20"
+                              title="Delete Package"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
+                          {pkg.title}
+                        </h3>
+
+                        <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                          {pkg.description}
+                        </p>
+
+                        {pkg.deliverables && (
+                          <div className="pt-2 text-[11px] text-slate-400">
+                            <span className="font-mono uppercase text-emerald-400 font-bold block mb-1">Deliverables:</span>
+                            <ul className="list-disc list-inside space-y-0.5 text-slate-300">
+                              {(pkg.deliverables || "").split('\n').filter(Boolean).slice(0, 3).map((d, dIdx) => (
+                                <li key={dIdx} className="truncate">{d}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {pkg.tags && (
+                          <div className="flex flex-wrap gap-1.5 pt-2">
+                            {(pkg.tags || "").split(',').map(t => t.trim()).filter(Boolean).map((t, tIdx) => (
+                              <span key={tIdx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161C2A] text-slate-400 border border-[#232A3B]">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </SpotlightCard>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
             {/* TAB: CONTACT */}
             {/* ============================================================== */}
             {currentTab === "contact" && (
@@ -2652,6 +2799,96 @@ function AdminConsoleContent() {
             )}
 
             {/* Modal Body: Project */}
+            {modalType === "work_package" && (
+              <div className="space-y-4 text-xs">
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-300 mb-1">Category</label>
+                    <input
+                      type="text"
+                      value={editingItem.category || ""}
+                      onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
+                      placeholder="WEBSITE, AI, TRACKING, AUTOMATION"
+                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono uppercase"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block font-medium text-slate-300 mb-1">Package Title</label>
+                    <input
+                      type="text"
+                      value={editingItem.title || ""}
+                      onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                      placeholder="e.g. Business Website"
+                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-medium text-slate-300 mb-1">Description</label>
+                  <textarea
+                    rows={2}
+                    value={editingItem.description || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                    placeholder="Brief description of the package"
+                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-slate-300 mb-1">
+                    Deliverables (one item per line)
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={editingItem.deliverables || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, deliverables: e.target.value })}
+                    placeholder="Home, services, gallery & about pages&#10;Order / inquiry buttons connected to WhatsApp"
+                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-slate-300 mb-1">
+                    Tags (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.tags || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, tags: e.target.value })}
+                    placeholder="Next.js, CMS Admin, WhatsApp Orders"
+                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-slate-300 mb-1">Sort Order</label>
+                    <input
+                      type="number"
+                      value={editingItem.sort_order || 1}
+                      onChange={(e) => setEditingItem({ ...editingItem, sort_order: parseInt(e.target.value) || 1 })}
+                      className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-slate-300 mb-1">Visibility</label>
+                    <div className="flex items-center gap-3 mt-2">
+                      <label className="flex items-center gap-2 cursor-pointer text-slate-300">
+                        <input
+                          type="checkbox"
+                          checked={editingItem.is_active !== 0}
+                          onChange={(e) => setEditingItem({ ...editingItem, is_active: e.target.checked ? 1 : 0 })}
+                          className="rounded bg-[#0A0D12] border-[#1E2638] text-emerald-500 focus:ring-0"
+                        />
+                        Active (Visible on /work)
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {modalType === "project" && (
               <div className="space-y-4 text-xs">
                 <div className="grid grid-cols-3 gap-3">
@@ -2976,6 +3213,17 @@ function AdminConsoleContent() {
                     else updated.push(itemToSave);
                     setProjects(updated);
                     handleSaveSection("projects", { items: updated }, "Project saved!");
+                  } else if (modalType === "work_package") {
+                    const itemToSave = {
+                      ...editingItem,
+                      sort_order: Number(editingItem.sort_order) || (editingIndex >= 0 ? editingIndex + 1 : workPackages.length + 1),
+                      is_active: editingItem.is_active !== undefined ? (editingItem.is_active ? 1 : 0) : 1,
+                    };
+                    const updated = [...workPackages];
+                    if (editingIndex >= 0) updated[editingIndex] = itemToSave;
+                    else updated.push(itemToSave);
+                    setWorkPackages(updated);
+                    handleSaveSection("work_packages", { items: updated }, "Work package saved!");
                   }
                   setModalType(null);
                   setEditingItem(null);

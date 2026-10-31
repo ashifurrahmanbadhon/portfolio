@@ -17,10 +17,11 @@ import {
   DEFAULT_CERTIFICATIONS,
   DEFAULT_CONTACT,
   DEFAULT_PAGE_HEADERS,
-  DEFAULT_HOMEPAGE_CTA
+  DEFAULT_HOMEPAGE_CTA,
+  DEFAULT_WORK_PACKAGES
 } from '@/lib/portfolioDefaults';
 
-const CACHE_KEY = 'portfolio_cms_cache_v5';
+const CACHE_KEY = 'portfolio_cms_cache_v6';
 let inMemorySessionCache = null;
 const PortfolioContext = createContext(null);
 
@@ -41,6 +42,7 @@ export function PortfolioProvider({ children }) {
   const [contactData, setContactData] = useState(DEFAULT_CONTACT);
   const [contactChannels, setContactChannels] = useState([]);
   const [services, setServices] = useState([]);
+  const [workPackages, setWorkPackages] = useState(DEFAULT_WORK_PACKAGES);
   const [pageHeaders, setPageHeaders] = useState(DEFAULT_PAGE_HEADERS);
   const [homepageCta, setHomepageCta] = useState(DEFAULT_HOMEPAGE_CTA);
   const [resumeUrl, setResumeUrl] = useState('/Ashifur_Rahman_CV.pdf');
@@ -233,6 +235,11 @@ export function PortfolioProvider({ children }) {
       setServices(data.services);
     }
 
+    if (Array.isArray(data.work_packages)) {
+      const activePackages = data.work_packages.filter(wp => wp.is_active !== 0 && wp.is_active !== false);
+      setWorkPackages(activePackages);
+    }
+
     if (data.resume && data.resume.file_url) {
       setResumeUrl(data.resume.file_url);
     }
@@ -386,6 +393,7 @@ export function PortfolioProvider({ children }) {
         courseworkPillars,
         certifications,
         services,
+        workPackages,
         contactData,
         contactChannels,
         pageHeaders,
