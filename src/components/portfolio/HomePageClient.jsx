@@ -111,6 +111,17 @@ export default function Home() {
     ? workPackages.slice(0, 4)
     : [];
 
+  const featuredEngineeringProjects = React.useMemo(() => {
+    if (!Array.isArray(projectsData) || projectsData.length === 0) return [];
+    const p1 = projectsData.find((p) => p.title?.includes("Buck Converter")) || projectsData[0];
+    const p2 = projectsData.find((p) => p.title?.includes("Grid Substation")) || projectsData[1];
+    const motor = projectsData.find((p) => p.title?.includes("Industrial Motor Control"));
+    if (p1 && p2 && motor) {
+      return [p1, p2, motor];
+    }
+    return projectsData.slice(0, 3);
+  }, [projectsData]);
+
   return (
     <PortfolioLayout>
       {/* 1. HERO SECTION: 2-col grid (1.1fr / 0.9fr), name INSIDE left column, top-aligned with photo */}
@@ -305,7 +316,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {projectsData.slice(0, 3).map((proj, idx) => (
+              {featuredEngineeringProjects.map((proj, idx) => (
                 <div
                   key={proj.id || idx}
                   className="stat-box group p-6 flex flex-col justify-between"
