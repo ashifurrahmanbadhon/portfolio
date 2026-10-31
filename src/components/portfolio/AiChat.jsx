@@ -122,13 +122,13 @@ export default function AiChat() {
 
   return (
     <>
-      {/* 62px circle trigger button at bottom-right */}
-      <div className="fixed bottom-6 right-6 z-[99]">
+      {/* Trigger button at bottom-right (compact on mobile so it doesn't cover CTAs) */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99]">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? "Close AI Chat" : "Open AI Assistant"}
-          className="relative w-[62px] h-[62px] rounded-full bg-[#F59E0B] hover:bg-[#FBBF24] text-[#1A1202] flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+          className="relative w-[54px] h-[54px] sm:w-[62px] sm:h-[62px] rounded-full bg-[#F59E0B] hover:bg-[#FBBF24] text-[#1A1202] flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
         >
           {/* Soft pulse ring */}
           {!isOpen && (
@@ -136,20 +136,20 @@ export default function AiChat() {
           )}
 
           {/* Amber online dot */}
-          <span className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-[#F59E0B] border-2 border-[#06070B]" />
+          <span className="absolute top-1 right-1 w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-[#F59E0B] border-2 border-[#06070B]" />
 
           {isOpen ? (
-            <X size={24} className="stroke-[2.5]" />
+            <X size={22} className="stroke-[2.5]" />
           ) : (
-            <MessageSquare size={26} className="fill-[#1A1202] stroke-[1.5]" />
+            <MessageSquare size={24} className="fill-[#1A1202] stroke-[1.5]" />
           )}
         </button>
       </div>
 
-      {/* Chat Window Panel */}
+      {/* Chat Window Panel — width min(92vw, 362px) */}
       {isOpen && (
         <div
-          className="fixed bottom-24 right-4 sm:right-6 z-[99] w-[calc(100vw-32px)] sm:w-[362px] h-[min(560px,calc(100vh-140px))] bg-[#0A0B10] border border-[#23242B] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          className="fixed bottom-20 sm:bottom-24 right-3 sm:right-6 z-[99] w-[min(92vw,362px)] h-[min(540px,calc(100dvh-120px))] bg-[#0A0B10] border border-[#23242B] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
           role="dialog"
           aria-label="AI Assistant"
         >

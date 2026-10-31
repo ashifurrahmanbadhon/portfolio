@@ -197,8 +197,8 @@ export default function ProjectsPage() {
       />
 
       {/* Filter Tabs Bar */}
-      <section className="relative z-10 border-b border-[#23242B] bg-[#06070B]/90 sticky top-[69px] z-40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <section className="relative z-10 border-b border-[#23242B] bg-[#06070B]/90 sticky top-[68px] z-40 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-mono text-[#8E8B82] shrink-0">
             <Filter size={13} className="text-[#F59E0B]" />
             <span>FILTER BY DOMAIN:</span>
@@ -212,7 +212,7 @@ export default function ProjectsPage() {
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`stat-box text-xs font-mono uppercase tracking-wider px-3.5 py-1.5 whitespace-nowrap font-semibold transition cursor-pointer ${
+                  className={`stat-box text-xs font-mono uppercase tracking-wider px-3 py-1.5 whitespace-nowrap font-semibold transition cursor-pointer ${
                     active
                       ? 'text-[#F59E0B] border-[#F59E0B] shadow-[inset_0_0_0_1.5px_#F59E0B]'
                       : 'text-[#B9B5A9] hover:text-[#F59E0B]'
@@ -227,8 +227,8 @@ export default function ProjectsPage() {
       </section>
 
       {/* Projects Grid: 16-20px gap, EACH card its own border #23242B + bg panel */}
-      <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-10 text-xs font-mono text-[#8E8B82]">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-6 sm:mb-10 text-xs font-mono text-[#8E8B82]">
           <span>
             SHOWING <strong className="text-[#F5F2EA]">{filteredProjects.length}</strong> OF{' '}
             <strong className="text-[#F59E0B]">{projectsData.length}</strong> PROJECTS
@@ -240,7 +240,7 @@ export default function ProjectsPage() {
           {filteredProjects.map((proj, idx) => (
             <div
               key={proj.id || idx}
-              className="stat-box group p-6 sm:p-7 flex flex-col justify-between"
+              className="stat-box group p-5 sm:p-7 flex flex-col justify-between"
             >
               <div>
                 {/* Visual Thumbnail / Slider */}

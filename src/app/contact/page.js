@@ -114,7 +114,7 @@ export default function ContactPage() {
         description={header.description}
       />
 
-      <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
           {/* Left Column: Bordered channel grid — compact aesthetic stat-boxes; hover inset ring */}
@@ -160,7 +160,7 @@ export default function ContactPage() {
           </div>
 
           {/* Right Column: Form (SAME fields, validation, submit, success behavior; restyled) */}
-          <div className="lg:col-span-7 stat-box p-8 sm:p-10 shadow-2xl relative">
+          <div className="lg:col-span-7 stat-box p-5 sm:p-10 shadow-2xl relative">
             <div className="mb-6">
               <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-2">
                 Send a Direct Message

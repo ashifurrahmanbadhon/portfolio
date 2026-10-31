@@ -135,12 +135,12 @@ export default function Home() {
   return (
     <PortfolioLayout>
       {/* 1. HERO SECTION: 2-col grid (1.1fr / 0.9fr), name INSIDE left column, top-aligned with photo */}
-      <section className="relative z-10 px-6 md:px-12 pt-10 pb-16 md:pt-14 md:pb-20 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-start">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 pt-8 pb-12 sm:pt-10 sm:pb-16 md:pt-14 md:pb-20 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 sm:gap-12 lg:gap-16 items-start">
           
           {/* Left Column: Name & Intro */}
           <div className="flex flex-col justify-start">
-            <h1 className="text-5xl sm:text-7xl lg:text-[88px] font-black uppercase tracking-tight leading-[0.92]">
+            <h1 className="text-4xl sm:text-7xl lg:text-[88px] font-black uppercase tracking-tight leading-[0.92]">
               <span className="block text-[#F5F2EA]">{firstName}</span>
               <span className="block text-stroke-hero">{lastName}</span>
             </h1>
@@ -152,23 +152,23 @@ export default function Home() {
             )}
 
             {heroData.introduction && (
-              <p className="text-[#B9B5A9] text-base sm:text-lg max-w-xl leading-relaxed mt-6">
+              <p className="text-[#B9B5A9] text-sm sm:text-lg max-w-xl leading-relaxed mt-4 sm:mt-6">
                 {heroData.introduction}
               </p>
             )}
 
             {/* Action Buttons */}
-            <div className="pt-8 flex flex-wrap items-center gap-4">
+            <div className="pt-6 sm:pt-8 flex flex-wrap items-center gap-3 sm:gap-4">
               <Link
                 href={heroData.primary_btn_link || "/contact"}
-                className="stat-box text-[#F5F2EA] px-7 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                className="stat-box text-[#F5F2EA] px-6 sm:px-7 py-3.5 sm:py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
                 <Mail size={16} className="text-[#F59E0B]" /> {heroData.primary_btn_text || "Contact Me"}
               </Link>
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="stat-box text-[#F5F2EA] px-7 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                className="stat-box text-[#F5F2EA] px-6 sm:px-7 py-3.5 sm:py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
                 <Download size={16} className="text-[#F59E0B]" /> {heroData.secondary_btn_text || "Download CV"}
               </button>
@@ -177,7 +177,7 @@ export default function Home() {
 
           {/* Right Column: Photo in hairline frame + padding 8px, aspect 3/4, caption row */}
           <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-[380px] stat-box p-2 shadow-2xl group">
+            <div className="w-full max-w-[340px] sm:max-w-[380px] stat-box p-2 shadow-2xl group">
               <div className="relative w-full aspect-[3/4] overflow-hidden bg-[#06070B]">
                 <Image
                   src={heroData.profile_image || "/ashifur-home.jpg"}
@@ -209,27 +209,27 @@ export default function Home() {
 
       {/* 2. HIGHLIGHTS: 4 separate stat-boxes with complete borders on all 4 sides */}
       {highlights && highlights.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-12 max-w-7xl mx-auto">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-8 sm:py-12 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4"
           >
             {highlights.map((h, i) => {
               const rawVal = String(h.metric_value || '').trim();
               const numMatch = rawVal.match(/^(\d+)(.*)$/);
               return (
-                <div key={i} className="stat-box px-[22px] py-[26px] text-left flex flex-col justify-center">
-                  <p className="text-[38px] font-extrabold text-[#F5F2EA] tracking-tight leading-none">
+                <div key={i} className="stat-box px-4 py-5 sm:px-[22px] sm:py-[26px] text-left flex flex-col justify-center">
+                  <p className="text-2xl sm:text-[38px] font-extrabold text-[#F5F2EA] tracking-tight leading-none">
                     {numMatch ? (
                       <CountUp to={parseInt(numMatch[1], 10)} suffix={numMatch[2]} />
                     ) : (
                       rawVal
                     )}
                   </p>
-                  <p className="text-[11px] font-mono uppercase tracking-[0.15em] text-[#B9B5A9] mt-[8px]">
+                  <p className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.15em] text-[#B9B5A9] mt-2 sm:mt-[8px]">
                     {h.metric_label}
                   </p>
                 </div>
@@ -240,7 +240,7 @@ export default function Home() {
       )}
 
       {/* 4. ABOUT PREVIEW SECTION */}
-      <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -304,14 +304,14 @@ export default function Home() {
 
       {/* 5. FEATURED PROJECTS PREVIEW (First 3) */}
       {projectsData && projectsData.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 sm:mb-10 gap-4">
               <div>
                 <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
                   {siteTexts?.home_featured_projects_heading || "Featured Engineering Projects"}
@@ -329,7 +329,7 @@ export default function Home() {
               {featuredEngineeringProjects.map((proj, idx) => (
                 <div
                   key={proj.id || idx}
-                  className="stat-box group p-6 flex flex-col justify-between"
+                  className="stat-box group p-5 sm:p-6 flex flex-col justify-between"
                 >
                   <div>
                     {proj.image_url && (
@@ -383,14 +383,14 @@ export default function Home() {
 
       {/* 6. EXPERIENCE PREVIEW */}
       {experiences && experiences.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 sm:mb-10 gap-4">
               <div>
                 <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
                   {siteTexts?.home_experience_heading || "Career Journey & Field Work"}
@@ -404,11 +404,11 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-6 sm:gap-8">
               {experiences.slice(0, 2).map((exp, idx) => (
                 <div
                   key={idx}
-                  className="stat-box group p-6 sm:p-8 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-start"
+                  className="stat-box group p-5 sm:p-8 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-start"
                 >
                   <div>
                     <span className="font-mono text-xs text-[#F59E0B] font-semibold block">
@@ -440,14 +440,14 @@ export default function Home() {
 
       {/* 7. SKILLS PREVIEW */}
       {skillsData && skillsData.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 sm:mb-10 gap-4">
               <div>
                 <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
                   {siteTexts?.home_skills_heading || "Technical Skills & Tools"}
@@ -463,7 +463,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {skillsData.map((cat, idx) => (
-                <div key={idx} className="stat-box p-6 space-y-4">
+                <div key={idx} className="stat-box p-5 sm:p-6 space-y-4">
                   <div className="flex items-center gap-3 pb-3 border-b border-[#23242B]">
                     <span className="font-mono text-xs text-[#F59E0B] font-bold">
                       0{idx + 1} /
@@ -493,14 +493,14 @@ export default function Home() {
       )}
 
       {/* 8. EDUCATION PREVIEW */}
-      <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 sm:mb-10 gap-4">
             <div>
               <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
                 {siteTexts?.home_education_heading || "Education & Credentials"}
@@ -516,7 +516,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {educations && educations.length > 0 && (
-              <div className="stat-box p-8 space-y-4">
+              <div className="stat-box p-6 sm:p-8 space-y-4">
                 <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
                   {educations[0].period || "Degree Completed"}
                 </span>
@@ -534,7 +534,7 @@ export default function Home() {
               </div>
             )}
 
-            <div className="stat-box p-8 space-y-4">
+            <div className="stat-box p-6 sm:p-8 space-y-4">
               <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
                 Certifications &amp; Training
               </span>
@@ -559,14 +559,14 @@ export default function Home() {
 
       {/* 9. SERVICES PREVIEW (Dynamic from CMS) */}
       {services && services.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="mb-10">
+            <div className="mb-8 sm:mb-10">
               <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
                 {siteTexts?.home_services_heading || "Engineering Services"}
               </h2>
@@ -576,7 +576,7 @@ export default function Home() {
               {services.map((srv, idx) => {
                 const Icon = resolveIcon(srv.icon, Zap);
                 return (
-                  <div key={srv.id || idx} className="stat-box p-6 flex flex-col justify-between">
+                  <div key={srv.id || idx} className="stat-box p-5 sm:p-6 flex flex-col justify-between">
                     <div>
                       <div className="w-10 h-10 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
                         <Icon size={20} />
@@ -598,20 +598,20 @@ export default function Home() {
 
       {/* 9B. SERVICE PACKAGES PREVIEW (Dynamic from CMS work_packages) */}
       {previewPackages.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="mb-10">
+            <div className="mb-8 sm:mb-10">
               <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
                 {siteTexts?.home_packages_heading || "Digital Services"}
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 sm:mb-10">
               {previewPackages.map((pkg, idx) => {
                 const presetNum = String(pkg.sort_order || idx + 1).padStart(2, '0');
                 const rawDesc = (pkg.description || '').trim();
@@ -621,19 +621,19 @@ export default function Home() {
                   <Link
                     key={pkg.id || idx}
                     href="/work"
-                    className="stat-box p-6 sm:p-7 flex flex-col justify-between group no-underline transition block"
+                    className="stat-box p-5 sm:p-7 flex flex-col justify-between group no-underline transition block"
                   >
                     <div>
-                      <div className="flex items-center justify-between font-mono text-xs mb-3">
-                        <span className="text-[#F59E0B] font-bold tracking-wider">
+                      <div className="flex items-center justify-between gap-2 font-mono text-xs mb-3">
+                        <span className="text-[#F59E0B] font-bold tracking-wider shrink-0">
                           PRESET — {presetNum}
                         </span>
-                        <span className="text-[#8E8B82] uppercase tracking-wider font-medium text-[11px]">
+                        <span className="text-[#8E8B82] uppercase tracking-wider font-medium text-[11px] truncate text-right">
                           {pkg.category || 'SERVICE'}
                         </span>
                       </div>
 
-                      <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-2 leading-tight group-hover:text-[#FBBF24] transition-colors">
+                      <h3 className="text-lg sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-2 leading-tight group-hover:text-[#FBBF24] transition-colors break-words">
                         {pkg.title}
                       </h3>
 
@@ -649,7 +649,7 @@ export default function Home() {
             <div className="text-center">
               <Link
                 href="/work"
-                className="stat-box inline-block py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
+                className="stat-box inline-flex items-center justify-center min-h-[44px] py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
               >
                 {siteTexts?.home_packages_btn || "View All Packages →"}
               </Link>
@@ -659,14 +659,14 @@ export default function Home() {
       )}
 
       {/* 10. NEW STATIC SECTION "How I Work" AFTER SERVICES PREVIEW */}
-      <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="mb-10">
+          <div className="mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
               {siteTexts?.home_how_i_work_heading || "How I Work"}
             </h2>
@@ -676,13 +676,13 @@ export default function Home() {
             {stepsToRender.map((step) => (
               <div
                 key={step.num}
-                className="stat-box p-7 flex flex-col justify-between"
+                className="stat-box p-5 sm:p-7 flex flex-col justify-between"
               >
                 <div>
-                  <div className="font-mono text-4xl sm:text-5xl font-black text-stroke-numeral mb-4">
+                  <div className="font-mono text-3xl sm:text-5xl font-black text-stroke-numeral mb-3 sm:mb-4">
                     {step.num}
                   </div>
-                  <h3 className="text-lg font-bold text-[#F5F2EA] mb-2 uppercase tracking-wide">
+                  <h3 className="text-base sm:text-lg font-bold text-[#F5F2EA] mb-2 uppercase tracking-wide">
                     {step.title}
                   </h3>
                   <p className="text-xs text-[#B9B5A9] leading-relaxed">
@@ -696,31 +696,31 @@ export default function Home() {
       </section>
 
       {/* 11. HOMEPAGE CALL TO ACTION: existing DB CTA content, centered, hover inset amber ring */}
-      <section className="relative z-10 px-6 md:px-12 py-20 max-w-4xl mx-auto">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="stat-box p-10 sm:p-14 text-center space-y-6"
+          className="stat-box p-6 sm:p-14 text-center space-y-4 sm:space-y-6"
         >
-          <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight max-w-2xl mx-auto leading-tight">
+          <h2 className="text-xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight max-w-2xl mx-auto leading-tight">
             {ctaData.title}
           </h2>
-          <p className="text-[#B9B5A9] text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+          <p className="text-[#B9B5A9] text-xs sm:text-base max-w-xl mx-auto leading-relaxed">
             {ctaData.description}
           </p>
-          <div className="pt-3 flex flex-wrap justify-center gap-4">
+          <div className="pt-2 sm:pt-3 flex flex-wrap justify-center gap-3 sm:gap-4">
             <Link
               href={ctaData.primary_btn_link}
-              className="stat-box text-[#F5F2EA] px-8 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+              className="stat-box text-[#F5F2EA] px-6 sm:px-8 py-3.5 sm:py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
               <Mail size={16} className="text-[#F59E0B]" /> {ctaData.primary_btn_text}
             </Link>
             <button
               type="button"
               onClick={triggerCvDownload}
-              className="stat-box text-[#F5F2EA] px-8 py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+              className="stat-box text-[#F5F2EA] px-6 sm:px-8 py-3.5 sm:py-4 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
               <Download size={16} className="text-[#F59E0B]" /> {ctaData.secondary_btn_text || "Download CV"}
             </button>
