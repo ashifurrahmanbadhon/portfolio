@@ -4,33 +4,39 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import {
+  LayoutDashboard,
   Home,
   User,
-  Briefcase,
-  GraduationCap,
-  Cpu,
   FolderGit2,
+  Layers,
+  Briefcase,
+  Cpu,
+  GraduationCap,
   Mail,
-  MessageSquare,
   Sliders,
-  ExternalLink,
-  ChevronLeft,
-  ChevronRight,
+  FileText,
+  Globe,
+  MessageSquare,
   Sparkles,
-  LayoutDashboard
+  ShieldCheck,
+  Settings,
+  ExternalLink,
+  X
 } from "lucide-react";
 import { api } from "@/lib/api";
 
-function SidebarNavigation({ collapsed, setMobileOpen }) {
+function SidebarNavigation({ setMobileOpen }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const activeTab = searchParams.get("tab") || "home";
+  const activeTab = searchParams.get("tab") || "dashboard";
   const [unreadCount, setUnreadCount] = useState(0);
+  const [counts, setCounts] = useState({ projects: 9, workPackages: 8 });
 
   useEffect(() => {
     let isMounted = true;
 
-    const fetchCount = async () => {
+    // Fetch unread messages
+    const fetchUnread = async () => {
       try {
         const res = await api.getUnreadContactCount();
         if (isMounted && res && res.success && typeof res.unread === "number") {
@@ -39,7 +45,24 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
       } catch (_) {}
     };
 
-    fetchCount();
+    // Fetch entity counts
+    const fetchCounts = async () => {
+      try {
+        const res = await fetch("/api/content");
+        if (res.ok) {
+          const d = await res.json();
+          if (isMounted && d) {
+            setCounts({
+              projects: Array.isArray(d.projects) ? d.projects.length : 9,
+              workPackages: Array.isArray(d.work_packages) ? d.work_packages.length : 8,
+            });
+          }
+        }
+      } catch (_) {}
+    };
+
+    fetchUnread();
+    fetchCounts();
 
     const handleUpdate = (e) => {
       if (typeof e?.detail === "number") {
@@ -47,8 +70,9 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
       }
     };
     window.addEventListener("unread-inbox-count", handleUpdate);
-
-    const timer = setInterval(fetchCount, 60000);
+    const timer = setInterval(() => {
+      fetchUnread();
+    }, 60000);
 
     return () => {
       isMounted = false;
@@ -57,174 +81,168 @@ function SidebarNavigation({ collapsed, setMobileOpen }) {
     };
   }, []);
 
-  const portfolioTabs = [
-    { name: "Home & Hero", tab: "home", href: "/admin?tab=home", icon: Home, badge: "Page 1" },
-    { name: "About Ashifur", tab: "about", href: "/admin?tab=about", icon: User, badge: "Page 2" },
-    { name: "Experience", tab: "experience", href: "/admin?tab=experience", icon: Briefcase, badge: "Page 3" },
-    { name: "Education", tab: "education", href: "/admin?tab=education", icon: GraduationCap, badge: "Page 4" },
-    { name: "Skills Matrix", tab: "skills", href: "/admin?tab=skills", icon: Cpu, badge: "Page 5" },
-    { name: "Projects", tab: "projects", href: "/admin?tab=projects", icon: FolderGit2, badge: "Page 6" },
-    { name: "Contact Info", tab: "contact", href: "/admin?tab=contact", icon: Mail, badge: "Page 7" },
-    { name: "Inbox", tab: "inbox", href: "/admin?tab=inbox", icon: MessageSquare, badge: "Page 8" },
-  ];
-
-  const utilityNav = [
-    { name: "Settings & Resume", tab: "settings", href: "/admin?tab=settings", icon: Sliders },
+  const NAV_GROUPS = [
+    {
+      group: "OVERVIEW",
+      items: [
+        { name: "Dashboard", tab: "dashboard", href: "/admin?tab=dashboard", icon: LayoutDashboard },
+      ],
+    },
+    {
+      group: "PAGES",
+      items: [
+        { name: "Home & Hero", tab: "home", href: "/admin?tab=home", icon: Home },
+        { name: "About", tab: "about", href: "/admin?tab=about", icon: User },
+        { name: "Projects", tab: "projects", href: "/admin?tab=projects", icon: FolderGit2, count: counts.projects },
+        { name: "Work Packages", tab: "work", href: "/admin?tab=work", icon: Layers, count: counts.workPackages },
+        { name: "Experience", tab: "experience", href: "/admin?tab=experience", icon: Briefcase },
+        { name: "Skills", tab: "skills", href: "/admin?tab=skills", icon: Cpu },
+        { name: "Education", tab: "education", href: "/admin?tab=education", icon: GraduationCap },
+        { name: "Contact", tab: "contact", href: "/admin?tab=contact", icon: Mail },
+      ],
+    },
+    {
+      group: "SITE CONTENT",
+      items: [
+        { name: "Page Headers & Settings", tab: "settings", href: "/admin?tab=settings", icon: Sliders },
+        { name: "Headings & Texts", tab: "headings", href: "/admin?tab=headings", icon: FileText, badge: "Step 2" },
+        { name: "SEO Titles", tab: "seo", href: "/admin?tab=seo", icon: Globe, badge: "Step 2" },
+        { name: "Inbox", tab: "inbox", href: "/admin?tab=inbox", icon: MessageSquare, isInbox: true },
+      ],
+    },
+    {
+      group: "SYSTEM",
+      items: [
+        { name: "AI Chat", tab: "ai_chat", href: "/admin?tab=ai_chat", icon: Sparkles, badge: "Step 2" },
+        { name: "Security", tab: "security", href: "/admin?tab=security", icon: ShieldCheck },
+        { name: "Settings", tab: "system_settings", href: "/admin?tab=system_settings", icon: Settings },
+      ],
+    },
   ];
 
   return (
-    <div className="space-y-4">
-      {/* 8 Webpages Navigation */}
-      <div>
-        {!collapsed && (
-          <div className="px-3 pb-2 text-[10px] font-mono uppercase tracking-wider text-emerald-400/80 font-bold flex items-center justify-between">
-            <span>8 Website Pages</span>
-            <span className="text-[9px] bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 text-emerald-400">
-              CMS Tabs
-            </span>
+    <div className="space-y-5 py-2">
+      {NAV_GROUPS.map((grp) => (
+        <div key={grp.group} className="space-y-1">
+          <div className="px-3 pb-1 text-[10px] font-mono uppercase tracking-wider text-[#8E8B82] font-semibold">
+            {grp.group}
           </div>
-        )}
 
-        <nav className="space-y-1">
-          {portfolioTabs.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === "/admin" && activeTab === item.tab;
+          <nav className="space-y-0.5">
+            {grp.items.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === "/admin" && activeTab === item.tab;
 
-            return (
-              <Link
-                key={item.tab}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 group relative select-none ${
-                  isActive
-                    ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold shadow-xs shadow-emerald-500/10"
-                    : "text-slate-400 hover:text-white hover:bg-[#111622] border border-transparent"
-                } ${collapsed ? "justify-center" : ""}`}
-              >
-                {isActive && (
-                  <span className="absolute left-0 top-2 bottom-2 w-1 bg-emerald-400 rounded-r-full shadow-[0_0_8px_#10B981]"></span>
-                )}
-
-                <Icon
-                  className={`w-4 h-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                    isActive ? "text-emerald-400" : "text-slate-400 group-hover:text-emerald-400"
+              return (
+                <Link
+                  key={item.tab}
+                  href={item.href}
+                  onClick={() => setMobileOpen?.(false)}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors duration-150 select-none ${
+                    isActive
+                      ? "bg-[rgba(245,158,11,0.13)] text-[#FBBF24] font-semibold"
+                      : "text-[#B9B5A9] hover:bg-[#12131A] hover:text-[#F5F2EA]"
                   }`}
-                />
+                >
+                  <Icon
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      isActive ? "text-[#F59E0B]" : "text-[#8E8B82] group-hover:text-[#F5F2EA]"
+                    }`}
+                  />
 
-                {!collapsed && (
-                  <div className="flex-1 flex items-center justify-between truncate gap-1.5">
-                    <span className="truncate">{item.name}</span>
-                    {item.tab === "inbox" && unreadCount > 0 ? (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold text-white bg-[#FF5F57] min-w-[18px] text-center shrink-0 shadow-sm leading-tight">
-                        {unreadCount > 99 ? "99+" : unreadCount}
-                      </span>
-                    ) : item.badge ? (
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#161C2A] text-slate-400 border border-[#1E2638]">
-                        {item.badge}
-                      </span>
-                    ) : null}
-                  </div>
-                )}
+                  <span className="flex-1 truncate">{item.name}</span>
 
-                {/* Floating tooltip when collapsed */}
-                {collapsed && (
-                  <>
-                    {item.tab === "inbox" && unreadCount > 0 && (
-                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FF5F57] ring-2 ring-[#0B0F17]" />
-                    )}
-                    <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#111622] border border-[#1E2638] text-white text-xs font-mono rounded-lg shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 flex items-center gap-2">
-                      <span>{item.name}</span>
-                      {item.tab === "inbox" && unreadCount > 0 && (
-                        <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold text-white bg-[#FF5F57]">
-                          {unreadCount > 99 ? "99+" : unreadCount}
-                        </span>
-                      )}
-                    </div>
-                  </>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Settings & Extras */}
-      <div className="pt-3 border-t border-[#1E2638] space-y-1">
-        {!collapsed && (
-          <div className="px-3 pb-1 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
-            Preferences
-          </div>
-        )}
-
-        {utilityNav.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === "/admin" && activeTab === item.tab;
-
-          return (
-            <Link
-              key={item.tab}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 group relative ${
-                isActive
-                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                  : "text-slate-400 hover:text-white hover:bg-[#111622] border border-transparent"
-              } ${collapsed ? "justify-center" : ""}`}
-            >
-              <Icon className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-emerald-400" />
-              {!collapsed && <span className="truncate">{item.name}</span>}
-            </Link>
-          );
-        })}
-      </div>
+                  {item.isInbox && unreadCount > 0 ? (
+                    <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold text-white bg-[#EF4444] min-w-[18px] text-center shrink-0 leading-tight">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  ) : item.count !== undefined ? (
+                    <span
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded-full transition-colors ${
+                        isActive
+                          ? "bg-[#F59E0B]/20 text-[#FBBF24]"
+                          : "bg-[#1A1B22] text-[#8E8B82]"
+                      }`}
+                    >
+                      {item.count}
+                    </span>
+                  ) : item.badge ? (
+                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#161B26] text-[#8E8B82] border border-[#23242B]">
+                      {item.badge}
+                    </span>
+                  ) : null}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      ))}
     </div>
   );
 }
 
-export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
+export default function Sidebar({ mobileOpen, setMobileOpen }) {
   return (
     <>
       {/* Mobile Backdrop */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Left Sidebar (248px, panel bg #0A0B10, hairline #23242B, sticky) */}
       <aside
-        className={`fixed top-16 bottom-0 left-0 z-30 bg-[#0B0F17] border-r border-[#1E2638] flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          collapsed ? "w-20" : "w-64 max-w-[85vw]"
-        } ${mobileOpen ? "translate-x-0 z-50 shadow-2xl shadow-black/80" : "-translate-x-full lg:translate-x-0"}`}
+        className={`fixed top-0 bottom-0 left-0 z-50 w-[248px] bg-[#0A0B10] border-r border-[#23242B] flex flex-col justify-between transition-transform duration-200 ease-out ${
+          mobileOpen ? "translate-x-0 shadow-2xl shadow-black/90" : "-translate-x-full lg:translate-x-0"
+        }`}
       >
-        <div className="flex-1 overflow-y-auto py-3 px-2">
-          <Suspense fallback={<div className="p-4 text-xs font-mono text-slate-500">Loading Navigation...</div>}>
-            <SidebarNavigation collapsed={collapsed} setMobileOpen={setMobileOpen} />
+        {/* Brand row: amber avatar "A" + "Ashifur Rahman / Portfolio Admin" */}
+        <div className="p-4 border-b border-[#23242B] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-[#F59E0B] text-[#06070B] font-black text-sm flex items-center justify-center shrink-0 font-mono shadow-sm">
+              A
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-[#F5F2EA] truncate leading-tight">
+                Ashifur Rahman
+              </div>
+              <div className="text-[10px] font-mono text-[#8E8B82] uppercase tracking-wider leading-tight">
+                Portfolio Admin
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile close button */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(false)}
+            className="lg:hidden p-1 text-[#8E8B82] hover:text-[#F5F2EA] transition cursor-pointer"
+            aria-label="Close navigation"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Scrollable Navigation Groups */}
+        <div className="flex-1 overflow-y-auto px-2.5 py-3 custom-scrollbar">
+          <Suspense fallback={<div className="p-4 text-xs font-mono text-[#8E8B82]">Loading navigation...</div>}>
+            <SidebarNavigation setMobileOpen={setMobileOpen} />
           </Suspense>
         </div>
 
-        {/* Footer info & collapse toggle */}
-        <div className="p-3 border-t border-[#1E2638] space-y-2">
-          {!collapsed && (
-            <div className="p-2.5 rounded-xl bg-[#111622] border border-[#1E2638]/70 text-xs font-mono space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400 text-[10px] tracking-wider">DATABASE</span>
-                <span className="inline-flex items-center gap-1.5 text-emerald-400 text-[10px]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse"></span> Neon Active
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-500 truncate" title="ashifur.badhon@gmail.com">ashifur.badhon@gmail.com</p>
-            </div>
-          )}
-
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="w-full py-2 rounded-xl bg-[#111622] hover:bg-[#161E30] text-slate-400 hover:text-white border border-[#1E2638] flex items-center justify-center transition-all duration-200 text-xs font-mono cursor-pointer"
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        {/* Bottom of sidebar: View Website ↗ outline button */}
+        <div className="p-3 border-t border-[#23242B] shrink-0 bg-[#0A0B10]">
+          <Link
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2 px-3 border border-[#23242B] hover:border-[#F59E0B] rounded-lg text-xs font-mono text-[#B9B5A9] hover:text-[#FBBF24] flex items-center justify-center gap-2 transition cursor-pointer bg-[#06070B]"
           >
-            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
+            <span>View Website</span>
+            <ExternalLink size={12} className="text-[#F59E0B]" />
+          </Link>
         </div>
       </aside>
     </>

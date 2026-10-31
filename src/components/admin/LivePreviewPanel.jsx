@@ -136,10 +136,10 @@ export default function LivePreviewPanel({
 
   return (
     <div
-      className={`w-full rounded-2xl bg-[#0B0F17] border border-[#1E2638] overflow-hidden flex flex-col transition-colors duration-150 ${className}`}
+      className={`w-full rounded-2xl bg-[#0A0B10] border border-[#23242B] overflow-hidden flex flex-col transition-colors duration-150 ${className}`}
     >
       {/* Browser Chrome Bar */}
-      <div className="px-3 py-2.5 bg-[#0E131F] border-b border-[#1E2638] flex items-center justify-between gap-2 select-none shrink-0">
+      <div className="px-3 py-2.5 bg-[#06070B] border-b border-[#23242B] flex items-center justify-between gap-2 select-none shrink-0">
         {/* Left: Traffic light dots & LIVE SIMULATION label */}
         <div className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-center gap-1.5">
@@ -148,14 +148,14 @@ export default function LivePreviewPanel({
             <span className="w-2.5 h-2.5 rounded-full bg-[#28C840] inline-block" />
           </div>
 
-          <span className="text-[10px] font-mono font-bold text-slate-300 tracking-wider">
+          <span className="text-[10px] font-mono font-bold text-[#F5F2EA] tracking-wider">
             LIVE SIMULATION
           </span>
         </div>
 
         {/* Center: URL Pill */}
         <div className="flex-1 min-w-0 max-w-[160px] sm:max-w-[220px] mx-1">
-          <div className="w-full bg-[#070A0F] border border-[#1E2638] px-2.5 py-0.5 rounded-full text-[10px] font-mono text-emerald-400 text-center truncate">
+          <div className="w-full bg-[#0A0B10] border border-[#23242B] px-2.5 py-0.5 rounded-full text-[10px] font-mono text-[#F59E0B] text-center truncate">
             {cleanUrl}
           </div>
         </div>
@@ -163,14 +163,14 @@ export default function LivePreviewPanel({
         {/* Right: Controls (Desktop/Mobile Toggle, Refresh, Open New Tab, Collapse) */}
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Segmented Desktop / Mobile Toggle */}
-          <div className="flex items-center p-0.5 rounded-lg bg-[#070A0F] border border-[#1E2638] text-[11px] font-mono">
+          <div className="flex items-center p-0.5 rounded-lg bg-[#0A0B10] border border-[#23242B] text-[11px] font-mono">
             <button
               type="button"
               onClick={() => setDevice("desktop")}
               className={`flex items-center gap-1 px-2 py-0.5 rounded transition-colors duration-150 cursor-pointer ${
                 device === "desktop"
-                  ? "bg-emerald-500 text-slate-950 font-bold"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-[#F59E0B] text-[#06070B] font-bold"
+                  : "text-[#8E8B82] hover:text-[#F5F2EA]"
               }`}
               title="Desktop View"
             >
@@ -182,8 +182,8 @@ export default function LivePreviewPanel({
               onClick={() => setDevice("mobile")}
               className={`flex items-center gap-1 px-2 py-0.5 rounded transition-colors duration-150 cursor-pointer ${
                 device === "mobile"
-                  ? "bg-emerald-500 text-slate-950 font-bold"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-[#F59E0B] text-[#06070B] font-bold"
+                  : "text-[#8E8B82] hover:text-[#F5F2EA]"
               }`}
               title="Mobile View (390px)"
             >
@@ -196,7 +196,7 @@ export default function LivePreviewPanel({
           <button
             type="button"
             onClick={handleRefresh}
-            className="p-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition-colors duration-150 cursor-pointer"
+            className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
             title="Reload Preview"
           >
             <RotateCcw className="w-3 h-3" />
@@ -207,7 +207,7 @@ export default function LivePreviewPanel({
             href={cleanUrl}
             target="_blank"
             rel="noreferrer"
-            className="p-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition-colors duration-150 cursor-pointer"
+            className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
             title="Open in New Tab"
           >
             <ExternalLink className="w-3 h-3" />
@@ -218,7 +218,7 @@ export default function LivePreviewPanel({
             <button
               type="button"
               onClick={() => setCollapsed((prev) => !prev)}
-              className="p-1 rounded-lg bg-[#141A29] hover:bg-[#1E2638] text-slate-400 hover:text-white border border-[#1E2638] transition-colors duration-150 cursor-pointer"
+              className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
               title={collapsed ? "Expand Simulation" : "Collapse Simulation"}
               aria-label={collapsed ? "Expand Simulation" : "Collapse Simulation"}
             >
@@ -236,12 +236,12 @@ export default function LivePreviewPanel({
       {!collapsed && (
         <div
           ref={stageRef}
-          className="flex-1 min-h-[300px] relative bg-[#070A0F] p-2.5 sm:p-3 flex items-center justify-center overflow-hidden"
+          className="flex-1 min-h-[300px] relative bg-[#06070B] p-2.5 sm:p-3 flex items-center justify-center overflow-hidden"
         >
           {/* Loading Indicator */}
           {loading && (
-            <div className="absolute inset-0 z-10 bg-[#070A0F]/85 flex flex-col items-center justify-center gap-1.5 text-slate-400">
-              <Loader2 className="w-5 h-5 animate-spin text-emerald-400" />
+            <div className="absolute inset-0 z-10 bg-[#06070B]/85 flex flex-col items-center justify-center gap-1.5 text-[#8E8B82]">
+              <Loader2 className="w-5 h-5 animate-spin text-[#F59E0B]" />
               <span className="text-[11px] font-mono">Loading simulation...</span>
             </div>
           )}
@@ -253,7 +253,7 @@ export default function LivePreviewPanel({
                 width: 1440 * desktopScale,
                 height: 900 * desktopScale,
               }}
-              className="rounded-xl overflow-hidden border border-[#1E2638] bg-[#080C14] shrink-0 relative"
+              className="rounded-xl overflow-hidden border border-[#23242B] bg-[#06070B] shrink-0 relative"
             >
               <div
                 style={{
@@ -286,10 +286,10 @@ export default function LivePreviewPanel({
                 transform: `scale(${mobileScale})`,
                 transformOrigin: "center center",
               }}
-              className="rounded-[28px] border-[3px] border-[#1E2638] bg-black shrink-0 relative flex flex-col overflow-hidden shadow-md"
+              className="rounded-[28px] border-[3px] border-[#23242B] bg-black shrink-0 relative flex flex-col overflow-hidden shadow-md"
             >
               {/* Notch */}
-              <div className="w-full h-5 bg-[#0E131F] flex items-center justify-center shrink-0 border-b border-[#1E2638]/50">
+              <div className="w-full h-5 bg-[#06070B] flex items-center justify-center shrink-0 border-b border-[#23242B]/50">
                 <div className="w-16 h-2.5 bg-black rounded-full" />
               </div>
 
@@ -301,15 +301,15 @@ export default function LivePreviewPanel({
                 title="Live preview (Mobile)"
                 sandbox="allow-same-origin allow-scripts"
                 onLoad={() => {
-                  setLoading(false);
-                  sendDraft();
+                    setLoading(false);
+                    sendDraft();
                 }}
-                className="w-full flex-1 border-0 bg-[#080C14]"
+                className="w-full flex-1 border-0 bg-[#06070B]"
               />
 
               {/* Bottom Home Indicator */}
-              <div className="w-full h-3.5 bg-[#0E131F] flex items-center justify-center shrink-0 border-t border-[#1E2638]/50">
-                <div className="w-24 h-1 bg-slate-600 rounded-full" />
+              <div className="w-full h-3.5 bg-[#06070B] flex items-center justify-center shrink-0 border-t border-[#23242B]/50">
+                <div className="w-24 h-1 bg-[#23242B] rounded-full" />
               </div>
             </div>
           )}

@@ -105,23 +105,23 @@ export default function ProjectMethodologyManager({
   };
 
   return (
-    <div className="bg-[#111622] border border-[#1E2638] p-5 sm:p-7 rounded-2xl space-y-4">
+    <div className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1E2638] gap-4 w-full">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#23242B] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <Layers className="w-4 h-4 text-emerald-400" />
+            <Layers className="w-4 h-4 text-[#F59E0B]" />
             Engineering Lifecycle &amp; Project Methodologies
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            Workflow steps shown at the bottom of <code className="text-emerald-400">/projects</code> (e.g. Specification, Simulation, Drafting, Verification).
+            Workflow steps shown at the bottom of <code className="text-[#F59E0B]">/projects</code> (e.g. Specification, Simulation, Drafting, Verification).
           </p>
         </div>
 
         <button
           type="button"
           onClick={openAdd}
-          className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 self-start sm:self-auto"
+          className="px-3.5 py-2 rounded-xl bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add New Workflow Step</span>
@@ -130,7 +130,7 @@ export default function ProjectMethodologyManager({
 
       {/* Empty State */}
       {list.length === 0 && (
-        <div className="text-center py-8 px-4 rounded-xl border border-dashed border-[#1E2638] bg-[#0A0D12]/50 text-slate-400 text-xs">
+        <div className="text-center py-8 px-4 rounded-xl border border-dashed border-[#23242B] bg-[#06070B]/50 text-slate-400 text-xs">
           No workflow steps configured. Click &ldquo;Add New Workflow Step&rdquo; above to create one.
         </div>
       )}
@@ -141,11 +141,11 @@ export default function ProjectMethodologyManager({
           {list.map((item, idx) => (
             <SpotlightCard
               key={idx}
-              className="bg-[#0A0D12] border border-[#1E2638] p-4 sm:p-5 rounded-xl space-y-3 group relative flex flex-col justify-between"
+              className="bg-[#06070B] border border-[#23242B] p-4 sm:p-5 rounded-xl space-y-3 group relative flex flex-col justify-between"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-black font-mono text-emerald-400">
+                  <span className="text-2xl font-black font-mono text-[#F59E0B]">
                     {item.step_number || String(idx + 1).padStart(2, "0")}
                   </span>
                   <div className="flex items-center gap-1.5">
@@ -157,7 +157,7 @@ export default function ProjectMethodologyManager({
                     <button
                       type="button"
                       onClick={() => openEdit(idx)}
-                      className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition cursor-pointer"
+                      className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-[#F59E0B] hover:bg-[#F59E0B]/10 transition cursor-pointer"
                       title="Edit Step"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -165,7 +165,7 @@ export default function ProjectMethodologyManager({
                     <button
                       type="button"
                       onClick={() => handleDelete(idx)}
-                      className="p-1.5 rounded-lg bg-[#161C2A] text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
+                      className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer"
                       title="Delete Step"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -173,7 +173,7 @@ export default function ProjectMethodologyManager({
                   </div>
                 </div>
 
-                <h4 className="text-xs font-bold text-white group-hover:text-emerald-300 transition">
+                <h4 className="text-xs font-bold text-white group-hover:text-[#FBBF24] transition">
                   {item.title}
                 </h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
@@ -192,13 +192,13 @@ export default function ProjectMethodologyManager({
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="bg-[#111622] border border-[#1E2638] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4 relative max-h-[90vh] overflow-y-auto"
+            className="bg-[#0A0B10] border border-[#23242B] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4 relative max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#1E2638] pb-3">
+            <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Layers className="w-4 h-4 text-emerald-400" />
+                <Layers className="w-4 h-4 text-[#F59E0B]" />
                 <span>{editingIndex >= 0 ? "Edit Workflow Step" : "Add New Workflow Step"}</span>
               </h3>
               <button
@@ -221,7 +221,7 @@ export default function ProjectMethodologyManager({
                     value={form.step_number}
                     onChange={(e) => setForm({ ...form, step_number: e.target.value })}
                     placeholder="01"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2.5 text-white outline-none font-mono"
                   />
                 </div>
                 <div className="col-span-2">
@@ -232,7 +232,7 @@ export default function ProjectMethodologyManager({
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
                     placeholder="e.g. Specification & Requirements"
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3 py-2.5 text-white outline-none font-medium"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2.5 text-white outline-none font-medium"
                   />
                 </div>
               </div>
@@ -245,23 +245,23 @@ export default function ProjectMethodologyManager({
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="Detailed explanation of this engineering lifecycle step..."
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
                 />
               </div>
 
               {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#1E2638]">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#23242B]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#161C2A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#1E2638] text-xs font-mono transition cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#23242B] text-xs font-mono transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition cursor-pointer disabled:opacity-50"
                 >
                   <Check className="w-4 h-4" />
                   <span>{saving ? "Saving..." : "Save Step"}</span>

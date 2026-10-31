@@ -252,14 +252,14 @@ export default function CentralLoginPanel() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative z-50 bg-[#0A0D12] overflow-hidden">
-      {/* Background dynamic ambient glowing meshes */}
-      <div className="absolute w-96 h-96 bg-[#10B981]/10 blur-[130px] rounded-full pointer-events-none -top-24 -left-24"></div>
-      <div className="absolute w-80 h-80 bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none -bottom-20 -right-20"></div>
+    <div className="min-h-screen flex items-center justify-center p-4 relative z-50 bg-[#06070B] overflow-hidden">
+      {/* Background ambient warm glowing mesh */}
+      <div className="absolute w-96 h-96 bg-[#F59E0B]/5 blur-[140px] rounded-full pointer-events-none -top-24 -left-24"></div>
+      <div className="absolute w-80 h-80 bg-[#F59E0B]/5 blur-[120px] rounded-full pointer-events-none -bottom-20 -right-20"></div>
 
       {/* Main Login Console Card with SpotlightCard effect */}
       <SpotlightCard
-        className="animate-fade-up bg-[#111622]/95 backdrop-blur-md border border-[#1E2638] w-full max-w-sm p-7 sm:p-8 rounded-2xl shadow-2xl relative z-10"
+        className="animate-fade-up bg-[#0A0B10] backdrop-blur-md border border-[#23242B] w-full max-w-sm p-7 sm:p-8 rounded-2xl shadow-2xl relative z-10"
         contentClassName="space-y-6"
       >
         {/* Branding */}
@@ -269,8 +269,8 @@ export default function CentralLoginPanel() {
           </div>
 
           <div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">ADMIN CONSOLE</h1>
-            <p className="text-xs text-slate-400 font-medium mt-1">Portfolio Content Management System</p>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#F5F2EA]">ADMIN CONSOLE</h1>
+            <p className="text-xs text-[#8E8B82] font-medium mt-1">Portfolio Content Management System</p>
           </div>
         </div>
 
@@ -281,11 +281,11 @@ export default function CentralLoginPanel() {
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             {/* Password Only */}
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
+              <label className="block text-xs font-medium text-[#B9B5A9] mb-1.5">
                 Admin Password
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8B82]">
                   <Lock className="w-4 h-4" />
                 </span>
                 <input
@@ -296,12 +296,12 @@ export default function CentralLoginPanel() {
                   placeholder="Enter admin password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-[#10B981] rounded-xl pl-9 pr-10 py-2.5 text-xs text-white placeholder-slate-600 outline-none transition font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl pl-9 pr-10 py-2.5 text-xs text-[#F5F2EA] placeholder-[#8E8B82]/50 outline-none transition font-mono"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 transition"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8E8B82] hover:text-[#F5F2EA] transition"
                   title={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -311,12 +311,12 @@ export default function CentralLoginPanel() {
 
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between pt-0.5">
-              <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-400 hover:text-slate-300 select-none">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-[#8E8B82] hover:text-[#B9B5A9] select-none">
                 <input
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded bg-[#0A0D12] border-[#1E2638] text-[#10B981] focus:ring-0 cursor-pointer accent-emerald-500"
+                  className="w-3.5 h-3.5 rounded bg-[#06070B] border-[#23242B] text-[#F59E0B] focus:ring-0 cursor-pointer accent-[#F59E0B]"
                 />
                 <span>Remember me</span>
               </label>
@@ -324,7 +324,7 @@ export default function CentralLoginPanel() {
               <button
                 type="button"
                 onClick={() => setView("forgot")}
-                className="text-[#10B981] hover:underline text-[11px] transition font-mono"
+                className="text-[#F59E0B] hover:text-[#FBBF24] hover:underline text-[11px] transition font-mono"
               >
                 Forgot Password?
               </button>
@@ -342,7 +342,7 @@ export default function CentralLoginPanel() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-2.5 rounded-xl font-bold bg-[#10B981] hover:bg-[#059669] text-black transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-emerald-500/20 interactive-btn cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
+              className="w-full py-2.5 rounded-xl font-bold bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-amber-500/20 interactive-btn cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
             >
               {submitting ? (
                 <>
@@ -366,13 +366,13 @@ export default function CentralLoginPanel() {
           <div className="space-y-4 animate-fade-up">
             {/* Header Badge & Title */}
             <div className="text-center space-y-1.5 pb-1">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-1 shadow-inner">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#F59E0B] mb-1 shadow-inner">
                 {twoFactorMethod === "totp" && <ShieldCheck className="w-6 h-6 animate-pulse" />}
                 {twoFactorMethod === "sms_otp" && <Smartphone className="w-6 h-6 text-sky-400 animate-pulse" />}
                 {twoFactorMethod === "recovery_code" && <KeyRound className="w-6 h-6 text-amber-400" />}
               </div>
-              <h2 className="text-lg font-bold text-white tracking-tight">Two-Factor Authentication</h2>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h2 className="text-lg font-bold text-[#F5F2EA] tracking-tight">Two-Factor Authentication</h2>
+              <p className="text-xs text-[#8E8B82] leading-relaxed">
                 {twoFactorMethod === "totp" && "Enter the 6-digit code from your authenticator app."}
                 {twoFactorMethod === "sms_otp" && `Enter the 6-digit verification code sent to ${maskedPhone}.`}
                 {twoFactorMethod === "recovery_code" && "Enter one of your 8-character emergency backup recovery codes."}
@@ -402,12 +402,12 @@ export default function CentralLoginPanel() {
                       }
                       if (twoFactorError) setTwoFactorError("");
                     }}
-                    className={`w-full bg-[#0A0D12] border ${
-                      twoFactorError ? "border-rose-500/60 focus:border-rose-500" : "border-[#1E2638] focus:border-[#10B981]"
-                    } rounded-xl px-4 py-3 text-center text-xl tracking-[0.35em] text-white font-mono placeholder:tracking-normal placeholder:text-slate-600 outline-none transition shadow-inner font-bold`}
+                    className={`w-full bg-[#06070B] border ${
+                      twoFactorError ? "border-rose-500/60 focus:border-rose-500" : "border-[#23242B] focus:border-[#F59E0B]"
+                    } rounded-xl px-4 py-3 text-center text-xl tracking-[0.35em] text-[#F5F2EA] font-mono placeholder:tracking-normal placeholder:text-[#8E8B82]/50 outline-none transition shadow-inner font-bold`}
                   />
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1.5 px-1 font-mono">
+                <div className="flex items-center justify-between text-[11px] text-[#8E8B82] mt-1.5 px-1 font-mono">
                   <span>
                     {twoFactorMethod === "recovery_code" ? "Single-use recovery format" : "Time-based one-time code"}
                   </span>
@@ -437,7 +437,7 @@ export default function CentralLoginPanel() {
               <button
                 type="submit"
                 disabled={twoFactorSubmitting || !twoFactorCode.trim()}
-                className="w-full py-2.5 rounded-xl font-bold bg-[#10B981] hover:bg-[#059669] text-black transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-emerald-500/20 interactive-btn cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+                className="w-full py-2.5 rounded-xl font-bold bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-amber-500/20 interactive-btn cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
               >
                 {twoFactorSubmitting ? (
                   <>
@@ -457,30 +457,30 @@ export default function CentralLoginPanel() {
                 <button
                   type="button"
                   onClick={() => setShowFallbackMenu(!showFallbackMenu)}
-                  className="w-full text-center text-xs text-slate-400 hover:text-emerald-400 transition flex items-center justify-center gap-1 font-medium py-1 cursor-pointer"
+                  className="w-full text-center text-xs text-[#8E8B82] hover:text-[#F59E0B] transition flex items-center justify-center gap-1 font-medium py-1 cursor-pointer"
                 >
-                  <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+                  <HelpCircle className="w-3.5 h-3.5 text-[#8E8B82]" />
                   <span>Can’t access your authenticator?</span>
                   {showFallbackMenu ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
 
                 {/* Collapsible Fallback Options */}
                 {showFallbackMenu && (
-                  <div className="mt-2.5 p-3 rounded-xl bg-[#0A0D12] border border-[#1E2638] space-y-2 animate-fadeIn">
-                    <p className="text-[11px] text-slate-400 mb-2">Alternative verification options:</p>
+                  <div className="mt-2.5 p-3 rounded-xl bg-[#06070B] border border-[#23242B] space-y-2 animate-fadeIn">
+                    <p className="text-[11px] text-[#8E8B82] mb-2">Alternative verification options:</p>
 
                     {/* Option A: Send OTP to registered phone */}
                     <button
                       type="button"
                       disabled={smsSending || smsCooldown > 0}
                       onClick={handleSendSmsOtp}
-                      className="w-full text-left p-2.5 rounded-lg bg-[#111622] hover:bg-[#161C2A] border border-[#1E2638] hover:border-sky-500/40 transition flex items-center justify-between group disabled:opacity-50 cursor-pointer"
+                      className="w-full text-left p-2.5 rounded-lg bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-sky-500/40 transition flex items-center justify-between group disabled:opacity-50 cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5">
                         <Smartphone className="w-4 h-4 text-sky-400 group-hover:scale-110 transition" />
                         <div>
-                          <div className="text-xs font-semibold text-white">Send OTP to registered phone</div>
-                          <div className="text-[10px] text-slate-400 font-mono">
+                          <div className="text-xs font-semibold text-[#F5F2EA]">Send OTP to registered phone</div>
+                          <div className="text-[10px] text-[#8E8B82] font-mono">
                             Sent to: <span className="text-sky-300 font-bold">{maskedPhone}</span>
                           </div>
                         </div>
@@ -500,16 +500,16 @@ export default function CentralLoginPanel() {
                           setTwoFactorError("");
                           setShowFallbackMenu(false);
                         }}
-                        className="w-full text-left p-2.5 rounded-lg bg-[#111622] hover:bg-[#161C2A] border border-[#1E2638] hover:border-amber-500/40 transition flex items-center justify-between group cursor-pointer"
+                        className="w-full text-left p-2.5 rounded-lg bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 transition flex items-center justify-between group cursor-pointer"
                       >
                         <div className="flex items-center gap-2.5">
-                          <KeyRound className="w-4 h-4 text-amber-400 group-hover:scale-110 transition" />
+                          <KeyRound className="w-4 h-4 text-[#F59E0B] group-hover:scale-110 transition" />
                           <div>
-                            <div className="text-xs font-semibold text-white">Use a recovery code</div>
-                            <div className="text-[10px] text-slate-400 font-mono">Single-use emergency key</div>
+                            <div className="text-xs font-semibold text-[#F5F2EA]">Use a recovery code</div>
+                            <div className="text-[10px] text-[#8E8B82] font-mono">Single-use emergency key</div>
                           </div>
                         </div>
-                        <span className="text-[11px] text-amber-400 font-mono font-medium">Use Code</span>
+                        <span className="text-[11px] text-[#F59E0B] font-mono font-medium">Use Code</span>
                       </button>
                     ) : null}
 
@@ -523,16 +523,16 @@ export default function CentralLoginPanel() {
                           setTwoFactorError("");
                           setShowFallbackMenu(false);
                         }}
-                        className="w-full text-left p-2.5 rounded-lg bg-[#111622] hover:bg-[#161C2A] border border-[#1E2638] hover:border-emerald-500/40 transition flex items-center justify-between group cursor-pointer"
+                        className="w-full text-left p-2.5 rounded-lg bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 transition flex items-center justify-between group cursor-pointer"
                       >
                         <div className="flex items-center gap-2.5">
-                          <ShieldCheck className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition" />
+                          <ShieldCheck className="w-4 h-4 text-[#F59E0B] group-hover:scale-110 transition" />
                           <div>
-                            <div className="text-xs font-semibold text-white">Use Authenticator App</div>
-                            <div className="text-[10px] text-slate-400 font-mono">Google, Microsoft, Authy</div>
+                            <div className="text-xs font-semibold text-[#F5F2EA]">Use Authenticator App</div>
+                            <div className="text-[10px] text-[#8E8B82] font-mono">Google, Microsoft, Authy</div>
                           </div>
                         </div>
-                        <span className="text-[11px] text-emerald-400 font-mono font-medium">Select</span>
+                        <span className="text-[11px] text-[#F59E0B] font-mono font-medium">Select</span>
                       </button>
                     ) : null}
                   </div>
@@ -550,7 +550,7 @@ export default function CentralLoginPanel() {
                     setSmsMessage("");
                     setShowFallbackMenu(false);
                   }}
-                  className="text-xs text-slate-400 hover:text-white transition font-mono flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
+                  className="text-xs text-[#8E8B82] hover:text-[#F5F2EA] transition font-mono flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Return to Sign In</span>
@@ -565,23 +565,23 @@ export default function CentralLoginPanel() {
         {/* ========================================= */}
         {view === "forgot" && (
           <div className="space-y-4 animate-fadeIn">
-            <div className="text-left border-b border-[#1E2638] pb-2.5">
-              <h2 className="text-xs font-bold text-white flex items-center gap-1.5">
-                <MailCheck className="w-3.5 h-3.5 text-[#10B981]" />
+            <div className="text-left border-b border-[#23242B] pb-2.5">
+              <h2 className="text-xs font-bold text-[#F5F2EA] flex items-center gap-1.5">
+                <MailCheck className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>Reset Password</span>
               </h2>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-[#8E8B82] mt-1">
                 Enter your email or username. A password reset token will be issued for your account.
               </p>
             </div>
 
             <form onSubmit={handleForgotSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">
                   Email or Username
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8B82]">
                     <User className="w-4 h-4" />
                   </span>
                   <input
@@ -590,21 +590,21 @@ export default function CentralLoginPanel() {
                     placeholder="admin@ashifurrahman.com"
                     value={forgotIdentifier}
                     onChange={(e) => setForgotIdentifier(e.target.value)}
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-[#10B981] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-white outline-none transition font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[#F5F2EA] outline-none transition font-mono placeholder-[#8E8B82]/50"
                   />
                 </div>
               </div>
 
               {forgotStatus && forgotStatus.type === "success" && (
-                <div className="text-xs p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 space-y-2.5 font-sans animate-pop">
-                  <div className="font-bold flex items-center gap-1.5 text-emerald-400">
+                <div className="text-xs p-3.5 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#FBBF24] space-y-2.5 font-sans animate-pop">
+                  <div className="font-bold flex items-center gap-1.5 text-[#F59E0B]">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Reset instructions generated!</span>
                   </div>
-                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                  <p className="text-[11px] text-[#B9B5A9] leading-relaxed">
                     A recovery token was created for <strong>{forgotIdentifier}</strong>:
                   </p>
-                  <div className="bg-[#0A0D12] p-2 rounded-lg border border-[#1E2638] text-[11px] select-all break-all text-white font-mono">
+                  <div className="bg-[#06070B] p-2 rounded-lg border border-[#23242B] text-[11px] select-all break-all text-[#F5F2EA] font-mono">
                     {forgotStatus.token}
                   </div>
                   <button
@@ -613,7 +613,7 @@ export default function CentralLoginPanel() {
                       setResetToken(forgotStatus.token);
                       setView("reset");
                     }}
-                    className="w-full mt-2 py-2 bg-[#10B981] hover:bg-[#059669] text-black font-bold text-xs rounded-xl transition interactive-btn"
+                    className="w-full mt-2 py-2 bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs rounded-xl transition interactive-btn cursor-pointer"
                   >
                     Set New Password Now →
                   </button>
@@ -629,7 +629,7 @@ export default function CentralLoginPanel() {
               <button
                 type="submit"
                 disabled={forgotSubmitting}
-                className="w-full py-2.5 rounded-xl font-semibold bg-[#161C2A] hover:bg-[#10B981] text-[#10B981] hover:text-black border border-emerald-500/30 transition text-xs flex items-center justify-center gap-1.5 interactive-btn disabled:opacity-75"
+                className="w-full py-2.5 rounded-xl font-semibold bg-[#12131A] hover:bg-[#F59E0B] text-[#F59E0B] hover:text-[#06070B] border border-[#F59E0B]/30 transition text-xs flex items-center justify-center gap-1.5 interactive-btn disabled:opacity-75 cursor-pointer"
               >
                 {forgotSubmitting ? (
                   <>
@@ -648,14 +648,14 @@ export default function CentralLoginPanel() {
                 <button
                   type="button"
                   onClick={() => setView("reset")}
-                  className="text-cyan-400 hover:underline text-[11px] font-mono"
+                  className="text-[#F59E0B] hover:text-[#FBBF24] hover:underline text-[11px] font-mono"
                 >
                   Have a reset token? Enter here →
                 </button>
                 <button
                   type="button"
                   onClick={() => setView("login")}
-                  className="text-slate-400 hover:text-white text-[11px] font-mono"
+                  className="text-[#8E8B82] hover:text-[#F5F2EA] text-[11px] font-mono"
                 >
                   ← Back to Sign In
                 </button>
@@ -669,31 +669,31 @@ export default function CentralLoginPanel() {
         {/* ========================================= */}
         {view === "reset" && (
           <div className="space-y-4 animate-fadeIn">
-            <div className="text-left border-b border-[#1E2638] pb-2.5">
-              <h2 className="text-xs font-bold text-white flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#10B981]" />
+            <div className="text-left border-b border-[#23242B] pb-2.5">
+              <h2 className="text-xs font-bold text-[#F5F2EA] flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#F59E0B]" />
                 <span>Set New Password</span>
               </h2>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-[#8E8B82] mt-1">
                 Paste the recovery token and choose your new administrator password.
               </p>
             </div>
 
             <form onSubmit={handleResetSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Reset Token</label>
+                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">Reset Token</label>
                 <input
                   type="text"
                   required
                   placeholder="Paste token here"
                   value={resetToken}
                   onChange={(e) => setResetToken(e.target.value)}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-[#10B981] rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-xs font-mono text-[#F5F2EA] outline-none placeholder-[#8E8B82]/50"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">
                   New Password (Min 8 chars)
                 </label>
                 <div className="relative">
@@ -704,12 +704,12 @@ export default function CentralLoginPanel() {
                     placeholder="••••••••"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-[#10B981] rounded-xl pl-3 pr-9 py-2 text-xs text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl pl-3 pr-9 py-2 text-xs text-[#F5F2EA] outline-none font-mono placeholder-[#8E8B82]/50"
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-500 hover:text-slate-300"
+                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#8E8B82] hover:text-[#F5F2EA]"
                   >
                     {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
@@ -717,7 +717,7 @@ export default function CentralLoginPanel() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">
                   Confirm New Password
                 </label>
                 <input
@@ -727,7 +727,7 @@ export default function CentralLoginPanel() {
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-[#0A0D12] border border-[#1E2638] focus:border-[#10B981] rounded-xl px-3 py-2 text-xs text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-xs text-[#F5F2EA] outline-none font-mono placeholder-[#8E8B82]/50"
                 />
               </div>
 
@@ -735,7 +735,7 @@ export default function CentralLoginPanel() {
                 <div
                   className={`text-xs p-2.5 rounded-xl font-mono leading-relaxed ${
                     resetStatus.type === "success"
-                      ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+                      ? "bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#FBBF24]"
                       : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
                   }`}
                 >
@@ -746,7 +746,7 @@ export default function CentralLoginPanel() {
               <button
                 type="submit"
                 disabled={resetSubmitting}
-                className="w-full py-2.5 rounded-xl font-bold bg-[#10B981] text-black hover:bg-[#059669] transition text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full py-2.5 rounded-xl font-bold bg-[#F59E0B] text-[#06070B] hover:bg-[#FBBF24] transition text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-amber-500/20"
               >
                 {resetSubmitting ? (
                   <>
@@ -765,7 +765,7 @@ export default function CentralLoginPanel() {
                 <button
                   type="button"
                   onClick={() => setView("login")}
-                  className="text-xs text-slate-400 hover:text-white font-mono"
+                  className="text-xs text-[#8E8B82] hover:text-[#F5F2EA] font-mono cursor-pointer"
                 >
                   ← Return to Sign In
                 </button>
@@ -775,15 +775,15 @@ export default function CentralLoginPanel() {
         )}
 
         {/* Minimal Public Link */}
-        <div className="pt-4 border-t border-[#1E2638] flex flex-col items-center gap-2 text-center">
+        <div className="pt-4 border-t border-[#23242B] flex flex-col items-center gap-2 text-center">
           <Link
             href="/"
-            className="text-xs text-slate-400 hover:text-[#10B981] transition inline-flex items-center gap-1.5 font-mono cursor-pointer"
+            className="text-xs text-[#8E8B82] hover:text-[#F59E0B] transition inline-flex items-center gap-1.5 font-mono cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Public Website</span>
           </Link>
-          <span className="text-[10px] text-slate-500 font-mono">
+          <span className="text-[10px] text-[#8E8B82] font-mono">
             🔒 Secure Multi-Website Session Protection
           </span>
         </div>
