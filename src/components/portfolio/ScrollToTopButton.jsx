@@ -8,7 +8,7 @@ export default function ScrollToTopButton() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) {
+      if (window.scrollY > 150) {
         setVisible(true);
       } else {
         setVisible(false);
@@ -33,13 +33,13 @@ export default function ScrollToTopButton() {
       onClick={scrollToTop}
       aria-label="Scroll to top"
       title="Back to top"
-      className={`fixed bottom-6 right-6 z-50 p-3 rounded-xl bg-[#111622]/90 hover:bg-[#10B981] border border-[#1e2638] hover:border-[#10B981] text-[#10B981] hover:text-black shadow-xl shadow-black/50 backdrop-blur-md transition-all duration-300 transform cursor-pointer group ${
+      className={`fixed bottom-24 right-6 z-40 p-3 rounded-xl bg-[#0A0B10]/90 hover:bg-[#F59E0B] border border-[#23242B] hover:border-[#F59E0B] text-[#F59E0B] hover:text-[#1A1202] shadow-xl backdrop-blur-md transition-all duration-300 transform cursor-pointer group ${
         visible
           ? 'opacity-100 translate-y-0 pointer-events-auto scale-100'
           : 'opacity-0 translate-y-4 pointer-events-none scale-90'
       }`}
     >
-      <ArrowUp className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+      <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-200" />
     </button>
   );
 }

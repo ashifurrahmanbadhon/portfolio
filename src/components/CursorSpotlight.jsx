@@ -93,7 +93,7 @@ export default function CursorSpotlight() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(600px circle at var(--cursor-x) var(--cursor-y), rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02) 45%, transparent 70%)',
+            'radial-gradient(600px circle at var(--cursor-x) var(--cursor-y), rgba(245, 158, 11, 0.07), rgba(245, 158, 11, 0.02) 45%, transparent 70%)',
         }}
       />
       {/* Focused core highlight */}
@@ -101,7 +101,7 @@ export default function CursorSpotlight() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(220px circle at var(--cursor-x) var(--cursor-y), rgba(52, 211, 153, 0.06), transparent 60%)',
+            'radial-gradient(220px circle at var(--cursor-x) var(--cursor-y), rgba(251, 191, 36, 0.05), transparent 60%)',
         }}
       />
     </div>

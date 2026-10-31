@@ -6,26 +6,20 @@ import {
   GraduationCap,
   ShieldCheck,
   Check,
-  Calendar,
   Building,
-  Award,
   BookOpen,
   Download,
-  ArrowRight,
-  Sparkles,
-  Zap
+  ArrowRight
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
-import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 
 export default function EducationPage() {
-  const { educations, courseworkPillars, certifications, pageHeaders, resumeUrl } = usePortfolio();
+  const { educations, courseworkPillars, certifications, pageHeaders } = usePortfolio();
 
   const header = pageHeaders?.education || {
-    badge_text: "ACADEMIC BACKGROUND",
     title: "Academic Credentials &",
     highlight_word: "Certifications",
     description: "Formal degree in Electrical & Electronic Engineering complemented by on-site utility training at DESCO and CAD and GIS training."
@@ -34,151 +28,145 @@ export default function EducationPage() {
   return (
     <PortfolioLayout>
       <PageHeader
-        breadcrumbs={[{ name: 'Education' }]}
-        badgeText={header.badge_text}
         title={header.title}
         highlightWord={header.highlight_word}
         description={header.description}
       />
 
-      {/* Degree & Institutional History */}
+      {/* Degree & Institutional History: 3 bordered cells (years mono amber, degree, institution faint) */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
         <div className="mb-12">
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Academic Qualifications</h2>
-          <p className="text-gray-400 text-xs sm:text-sm mt-2 max-w-2xl">
+          <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-[#F5F2EA]">
+            Academic Qualifications
+          </h2>
+          <p className="text-[#B9B5A9] text-xs sm:text-sm mt-2 max-w-2xl">
             A solid academic foundation covering electrical theories, mathematical modeling, and engineering principles.
           </p>
         </div>
 
-        <div className="space-y-6">
+        {/* 3 bordered cells */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {educations.map((edu, idx) => (
-            <SpotlightCard
+            <div
               key={idx}
-              className={`bg-[#111622] rounded-2xl border p-6 sm:p-8 transition duration-300 ${
-                idx === 0
-                  ? 'border-[#10B981]/40 shadow-[0_0_30px_rgba(16,185,129,0.06)]'
-                  : 'border-[#1e2638]'
-              }`}
+              className="luxury-box p-7 sm:p-8 flex flex-col justify-between"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#1e2638]">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 shrink-0 mt-1">
-                    <GraduationCap size={24} />
-                  </div>
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-[#10B981] transition">
-                        {edu.degree}
-                      </h3>
-                      {edu.badge_text ? (
-                        <span className="text-[10px] uppercase px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 font-semibold">
-                          {edu.badge_text}
-                        </span>
-                      ) : idx === 0 ? (
-                        <span className="text-[10px] uppercase px-2.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 font-semibold">
-                          Major Degree
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-300 mt-1">
-                      <Building size={14} className="text-[#10B981]" />
-                      <span>{edu.institution}</span>
-                    </div>
-                  </div>
+              <div>
+                <div className="w-11 h-11 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
+                  <GraduationCap size={22} />
                 </div>
 
-                <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
-                  {edu.period && (
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0b0f17] border border-[#1e2638]">
-                      <Calendar size={13} className="text-[#10B981]" />
-                      {edu.period}
-                    </span>
-                  )}
-                  {edu.result && (
-                    <span className="px-3 py-1.5 rounded-lg bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/25 font-bold">
+                {/* Years mono amber */}
+                {edu.period && (
+                  <span className="font-mono text-xs text-[#F59E0B] font-bold block mb-2 uppercase tracking-wider">
+                    {edu.period}
+                  </span>
+                )}
+
+                {/* Degree */}
+                <h3 className="text-lg font-bold text-[#F5F2EA] uppercase tracking-wide leading-snug">
+                  {edu.degree}
+                </h3>
+
+                {/* Institution faint */}
+                <div className="flex items-center gap-1.5 text-xs text-[#8E8B82] font-mono mt-2">
+                  <Building size={13} className="text-[#8E8B82]" />
+                  <span>{edu.institution}</span>
+                </div>
+
+                {edu.result && (
+                  <div className="mt-3">
+                    <span className="font-mono text-[11px] px-2.5 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/25 font-bold">
                       {edu.result}
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
+
+                {edu.description && (
+                  <p className="text-xs text-[#B9B5A9] leading-relaxed mt-4 pt-4 border-t border-[#23242B]">
+                    {edu.description}
+                  </p>
+                )}
               </div>
 
-              {edu.description && (
-                <div className="pt-4 text-xs sm:text-sm text-gray-300 leading-relaxed">
-                  <p>{edu.description}</p>
-                </div>
-              )}
-
               {edu.highlights && edu.highlights.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-4 pt-3 flex flex-wrap gap-1.5">
                   {edu.highlights.map((h, hIdx) => (
                     <span
                       key={hIdx}
-                      className="text-[11px] text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
+                      className="text-[10px] font-mono text-[#8E8B82] bg-[#06070B] px-2 py-0.5 rounded border border-[#23242B]"
                     >
                       {h}
                     </span>
                   ))}
                 </div>
               )}
-            </SpotlightCard>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Core Engineering Coursework Breakdown (100% Dynamic from CMS) */}
+      {/* Core Engineering Coursework Breakdown */}
       {courseworkPillars && courseworkPillars.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 bg-[#0e131d] border-y border-[#1e2638]">
+        <section className="relative z-10 px-6 md:px-12 py-16 bg-[#06070B] border-y border-[#23242B]">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center max-w-2xl mx-auto mb-14">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Undergraduate Engineering Coursework</h3>
-              <p className="text-gray-400 text-xs sm:text-sm mt-3">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA]">
+                Undergraduate Engineering Coursework
+              </h3>
+              <p className="text-[#B9B5A9] text-xs sm:text-sm mt-2">
                 Theoretical rigor paired with laboratory experimentation at university.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {courseworkPillars.map((pillar, idx) => (
-                <SpotlightCard key={idx} className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] space-y-4 flex flex-col justify-between">
+                <div key={idx} className="luxury-box p-7 flex flex-col justify-between">
                   <div>
-                    <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 mb-4">
-                      <BookOpen size={24} />
+                    <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
+                      <BookOpen size={20} />
                     </div>
-                    <h4 className="font-bold text-white text-base group-hover:text-[#10B981] transition mb-3 pb-3 border-b border-[#1e2638]">{pillar.title}</h4>
+                    <h4 className="font-bold text-[#F5F2EA] text-base uppercase tracking-wide mb-3 pb-3 border-b border-[#23242B]">
+                      {pillar.title}
+                    </h4>
 
-                    <ul className="space-y-2.5 text-xs text-gray-300">
+                    <ul className="space-y-2.5 text-xs text-[#B9B5A9]">
                       {(pillar.courses || []).map((course, cIdx) => (
-                        <li key={cIdx} className="flex items-start gap-2 group-hover:text-gray-200 transition">
-                          <Check size={14} className="text-[#10B981] shrink-0 mt-0.5" />
+                        <li key={cIdx} className="flex items-start gap-2">
+                          <Check size={14} className="text-[#F59E0B] shrink-0 mt-0.5" />
                           <span>{course}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                </SpotlightCard>
+                </div>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* Certifications & Industry Modules (100% Dynamic from CMS) */}
+      {/* Certifications: img aspect 29/20, object-CONTAIN, bg #0C0D13, hover zoom over contain */}
       {certifications && certifications.length > 0 && (
         <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
           <div className="mb-12">
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Training & Certifications</h2>
-            <p className="text-gray-400 text-xs sm:text-sm mt-2 max-w-2xl">
+            <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-[#F5F2EA]">
+              Training &amp; Certifications
+            </h2>
+            <p className="text-[#B9B5A9] text-xs sm:text-sm mt-2 max-w-2xl">
               Hands-on technical training in power software, substation protocol, and geospatial modeling, plus certified learning.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {certifications.map((cert, idx) => (
-              <SpotlightCard
+              <div
                 key={idx}
-                className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] flex flex-col justify-between"
+                className="luxury-box p-6 sm:p-7 flex flex-col justify-between"
               >
                 <div>
-                  <div className="relative w-full aspect-[29/20] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638] select-none group/certimg">
+                  {/* Certificate frame: aspect-[29/20], object-contain, bg-[#0C0D13], no lightbox */}
+                  <div className="relative w-full aspect-[29/20] rounded-xl overflow-hidden mb-5 bg-[#0C0D13] border border-[#23242B] select-none group/certimg">
                     <img
                       src={cert.image_url && cert.image_url.trim() ? cert.image_url : '/certs/no-image.svg'}
                       alt={cert.title || "Certificate"}
@@ -193,61 +181,65 @@ export default function EducationPage() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300">
-                      <ShieldCheck size={24} />
+                  <div className="flex items-center justify-between mb-3 font-mono text-xs">
+                    <div className="w-8 h-8 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B]">
+                      <ShieldCheck size={16} />
                     </div>
                     {cert.year && (
-                      <span className="text-[11px] font-semibold text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 group-hover:border-[#10B981]/50 px-2.5 py-0.5 rounded-full border border-[#10B981]/20 transition">
+                      <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2.5 py-0.5 rounded border border-[#F59E0B]/25">
                         {cert.year}
                       </span>
                     )}
                   </div>
 
-                  <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
+                  <h3 className="text-base font-bold text-[#F5F2EA] mb-1 leading-snug uppercase tracking-wide">
                     {cert.title}
-                  </h4>
+                  </h3>
                   {cert.issuer && (
-                    <p className="text-xs text-white/90 group-hover:text-[#10B981] transition mb-3">
+                    <p className="font-mono text-xs text-[#8E8B82] mb-3">
                       {cert.issuer}
                     </p>
                   )}
                   {cert.description && (
-                    <p className="text-xs text-gray-400 group-hover:text-gray-300 leading-relaxed transition">
+                    <p className="text-xs text-[#B9B5A9] leading-relaxed">
                       {cert.description}
                     </p>
                   )}
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-[#1e2638]/70 flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
-                  <Check size={14} /> Verified Credential
+                <div className="mt-6 pt-4 border-t border-[#23242B] flex items-center gap-1.5 text-xs font-mono text-[#F59E0B]">
+                  <Check size={13} /> VERIFIED CREDENTIAL
                 </div>
-              </SpotlightCard>
+              </div>
             ))}
           </div>
 
           {/* CTA Bar */}
-          <SpotlightCard className="mt-16 bg-[#111622] border border-[#1e2638] rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <div className="mt-16 luxury-box p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div className="space-y-1">
-              <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">Interested in reviewing verified academic transcripts?</h4>
-              <p className="text-xs text-gray-400">Download Ashifur's official Curriculum Vitae or request specific coursework verification.</p>
+              <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
+                Interested in Reviewing Verified Academic Transcripts?
+              </h3>
+              <p className="text-xs text-[#B9B5A9]">
+                Download Ashifur's official Curriculum Vitae or request specific coursework verification.
+              </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:bg-[#059669] transition cursor-pointer"
+                className="btn-amber-solid px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
               >
                 <Download size={15} /> Download Official CV
               </button>
               <Link
                 href="/contact"
-                className="bg-[#0b0f17] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 transition"
+                className="btn-amber-outline px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 Get In Touch <ArrowRight size={15} />
               </Link>
             </div>
-          </SpotlightCard>
+          </div>
         </section>
       )}
 

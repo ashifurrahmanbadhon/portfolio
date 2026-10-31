@@ -1,68 +1,36 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
-import SpotlightCard from '@/components/SpotlightCard';
 
 export default function PageHeader({
-  badgeText,
   title,
   highlightWord,
   description,
-  breadcrumbs = [],
   children
 }) {
   return (
-    <section className="relative z-10 pt-8 pb-10 sm:pt-12 sm:pb-14 border-b border-[#1e2638] bg-gradient-to-b from-[#0e1422]/60 to-transparent">
+    <section className="relative z-10 pt-8 pb-10 sm:pt-12 sm:pb-14 border-b border-[#23242B] bg-[#06070B]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <SpotlightCard className="bg-[#111622]/85 backdrop-blur-md border border-[#1e2638] p-6 sm:p-10 rounded-3xl shadow-2xl">
-          {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-xs text-gray-400 mb-6">
-            <Link href="/" className="hover:text-[#10B981] transition flex items-center gap-1">
-              Home
-            </Link>
-            {breadcrumbs.map((crumb, idx) => (
-              <React.Fragment key={idx}>
-                <ChevronRight size={12} className="text-gray-600" />
-                {crumb.href ? (
-                  <Link href={crumb.href} className="hover:text-[#10B981] transition">
-                    {crumb.name}
-                  </Link>
-                ) : (
-                  <span className="text-[#10B981] font-semibold">{crumb.name}</span>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
+        <div className="border border-[#23242B] bg-[#0A0B10] p-8 sm:p-12 rounded-2xl shadow-xl space-y-4">
+          {/* Big Uppercase Title - NO kicker or eyebrow above it */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-[#F5F2EA] leading-[1.08]">
+            {title}{' '}
+            {highlightWord && (
+              <span className="text-[#F59E0B]">
+                {highlightWord}
+              </span>
+            )}
+          </h1>
 
-          {/* Badge Pill */}
-          {badgeText && (
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs font-semibold mb-4">
-              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-              {badgeText}
-            </div>
+          {/* Muted Description Below Title */}
+          {description && (
+            <p className="text-[#B9B5A9] text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed">
+              {description}
+            </p>
           )}
 
-          {/* Main Title & Subtitle */}
-          <div className="max-w-3xl space-y-4">
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-[1.15] group-hover:text-emerald-50 transition">
-              {title}{' '}
-              {highlightWord && (
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] to-teal-400">
-                  {highlightWord}
-                </span>
-              )}
-            </h1>
-            {description && (
-              <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed">
-                {description}
-              </p>
-            )}
-          </div>
-
-          {children && <div className="mt-6 pt-4 border-t border-[#1e2638]/60">{children}</div>}
-        </SpotlightCard>
+          {children && <div className="mt-6 pt-4 border-t border-[#23242B]">{children}</div>}
+        </div>
       </div>
     </section>
   );

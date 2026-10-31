@@ -10,22 +10,19 @@ import {
   Briefcase,
   Cpu,
   ShieldCheck,
-  CheckCircle2,
   ArrowRight,
-  FileText,
-  MapPin,
-  Mail,
   Download,
   GraduationCap,
   Sparkles,
   Compass,
   FileSpreadsheet,
   Sun,
-  Layers
+  Layers,
+  MapPin,
+  Mail
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
-import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 import { parsePhotoPosition } from '@/lib/photoPosition';
@@ -57,42 +54,42 @@ export default function AboutPage() {
     aboutData,
     highlights,
     contactData,
-    educations,
-    pageHeaders,
-    resumeUrl
+    pageHeaders
   } = usePortfolio();
 
   const header = pageHeaders?.about || {
-    badge_text: "ENGINEER & INNOVATOR",
-    title: "About Ashifur Rahman —",
-    highlight_word: "Engineering & AI",
+    title: "About Ashifur Rahman",
+    highlight_word: "— Engineering & AI",
     description: "Electrical & Electronic Engineer passionate about technical solutions, substation design, spatial utility systems, and the transformative potential of Artificial Intelligence."
   };
 
   const pillars = Array.isArray(aboutData?.pillars) ? aboutData.pillars : [];
-  const principles = Array.isArray(aboutData?.principles) ? aboutData.principles : [];
 
   return (
     <PortfolioLayout>
       <PageHeader
-        breadcrumbs={[{ name: 'About' }]}
-        badgeText={header.badge_text}
         title={header.title}
         highlightWord={header.highlight_word}
         description={header.description}
       />
 
-      {/* Main Narrative & Profile Section */}
+      {/* Main Narrative & Profile Section: Bordered box, grid 1.32fr/.68fr, align start */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="border border-[#23242B] bg-[#0A0B10] rounded-2xl p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
           
-          {/* Left Column: Biography Narrative */}
-          <div className="lg:col-span-7 space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-snug">
+          {/* Left Column: All existing about fields + focus chips (hairline chips, mono) */}
+          <div className="space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA] leading-snug">
               {aboutData.title}
             </h2>
 
-            <div className="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+            {aboutData.subtitle && (
+              <p className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
+                {aboutData.subtitle}
+              </p>
+            )}
+
+            <div className="space-y-4 text-[#B9B5A9] text-sm sm:text-base leading-relaxed">
               {aboutData.description1 && (
                 <p>{aboutData.description1}</p>
               )}
@@ -101,74 +98,72 @@ export default function AboutPage() {
               )}
             </div>
 
-            {/* Quick Action CTAs */}
+            {/* Focus Chips (hairline chips, mono) */}
+            <div className="pt-2">
+              <p className="font-mono text-[11px] text-[#8E8B82] uppercase tracking-wider mb-3 font-semibold">
+                Core Focus Domains
+              </p>
+              <div className="flex flex-wrap gap-2.5">
+                {aboutData.focus1_title && (
+                  <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                    {aboutData.focus1_title}
+                  </span>
+                )}
+                {aboutData.focus2_title && (
+                  <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                    {aboutData.focus2_title}
+                  </span>
+                )}
+                <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
+                  IEEE &amp; BNBC Standards
+                </span>
+                <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
+                  ArcGIS &amp; QGIS
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Action Buttons */}
             <div className="pt-4 flex flex-wrap gap-4">
               <Link
                 href="/projects"
-                className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition duration-300"
+                className="btn-amber-solid px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 View Case Studies <ArrowRight size={15} />
               </Link>
               <button
                 type="button"
                 onClick={triggerCvDownload}
-                className="bg-[#111622] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg flex items-center gap-2 hover:border-[#10B981]/50 hover:bg-[#161e30] transition duration-300 cursor-pointer"
+                className="btn-amber-outline px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
               >
                 <Download size={15} /> Download CV
               </button>
             </div>
           </div>
 
-          {/* Right Column: Profile Card */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="w-full max-w-md">
-              <div className="relative group">
-                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#10B981] to-teal-600 opacity-25 blur-xl group-hover:opacity-50 transition duration-500" />
-                
-                <div className="relative bg-[#111622] border border-[#1e2638] rounded-3xl p-5 shadow-2xl space-y-5">
-                  <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-[#0b0f17]">
-                    <Image
-                      src={aboutData.profile_image || "/ashifur-about.jpg"}
-                      alt={heroData.name || "Ashifur Rahman"}
-                      fill
-                      className="object-cover group-hover:scale-105 transition duration-500"
-                      style={parsePhotoPosition(aboutData.profile_position || "center 12%").style}
-                      priority
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17]/90 via-transparent to-transparent opacity-85" />
-                    
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <p className="text-sm font-bold text-white">
-                        {heroData.spec_badge_title || "Engineering, Management & AI"}
-                      </p>
-                    </div>
-                  </div>
+          {/* Right Column: profile_image at width 86%, aspect 3/4, centered with margin, top-aligned (≈ text-block height; no full-column stretch) */}
+          <div className="flex justify-center w-full">
+            <div className="w-[86%] max-w-[340px] border border-[#23242B] bg-[#06070B] p-2 rounded-2xl shadow-xl group">
+              <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#06070B]">
+                <Image
+                  src={aboutData.profile_image || "/ashifur-about.jpg"}
+                  alt={heroData.name || "Ashifur Rahman"}
+                  fill
+                  className="object-cover group-hover:scale-[1.055] transition duration-500"
+                  style={parsePhotoPosition(aboutData.profile_position || "center 12%").style}
+                  priority
+                  unoptimized
+                />
+              </div>
 
-                  {/* Dynamic Info points */}
-                  <div className="space-y-3 pt-2 text-xs border-t border-[#1e2638]/70">
-                    {contactData.location && (
-                      <div className="flex items-center gap-3 text-gray-300">
-                        <MapPin size={16} className="text-[#10B981] shrink-0" />
-                        <span>{contactData.location}</span>
-                      </div>
-                    )}
-                    {contactData.email && (
-                      <div className="flex items-center gap-3 text-gray-300">
-                        <Mail size={16} className="text-[#10B981] shrink-0" />
-                        <a href={`mailto:${contactData.email}`} className="hover:text-[#10B981] transition font-medium">
-                          Send Direct Email
-                        </a>
-                      </div>
-                    )}
-                    {educations && educations.length > 0 && (
-                      <div className="flex items-center gap-3 text-gray-300">
-                        <FileText size={16} className="text-[#10B981] shrink-0" />
-                        <span>{educations[0].degree}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
+              {/* Minimal caption below photo */}
+              <div className="px-2 pt-3 pb-1 flex items-center justify-between font-mono text-[11px] text-[#8E8B82]">
+                <span className="text-[#F59E0B] font-semibold">ENGINEERING PROFILE</span>
+                <span className="flex items-center gap-1">
+                  <MapPin size={11} /> {contactData.location || "Bangladesh"}
+                </span>
               </div>
             </div>
           </div>
@@ -176,108 +171,70 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Highlights Bar */}
-      {highlights && highlights.length > 0 && (
-        <section className="relative z-10 border-y border-[#1e2638] bg-[#0e131d]/60 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {highlights.map((h, i) => (
-              <div key={i}>
-                <p className="text-3xl font-extrabold text-[#10B981]">{h.metric_value}</p>
-                <p className="text-sm font-semibold text-white mt-1">{h.metric_label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{h.metric_subtext}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Pillars of Engineering Competency (100% Dynamic from CMS) */}
+      {/* Pillars of Engineering Competency */}
       {pillars && pillars.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <h3 className="text-2xl sm:text-4xl font-extrabold text-white">Engineering Domains &amp; Capabilities</h3>
-            <p className="text-gray-400 text-xs sm:text-sm mt-3">
+        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+          <div className="mb-12">
+            <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-[#F5F2EA]">
+              Engineering Domains &amp; Capabilities
+            </h2>
+            <p className="text-[#B9B5A9] text-xs sm:text-sm mt-2 max-w-2xl">
               A versatile spectrum combining traditional high-voltage engineering with modern data-driven and computational methods.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {pillars.map((pillar, idx) => {
               const Icon = resolveIcon(pillar.icon, Zap);
               return (
-                <SpotlightCard
+                <div
                   key={idx}
-                  className="bg-[#111622] p-7 rounded-2xl border border-[#1e2638] flex flex-col justify-between"
+                  className="luxury-box p-7 flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 mb-5">
-                      <Icon size={24} />
+                    <div className="w-11 h-11 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
+                      <Icon size={22} />
                     </div>
-                    <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
+                    <h3 className="text-base font-bold text-[#F5F2EA] mb-1.5 uppercase tracking-wide">
                       {pillar.title}
-                    </h4>
+                    </h3>
                     {pillar.subtitle && (
-                      <p className="text-xs text-white/90 group-hover:text-[#10B981] transition mb-3">
+                      <p className="font-mono text-xs text-[#F59E0B] font-medium mb-3">
                         {pillar.subtitle}
                       </p>
                     )}
-                    <p className="text-xs text-gray-400 leading-relaxed">
-                      {pillar.description}
+                    <p className="text-xs text-[#B9B5A9] leading-relaxed">
+                      {pillar.description || pillar.subtitle}
                     </p>
                   </div>
-                </SpotlightCard>
+                </div>
               );
             })}
           </div>
         </section>
       )}
 
-      {/* Engineering Philosophy & Work Ethics (100% Dynamic from CMS) */}
-      {principles && principles.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 bg-[#0e131d] border-t border-[#1e2638]">
-          <div className="max-w-5xl mx-auto space-y-10">
-            <div className="text-center">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Guiding Principles</h3>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {principles.map((pr, idx) => (
-                <SpotlightCard key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638]">
-                  <div className="text-[#10B981] text-2xl font-bold mb-2">
-                    {pr.number || String(idx + 1).padStart(2, "0") + "."}
-                  </div>
-                  <h4 className="text-sm font-bold text-white mb-2 group-hover:text-[#10B981] transition">{pr.title}</h4>
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    {pr.description}
-                  </p>
-                </SpotlightCard>
-              ))}
-            </div>
-
-            {/* Bottom CTA Box */}
-            <SpotlightCard className="bg-gradient-to-r from-[#111622] to-[#151e30] border border-[#1e2638] p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-              <div>
-                <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">Looking to collaborate or recruit?</h4>
-                <p className="text-xs text-gray-400 mt-1">Explore my career journey or reach out for engineering consultation.</p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/experience"
-                  className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-lg hover:bg-[#059669] transition"
-                >
-                  View Experience
-                </Link>
-                <Link
-                  href="/contact"
-                  className="bg-[#0b0f17] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-lg hover:border-[#10B981]/50 transition"
-                >
-                  Contact Ashifur
-                </Link>
-              </div>
-            </SpotlightCard>
+      {/* CTA Bar */}
+      <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
+        <div className="luxury-box p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <div className="space-y-1.5">
+            <h3 className="text-xl font-bold uppercase tracking-tight text-[#F5F2EA]">
+              Have a Project in Mind?
+            </h3>
+            <p className="text-xs text-[#B9B5A9]">
+              Reach out directly to discuss substation design, drafting, or AI-powered workflow automations.
+            </p>
           </div>
-        </section>
-      )}
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/contact"
+              className="btn-amber-solid px-6 py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+            >
+              Get In Touch <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
 
     </PortfolioLayout>
   );

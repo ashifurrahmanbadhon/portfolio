@@ -40,6 +40,7 @@ export function PortfolioProvider({ children }) {
   const [certifications, setCertifications] = useState(DEFAULT_CERTIFICATIONS);
   const [contactData, setContactData] = useState(DEFAULT_CONTACT);
   const [contactChannels, setContactChannels] = useState([]);
+  const [services, setServices] = useState([]);
   const [pageHeaders, setPageHeaders] = useState(DEFAULT_PAGE_HEADERS);
   const [homepageCta, setHomepageCta] = useState(DEFAULT_HOMEPAGE_CTA);
   const [resumeUrl, setResumeUrl] = useState('/Ashifur_Rahman_CV.pdf');
@@ -218,6 +219,10 @@ export function PortfolioProvider({ children }) {
       setContactChannels(data.contact_channels);
     }
 
+    if (Array.isArray(data.services)) {
+      setServices(data.services);
+    }
+
     if (data.resume && data.resume.file_url) {
       setResumeUrl(data.resume.file_url);
     }
@@ -370,6 +375,7 @@ export function PortfolioProvider({ children }) {
         educations,
         courseworkPillars,
         certifications,
+        services,
         contactData,
         contactChannels,
         pageHeaders,
