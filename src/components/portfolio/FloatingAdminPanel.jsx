@@ -110,7 +110,7 @@ export default function FloatingAdminPanel() {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Admin Panel"
         aria-expanded={isOpen}
-        className="fixed bottom-[22px] left-[22px] z-40 flex items-center gap-2 h-11 px-4 rounded-full bg-[#0A0B10]/95 backdrop-blur-md border border-[#23242B] text-[#F5F2EA] hover:text-[#F59E0B] hover:border-[#F59E0B]/60 shadow-lg shadow-black/40 text-[13px] font-semibold transition-all duration-200 cursor-pointer select-none"
+        className="fixed bottom-[22px] left-[22px] z-40 flex items-center gap-2 h-11 px-4 rounded-full bg-[#0A0B10]/95 backdrop-blur-md border border-[#23242B] text-[#F5F2EA] hover:text-[#F59E0B] hover:border-[#F59E0B]/60 shadow-lg shadow-black/40 text-[13px] font-semibold transition-all duration-200 cursor-pointer"
       >
         <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-pulse" />
         <Shield size={14} className="text-[#F59E0B]" />

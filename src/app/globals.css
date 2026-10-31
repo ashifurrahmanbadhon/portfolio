@@ -341,37 +341,36 @@ code, pre, kbd, samp, .font-mono {
 /* 6. TACTILE INTERACTIVE CLASSES & LUXURY TOKENS      */
 /* =================================================== */
 .luxury-box,
-.spotlight-card,
 .interactive-card {
   position: relative;
   background-color: #0A0B10;
   border: 1px solid #23242B;
   border-radius: 1rem;
   overflow: hidden;
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.28s ease,
-              border-color 0.28s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease,
+              background-color 0.3s ease,
+              border-color 0.3s ease;
   will-change: transform, box-shadow;
 }
 
 /* HOVER ON EVERY BOX/CARD:
-   box-shadow: inset 0 0 0 1.5px rgba(245,158,11,.85), 0 12px 26px rgba(0,0,0,.5)
-   + translateY(-3px) + cursor pointer;
-   images inside scale 1.05–1.06 (overflow hidden).
+   box-shadow: inset 0 0 0 1.5px rgba(245,158,11,.85), 0 12px 26px rgba(0,0,0,.5),
+   bg tint rgba(245,158,11,.03), translateY(-3px), cursor pointer;
+   inner images scale 1.05 (overflow hidden). Transition .3s.
 */
 .luxury-box:hover,
-.spotlight-card:hover,
 .interactive-card:hover {
   transform: translateY(-3px);
   box-shadow: inset 0 0 0 1.5px rgba(245, 158, 11, 0.85), 0 12px 26px rgba(0, 0, 0, 0.5);
+  background-color: color-mix(in srgb, #0A0B10, #F59E0B 3%);
   cursor: pointer;
 }
 
 .luxury-box:hover img,
-.spotlight-card:hover img,
 .interactive-card:hover img {
-  transform: scale(1.055);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(1.05);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Button lift and amber shadow */
@@ -441,40 +440,14 @@ code, pre, kbd, samp, .font-mono {
 }
 
 /* =================================================== */
-/* 7. SPOTLIGHT CARD (Amber Subtle Aura)               */
-/* =================================================== */
-.spotlight-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    320px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
-    rgba(245, 158, 11, 0.08),
-    transparent 80%
-  );
-  opacity: var(--spotlight-opacity, 0);
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.spotlight-card:hover::before {
-  opacity: 1;
-}
-
-/* =================================================== */
-/* 8. KEYFRAMES FOR DRIFT & MARQUEE                    */
+/* 7. KEYFRAMES FOR DRIFT                              */
 /* =================================================== */
 @keyframes amberDrift1 {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
-  50% {
-    transform: translate3d(-5vw, 6vh, 0) scale(1.08);
-  }
   100% {
-    transform: translate3d(4vw, -4vh, 0) scale(0.94);
+    transform: translate3d(-9vw, 7vh, 0) scale(1.12);
   }
 }
 
@@ -482,11 +455,8 @@ code, pre, kbd, samp, .font-mono {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
-  50% {
-    transform: translate3d(6vw, -5vh, 0) scale(1.1);
-  }
   100% {
-    transform: translate3d(-4vw, 5vh, 0) scale(0.92);
+    transform: translate3d(8vw, -6vh, 0) scale(0.95);
   }
 }
 
@@ -500,29 +470,9 @@ code, pre, kbd, samp, .font-mono {
   will-change: transform;
 }
 
-@keyframes marqueeRoll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marqueeRoll 26s linear infinite;
-  will-change: transform;
-}
-
 /* Text outline strokes */
 .text-stroke-hero {
   -webkit-text-stroke: 2px #F5F2EA;
-  color: transparent;
-}
-.text-stroke-marquee {
-  -webkit-text-stroke: 1.5px #F5F2EA;
   color: transparent;
 }
 .text-stroke-numeral {
@@ -543,7 +493,6 @@ code, pre, kbd, samp, .font-mono {
 
   .animate-glow-drift-1,
   .animate-glow-drift-2,
-  .animate-marquee,
   .logo-orbit-ring,
   .logo-core,
   .live-pulse::after,

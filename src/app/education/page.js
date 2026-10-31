@@ -166,11 +166,11 @@ export default function EducationPage() {
               >
                 <div>
                   {/* Certificate frame: aspect-[29/20], object-contain, bg-[#0C0D13], no lightbox */}
-                  <div className="relative w-full aspect-[29/20] rounded-xl overflow-hidden mb-5 bg-[#0C0D13] border border-[#23242B] select-none group/certimg">
+                  <div className="relative w-full aspect-[29/20] rounded-xl overflow-hidden mb-5 bg-[#0C0D13] border border-[#23242B] group/certimg">
                     <img
                       src={cert.image_url && cert.image_url.trim() ? cert.image_url : '/certs/no-image.svg'}
                       alt={cert.title || "Certificate"}
-                      className="w-full h-full object-contain transition-transform duration-500 group-hover/certimg:scale-105 pointer-events-none select-none"
+                      className="w-full h-full object-contain transition-transform duration-500 group-hover/certimg:scale-105 pointer-events-none"
                       draggable={false}
                       loading="lazy"
                       onError={(e) => {
