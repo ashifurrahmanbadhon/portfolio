@@ -2,19 +2,25 @@
 
 @layer base {
   :root {
-    --bg-main: #080c14;
-    --bg-card: #0b0f17;
-    --bg-surface: #111622;
-    --bg-hover: #161e30;
-    --border-main: #1e2638;
-    --primary: #10b981;
-    --accent: #14b8a6;
+    --bg-main: #06070B;
+    --bg-card: #0A0B10;
+    --bg-panel: #0A0B10;
+    --bg-surface: #0E1017;
+    --border-main: #23242B;
+    --border-hairline: #23242B;
+    --text-main: #F5F2EA;
+    --text-muted: #B9B5A9;
+    --text-faint: #8E8B82;
+    --primary: #F59E0B;
+    --primary-light: #FBBF24;
+    --accent: #F59E0B;
+    --on-accent: #1A1202;
     --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   body {
-    background-color: #080c14;
-    color: #e2e8f0;
+    background-color: #06070B;
+    color: #F5F2EA;
     font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -22,19 +28,20 @@
   }
 }
 
-/* Inter as the single UI font across all pages */
-body, button, input, select, textarea, p, span, h1, h2, h3, h4, h5, h6, a, div, li, td, th {
+/* Inter Tight as body/heading font across all pages */
+body, button, input, select, textarea, p, h1, h2, h3, h4, h5, h6, a, div, li, td, th {
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* JetBrains Mono stays ONLY for genuine code / preformatted content */
-code, pre, kbd, samp {
+/* JetBrains Mono for labels, codes, numbers */
+code, pre, kbd, samp, .font-mono {
   font-family: var(--font-mono), monospace !important;
 }
 
-/* Non-code elements with .font-mono class use Inter */
-.font-mono:not(code):not(pre):not(kbd):not(samp):not(code *):not(pre *) {
-  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+/* Selection: amber bg */
+::selection {
+  background-color: #F59E0B;
+  color: #1A1202;
 }
 
 /* Custom Minimal Scrollbar */
@@ -43,15 +50,15 @@ code, pre, kbd, samp {
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #080c14;
+  background: #06070B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2638;
+  background: #2A2B33;
   border-radius: 9999px;
   transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2dd4bf;
+  background: #F59E0B;
 }
 
 /* =================================================== */
@@ -330,19 +337,82 @@ code, pre, kbd, samp {
 }
 
 /* =================================================== */
-/* 6. TACTILE INTERACTIVE CLASSES (Instant UX)         */
 /* =================================================== */
+/* 6. TACTILE INTERACTIVE CLASSES & LUXURY TOKENS      */
+/* =================================================== */
+.luxury-box,
+.spotlight-card,
 .interactive-card {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s ease,
-              box-shadow 0.2s ease,
-              background-color 0.2s ease;
-  will-change: transform;
+  position: relative;
+  background-color: #0A0B10;
+  border: 1px solid #23242B;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s ease,
+              border-color 0.28s ease;
+  will-change: transform, box-shadow;
 }
 
+/* HOVER ON EVERY BOX/CARD:
+   box-shadow: inset 0 0 0 1.5px rgba(245,158,11,.85), 0 12px 26px rgba(0,0,0,.5)
+   + translateY(-3px) + cursor pointer;
+   images inside scale 1.05–1.06 (overflow hidden).
+*/
+.luxury-box:hover,
+.spotlight-card:hover,
 .interactive-card:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 0 0 1.5px rgba(245, 158, 11, 0.85), 0 12px 26px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.luxury-box:hover img,
+.spotlight-card:hover img,
+.interactive-card:hover img {
+  transform: scale(1.055);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Button lift and amber shadow */
+.btn-amber-solid {
+  background-color: #F59E0B;
+  color: #1A1202;
+  font-weight: 700;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s ease,
+              background-color 0.18s ease;
+  will-change: transform, box-shadow;
+}
+.btn-amber-solid:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.1);
+  background-color: #FBBF24;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+  cursor: pointer;
+}
+.btn-amber-solid:active {
+  transform: translateY(0);
+}
+
+.btn-amber-outline {
+  border: 1px solid #23242B;
+  color: #F5F2EA;
+  background-color: transparent;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s ease,
+              border-color 0.18s ease,
+              color 0.18s ease;
+  will-change: transform;
+}
+.btn-amber-outline:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.7);
+  color: #F59E0B;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+.btn-amber-outline:active {
+  transform: translateY(0);
 }
 
 .interactive-btn {
@@ -371,14 +441,8 @@ code, pre, kbd, samp {
 }
 
 /* =================================================== */
-/* 7. SPOTLIGHT CARD (React Bits / Aceternity Style)   */
+/* 7. SPOTLIGHT CARD (Amber Subtle Aura)               */
 /* =================================================== */
-.spotlight-card {
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 .spotlight-card::before {
   content: "";
   position: absolute;
@@ -386,7 +450,7 @@ code, pre, kbd, samp {
   border-radius: inherit;
   background: radial-gradient(
     320px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
-    rgba(16, 185, 129, 0.08),
+    rgba(245, 158, 11, 0.08),
     transparent 80%
   );
   opacity: var(--spotlight-opacity, 0);
@@ -400,7 +464,74 @@ code, pre, kbd, samp {
 }
 
 /* =================================================== */
-/* 8. ACCESSIBILITY: PREFERS-REDUCED-MOTION            */
+/* 8. KEYFRAMES FOR DRIFT & MARQUEE                    */
+/* =================================================== */
+@keyframes amberDrift1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-5vw, 6vh, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(4vw, -4vh, 0) scale(0.94);
+  }
+}
+
+@keyframes amberDrift2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6vw, -5vh, 0) scale(1.1);
+  }
+  100% {
+    transform: translate3d(-4vw, 5vh, 0) scale(0.92);
+  }
+}
+
+.animate-glow-drift-1 {
+  animation: amberDrift1 30s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.animate-glow-drift-2 {
+  animation: amberDrift2 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes marqueeRoll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeRoll 26s linear infinite;
+  will-change: transform;
+}
+
+/* Text outline strokes */
+.text-stroke-hero {
+  -webkit-text-stroke: 2px #F5F2EA;
+  color: transparent;
+}
+.text-stroke-marquee {
+  -webkit-text-stroke: 1.5px #F5F2EA;
+  color: transparent;
+}
+.text-stroke-numeral {
+  -webkit-text-stroke: 1.5px #F59E0B;
+  color: transparent;
+}
+
+/* =================================================== */
+/* 9. ACCESSIBILITY: PREFERS-REDUCED-MOTION            */
 /* =================================================== */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
@@ -410,6 +541,9 @@ code, pre, kbd, samp {
     scroll-behavior: auto !important;
   }
 
+  .animate-glow-drift-1,
+  .animate-glow-drift-2,
+  .animate-marquee,
   .logo-orbit-ring,
   .logo-core,
   .live-pulse::after,
@@ -417,5 +551,6 @@ code, pre, kbd, samp {
   .shimmer-mask::after,
   .animate-skeleton {
     animation: none !important;
+    transform: none !important;
   }
 }

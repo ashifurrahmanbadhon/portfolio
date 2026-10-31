@@ -1,23 +1,16 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import {
   FolderGit2,
   ExternalLink,
-  Zap,
-  Tag,
-  Layers,
-  ArrowRight,
+  Download,
   Filter,
-  CheckCircle,
-  FileCheck,
-  Download
+  FileCheck
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
-import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { parsePhotoPosition } from '@/lib/photoPosition';
 
@@ -52,15 +45,14 @@ function ProjectCardSlider({ proj }) {
 
   const photoStyle = parsePhotoPosition(proj.image_position || "center center").style;
 
-  // Single image: exact same render and style as original (no arrows, no dots)
   if (slides.length === 1) {
     return (
-      <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638]">
+      <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#06070B] border border-[#23242B]">
         <Image
           src={slides[0]}
           alt={proj.title}
           fill
-          className="object-cover group-hover:scale-105 transition duration-500"
+          className="object-cover group-hover:scale-[1.055] transition duration-500"
           style={photoStyle}
           unoptimized
         />
@@ -104,7 +96,7 @@ function ProjectCardSlider({ proj }) {
 
   return (
     <div
-      className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#070a0f] border border-[#1e2638] select-none group/slider"
+      className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-5 bg-[#06070B] border border-[#23242B] select-none group/slider"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -118,7 +110,7 @@ function ProjectCardSlider({ proj }) {
               src={url}
               alt={`${proj.title} - ${idx + 1}`}
               fill
-              className="object-cover transition duration-500"
+              className="object-cover group-hover:scale-[1.055] transition duration-500"
               style={photoStyle}
               unoptimized
             />
@@ -126,9 +118,9 @@ function ProjectCardSlider({ proj }) {
         ))}
       </div>
 
-      {/* Arrows (‹ ›) + dots below-right of frame */}
+      {/* Slider Controls */}
       <div
-        className="absolute bottom-2.5 right-2.5 z-20 flex items-center gap-1.5 bg-[#070a0f]/85 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 shadow-lg text-white"
+        className="absolute bottom-2.5 right-2.5 z-20 flex items-center gap-1.5 bg-[#06070B]/90 backdrop-blur-md px-2 py-1 rounded-full border border-[#23242B] shadow-lg text-white"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -152,7 +144,7 @@ function ProjectCardSlider({ proj }) {
               aria-label={`Go to slide ${dotIdx + 1}`}
               className={`rounded-full transition-all cursor-pointer ${
                 currentIndex === dotIdx
-                  ? 'w-3 h-1.5 bg-[#10B981]'
+                  ? 'w-3 h-1.5 bg-[#F59E0B]'
                   : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
               }`}
             />
@@ -177,13 +169,11 @@ export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   const header = pageHeaders?.projects || {
-    badge_text: "ENGINEERING CASE STUDIES",
-    title: "Featured Engineering &",
-    highlight_word: "Technical Projects",
+    title: "Engineering Projects &",
+    highlight_word: "Case Studies",
     description: "Comprehensive engineering case studies spanning substation SLDs, GIS network mapping, solar converter hardware, and industrial power factor simulations."
   };
 
-  // Derive dynamic categories from active projects data
   const categories = useMemo(() => {
     const cats = new Set();
     cats.add('All');
@@ -201,19 +191,17 @@ export default function ProjectsPage() {
   return (
     <PortfolioLayout>
       <PageHeader
-        breadcrumbs={[{ name: 'Projects' }]}
-        badgeText={header.badge_text}
         title={header.title}
         highlightWord={header.highlight_word}
         description={header.description}
       />
 
-      {/* Filter Tabs Bar (100% Dynamic) */}
-      <section className="relative z-10 border-b border-[#1e2638] bg-[#0e131d]/60 sticky top-[73px] z-40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
-          <div className="flex items-center gap-2 text-xs text-gray-400 shrink-0">
-            <Filter size={14} className="text-[#10B981]" />
-            <span>Filter by Domain:</span>
+      {/* Filter Tabs Bar */}
+      <section className="relative z-10 border-b border-[#23242B] bg-[#06070B]/90 sticky top-[69px] z-40 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#8E8B82] shrink-0">
+            <Filter size={13} className="text-[#F59E0B]" />
+            <span>FILTER BY DOMAIN:</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -222,10 +210,10 @@ export default function ProjectsPage() {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`text-xs uppercase tracking-wider px-3.5 py-1.5 rounded-lg whitespace-nowrap transition cursor-pointer font-semibold ${
+                className={`text-xs font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-lg whitespace-nowrap transition cursor-pointer font-semibold ${
                   selectedCategory === cat
-                    ? 'bg-[#10B981] text-black font-bold shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                    : 'bg-[#111622] text-gray-300 hover:text-white border border-[#1e2638] hover:border-[#10B981]/40'
+                    ? 'bg-[#F59E0B] text-[#1A1202] font-bold shadow-[0_0_15px_rgba(245,158,11,0.35)]'
+                    : 'bg-[#0A0B10] text-[#B9B5A9] hover:text-[#F5F2EA] border border-[#23242B] hover:border-[#F59E0B]/50'
                 }`}
               >
                 {cat}
@@ -235,30 +223,30 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      {/* Projects Grid */}
+      {/* Projects Grid: 16-20px gap, EACH card its own border #23242B + bg panel */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-10 text-xs text-gray-400">
+        <div className="flex justify-between items-center mb-10 text-xs font-mono text-[#8E8B82]">
           <span>
-            Showing <strong className="text-white">{filteredProjects.length}</strong> of{' '}
-            <strong className="text-[#10B981]">{projectsData.length}</strong> Engineering Projects
+            SHOWING <strong className="text-[#F5F2EA]">{filteredProjects.length}</strong> OF{' '}
+            <strong className="text-[#F59E0B]">{projectsData.length}</strong> PROJECTS
           </span>
-          <span className="hidden sm:inline">AutoCAD • GIS • MATLAB • Substation</span>
+          <span className="hidden sm:inline">AUTOCAD • GIS • MATLAB • SUBSTATION</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((proj) => (
-            <SpotlightCard
-              key={proj.id}
-              className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 sm:p-7 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300 shadow-lg"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredProjects.map((proj, idx) => (
+            <div
+              key={proj.id || idx}
+              className="luxury-box p-6 sm:p-7 flex flex-col justify-between"
             >
               <div>
                 {/* Visual Thumbnail / Slider */}
                 <ProjectCardSlider proj={proj} />
 
-                {/* Header Badge */}
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded border border-[#10B981]/25">
-                    PROJECT #{proj.project_number || proj.id}
+                {/* Number label / 01 mono amber above title */}
+                <div className="flex justify-between items-center mb-2 font-mono text-xs">
+                  <span className="text-[#F59E0B] font-bold tracking-wider">
+                    / {String(proj.project_number || idx + 1).padStart(2, '0')}
                   </span>
                   <div className="flex items-center gap-2">
                     {proj.github_url && (
@@ -266,10 +254,10 @@ export default function ProjectsPage() {
                         href={proj.github_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-gray-400 hover:text-white transition"
+                        className="text-[#8E8B82] hover:text-[#F5F2EA] transition"
                         title="GitHub Repository"
                       >
-                        <GithubIcon size={16} />
+                        <GithubIcon size={15} />
                       </a>
                     )}
                     {proj.live_url && (() => {
@@ -280,38 +268,38 @@ export default function ProjectsPage() {
                           target="_blank"
                           rel="noreferrer"
                           {...(isApk ? { download: '' } : {})}
-                          className="text-gray-400 hover:text-[#10B981] transition"
+                          className="text-[#8E8B82] hover:text-[#F59E0B] transition"
                           title={isApk ? "Download APK" : "Live Demo"}
                         >
-                          {isApk ? <Download size={16} /> : <ExternalLink size={16} />}
+                          {isApk ? <Download size={15} /> : <ExternalLink size={15} />}
                         </a>
                       );
                     })()}
-                    <div className="w-8 h-8 rounded-lg bg-[#0b0f17] border border-[#1e2638] flex items-center justify-center text-gray-400 group-hover:text-[#10B981] group-hover:border-[#10B981]/30 transition">
-                      <FolderGit2 size={18} />
+                    <div className="w-7 h-7 rounded-lg bg-[#06070B] border border-[#23242B] flex items-center justify-center text-[#8E8B82] group-hover:text-[#F59E0B] transition">
+                      <FolderGit2 size={15} />
                     </div>
                   </div>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-base sm:text-lg font-bold text-white mb-3 group-hover:text-[#10B981] transition leading-snug">
+                <h3 className="text-base sm:text-lg font-bold text-[#F5F2EA] mb-2.5 uppercase tracking-wide leading-snug">
                   {proj.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mb-6">
+                <p className="text-xs text-[#B9B5A9] leading-relaxed mb-6">
                   {proj.description || proj.full_description}
                 </p>
               </div>
 
               {/* Tags Section */}
-              <div className="space-y-4 pt-4 border-t border-[#1e2638]/70">
+              <div className="space-y-4 pt-4 border-t border-[#23242B]">
                 {proj.tags && proj.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {proj.tags.map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[11px] text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
+                        className="text-[10px] font-mono text-[#8E8B82] bg-[#06070B] px-2.5 py-1 rounded border border-[#23242B]"
                       >
                         {tag}
                       </span>
@@ -319,44 +307,48 @@ export default function ProjectsPage() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between text-xs text-[#10B981] pt-1">
-                  <span className="inline-flex items-center gap-1.5 text-gray-400 text-[11px] group-hover:text-gray-300 transition">
-                    <FileCheck size={14} className="text-[#10B981]" /> Verified Implementation
+                <div className="flex items-center justify-between text-xs pt-1 font-mono">
+                  <span className="inline-flex items-center gap-1.5 text-[#8E8B82] text-[11px]">
+                    <FileCheck size={13} className="text-[#F59E0B]" /> VERIFIED
                   </span>
                   {proj.category && (
-                    <span className="text-[10px] uppercase text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded group-hover:text-emerald-300 group-hover:bg-emerald-500/20 transition font-medium">
+                    <span className="text-[10px] uppercase text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/25 px-2 py-0.5 rounded font-semibold">
                       {proj.category}
                     </span>
                   )}
                 </div>
               </div>
-            </SpotlightCard>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Engineering Methodology Section (100% Dynamic from CMS) */}
+      {/* Engineering Methodology Section */}
       {projectMethodologies && projectMethodologies.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 bg-[#0e131d] border-t border-[#1e2638]">
+        <section className="relative z-10 px-6 md:px-12 py-16 bg-[#06070B] border-t border-[#23242B]">
           <div className="max-w-5xl mx-auto space-y-10">
             <div className="text-center">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Engineering Project Lifecycle</h3>
-              <p className="text-gray-400 text-xs sm:text-sm mt-2 max-w-xl mx-auto">
+              <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA]">
+                Engineering Project Lifecycle
+              </h3>
+              <p className="text-[#B9B5A9] text-xs sm:text-sm mt-2 max-w-xl mx-auto">
                 Systematic engineering lifecycle applied across all simulation, CAD drafting, and hardware installations.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
               {projectMethodologies.map((step, idx) => (
-                <SpotlightCard key={idx} className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] space-y-3">
-                  <span className="text-2xl font-black text-[#10B981]">
+                <div key={idx} className="luxury-box p-6 space-y-3">
+                  <span className="text-2xl font-black text-[#F59E0B] font-mono">
                     {step.step_number || String(idx + 1).padStart(2, "0")}
                   </span>
-                  <h4 className="text-sm font-bold text-white group-hover:text-[#10B981] transition">{step.title}</h4>
-                  <p className="text-xs text-gray-400 leading-relaxed">
+                  <h4 className="text-sm font-bold text-[#F5F2EA] uppercase tracking-wide">
+                    {step.title}
+                  </h4>
+                  <p className="text-xs text-[#B9B5A9] leading-relaxed">
                     {step.description}
                   </p>
-                </SpotlightCard>
+                </div>
               ))}
             </div>
           </div>

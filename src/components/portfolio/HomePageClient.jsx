@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'motion/react';
 import {
   Zap,
   Download,
@@ -15,22 +16,20 @@ import {
   Briefcase,
   GraduationCap,
   Sparkles,
-  ExternalLink,
+  MapPin,
   CheckCircle2,
   Layers,
-  Calendar,
-  Cpu,
   Compass,
   FileSpreadsheet,
-  Sun
+  Sun,
+  Cpu
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
-import SpotlightCard from '@/components/SpotlightCard';
+import CountUp from '@/components/CountUp';
 import { usePortfolio } from '@/context/PortfolioContext';
 import { triggerCvDownload } from '@/lib/downloadCv';
 import { parsePhotoPosition } from '@/lib/photoPosition';
 
-// Helper for dynamic icons
 const ICON_MAP = {
   Zap,
   Monitor,
@@ -52,6 +51,29 @@ function resolveIcon(iconName, Fallback = Zap) {
   return ICON_MAP[iconName] || Fallback;
 }
 
+const HOW_I_WORK_STEPS = [
+  {
+    num: "01",
+    title: "Consult",
+    desc: "We discuss your requirement — substation, design, GIS or automation — and I confirm scope honestly."
+  },
+  {
+    num: "02",
+    title: "Plan",
+    desc: "You get a clear plan: deliverables, tools (AutoCAD, ETAP, GIS, AI) and a timeline before work starts."
+  },
+  {
+    num: "03",
+    title: "Execute",
+    desc: "Work is done to standard — IEEE & BNBC compliant for engineering, tested end-to-end for automation."
+  },
+  {
+    num: "04",
+    title: "Support",
+    desc: "Clean handover with documentation, plus support after delivery so nothing is left unclear."
+  }
+];
+
 export default function Home() {
   const {
     heroData,
@@ -62,12 +84,17 @@ export default function Home() {
     experiences,
     educations,
     certifications,
-    homepageCta,
-    resumeUrl
+    services,
+    contactData,
+    homepageCta
   } = usePortfolio();
 
+  const fullName = (heroData?.name || "ASHIFUR RAHMAN").trim();
+  const nameParts = fullName.split(/\s+/);
+  const firstName = nameParts[0] || "ASHIFUR";
+  const lastName = nameParts.slice(1).join(" ") || "RAHMAN";
+
   const ctaData = {
-    badge_text: homepageCta?.badge_text || "Open for Engineering & AI Opportunities",
     title: homepageCta?.title || "Let's Collaborate on Engineering Solutions",
     description: homepageCta?.description || "Whether you need substation consultation, AutoCAD schematics, GIS utility analysis, or want to discuss technical roles, let's connect.",
     primary_btn_text: homepageCta?.primary_btn_text || "Open Contact Hub",
@@ -81,60 +108,72 @@ export default function Home() {
 
   return (
     <PortfolioLayout>
-      {/* 1. HERO SECTION */}
-      <section className="relative z-10 px-6 md:px-12 py-16 md:py-24 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      {/* 1. HERO SECTION: 2-col grid (1.1fr / 0.9fr), name INSIDE left column, top-aligned with photo */}
+      <section className="relative z-10 px-6 md:px-12 pt-10 pb-16 md:pt-14 md:pb-20 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-start">
           
-          <div className="lg:col-span-7 space-y-6">
-            {heroData.badge_text && (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs font-semibold tracking-wide">
-                <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-                {heroData.badge_text}
-              </div>
-            )}
-
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-[1.1]">
-              {heroData.name || "ASHIFUR RAHMAN"}
-              {heroData.title && (
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] to-teal-400 text-2xl sm:text-4xl mt-2 font-bold">
-                  {heroData.title}
-                </span>
-              )}
+          {/* Left Column: Name & Intro */}
+          <div className="flex flex-col justify-start">
+            <h1 className="text-5xl sm:text-7xl lg:text-[88px] font-black uppercase tracking-tight leading-[0.92] select-none">
+              <span className="block text-[#F5F2EA]">{firstName}</span>
+              <span className="block text-stroke-hero">{lastName}</span>
             </h1>
 
+            {heroData.title && (
+              <p className="font-mono text-xs sm:text-sm uppercase tracking-widest text-[#F59E0B] font-semibold mt-4">
+                {heroData.title}
+              </p>
+            )}
+
             {heroData.introduction && (
-              <p className="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed">
+              <p className="text-[#B9B5A9] text-base sm:text-lg max-w-xl leading-relaxed mt-6">
                 {heroData.introduction}
               </p>
             )}
 
-            {/* Intro text */}
+            {/* Action Buttons */}
+            <div className="pt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href={heroData.primary_btn_link || "/contact"}
+                className="btn-amber-solid px-7 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+              >
+                <Mail size={16} /> {heroData.primary_btn_text || "Contact Me"}
+              </Link>
+              <button
+                type="button"
+                onClick={triggerCvDownload}
+                className="btn-amber-outline px-7 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
+              >
+                <Download size={16} /> {heroData.secondary_btn_text || "Download CV"}
+              </button>
+            </div>
           </div>
 
-          {/* Profile Photo Card */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="relative group">
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#10B981] to-teal-600 opacity-30 blur-xl group-hover:opacity-60 transition duration-500" />
-              
-              <div className="relative bg-[#111622] border-2 border-[#1e2638] rounded-3xl p-4 shadow-2xl">
-                <div className="relative w-64 sm:w-72 aspect-[3/4] rounded-2xl overflow-hidden bg-[#0b0f17]">
-                  <Image
-                    src={heroData.profile_image || "/ashifur-home.jpg"}
-                    alt={heroData.name || "Ashifur Rahman"}
-                    fill
-                    className="object-cover group-hover:scale-105 transition duration-500"
-                    style={parsePhotoPosition(heroData.profile_position || "center 15%").style}
-                    priority
-                    sizes="(max-width: 640px) 256px, 288px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent opacity-80" />
-                  
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-xs font-bold text-white">
-                      {heroData.spec_badge_title || "Engineering, Management & AI"}
-                    </p>
-                  </div>
-                </div>
+          {/* Right Column: Photo in hairline frame + padding 8px, aspect 3/4, caption row */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="w-full max-w-[380px] border border-[#23242B] bg-[#0A0B10] p-2 rounded-2xl shadow-2xl transition duration-300 hover:ring-1 hover:ring-[#F59E0B] hover:shadow-[0_0_30px_rgba(245,158,11,0.18)] group">
+              <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#06070B]">
+                <Image
+                  src={heroData.profile_image || "/ashifur-home.jpg"}
+                  alt={heroData.name || "Ashifur Rahman"}
+                  fill
+                  className="object-cover group-hover:scale-[1.055] transition duration-500"
+                  style={parsePhotoPosition(heroData.profile_position || "center 15%").style}
+                  priority
+                  sizes="(max-width: 640px) 100vw, 380px"
+                />
+              </div>
+
+              {/* Caption row under img inside frame */}
+              <div className="flex items-center justify-between px-2 pt-3 pb-1 font-mono text-[11px] text-[#8E8B82] uppercase tracking-wider">
+                <span className="flex items-center gap-1.5 text-[#F59E0B] font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                  THE ENGINEER
+                </span>
+                <span className="flex items-center gap-1 text-[#8E8B82]">
+                  <MapPin size={11} className="text-[#8E8B82]" />
+                  {contactData.location || "Bangladesh"}
+                </span>
               </div>
             </div>
           </div>
@@ -142,42 +181,89 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. METRICS / HIGHLIGHTS BAR */}
+      {/* 2. MARQUEE UNDER HERO: 26s linear infinite, alternate words outline-stroked */}
+      <section className="relative z-10 border-y border-[#23242B] bg-[#0A0B10] py-4 overflow-hidden select-none">
+        <div className="animate-marquee font-mono text-sm sm:text-base font-black tracking-widest uppercase">
+          {/* Loop x2 for seamless CSS animation */}
+          {[1, 2].map((loopIdx) => (
+            <div key={loopIdx} className="flex items-center gap-8 shrink-0 pr-8">
+              <span className="text-[#F5F2EA]">POWER SYSTEMS</span>
+              <span className="text-[#F59E0B]">✦</span>
+              <span className="text-stroke-marquee">SUBSTATION DESIGN</span>
+              <span className="text-[#F59E0B]">✦</span>
+              <span className="text-[#F5F2EA]">GIS MAPPING</span>
+              <span className="text-[#F59E0B]">✦</span>
+              <span className="text-stroke-marquee">AI AUTOMATION</span>
+              <span className="text-[#F59E0B]">✦</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. HIGHLIGHTS: Bordered 4-cell grid, CountUp for numeric values */}
       {highlights && highlights.length > 0 && (
-        <section className="relative z-10 border-y border-[#1e2638] bg-[#0e131d]/60 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {highlights.map((h, i) => (
-              <div key={i}>
-                <p className="text-3xl font-extrabold text-[#10B981]">{h.metric_value}</p>
-                <p className="text-sm font-semibold text-white mt-1">{h.metric_label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{h.metric_subtext}</p>
-              </div>
-            ))}
-          </div>
+        <section className="relative z-10 px-6 md:px-12 py-12 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 26 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="border border-[#23242B] bg-[#0A0B10] rounded-2xl grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#23242B] overflow-hidden"
+          >
+            {highlights.map((h, i) => {
+              const rawVal = String(h.metric_value || '').trim();
+              const numMatch = rawVal.match(/^(\d+)(.*)$/);
+              return (
+                <div key={i} className="p-6 sm:p-8 text-center flex flex-col justify-center">
+                  <p className="text-3xl sm:text-4xl font-black text-[#F59E0B] font-mono tracking-tight">
+                    {numMatch ? (
+                      <CountUp to={parseInt(numMatch[1], 10)} suffix={numMatch[2]} />
+                    ) : (
+                      rawVal
+                    )}
+                  </p>
+                  <p className="text-sm font-bold text-[#F5F2EA] mt-1.5 uppercase tracking-wide">
+                    {h.metric_label}
+                  </p>
+                  {h.metric_subtext && (
+                    <p className="text-xs text-[#8E8B82] font-mono mt-0.5">
+                      {h.metric_subtext}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </motion.div>
         </section>
       )}
 
-      {/* 3. ABOUT OVERVIEW SECTION */}
-      <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      {/* 4. ABOUT PREVIEW SECTION */}
+      <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start"
+        >
           <div className="lg:col-span-5 space-y-5">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
-              {aboutData.title || "Engineering Reliability, Efficiency & Innovation"}
+            <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+              {aboutData.title || "Engineering Reliability & Innovation"}
             </h2>
             {aboutData.description1 && (
-              <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+              <p className="text-[#B9B5A9] leading-relaxed text-sm sm:text-base">
                 {aboutData.description1}
               </p>
             )}
             {aboutData.description2 && (
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-[#8E8B82] text-xs sm:text-sm leading-relaxed">
                 {aboutData.description2}
               </p>
             )}
             <div className="pt-2">
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#10B981] hover:text-emerald-300 group transition"
+                className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] transition group"
               >
                 Read Full Biography <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
@@ -188,278 +274,394 @@ export default function Home() {
             {previewPillars.map((pillar, pIdx) => {
               const Icon = resolveIcon(pillar.icon, Zap);
               return (
-                <Link
-                  key={pIdx}
-                  href="/about"
-                  className="block h-full"
-                >
-                  <SpotlightCard className="bg-[#111622] p-6 rounded-2xl border border-[#1e2638] h-full flex flex-col justify-between">
+                <Link key={pIdx} href="/about" className="block h-full">
+                  <div className="luxury-box p-6 h-full flex flex-col justify-between">
                     <div>
-                      <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition duration-300 mb-4">
-                        <Icon size={24} />
+                      <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
+                        <Icon size={20} />
                       </div>
-                      <h4 className="text-base font-bold text-white mb-1 group-hover:text-[#10B981] transition">
+                      <h3 className="text-base font-bold text-[#F5F2EA] mb-1.5 uppercase tracking-wide">
                         {pillar.title}
-                      </h4>
+                      </h3>
                       {pillar.subtitle && (
-                        <p className="text-xs text-white/90 group-hover:text-[#10B981] transition mb-2">
+                        <p className="font-mono text-xs text-[#F59E0B] mb-2 font-medium">
                           {pillar.subtitle}
                         </p>
                       )}
-                      <p className="text-xs text-gray-400 leading-relaxed">
+                      <p className="text-xs text-[#B9B5A9] leading-relaxed">
                         {pillar.description || pillar.subtitle}
                       </p>
                     </div>
-                  </SpotlightCard>
+                  </div>
                 </Link>
               );
             })}
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* 4. EXPERIENCE PREVIEW */}
-      {experiences && experiences.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-20 bg-[#0e131d] border-y border-[#1e2638]">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
+      {/* 5. FEATURED PROJECTS PREVIEW (First 3) */}
+      {projectsData && projectsData.length > 0 && (
+        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 26 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
               <div>
-                <h3 className="text-3xl md:text-4xl font-extrabold text-white">Career Journey &amp; Field Work</h3>
+                <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+                  Featured Engineering Projects
+                </h2>
+              </div>
+              <Link
+                href="/projects"
+                className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
+              >
+                Explore All Projects ({projectsData.length}) <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {projectsData.slice(0, 3).map((proj, idx) => (
+                <div
+                  key={proj.id || idx}
+                  className="luxury-box p-6 flex flex-col justify-between"
+                >
+                  <div>
+                    {proj.image_url && (
+                      <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-[#06070B] border border-[#23242B]">
+                        <Image
+                          src={proj.image_url}
+                          alt={proj.title}
+                          fill
+                          className="object-cover transition duration-500"
+                          style={parsePhotoPosition(proj.image_position || "center center").style}
+                          loading="lazy"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          unoptimized
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex justify-between items-center mb-2 font-mono text-xs">
+                      <span className="text-[#F59E0B] font-bold">
+                        / {String(proj.project_number || idx + 1).padStart(2, '0')}
+                      </span>
+                      <span className="text-[#8E8B82] uppercase text-[11px]">
+                        {proj.category}
+                      </span>
+                    </div>
+
+                    <h3 className="text-base font-bold text-[#F5F2EA] mb-2 leading-snug uppercase tracking-wide">
+                      {proj.title}
+                    </h3>
+                    <p className="text-xs text-[#B9B5A9] leading-relaxed mb-4">
+                      {proj.description}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 pt-4 border-t border-[#23242B]">
+                    {(proj.tags || []).map((tag, tIdx) => (
+                      <span
+                        key={tIdx}
+                        className="text-[10px] font-mono text-[#8E8B82] bg-[#06070B] px-2.5 py-1 rounded border border-[#23242B]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+      )}
+
+      {/* 6. EXPERIENCE PREVIEW */}
+      {experiences && experiences.length > 0 && (
+        <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 26 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+              <div>
+                <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+                  Career Journey &amp; Field Work
+                </h2>
               </div>
               <Link
                 href="/experience"
-                className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
+                className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
               >
                 View Full Timeline <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
             </div>
 
-            <div className="space-y-6">
+            <div className="border border-[#23242B] bg-[#0A0B10] rounded-2xl overflow-hidden divide-y divide-[#23242B]">
               {experiences.slice(0, 2).map((exp, idx) => (
-                <SpotlightCard
+                <div
                   key={idx}
-                  className="bg-[#111622] p-6 sm:p-7 rounded-2xl border border-[#1e2638] space-y-3"
+                  className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-start hover:bg-white/[0.02] transition"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                      <h4 className="text-lg font-bold text-white group-hover:text-[#10B981] transition">{exp.role}</h4>
-                      <p className="text-xs font-semibold text-gray-300 mt-0.5">{exp.organization}</p>
-                    </div>
-                    <span className="text-xs text-[#10B981] bg-[#10B981]/10 group-hover:bg-[#10B981]/20 px-3 py-1 rounded-full w-fit transition font-medium">
+                  <div>
+                    <span className="font-mono text-xs text-[#F59E0B] font-semibold block">
                       {exp.period}
                     </span>
+                    <p className="text-xs text-[#8E8B82] mt-1 font-mono">
+                      {exp.organization}
+                    </p>
                   </div>
-                  <ul className="text-xs text-gray-400 space-y-1.5 list-disc list-inside">
-                    {(exp.points || []).slice(0, 3).map((pt, pIdx) => (
-                      <li key={pIdx}>{pt}</li>
-                    ))}
-                  </ul>
-                </SpotlightCard>
+                  <div>
+                    <h3 className="text-base font-bold text-[#F5F2EA] uppercase tracking-wide">
+                      {exp.role}
+                    </h3>
+                    <ul className="text-xs text-[#B9B5A9] space-y-2 mt-3 leading-relaxed">
+                      {(exp.points || []).slice(0, 3).map((pt, pIdx) => (
+                        <li key={pIdx} className="flex items-start">
+                          <span className="text-[#F59E0B] mr-2 font-mono shrink-0">—</span>
+                          <span>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </section>
       )}
 
-      {/* 5. FEATURED PROJECTS PREVIEW */}
-      {projectsData && projectsData.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
-            <div>
-              <h3 className="text-3xl md:text-4xl font-extrabold text-white">Featured Engineering Projects</h3>
-            </div>
-            <Link
-              href="/projects"
-              className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
-            >
-              Explore All Projects ({projectsData.length}) <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projectsData.slice(0, 3).map((proj) => (
-              <SpotlightCard
-                key={proj.id}
-                className="bg-[#111622] rounded-2xl border border-[#1e2638] p-6 flex flex-col justify-between hover:scale-[1.01] transition duration-300"
-              >
-                <div>
-                  {proj.image_url && (
-                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-[#070a0f] border border-[#1e2638]">
-                      <Image
-                        src={proj.image_url}
-                        alt={proj.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition duration-500"
-                        style={parsePhotoPosition(proj.image_position || "center center").style}
-                        loading="lazy"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        unoptimized
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-2.5 py-1 rounded">
-                      PROJECT #{proj.project_number || proj.id}
-                    </span>
-                    <FolderGit2 className="text-gray-500 group-hover:text-[#10B981] transition" size={20} />
-                  </div>
-                  <h4 className="text-base font-bold text-white mb-2 group-hover:text-[#10B981] transition leading-snug">
-                    {proj.title}
-                  </h4>
-                  <p className="text-xs text-gray-400 leading-relaxed mb-4">
-                    {proj.description}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-[#1e2638]/70">
-                  {(proj.tags || []).map((tag, tIdx) => (
-                    <span
-                      key={tIdx}
-                      className="text-[11px] text-gray-300 bg-[#0b0f17] px-2.5 py-1 rounded border border-[#1e2638] group-hover:border-[#10B981]/50 group-hover:text-[#10B981] group-hover:bg-[#10B981]/10 transition"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </SpotlightCard>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 6. TECHNICAL SKILLS PREVIEW */}
+      {/* 7. SKILLS PREVIEW */}
       {skillsData && skillsData.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-20 bg-[#111622] border-y border-[#1e2638]">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
+        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 26 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
               <div>
-                <h3 className="text-3xl md:text-4xl font-extrabold text-white">Technical Skills &amp; Tools</h3>
+                <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+                  Technical Skills &amp; Tools
+                </h2>
               </div>
               <Link
                 href="/skills"
-                className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
+                className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
               >
-                View Full Competency Matrix <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+                View Full Matrix <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {skillsData.map((cat, idx) => (
-                <SpotlightCard key={idx} className="bg-[#0b0f17] p-6 rounded-2xl border border-[#1e2638] space-y-4">
-                  <div className="flex items-center gap-3 pb-3 border-b border-[#1e2638]">
-                    <div className="p-2 rounded-lg bg-[#10B981]/10 text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition">
-                      <Monitor size={20} />
-                    </div>
-                    <h4 className="font-bold text-white group-hover:text-[#10B981] transition">{cat.category}</h4>
+                <div key={idx} className="luxury-box p-6 space-y-4">
+                  <div className="flex items-center gap-3 pb-3 border-b border-[#23242B]">
+                    <span className="font-mono text-xs text-[#F59E0B] font-bold">
+                      0{idx + 1} /
+                    </span>
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#F5F2EA]">
+                      {cat.category}
+                    </h3>
                   </div>
-                  <div className="space-y-3 pt-2">
-                    {cat.items.map((skill, sIdx) => (
-                      <div key={sIdx}>
-                        <div className="flex justify-between text-xs font-medium mb-1">
-                          <span className="text-gray-200 group-hover:text-[#10B981] transition">{skill.name}</span>
-                          <span className="text-[#10B981] font-bold">{skill.level}%</span>
+                  <div className="space-y-3 pt-1">
+                    {cat.items.slice(0, 4).map((skill, sIdx) => (
+                      <div key={sIdx} className="border-b border-dashed border-[#23242B]/70 pb-2">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-[#F5F2EA] font-medium">{skill.name}</span>
+                          <span className="text-[#F59E0B] font-mono text-[11px] font-bold">{skill.level}%</span>
                         </div>
-                        <div className="w-full bg-[#1e2638] rounded-full h-1.5">
-                          <div className="bg-[#10B981] h-1.5 rounded-full" style={{ width: `${skill.level}%` }} />
+                        <div className="w-full bg-[#181920] rounded-full h-1 overflow-hidden">
+                          <div className="bg-[#F59E0B] h-1 rounded-full" style={{ width: `${skill.level}%` }} />
                         </div>
                       </div>
                     ))}
                   </div>
-                </SpotlightCard>
+                </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </section>
       )}
 
-      {/* 7. EDUCATION & CREDENTIALS PREVIEW (Fully Dynamic) */}
-      <section className="relative z-10 px-6 md:px-12 py-20 max-w-5xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
-          <div>
-            <h3 className="text-3xl md:text-4xl font-extrabold text-white">Education &amp; Qualifications</h3>
+      {/* 8. EDUCATION PREVIEW */}
+      <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+            <div>
+              <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+                Education &amp; Credentials
+              </h2>
+            </div>
+            <Link
+              href="/education"
+              className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
+            >
+              View All Credentials <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+            </Link>
           </div>
-          <Link
-            href="/education"
-            className="text-xs uppercase tracking-wider text-[#10B981] hover:text-emerald-300 font-semibold flex items-center gap-1 group shrink-0"
-          >
-            View All Credentials <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
-          </Link>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Main Degree Card */}
-          {educations && educations.length > 0 && (
-            <SpotlightCard className="bg-[#111622] p-8 rounded-2xl border border-[#1e2638] space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition">
-                <GraduationCap size={24} />
-              </div>
-              <div>
-                <span className="text-xs text-[#10B981] uppercase tracking-wider font-semibold">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {educations && educations.length > 0 && (
+              <div className="luxury-box p-8 space-y-4">
+                <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
                   {educations[0].period || "Degree Completed"}
                 </span>
-                <h4 className="text-lg font-bold text-white mt-1 group-hover:text-[#10B981] transition">{educations[0].degree}</h4>
-                <p className="text-sm text-gray-400 mt-1">{educations[0].institution}</p>
-              </div>
-              {educations[0].description && (
-                <p className="text-xs text-gray-400 leading-relaxed pt-2 border-t border-[#1e2638]">
-                  {educations[0].description}
+                <h3 className="text-lg font-bold text-[#F5F2EA] uppercase tracking-wide">
+                  {educations[0].degree}
+                </h3>
+                <p className="text-xs text-[#8E8B82] font-mono">
+                  {educations[0].institution}
                 </p>
-              )}
-            </SpotlightCard>
-          )}
+                {educations[0].description && (
+                  <p className="text-xs text-[#B9B5A9] leading-relaxed pt-3 border-t border-[#23242B]">
+                    {educations[0].description}
+                  </p>
+                )}
+              </div>
+            )}
 
-          {/* Dynamic Certifications Box */}
-          <SpotlightCard className="bg-[#111622] p-8 rounded-2xl border border-[#1e2638] space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center text-[#10B981] group-hover:bg-[#10B981] group-hover:text-black transition">
-              <ShieldCheck size={24} />
+            <div className="luxury-box p-8 space-y-4">
+              <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
+                Certifications &amp; Training
+              </span>
+              <h3 className="text-lg font-bold text-[#F5F2EA] uppercase tracking-wide">
+                Specialized Engineering Modules
+              </h3>
+              <p className="text-xs text-[#8E8B82] font-mono">
+                Industry Standards &amp; Practical Training
+              </p>
+              <ul className="text-xs text-[#B9B5A9] space-y-2 pt-3 border-t border-[#23242B]">
+                {(certifications || []).slice(0, 3).map((cert, cIdx) => (
+                  <li key={cIdx} className="flex items-center gap-2">
+                    <CheckCircle2 size={13} className="text-[#F59E0B] shrink-0" />
+                    <span className="line-clamp-1">{cert.title}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div>
-              <span className="text-xs text-[#10B981] uppercase tracking-wider font-semibold">Certifications &amp; Training</span>
-              <h4 className="text-lg font-bold text-white mt-1 group-hover:text-[#10B981] transition">Specialized Engineering Modules</h4>
-              <p className="text-sm text-gray-400 mt-1">Industry Standards &amp; Practical Training</p>
-            </div>
-            <ul className="text-xs text-gray-400 space-y-2 pt-2 border-t border-[#1e2638]">
-              {(certifications || []).slice(0, 3).map((cert, cIdx) => (
-                <li key={cIdx} className="flex items-center gap-2 group-hover:text-gray-200 transition">
-                  <CheckCircle2 size={14} className="text-[#10B981] shrink-0" />
-                  <span>{cert.title}</span>
-                </li>
-              ))}
-            </ul>
-          </SpotlightCard>
-        </div>
+          </div>
+        </motion.div>
       </section>
 
-      {/* 8. CALL TO ACTION TO CONTACT (Dynamic) */}
-      <section className="relative z-10 px-6 md:px-12 py-20 bg-[#0e131d] border-t border-[#1e2638]">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] text-xs font-semibold">
-            <Sparkles size={13} />
-            <span>{ctaData.badge_text}</span>
+      {/* 9. SERVICES PREVIEW (Dynamic from CMS) */}
+      {services && services.length > 0 && (
+        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 26 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="mb-10">
+              <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+                Engineering Services
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {services.map((srv, idx) => {
+                const Icon = resolveIcon(srv.icon, Zap);
+                return (
+                  <div key={srv.id || idx} className="luxury-box p-6 flex flex-col justify-between">
+                    <div>
+                      <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
+                        <Icon size={20} />
+                      </div>
+                      <h3 className="text-base font-bold text-[#F5F2EA] mb-2 uppercase tracking-wide">
+                        {srv.title}
+                      </h3>
+                      <p className="text-xs text-[#B9B5A9] leading-relaxed">
+                        {srv.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        </section>
+      )}
+
+      {/* 10. NEW STATIC SECTION "How I Work" AFTER SERVICES PREVIEW */}
+      <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <div className="mb-10">
+            <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+              How I Work
+            </h2>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {HOW_I_WORK_STEPS.map((step) => (
+              <div
+                key={step.num}
+                className="luxury-box p-7 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="font-mono text-4xl sm:text-5xl font-black text-stroke-numeral mb-4 select-none">
+                    {step.num}
+                  </div>
+                  <h3 className="text-lg font-bold text-[#F5F2EA] mb-2 uppercase tracking-wide">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-[#B9B5A9] leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* 11. HOMEPAGE CALL TO ACTION: existing DB CTA content, centered, hover inset amber ring */}
+      <section className="relative z-10 px-6 md:px-12 py-20 max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="luxury-box p-10 sm:p-14 text-center space-y-6"
+        >
+          <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight max-w-2xl mx-auto leading-tight">
             {ctaData.title}
           </h2>
-          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+          <p className="text-[#B9B5A9] text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
             {ctaData.description}
           </p>
-          <div className="pt-2 flex flex-wrap justify-center gap-4">
+          <div className="pt-3 flex flex-wrap justify-center gap-4">
             <Link
               href={ctaData.primary_btn_link}
-              className="bg-[#10B981] text-black font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-xl flex items-center gap-2 hover:bg-[#059669] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] transition duration-300"
+              className="btn-amber-solid px-8 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <Mail size={16} /> {ctaData.primary_btn_text}
             </Link>
             <button
               type="button"
               onClick={triggerCvDownload}
-              className="bg-[#111622] text-white border border-[#1e2638] font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-xl flex items-center gap-2 hover:border-[#10B981]/50 hover:bg-[#161e30] transition duration-300 cursor-pointer"
+              className="btn-amber-outline px-8 py-4 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <Download size={16} /> {ctaData.secondary_btn_text || "Download CV"}
             </button>
           </div>
-        </div>
+        </motion.div>
       </section>
 
     </PortfolioLayout>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { PortfolioProvider, usePortfolio } from '@/context/PortfolioContext';
+import { usePortfolio } from '@/context/PortfolioContext';
 import BackgroundGlow from './BackgroundGlow';
 import PortfolioNavbar from './PortfolioNavbar';
 import PortfolioFooter from './PortfolioFooter';
@@ -10,20 +10,21 @@ import PortfolioFooter from './PortfolioFooter';
 const ScrollToTopButton = dynamic(() => import('./ScrollToTopButton'), { ssr: false });
 const ResumeModal = dynamic(() => import('./ResumeModal'), { ssr: false });
 const FloatingAdminPanel = dynamic(() => import('./FloatingAdminPanel'), { ssr: false });
+const AiChat = dynamic(() => import('./AiChat'), { ssr: false });
 
 function PortfolioInnerLayout({ children }) {
   const { resumeModalOpen, closeResumeModal, openResumeModal, resumeUrl, isLoaded } = usePortfolio();
 
   if (!isLoaded) {
     return (
-      <div className="bg-[#0b0f17] text-white min-h-screen font-sans flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="bg-[#06070B] text-[#F5F2EA] min-h-screen font-sans flex flex-col items-center justify-center relative overflow-hidden">
         <BackgroundGlow />
         <div className="relative z-10 flex flex-col items-center space-y-4 animate-fade-in">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
-            <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
+          <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center shadow-lg shadow-[#F59E0B]/10">
+            <span className="w-3 h-3 rounded-full bg-[#F59E0B] animate-ping" />
           </div>
-          <div className="text-center">
-            <p className="text-xs text-slate-400">Loading verified portfolio content...</p>
+          <div className="text-center font-mono">
+            <p className="text-xs text-[#8E8B82]">Loading portfolio...</p>
           </div>
         </div>
       </div>
@@ -31,7 +32,7 @@ function PortfolioInnerLayout({ children }) {
   }
 
   return (
-    <div className="bg-[#0b0f17] text-white min-h-screen font-sans selection:bg-[#10B981] selection:text-black flex flex-col relative overflow-x-hidden animate-fade-in">
+    <div className="bg-[#06070B] text-[#F5F2EA] min-h-screen font-sans selection:bg-[#F59E0B] selection:text-[#1A1202] flex flex-col relative overflow-x-hidden animate-fade-in">
       <BackgroundGlow />
       <PortfolioNavbar onOpenResume={openResumeModal} />
       
@@ -42,8 +43,11 @@ function PortfolioInnerLayout({ children }) {
 
       <PortfolioFooter />
 
-      {/* Persistent floating scroll to top button at bottom right corner */}
+      {/* Persistent floating scroll to top button */}
       <ScrollToTopButton />
+
+      {/* Additive AI Assistant Chat Widget on public pages */}
+      <AiChat />
 
       {/* Floating admin panel for authenticated sessions at bottom left */}
       <FloatingAdminPanel />

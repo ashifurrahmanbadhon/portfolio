@@ -1,7 +1,7 @@
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const interTight = Inter_Tight({
   variable: "--font-sans",
   subsets: ["latin"],
 });
@@ -39,11 +39,11 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
+      className={`${interTight.variable} ${jetbrainsMono.variable} dark h-full antialiased`}
     >
       <body
         suppressHydrationWarning
-        className="min-h-full bg-[#080C14] text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-300"
+        className="min-h-full bg-[#06070B] text-[#F5F2EA] selection:bg-[#F59E0B] selection:text-[#1A1202]"
       >
         <CursorSpotlight />
         <DashboardShell>{children}</DashboardShell>

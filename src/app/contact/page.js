@@ -2,60 +2,14 @@
 
 import React, { useState } from 'react';
 import {
-  Mail,
-  Phone,
-  MessageCircle,
-  MapPin,
   Send,
   Check,
   Clock,
-  Sparkles,
-  ExternalLink,
-  ShieldCheck
+  ExternalLink
 } from 'lucide-react';
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
-import SpotlightCard from '@/components/SpotlightCard';
 import { usePortfolio } from '@/context/PortfolioContext';
-
-function LinkedinIcon({ size = 20, className = "" }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect x="2" y="9" width="4" height="12" />
-      <circle cx="4" cy="4" r="2" />
-    </svg>
-  );
-}
-
-function GithubIcon({ size = 20, className = "" }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-      <path d="M9 18c-4.51 2-5-2-7-2" />
-    </svg>
-  );
-}
 
 export default function ContactPage() {
   const { contactData, contactChannels, pageHeaders, isPreview } = usePortfolio();
@@ -71,7 +25,6 @@ export default function ContactPage() {
   };
 
   const header = pageHeaders?.contact || {
-    badge_text: "COMMUNICATION & INQUIRIES",
     title: "Let's Discuss Engineering &",
     highlight_word: "Technical Solutions",
     description: "Reach out directly for substation engineering consultations, AutoCAD schematics, GIS asset mapping, operational analytics, or technology collaborations."
@@ -95,7 +48,7 @@ export default function ContactPage() {
     } finally {
       setSubmitting(false);
       setFormSubmitted(true);
-      const mailtoUrl = `mailto:${contactData.email}?subject=${encodeURIComponent(
+      const mailtoUrl = `mailto:${contactData.email || 'ashifur.badhon@gmail.com'}?subject=${encodeURIComponent(
         formData.subject + ' - from ' + formData.name
       )}&body=${encodeURIComponent(
         'Sender Name: ' + formData.name + '\nSender Email: ' + formData.email + '\n\nMessage:\n' + formData.message
@@ -106,231 +59,124 @@ export default function ContactPage() {
     }
   };
 
+  const channelsList = [
+    {
+      key: 'email',
+      label: 'Email',
+      value: contactData.email || 'ashifur.badhon@gmail.com',
+      url: `mailto:${contactData.email || 'ashifur.badhon@gmail.com'}`
+    },
+    {
+      key: 'phone',
+      label: 'Phone',
+      value: contactData.phone || '+880 1521 417284',
+      url: `tel:${(contactData.phone || '+8801521417284').replace(/\s+/g, '')}`
+    },
+    {
+      key: 'whatsapp',
+      label: 'WhatsApp',
+      value: contactData.phone || '+880 1521 417284',
+      url: contactData.whatsapp_url || `https://wa.me/${(contactData.phone || '+8801521417284').replace(/[^0-9]/g, '')}`
+    },
+    {
+      key: 'linkedin',
+      label: 'LinkedIn',
+      value: 'ashifurrahmanbadhon',
+      url: contactData.linkedin_url || contactData.linkedin || 'https://www.linkedin.com/in/ashifurrahmanbadhon'
+    },
+    {
+      key: 'github',
+      label: 'GitHub',
+      value: 'ashifurrahmanbadhon',
+      url: contactData.github_url || contactData.github || 'https://github.com/ashifurrahmanbadhon'
+    },
+    {
+      key: 'location',
+      label: 'Location',
+      value: contactData.location || 'Tangail, Bangladesh',
+      url: contactData.maps_url || 'https://maps.google.com/?q=Tangail,+Bangladesh'
+    }
+  ];
+
   return (
     <PortfolioLayout>
       <PageHeader
-        breadcrumbs={[{ name: 'Contact' }]}
-        badgeText={header.badge_text}
         title={header.title}
         highlightWord={header.highlight_word}
         description={header.description}
       />
 
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           
-          {/* Left Column: Direct Contact Channels */}
+          {/* Left Column: Bordered channel rows — left mono faint label, right bold value; hover inset ring */}
           <div className="lg:col-span-5 space-y-6">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Contact Information</h2>
-              <p className="text-gray-400 text-xs sm:text-sm mt-2 leading-relaxed">
-                Connect through any preferred communication channel. All inquiries receive direct attention.
+              <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA]">
+                Communication Channels
+              </h2>
+              <p className="text-[#B9B5A9] text-xs sm:text-sm mt-2 leading-relaxed">
+                Reach out directly through any preferred channel. All inquiries are received directly.
               </p>
             </div>
 
-            <div className="space-y-3.5 pt-2">
-              {/* Email */}
-              {isChannelActive('email') && (
+            <div className="space-y-3">
+              {channelsList.filter(c => isChannelActive(c.key)).map((ch) => (
                 <a
-                  href={`mailto:${contactData.email || 'ashifur.badhon@gmail.com'}`}
+                  key={ch.key}
+                  href={ch.url}
+                  target={ch.url.startsWith('http') ? '_blank' : undefined}
+                  rel={ch.url.startsWith('http') ? 'noreferrer' : undefined}
                   className="block group cursor-pointer"
-                  title="Click to write an email"
                 >
-                  <SpotlightCard className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638]">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                        <Mail size={20} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 uppercase font-medium">Direct Email</p>
-                        <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
-                          Send an Email
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
-                      Write <ExternalLink size={13} />
+                  <div className="luxury-box p-4 sm:p-4.5 flex items-center justify-between transition-all">
+                    <span className="font-mono text-xs text-[#8E8B82] uppercase tracking-wider font-medium">
+                      {ch.label}
                     </span>
-                  </SpotlightCard>
-                </a>
-              )}
-
-              {/* Phone */}
-              {isChannelActive('phone') && (
-                <a
-                  href={`tel:${contactData.phone || '+8801521417284'}`}
-                  className="block group cursor-pointer"
-                  title="Click to make a phone call"
-                >
-                  <SpotlightCard className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638]">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                        <Phone size={20} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 uppercase font-medium">Direct Phone Call</p>
-                        <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
-                          Make a Call
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
-                      Call <ExternalLink size={13} />
+                    <span className="text-[#F5F2EA] font-bold text-sm tracking-wide group-hover:text-[#F59E0B] transition flex items-center gap-1.5">
+                      {ch.value}
+                      <ExternalLink size={12} className="text-[#8E8B82] group-hover:text-[#F59E0B]" />
                     </span>
-                  </SpotlightCard>
+                  </div>
                 </a>
-              )}
-
-              {/* WhatsApp */}
-              {isChannelActive('whatsapp') && (
-                <a
-                  href={contactData.whatsapp_url || `https://wa.me/${(contactData.phone || '+8801521417284').replace(/[^0-9]/g, '')}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block group cursor-pointer"
-                  title="Click to start WhatsApp instant chat"
-                >
-                  <SpotlightCard className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638]">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-11 h-11 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black transition shrink-0">
-                        <MessageCircle size={20} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 uppercase font-medium">WhatsApp Instant Chat</p>
-                        <p className="text-sm font-semibold text-white group-hover:text-emerald-400 transition">
-                          Start WhatsApp Chat
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2.5 shrink-0">
-                      <span className="text-[10px] font-semibold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        Online
-                      </span>
-                      <ExternalLink size={13} className="text-gray-400 group-hover:text-emerald-400 transition" />
-                    </div>
-                  </SpotlightCard>
-                </a>
-              )}
-
-              {/* LinkedIn */}
-              {isChannelActive('linkedin') && (
-                <a
-                  href={contactData.linkedin_url || contactData.linkedin || "https://www.linkedin.com/in/ashifurrahmanbadhon"}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block group cursor-pointer"
-                  title="Click to view LinkedIn profile and connect"
-                >
-                  <SpotlightCard className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638]">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                        <LinkedinIcon size={20} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 uppercase font-medium">LinkedIn Profile</p>
-                        <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
-                          Connect on LinkedIn
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
-                      Profile <ExternalLink size={13} />
-                    </span>
-                  </SpotlightCard>
-                </a>
-              )}
-
-              {/* GitHub */}
-              {isChannelActive('github') && (
-                <a
-                  href={contactData.github_url || contactData.github || "https://github.com/ashifurrahmanbadhon"}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block group cursor-pointer"
-                  title="Click to explore GitHub profile & code repositories"
-                >
-                  <SpotlightCard className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638]">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                        <GithubIcon size={20} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 uppercase font-medium">GitHub Profile</p>
-                        <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition truncate">
-                          Explore GitHub Profile
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
-                      GitHub <ExternalLink size={13} />
-                    </span>
-                  </SpotlightCard>
-                </a>
-              )}
-
-              {/* Location */}
-              {isChannelActive('location') && (
-                <a
-                  href={contactData.maps_url || "https://maps.google.com"}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block group cursor-pointer"
-                  title="Click to view location in Google Maps"
-                >
-                  <SpotlightCard className="flex items-center justify-between p-4 rounded-xl bg-[#111622] border border-[#1e2638]">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:bg-[#10B981] group-hover:text-black transition shrink-0">
-                        <MapPin size={20} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-gray-400 uppercase font-medium">Location</p>
-                        <p className="text-sm font-semibold text-white group-hover:text-[#10B981] transition">
-                          View on Google Maps
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-400 group-hover:text-[#10B981] transition flex items-center gap-1 shrink-0 font-medium">
-                      Maps <ExternalLink size={13} />
-                    </span>
-                  </SpotlightCard>
-                </a>
-              )}
+              ))}
             </div>
 
-            {/* Availability SLA Card */}
-            <SpotlightCard className="bg-[#0e131d] border border-[#1e2638] rounded-2xl p-5 space-y-2">
-              <div className="flex items-center gap-2 text-xs text-[#10B981] font-semibold">
-                <Clock size={14} />
-                <span>Response Time SLA</span>
+            {/* SLA Card */}
+            <div className="border border-[#23242B] bg-[#0A0B10] rounded-xl p-5 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] font-semibold">
+                <Clock size={13} />
+                <span>RESPONSE TIME SLA</span>
               </div>
-              <p className="text-xs text-gray-300 leading-relaxed">
-                Messages received via form or email are typically answered within 24 hours. For urgent inquiries, WhatsApp chat is prioritized.
+              <p className="text-xs text-[#B9B5A9] leading-relaxed">
+                Messages dispatched via this form or direct email are answered within 24 hours. For urgent project inquiries, WhatsApp is prioritized.
               </p>
-            </SpotlightCard>
+            </div>
           </div>
 
-          {/* Right Column: Interactive Form */}
-          <SpotlightCard className="lg:col-span-7 bg-[#111622] p-8 sm:p-10 rounded-2xl border border-[#1e2638] shadow-2xl relative">
+          {/* Right Column: Form (SAME fields, validation, submit, success behavior; restyled) */}
+          <div className="lg:col-span-7 luxury-box p-8 sm:p-10 shadow-2xl relative">
             <div className="mb-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 group-hover:text-[#10B981] transition">Send an Instant Message</h3>
-              <p className="text-xs sm:text-sm text-gray-400">
+              <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-2">
+                Send a Direct Message
+              </h3>
+              <p className="text-xs sm:text-sm text-[#B9B5A9]">
                 Submit this form to record your inquiry directly in Ashifur's database and dispatch it immediately.
               </p>
             </div>
 
             {formSubmitted && (
-              <div className="mb-6 p-4 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs sm:text-sm font-semibold flex items-center gap-3 animate-in fade-in duration-300">
+              <div className="mb-6 p-4 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#F59E0B] text-xs sm:text-sm font-semibold flex items-center gap-3 animate-in fade-in duration-300">
                 <Check size={18} className="shrink-0" />
-                <span>Inquiry saved in system database! Launching your email client to finalize dispatch...</span>
+                <span>Inquiry recorded! Opening your default email client to finalize dispatch...</span>
               </div>
             )}
 
             <form onSubmit={handleContactSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
-                    Your Name <span className="text-[#10B981]">*</span>
+                  <label className="block text-xs font-mono text-[#8E8B82] uppercase mb-2 font-medium">
+                    Your Name <span className="text-[#F59E0B]">*</span>
                   </label>
                   <input
                     type="text"
@@ -338,12 +184,12 @@ export default function ContactPage() {
                     placeholder="e.g. Engr. Tanvir Ahmed"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-[#0b0f17] border border-[#1e2638] rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition"
+                    className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
-                    Your Email <span className="text-[#10B981]">*</span>
+                  <label className="block text-xs font-mono text-[#8E8B82] uppercase mb-2 font-medium">
+                    Your Email <span className="text-[#F59E0B]">*</span>
                   </label>
                   <input
                     type="email"
@@ -351,14 +197,14 @@ export default function ContactPage() {
                     placeholder="e.g. tanvir@powercorp.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-[#0b0f17] border border-[#1e2638] rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition"
+                    className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
-                  Subject / Inquiry Type <span className="text-[#10B981]">*</span>
+                <label className="block text-xs font-mono text-[#8E8B82] uppercase mb-2 font-medium">
+                  Subject / Inquiry Type <span className="text-[#F59E0B]">*</span>
                 </label>
                 <input
                   type="text"
@@ -366,13 +212,13 @@ export default function ContactPage() {
                   placeholder="e.g. Substation SLD Consultation / GIS Project / Recruitment"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full bg-[#0b0f17] border border-[#1e2638] rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition"
+                  className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 uppercase mb-2 font-medium">
-                  Detailed Message <span className="text-[#10B981]">*</span>
+                <label className="block text-xs font-mono text-[#8E8B82] uppercase mb-2 font-medium">
+                  Detailed Message <span className="text-[#F59E0B]">*</span>
                 </label>
                 <textarea
                   rows={5}
@@ -380,7 +226,7 @@ export default function ContactPage() {
                   placeholder="Detail your engineering specifications, project timeline, location, or opportunity details..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-[#0b0f17] border border-[#1e2638] rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[#10B981] transition resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] rounded-xl px-4 py-3.5 text-sm text-[#F5F2EA] placeholder-[#8E8B82] focus:outline-none focus:border-[#F59E0B] focus:ring-1 focus:ring-[#F59E0B] transition resize-none leading-relaxed"
                 />
               </div>
 
@@ -393,12 +239,12 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-4 rounded-xl bg-[#10B981] text-black font-bold uppercase tracking-wider text-xs sm:text-sm hover:bg-[#059669] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] transition duration-300 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                className="btn-amber-solid w-full py-4 rounded-xl uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
               >
-                <Send size={16} /> {submitting ? "Saving & Sending..." : "Send Direct Message"}
+                <Send size={15} /> {submitting ? "Recording & Dispatching..." : "Send Direct Message"}
               </button>
             </form>
-          </SpotlightCard>
+          </div>
 
         </div>
       </section>

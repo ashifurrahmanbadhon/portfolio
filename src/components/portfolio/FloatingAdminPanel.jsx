@@ -110,10 +110,10 @@ export default function FloatingAdminPanel() {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Admin Panel"
         aria-expanded={isOpen}
-        className="fixed bottom-[22px] left-[22px] z-40 flex items-center gap-2 h-11 px-4 rounded-full bg-[#111622]/90 backdrop-blur-md border border-[#1e2638] text-white/90 hover:text-white hover:border-[#10B981] shadow-lg shadow-black/40 text-[13px] font-semibold transition-all duration-200 cursor-pointer select-none"
+        className="fixed bottom-[22px] left-[22px] z-40 flex items-center gap-2 h-11 px-4 rounded-full bg-[#0A0B10]/95 backdrop-blur-md border border-[#23242B] text-[#F5F2EA] hover:text-[#F59E0B] hover:border-[#F59E0B]/60 shadow-lg shadow-black/40 text-[13px] font-semibold transition-all duration-200 cursor-pointer select-none"
       >
-        <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-        <Shield size={14} className="text-[#10B981]" />
+        <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-pulse" />
+        <Shield size={14} className="text-[#F59E0B]" />
         <span>Admin</span>
       </button>
 
@@ -122,18 +122,18 @@ export default function FloatingAdminPanel() {
         <div
           role="dialog"
           aria-label="Admin Quick Links"
-          className="fixed bottom-[74px] left-[22px] z-40 w-[270px] max-w-[calc(100vw-44px)] bg-[#0b0f19] border border-[#1e2638] rounded-2xl shadow-2xl p-3 space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-[74px] left-[22px] z-40 w-[270px] max-w-[calc(100vw-44px)] bg-[#0A0B10] border border-[#23242B] rounded-2xl shadow-2xl p-3 space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-200"
         >
           {/* Header Row */}
-          <div className="flex items-center justify-between px-2 py-1.5 border-b border-[#1e2638]/70 mb-1">
+          <div className="flex items-center justify-between px-2 py-1.5 border-b border-[#23242B] mb-1">
             <div className="flex items-center gap-2">
-              <Shield size={15} className="text-[#10B981]" />
-              <span className="text-xs font-bold text-white tracking-wide">Central Admin</span>
+              <Shield size={15} className="text-[#F59E0B]" />
+              <span className="text-xs font-bold text-[#F5F2EA] tracking-wide">Central Admin</span>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-[#161e30] transition cursor-pointer"
+              className="p-1 rounded-lg text-[#8E8B82] hover:text-white hover:bg-white/5 transition cursor-pointer"
               aria-label="Close admin panel"
             >
               <X size={15} />
@@ -144,22 +144,22 @@ export default function FloatingAdminPanel() {
           <Link
             href="/admin"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-[#161e30] transition cursor-pointer"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5 transition cursor-pointer"
           >
-            <LayoutDashboard size={15} className="text-emerald-400" />
+            <LayoutDashboard size={15} className="text-[#F59E0B]" />
             <span>Admin Dashboard</span>
           </Link>
 
           <Link
             href="/settings"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-[#161e30] transition cursor-pointer"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5 transition cursor-pointer"
           >
-            <Settings size={15} className="text-amber-400" />
+            <Settings size={15} className="text-[#F59E0B]" />
             <span>Settings</span>
           </Link>
 
-          <div className="border-t border-[#1e2638]/70 my-1 pt-1" />
+          <div className="border-t border-[#23242B] my-1 pt-1" />
 
           {/* Log Out Button */}
           <button

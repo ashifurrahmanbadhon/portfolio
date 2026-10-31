@@ -6,8 +6,8 @@ const SpotlightCard = memo(function SpotlightCard({
   children,
   className = "",
   contentClassName = "",
-  spotlightColor = "rgba(16, 185, 129, 0.12)",
-  borderColor = "rgba(16, 185, 129, 0.45)",
+  spotlightColor = "rgba(245, 158, 11, 0.12)",
+  borderColor = "rgba(245, 158, 11, 0.45)",
   ...props
 }) {
   const cardRef = useRef(null);
@@ -26,7 +26,7 @@ const SpotlightCard = memo(function SpotlightCard({
     <div
       ref={cardRef}
       onPointerMove={handlePointerMove}
-      className={`group relative rounded-2xl bg-[#0B0F17] border border-[#1E2638] overflow-hidden transition-all duration-300 hover:scale-[1.01] hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-950/20 ${className}`}
+      className={`group relative rounded-2xl bg-[#0A0B10] border border-[#23242B] overflow-hidden transition-all duration-300 ${className}`}
       style={{
         "--spotlight-x": "-999px",
         "--spotlight-y": "-999px",
