@@ -21,7 +21,7 @@ import {
   DEFAULT_WORK_PACKAGES
 } from '@/lib/portfolioDefaults';
 
-const CACHE_KEY = 'portfolio_cms_cache_v6';
+const CACHE_KEY = 'portfolio_cms_cache_v7';
 let inMemorySessionCache = null;
 const PortfolioContext = createContext(null);
 
@@ -287,10 +287,8 @@ export function PortfolioProvider({ children }) {
           setIsLoaded(true);
         }
       } catch (_) {}
-      loadContent();
-    } else {
-      loadContent();
     }
+    loadContent(true);
 
     // Listen to admin update events for live sync without reload
     const handleSync = () => {
