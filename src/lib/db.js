@@ -705,7 +705,11 @@ export async function getPortfolioContent() {
     } catch {
       points = [];
     }
-    return { ...r, description_points: points };
+    const roleLower = (r.role || "").toLowerCase();
+    const tools = roleLower.includes("executive")
+      ? ["MS Excel", "Data Analytics", "Work Planning", "Operational Reporting"]
+      : ["Substation Maintenance", "Switchgear", "Transformer Inspection", "Single Line Diagrams"];
+    return { ...r, description_points: points, tools };
   });
 
   const educations = (eduRows || []).map((ed) => {
