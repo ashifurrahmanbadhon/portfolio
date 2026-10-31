@@ -2737,7 +2737,7 @@ function AdminConsoleContent() {
 
           {/* RIGHT COLUMN: Live Simulation Rail (only for editable pages with live preview) */}
           {hasLiveRail && (
-            <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0">
+            <div className="w-full lg:w-[400px] xl:w-[460px] lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] h-[70vh] min-h-[500px] shrink-0 flex flex-col">
               <LivePreviewPanel
                 url={railTargetUrl}
                 draftSection={railDraftSection}

@@ -13,7 +13,7 @@ import {
 /**
  * LivePreviewPanel (Reference 2 Design - Compact Rail Component)
  * Flat, lightweight live simulation preview panel with Desktop / Mobile viewport toggle,
- * traffic light browser chrome, auto-scaling mobile frame, and bidirectional draft synchronization.
+ * traffic light browser chrome, auto-scaling fitted frames, and bidirectional draft synchronization.
  */
 export default function LivePreviewPanel({
   url = "/",
@@ -31,8 +31,8 @@ export default function LivePreviewPanel({
   const [loading, setLoading] = useState(true);
   const iframeRef = useRef(null);
   const stageRef = useRef(null);
-  const [mobileScale, setMobileScale] = useState(1);
-  const [desktopScale, setDesktopScale] = useState(1);
+  const [mobileScale, setMobileScale] = useState(null);
+  const [desktopScale, setDesktopScale] = useState(null);
   const debounceTimerRef = useRef(null);
 
   // Clean URL for open-in-new-tab link (no cms_preview param)
@@ -87,56 +87,96 @@ export default function LivePreviewPanel({
     return () => window.removeEventListener("message", handleMessage);
   }, [sendDraft]);
 
-  // Auto-scale mobile frame (390x844) to fit stage without overflowing
+  // Trigger loading spinner when preview URL changes
   useEffect(() => {
-    if (!stageRef.current || device !== "mobile" || collapsed) return;
+    setLoading(true);
+  }, [url]);
 
-    const calculateScale = () => {
-      if (!stageRef.current) return;
-      const { clientWidth, clientHeight } = stageRef.current;
-      const targetW = 390 + 24; // 390px + margin
-      const targetH = 844 + 24; // 844px + margin
-      const scaleX = clientWidth / targetW;
-      const scaleY = clientHeight / targetH;
-      const s = Math.min(1, Math.min(scaleX, scaleY));
-      setMobileScale(Math.max(0.25, s));
-    };
+  // Compute exact scale factors so preview frames fit inside stage without overflowing
+  const calculateScale = useCallback(() => {
+    const el = stageRef.current;
+    if (!el || collapsed) return;
+
+    const rect = el.getBoundingClientRect();
+    const stageW = el.clientWidth || rect.width;
+    const stageH = el.clientHeight || rect.height;
+
+    if (stageW <= 0 || stageH <= 0) return;
+
+    // Desktop: logical 1440x900. Target 1464x924 (padding included), capped at 1
+    const sDesktopFit = Math.min(
+      1,
+      Math.min((stageW - 24) / 1440, (stageH - 24) / 900, stageW / 1464, stageH / 924)
+    );
+    setDesktopScale(Math.max(0.05, sDesktopFit));
+
+    // Mobile: logical 390x844. Target 414x868 (padding included), capped at 1
+    const sMobileFit = Math.min(
+      1,
+      Math.min((stageW - 24) / 390, (stageH - 24) / 844, stageW / 414, stageH / 868)
+    );
+    setMobileScale(Math.max(0.05, sMobileFit));
+  }, [collapsed]);
+
+  // Recompute scale on mount, stage resize, tab visibility, device switch, url change, or uncollapse
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
 
     calculateScale();
-    const ro = new ResizeObserver(calculateScale);
-    ro.observe(stageRef.current);
-    return () => ro.disconnect();
-  }, [device, collapsed]);
 
-  // Auto-scale desktop frame (1440x900) to fit stage without overflowing
-  useEffect(() => {
-    if (!stageRef.current || device !== "desktop" || collapsed) return;
+    let ro = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(() => {
+        calculateScale();
+      });
+      ro.observe(el);
+    }
 
-    const calculateScale = () => {
-      if (!stageRef.current) return;
-      const { clientWidth, clientHeight } = stageRef.current;
-      const targetW = 1440 + 24; // 1440px + margin
-      const targetH = 900 + 24;  // 900px + margin
-      const scaleX = clientWidth / targetW;
-      const scaleY = clientHeight / targetH;
-      const s = Math.min(1, Math.min(scaleX, scaleY));
-      setDesktopScale(Math.max(0.2, s));
+    let io = null;
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            calculateScale();
+          }
+        }
+      });
+      io.observe(el);
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        calculateScale();
+      }
     };
 
-    calculateScale();
-    const ro = new ResizeObserver(calculateScale);
-    ro.observe(stageRef.current);
-    return () => ro.disconnect();
-  }, [device, collapsed]);
+    window.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("resize", calculateScale);
+    window.addEventListener("focus", calculateScale);
+
+    return () => {
+      if (ro) ro.disconnect();
+      if (io) io.disconnect();
+      window.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("resize", calculateScale);
+      window.removeEventListener("focus", calculateScale);
+    };
+  }, [calculateScale, device, url, collapsed]);
 
   const handleRefresh = () => {
     setLoading(true);
     setIframeKey((prev) => prev + 1);
   };
 
+  const isScaleReady =
+    device === "desktop"
+      ? desktopScale !== null && desktopScale > 0
+      : mobileScale !== null && mobileScale > 0;
+
   return (
     <div
-      className={`w-full rounded-2xl bg-[#0A0B10] border border-[#23242B] overflow-hidden flex flex-col transition-colors duration-150 ${className}`}
+      className={`w-full bg-[#0A0B10] border border-[#23242B] overflow-hidden flex flex-col transition-colors duration-150 ${className}`}
     >
       {/* Browser Chrome Bar */}
       <div className="px-3 py-2.5 bg-[#06070B] border-b border-[#23242B] flex items-center justify-between gap-2 select-none shrink-0">
@@ -155,7 +195,7 @@ export default function LivePreviewPanel({
 
         {/* Center: URL Pill */}
         <div className="flex-1 min-w-0 max-w-[160px] sm:max-w-[220px] mx-1">
-          <div className="w-full bg-[#0A0B10] border border-[#23242B] px-2.5 py-0.5 rounded-full text-[10px] font-mono text-[#F59E0B] text-center truncate">
+          <div className="w-full bg-[#0A0B10] border border-[#23242B] px-2.5 py-0.5 text-[10px] font-mono text-[#F59E0B] text-center truncate">
             {cleanUrl}
           </div>
         </div>
@@ -163,11 +203,14 @@ export default function LivePreviewPanel({
         {/* Right: Controls (Desktop/Mobile Toggle, Refresh, Open New Tab, Collapse) */}
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Segmented Desktop / Mobile Toggle */}
-          <div className="flex items-center p-0.5 rounded-lg bg-[#0A0B10] border border-[#23242B] text-[11px] font-mono">
+          <div className="flex items-center p-0.5 bg-[#0A0B10] border border-[#23242B] text-[11px] font-mono">
             <button
               type="button"
-              onClick={() => setDevice("desktop")}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded transition-colors duration-150 cursor-pointer ${
+              onClick={() => {
+                setDevice("desktop");
+                calculateScale();
+              }}
+              className={`flex items-center gap-1 px-2 py-0.5 transition-colors duration-150 cursor-pointer ${
                 device === "desktop"
                   ? "bg-[#F59E0B] text-[#06070B] font-bold"
                   : "text-[#8E8B82] hover:text-[#F5F2EA]"
@@ -179,8 +222,11 @@ export default function LivePreviewPanel({
             </button>
             <button
               type="button"
-              onClick={() => setDevice("mobile")}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded transition-colors duration-150 cursor-pointer ${
+              onClick={() => {
+                setDevice("mobile");
+                calculateScale();
+              }}
+              className={`flex items-center gap-1 px-2 py-0.5 transition-colors duration-150 cursor-pointer ${
                 device === "mobile"
                   ? "bg-[#F59E0B] text-[#06070B] font-bold"
                   : "text-[#8E8B82] hover:text-[#F5F2EA]"
@@ -196,7 +242,7 @@ export default function LivePreviewPanel({
           <button
             type="button"
             onClick={handleRefresh}
-            className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
+            className="p-1 bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
             title="Reload Preview"
           >
             <RotateCcw className="w-3 h-3" />
@@ -207,7 +253,7 @@ export default function LivePreviewPanel({
             href={cleanUrl}
             target="_blank"
             rel="noreferrer"
-            className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
+            className="p-1 bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
             title="Open in New Tab"
           >
             <ExternalLink className="w-3 h-3" />
@@ -218,7 +264,7 @@ export default function LivePreviewPanel({
             <button
               type="button"
               onClick={() => setCollapsed((prev) => !prev)}
-              className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
+              className="p-1 bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition-colors duration-150 cursor-pointer"
               title={collapsed ? "Expand Simulation" : "Collapse Simulation"}
               aria-label={collapsed ? "Expand Simulation" : "Collapse Simulation"}
             >
@@ -236,82 +282,100 @@ export default function LivePreviewPanel({
       {!collapsed && (
         <div
           ref={stageRef}
-          className="flex-1 min-h-[300px] relative bg-[#06070B] p-2.5 sm:p-3 flex items-center justify-center overflow-hidden"
+          className="flex-1 min-h-0 relative bg-[#06070B] p-2.5 sm:p-3 flex items-center justify-center overflow-hidden w-full"
         >
-          {/* Loading Indicator */}
-          {loading && (
-            <div className="absolute inset-0 z-10 bg-[#06070B]/85 flex flex-col items-center justify-center gap-1.5 text-[#8E8B82]">
+          {/* Fitting placeholder: Never render unscaled iframe before scale is ready */}
+          {!isScaleReady ? (
+            <div className="absolute inset-0 z-10 bg-[#06070B] flex flex-col items-center justify-center gap-1.5 text-[#8E8B82]">
               <Loader2 className="w-5 h-5 animate-spin text-[#F59E0B]" />
-              <span className="text-[11px] font-mono">Loading simulation...</span>
-            </div>
-          )}
-
-          {device === "desktop" ? (
-            /* DESKTOP VIEWPORT (1440x900 logical viewport scaled to fit stage) */
-            <div
-              style={{
-                width: 1440 * desktopScale,
-                height: 900 * desktopScale,
-              }}
-              className="rounded-xl overflow-hidden border border-[#23242B] bg-[#06070B] shrink-0 relative"
-            >
-              <div
-                style={{
-                  width: 1440,
-                  height: 900,
-                  transform: `scale(${desktopScale})`,
-                  transformOrigin: "top left",
-                }}
-              >
-                <iframe
-                  key={`desktop-${iframeKey}-${url}`}
-                  ref={iframeRef}
-                  src={previewUrl}
-                  title="Live preview"
-                  sandbox="allow-same-origin allow-scripts"
-                  onLoad={() => {
-                    setLoading(false);
-                    sendDraft();
-                  }}
-                  className="w-full h-full border-0 block"
-                />
-              </div>
+              <span className="text-[11px] font-mono">Fitting simulation...</span>
             </div>
           ) : (
-            /* MOBILE VIEWPORT (Device Frame 390x844 scaled to container) */
-            <div
-              style={{
-                width: 390,
-                height: 844,
-                transform: `scale(${mobileScale})`,
-                transformOrigin: "center center",
-              }}
-              className="rounded-[28px] border-[3px] border-[#23242B] bg-black shrink-0 relative flex flex-col overflow-hidden shadow-md"
-            >
-              {/* Notch */}
-              <div className="w-full h-5 bg-[#06070B] flex items-center justify-center shrink-0 border-b border-[#23242B]/50">
-                <div className="w-16 h-2.5 bg-black rounded-full" />
-              </div>
+            <>
+              {/* Loading Indicator while iframe navigates */}
+              {loading && (
+                <div className="absolute inset-0 z-10 bg-[#06070B]/85 flex flex-col items-center justify-center gap-1.5 text-[#8E8B82] pointer-events-none">
+                  <Loader2 className="w-5 h-5 animate-spin text-[#F59E0B]" />
+                  <span className="text-[11px] font-mono">Loading simulation...</span>
+                </div>
+              )}
 
-              {/* Iframe */}
-              <iframe
-                key={`mobile-${iframeKey}-${url}`}
-                ref={iframeRef}
-                src={previewUrl}
-                title="Live preview (Mobile)"
-                sandbox="allow-same-origin allow-scripts"
-                onLoad={() => {
-                    setLoading(false);
-                    sendDraft();
-                }}
-                className="w-full flex-1 border-0 bg-[#06070B]"
-              />
+              {device === "desktop" ? (
+                /* DESKTOP VIEWPORT (1440x900 logical viewport scaled to fit stage) */
+                <div
+                  style={{
+                    width: Math.round(1440 * desktopScale),
+                    height: Math.round(900 * desktopScale),
+                  }}
+                  className="border border-[#23242B] bg-[#06070B] shrink-0 relative overflow-hidden"
+                >
+                  <div
+                    style={{
+                      width: 1440,
+                      height: 900,
+                      transform: `scale(${desktopScale})`,
+                      transformOrigin: "top left",
+                    }}
+                  >
+                    <iframe
+                      key={`desktop-${iframeKey}-${cleanUrl}`}
+                      ref={iframeRef}
+                      src={previewUrl}
+                      title="Live preview"
+                      sandbox="allow-same-origin allow-scripts"
+                      onLoad={() => {
+                        setLoading(false);
+                        sendDraft();
+                      }}
+                      className="w-full h-full border-0 block"
+                    />
+                  </div>
+                </div>
+              ) : (
+                /* MOBILE VIEWPORT (Device Frame 390x844 scaled to stage) */
+                <div
+                  style={{
+                    width: Math.round(390 * mobileScale),
+                    height: Math.round(844 * mobileScale),
+                  }}
+                  className="shrink-0 relative overflow-hidden"
+                >
+                  <div
+                    style={{
+                      width: 390,
+                      height: 844,
+                      transform: `scale(${mobileScale})`,
+                      transformOrigin: "top left",
+                    }}
+                    className="rounded-[28px] border-[3px] border-[#23242B] bg-black relative flex flex-col overflow-hidden shadow-md"
+                  >
+                    {/* Notch */}
+                    <div className="w-full h-5 bg-[#06070B] flex items-center justify-center shrink-0 border-b border-[#23242B]/50">
+                      <div className="w-16 h-2.5 bg-black rounded-full" />
+                    </div>
 
-              {/* Bottom Home Indicator */}
-              <div className="w-full h-3.5 bg-[#06070B] flex items-center justify-center shrink-0 border-t border-[#23242B]/50">
-                <div className="w-24 h-1 bg-[#23242B] rounded-full" />
-              </div>
-            </div>
+                    {/* Iframe */}
+                    <iframe
+                      key={`mobile-${iframeKey}-${cleanUrl}`}
+                      ref={iframeRef}
+                      src={previewUrl}
+                      title="Live preview (Mobile)"
+                      sandbox="allow-same-origin allow-scripts"
+                      onLoad={() => {
+                        setLoading(false);
+                        sendDraft();
+                      }}
+                      className="w-full flex-1 border-0 bg-[#06070B]"
+                    />
+
+                    {/* Bottom Home Indicator */}
+                    <div className="w-full h-3.5 bg-[#06070B] flex items-center justify-center shrink-0 border-t border-[#23242B]/50">
+                      <div className="w-24 h-1 bg-[#23242B] rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
