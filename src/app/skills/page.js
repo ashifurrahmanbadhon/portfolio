@@ -105,7 +105,6 @@ export default function SkillsPage() {
                     key={idx}
                     className="tag-plain border border-[#23242B] text-[#8E8B82] bg-[#0A0B10] group-hover:border-[#F59E0B]/70 group-hover:text-[#FBBF24] rounded-full px-3.5 py-2 text-xs font-mono flex items-center gap-2"
                   >
-                    <span className="text-[#F59E0B]">✦</span>
                     <span>{name}</span>
                     {cat && <span className="text-[10px] text-[#8E8B82] group-hover:text-[#FBBF24]/70">({cat})</span>}
                   </span>

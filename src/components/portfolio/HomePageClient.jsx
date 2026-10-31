@@ -181,7 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. HIGHLIGHTS: Bordered 4-cell grid, CountUp for numeric values */}
+      {/* 2. HIGHLIGHTS: 4 separate stat-boxes with complete borders on all 4 sides */}
       {highlights && highlights.length > 0 && (
         <section className="relative z-10 px-6 md:px-12 py-12 max-w-7xl mx-auto">
           <motion.div
@@ -189,13 +189,13 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="border border-[#23242B] bg-[#0A0B10] grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#23242B] overflow-hidden"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
           >
             {highlights.map((h, i) => {
               const rawVal = String(h.metric_value || '').trim();
               const numMatch = rawVal.match(/^(\d+)(.*)$/);
               return (
-                <div key={i} className="stat-box border-0 px-[22px] py-[26px] text-left flex flex-col justify-center">
+                <div key={i} className="stat-box px-[22px] py-[26px] text-left flex flex-col justify-center">
                   <p className="text-[38px] font-extrabold text-[#F5F2EA] tracking-tight leading-none">
                     {numMatch ? (
                       <CountUp to={parseInt(numMatch[1], 10)} suffix={numMatch[2]} />
@@ -378,11 +378,11 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="border border-[#23242B] bg-[#0A0B10] overflow-hidden divide-y divide-[#23242B]">
+            <div className="flex flex-col gap-8">
               {experiences.slice(0, 2).map((exp, idx) => (
                 <div
                   key={idx}
-                  className="stat-box border-0 p-6 sm:p-8 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-start"
+                  className="stat-box group p-6 sm:p-8 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-start"
                 >
                   <div>
                     <span className="font-mono text-xs text-[#F59E0B] font-semibold block">
