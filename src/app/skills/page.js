@@ -29,8 +29,8 @@ export default function SkillsPage() {
       />
 
       {/* Main Technical Domains: Groups as 2-col hairline grid cells (bg page color, gap 1px over hairline bg) */}
-      <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="mb-12">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-7xl mx-auto">
+        <div className="mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-[#F5F2EA]">
             Domain Competency Ratings
           </h2>
@@ -40,11 +40,11 @@ export default function SkillsPage() {
         </div>
 
         {/* Domain Competency Ratings */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12 sm:mb-16">
           {skillsData.map((category, idx) => (
             <div
               key={idx}
-              className="stat-box bg-[#0A0B10] p-6 sm:p-10 flex flex-col justify-between"
+              className="stat-box bg-[#0A0B10] p-5 sm:p-10 flex flex-col justify-between"
             >
               <div>
                 {/* Group title uppercase with mono amber index */}

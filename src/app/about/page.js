@@ -74,8 +74,8 @@ export default function AboutPage() {
       />
 
       {/* Main Narrative & Profile Section: Bordered box, grid 1.32fr/.68fr, align start */}
-      <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="stat-box group p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-7xl mx-auto">
+        <div className="stat-box group p-5 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-8 sm:gap-10 items-start shadow-xl">
           
           {/* Left Column: All existing about fields + focus chips (hairline chips, mono) */}
           <div className="space-y-6">
@@ -173,8 +173,8 @@ export default function AboutPage() {
 
       {/* Pillars of Engineering Competency */}
       {pillars && pillars.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
-          <div className="mb-12">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-7xl mx-auto">
+          <div className="mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-[#F5F2EA]">
               Engineering Domains &amp; Capabilities
             </h2>
@@ -189,7 +189,7 @@ export default function AboutPage() {
               return (
                 <div
                   key={idx}
-                  className="stat-box p-7 flex flex-col justify-between"
+                  className="stat-box p-5 sm:p-7 flex flex-col justify-between"
                 >
                   <div>
                     <div className="w-11 h-11 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
@@ -215,8 +215,8 @@ export default function AboutPage() {
       )}
 
       {/* CTA Bar */}
-      <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
-        <div className="stat-box p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-16 max-w-5xl mx-auto">
+        <div className="stat-box p-6 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1.5">
             <h3 className="text-xl font-bold uppercase tracking-tight text-[#F5F2EA]">
               Have a Project in Mind?

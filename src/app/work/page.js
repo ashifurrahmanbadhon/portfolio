@@ -28,9 +28,9 @@ export default function WorkPage() {
         description={header.description}
       />
 
-      <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-7xl mx-auto">
         {/* Count indicator */}
-        <div className="flex justify-between items-center mb-8 text-xs font-mono text-[#8E8B82]">
+        <div className="flex justify-between items-center mb-6 sm:mb-8 text-xs font-mono text-[#8E8B82]">
           <span>
             SHOWING <strong className="text-[#F5F2EA]">{packagesList.length}</strong> OF{' '}
             <strong className="text-[#F59E0B]">{packagesList.length}</strong> PACKAGES
@@ -39,7 +39,7 @@ export default function WorkPage() {
         </div>
 
         {/* 2-col Grid (1-col mobile), gap 20px */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12 sm:mb-16">
           {packagesList.map((pkg, idx) => {
             const presetNumber = String(pkg.sort_order || idx + 1).padStart(2, '0');
             const deliverables = (pkg.deliverables || '')
@@ -54,26 +54,26 @@ export default function WorkPage() {
             return (
               <div
                 key={pkg.id || idx}
-                className="stat-box group p-6 sm:p-8 flex flex-col justify-between"
+                className="stat-box group p-5 sm:p-8 flex flex-col justify-between"
               >
                 <div>
-                  {/* Top row: left amber PRESET — 01, right faint category */}
-                  <div className="flex items-center justify-between font-mono text-xs mb-3">
-                    <span className="text-[#F59E0B] font-bold tracking-wider">
+                  {/* Top row: left amber PRESET — 01, right faint category (no collision on mobile) */}
+                  <div className="flex items-center justify-between gap-2 font-mono text-xs mb-3">
+                    <span className="text-[#F59E0B] font-bold tracking-wider shrink-0">
                       PRESET — {presetNumber}
                     </span>
-                    <span className="text-[#8E8B82] uppercase tracking-wider font-medium">
+                    <span className="text-[#8E8B82] uppercase tracking-wider font-medium text-[11px] sm:text-xs truncate text-right">
                       {pkg.category || 'SERVICE'}
                     </span>
                   </div>
 
                   {/* Title (Inter Tight 26px font-black) */}
-                  <h2 className="text-2xl sm:text-[26px] font-black uppercase tracking-tight text-[#F5F2EA] mb-2 leading-tight">
+                  <h2 className="text-xl sm:text-[26px] font-black uppercase tracking-tight text-[#F5F2EA] mb-2 leading-tight break-words">
                     {pkg.title}
                   </h2>
 
                   {/* Description */}
-                  <p className="text-xs sm:text-sm text-[#B9B5A9] leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-[#B9B5A9] leading-relaxed mb-5 sm:mb-6">
                     {pkg.description}
                   </p>
 
@@ -96,7 +96,7 @@ export default function WorkPage() {
                 <div>
                   {/* Tags as passive pills (.tag-plain behavior) */}
                   {tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-4 border-t border-[#23242B] mb-6">
+                    <div className="flex flex-wrap gap-2 pt-4 border-t border-[#23242B] mb-5 sm:mb-6">
                       {tags.map((tag, tIdx) => (
                         <span
                           key={tIdx}
@@ -115,7 +115,7 @@ export default function WorkPage() {
                       setSelectedPackage(pkg);
                       setSelectedIndex(idx);
                     }}
-                    className="stat-box w-full py-3 px-4 text-center text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] block no-underline transition cursor-pointer"
+                    className="stat-box w-full min-h-[44px] py-3 px-4 text-center text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] block no-underline transition cursor-pointer"
                   >
                     Discuss This Package &rarr;
                   </button>
@@ -126,16 +126,16 @@ export default function WorkPage() {
         </div>
 
         {/* Bottom CTA stat-box */}
-        <div className="stat-box p-8 sm:p-12 text-center max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA] mb-4">
+        <div className="stat-box p-6 sm:p-12 text-center max-w-4xl mx-auto">
+          <h2 className="text-xl sm:text-3xl font-black uppercase tracking-tight text-[#F5F2EA] mb-3 sm:mb-4">
             {siteTexts?.work_bottom_cta_title || "Need something different?"}
           </h2>
-          <p className="text-sm sm:text-base text-[#B9B5A9] max-w-2xl mx-auto mb-8 leading-relaxed">
+          <p className="text-xs sm:text-base text-[#B9B5A9] max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed">
             {siteTexts?.work_bottom_cta_desc || "If your requirement does not match a package, describe it in a few lines — I will tell you honestly if I can do it, how long it takes, and what it costs."}
           </p>
           <Link
             href="/contact"
-            className="stat-box inline-block py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
+            className="stat-box inline-flex items-center justify-center min-h-[44px] py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
           >
             {siteTexts?.work_bottom_cta_btn || "Contact Me"}
           </Link>

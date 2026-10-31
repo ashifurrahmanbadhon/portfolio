@@ -78,6 +78,7 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [showMobileDeliverables, setShowMobileDeliverables] = useState(false);
 
   useEffect(() => {
     if (pkg) {
@@ -91,16 +92,26 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
       setSubmitting(false);
       setSubmitted(false);
       setError('');
+      setShowMobileDeliverables(false);
     }
   }, [pkg]);
 
   useEffect(() => {
     if (!isOpen) return;
+
+    // Lock background scroll when modal is open
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen, onClose]);
 
   if (!isOpen || !pkg) return null;
@@ -161,24 +172,71 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-[820px] bg-[#0A0B10] border border-[#23242B] shadow-2xl my-auto grid grid-cols-1 md:grid-cols-[290px_1fr] overflow-hidden">
-        {/* Close button */}
+      <div className="relative w-full max-w-[820px] max-h-[92dvh] md:max-h-none bg-[#0A0B10] border border-[#23242B] shadow-2xl my-auto flex flex-col md:grid md:grid-cols-[290px_1fr] overflow-y-auto md:overflow-hidden">
+        {/* Close button with ≥40px touch target */}
         <button
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-4 right-4 z-20 text-[#8E8B82] hover:text-[#F5F2EA] transition p-1.5 cursor-pointer"
+          className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 z-30 text-[#8E8B82] hover:text-[#F5F2EA] transition w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer"
         >
-          <X size={18} />
+          <X size={20} />
         </button>
 
-        {/* LEFT RAIL (bg #06070B, right hairline) */}
-        <div className="bg-[#06070B] border-b md:border-b-0 md:border-r border-[#23242B] p-6 sm:p-7 flex flex-col justify-between">
+        {/* MOBILE TOP SUMMARY (md:hidden) — compact header, title, collapsible WHAT YOU GET, note kept */}
+        <div className="md:hidden bg-[#06070B] border-b border-[#23242B] p-4 sm:p-5 pr-12">
+          <div className="flex items-center gap-2 font-mono text-xs mb-1">
+            <span className="text-[#F59E0B] font-bold tracking-wider">
+              PRESET — {presetNumber}
+            </span>
+            <span className="text-[#8E8B82]">•</span>
+            <span className="text-[#8E8B82] uppercase tracking-wider font-medium text-[11px] truncate">
+              {pkg.category || 'SERVICE'}
+            </span>
+          </div>
+
+          <h3 className="text-lg font-black uppercase tracking-tight text-[#F5F2EA] leading-tight mb-2">
+            {pkg.title}
+          </h3>
+
+          {/* Collapsible WHAT YOU GET on mobile */}
+          <div className="mt-2 pt-2 border-t border-[#23242B]/70">
+            <button
+              type="button"
+              onClick={() => setShowMobileDeliverables(!showMobileDeliverables)}
+              className="flex items-center justify-between w-full font-mono text-[10px] font-bold uppercase tracking-wider text-[#8E8B82] hover:text-[#F59E0B] py-1 cursor-pointer"
+            >
+              <span>WHAT YOU GET ({deliverables.length} items)</span>
+              <span className="text-[#F59E0B]">{showMobileDeliverables ? '▲ HIDE' : '▼ VIEW'}</span>
+            </button>
+            {showMobileDeliverables && (
+              <ul className="space-y-1.5 text-xs text-[#B9B5A9] leading-relaxed pt-2 pb-1">
+                {deliverables.map((item, idx) => (
+                  <li key={idx} className="flex items-start">
+                    <span className="text-[#F59E0B] font-mono mr-2 shrink-0 font-bold">—</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="p-2.5 bg-[#0A0B10] border border-[#23242B] text-[11px] text-[#8E8B82] leading-relaxed mt-2.5">
+            No fixed price on this page —{' '}
+            <strong className="text-[#F5F2EA] font-semibold">
+              we discuss and fix it together
+            </strong>
+            , based on your exact scope.
+          </div>
+        </div>
+
+        {/* DESKTOP LEFT RAIL (hidden on mobile, visible on md+) */}
+        <div className="hidden md:flex bg-[#06070B] md:border-r border-[#23242B] p-6 sm:p-7 flex-col justify-between">
           <div>
             <div className="font-mono text-xs text-[#F59E0B] font-bold tracking-wider mb-2">
               PRESET — {presetNumber}
@@ -216,7 +274,7 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
         </div>
 
         {/* RIGHT (Form or Success state) */}
-        <div className="p-6 sm:p-8 flex flex-col justify-between bg-[#0A0B10]">
+        <div className="p-5 sm:p-8 flex flex-col justify-between bg-[#0A0B10]">
           {submitted ? (
             <div className="py-12 sm:py-16 flex flex-col items-center justify-center text-center my-auto">
               <div className="w-12 h-12 stat-box bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
@@ -239,15 +297,15 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col justify-between h-full">
               <div>
-                <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-1">
+                <h2 className="text-lg sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-1 pr-6 sm:pr-0">
                   Let&apos;s discuss <span className="text-[#F59E0B]">{pkg.title}</span>
                 </h2>
-                <p className="text-xs sm:text-sm text-[#8E8B82] mb-6">
+                <p className="text-xs sm:text-sm text-[#8E8B82] mb-4 sm:mb-6">
                   Two minutes to fill in — I reply personally, no auto-messages.
                 </p>
 
                 {/* Name + Email in ONE row (2 cols; stacked on mobile) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                   <div>
                     <label className="block font-mono text-[10px] font-bold uppercase tracking-wider text-[#8E8B82] mb-1.5">
                       YOUR NAME <span className="text-[#F59E0B]">*</span>
@@ -277,7 +335,7 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
                 </div>
 
                 {/* Package-specific field */}
-                <div className="mb-4">
+                <div className="mb-3 sm:mb-4">
                   <label className="block font-mono text-[10px] font-bold uppercase tracking-wider text-[#8E8B82] mb-1.5">
                     {config.fieldLabel}
                   </label>
@@ -291,13 +349,13 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
                 </div>
 
                 {/* TELL ME ABOUT IT * textarea */}
-                <div className="mb-4">
+                <div className="mb-3 sm:mb-4">
                   <label className="block font-mono text-[10px] font-bold uppercase tracking-wider text-[#8E8B82] mb-1.5">
                     TELL ME ABOUT IT <span className="text-[#F59E0B]">*</span>
                   </label>
                   <textarea
                     required
-                    rows={5}
+                    rows={4}
                     value={formData.details}
                     onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                     className="stat-box w-full bg-[#06070B] border border-[#23242B] text-[#F5F2EA] placeholder-[#555] text-xs sm:text-sm p-3 focus:border-[#F59E0B] focus:outline-none transition font-sans resize-none"
@@ -306,29 +364,29 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
 
                 {/* Inline error */}
                 {error && (
-                  <div className="text-red-400 text-xs font-mono mb-4">
+                  <div className="text-red-400 text-xs font-mono mb-3 sm:mb-4">
                     {error}
                   </div>
                 )}
               </div>
 
-              {/* Footer row */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#23242B] mt-2">
-                <span className="font-mono text-[10px] uppercase text-[#8E8B82] tracking-wider text-center sm:text-left">
+              {/* Footer row: wraps on mobile with reply-note above buttons, Send/Cancel always reachable */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3.5 sm:pt-4 border-t border-[#23242B] mt-2">
+                <span className="font-mono text-[10px] uppercase text-[#8E8B82] tracking-wider text-center sm:text-left order-1">
                   USUALLY REPLIES WITHIN 24 HOURS
                 </span>
-                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end order-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="text-xs font-mono text-[#8E8B82] hover:text-[#F5F2EA] px-3 py-2 transition cursor-pointer"
+                    className="text-xs font-mono text-[#8E8B82] hover:text-[#F5F2EA] px-3 py-2.5 min-h-[42px] transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="stat-box py-2.5 px-5 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] transition cursor-pointer disabled:opacity-50"
+                    className="stat-box flex-1 sm:flex-initial py-2.5 px-5 min-h-[42px] text-center text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] transition cursor-pointer disabled:opacity-50"
                   >
                     {submitting ? 'Sending...' : 'Send Inquiry \u2192'}
                   </button>

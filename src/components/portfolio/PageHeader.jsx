@@ -9,11 +9,11 @@ export default function PageHeader({
   children
 }) {
   return (
-    <section className="relative z-10 pt-8 pb-10 sm:pt-12 sm:pb-14 border-b border-[#23242B] bg-[#06070B]">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="stat-box p-8 sm:p-12 shadow-xl space-y-4">
+    <section className="relative z-10 pt-6 pb-8 sm:pt-12 sm:pb-14 border-b border-[#23242B] bg-[#06070B]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+        <div className="stat-box p-5 sm:p-8 md:p-12 shadow-xl space-y-3 sm:space-y-4">
           {/* Big Uppercase Title - NO kicker or eyebrow above it */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-[#F5F2EA] leading-[1.08]">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-[#F5F2EA] leading-[1.08] break-words">
             {title}{' '}
             {highlightWord && (
               <span className="text-[#F59E0B]">
@@ -24,7 +24,7 @@ export default function PageHeader({
 
           {/* Muted Description Below Title */}
           {description && (
-            <p className="text-[#B9B5A9] text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed">
+            <p className="text-[#B9B5A9] text-xs sm:text-base md:text-lg max-w-3xl leading-relaxed">
               {description}
             </p>
           )}

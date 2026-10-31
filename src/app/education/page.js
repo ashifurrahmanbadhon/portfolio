@@ -34,8 +34,8 @@ export default function EducationPage() {
       />
 
       {/* Degree & Institutional History: 3 bordered cells (years mono amber, degree, institution faint) */}
-      <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="mb-12">
+      <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-7xl mx-auto">
+        <div className="mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-[#F5F2EA]">
             Academic Qualifications
           </h2>
@@ -49,7 +49,7 @@ export default function EducationPage() {
           {educations.map((edu, idx) => (
             <div
               key={idx}
-              className="stat-box group p-7 sm:p-8 flex flex-col justify-between"
+              className="stat-box group p-5 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 <div className="w-11 h-11 bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
@@ -148,8 +148,8 @@ export default function EducationPage() {
 
       {/* Certifications: img aspect 29/20, object-CONTAIN, bg #0C0D13, hover zoom over contain */}
       {certifications && certifications.length > 0 && (
-        <section className="relative z-10 px-6 md:px-12 py-20 max-w-7xl mx-auto">
-          <div className="mb-12">
+        <section className="relative z-10 px-4 sm:px-6 md:px-12 py-12 sm:py-20 max-w-7xl mx-auto">
+          <div className="mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-[#F5F2EA]">
               Training &amp; Certifications
             </h2>
@@ -162,7 +162,7 @@ export default function EducationPage() {
             {certifications.map((cert, idx) => (
               <div
                 key={idx}
-                className="stat-box group p-6 sm:p-7 flex flex-col justify-between"
+                className="stat-box group p-5 sm:p-7 flex flex-col justify-between"
               >
                 <div>
                   {/* Certificate frame: aspect-[29/20], object-contain, bg-[#0C0D13], no lightbox */}
