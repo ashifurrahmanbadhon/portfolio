@@ -44,7 +44,7 @@ export default function SkillsPage() {
           {skillsData.map((category, idx) => (
             <div
               key={idx}
-              className="bg-[#06070B] p-6 sm:p-10 flex flex-col justify-between hover:bg-[#0A0B10] transition-colors duration-200"
+              className="stat-box border-0 p-6 sm:p-10 flex flex-col justify-between"
             >
               <div>
                 {/* Group title uppercase with mono amber index */}
@@ -103,7 +103,7 @@ export default function SkillsPage() {
                 return (
                   <span
                     key={idx}
-                    className="border border-[#23242B] bg-[#06070B] text-[#B9B5A9] hover:border-[#F59E0B] hover:text-[#F59E0B] px-3.5 py-2 rounded-lg text-xs font-mono transition cursor-default flex items-center gap-2"
+                    className="stat-box rounded-lg px-3.5 py-2 text-xs font-mono text-[#B9B5A9] flex items-center gap-2"
                   >
                     <span className="text-[#F59E0B]">✦</span>
                     <span>{name}</span>
@@ -125,7 +125,7 @@ export default function SkillsPage() {
               {skillBadges.map((badge, bIdx) => (
                 <span
                   key={bIdx}
-                  className="font-mono text-xs px-3 py-1.5 rounded-full border border-[#23242B] bg-[#06070B] text-[#B9B5A9] hover:border-[#F59E0B] hover:text-[#F59E0B] transition cursor-default"
+                  className="stat-box rounded-full font-mono text-xs px-3 py-1.5 text-[#B9B5A9] inline-flex items-center"
                 >
                   {badge}
                 </span>
@@ -135,7 +135,7 @@ export default function SkillsPage() {
         )}
 
         {/* CTA Bar */}
-        <div className="luxury-box p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div className="stat-box rounded-2xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1">
             <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
               Require Custom Technical Simulation or Mapping?

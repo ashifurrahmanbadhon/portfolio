@@ -49,7 +49,7 @@ export default function EducationPage() {
           {educations.map((edu, idx) => (
             <div
               key={idx}
-              className="luxury-box p-7 sm:p-8 flex flex-col justify-between"
+              className="stat-box rounded-2xl p-7 sm:p-8 flex flex-col justify-between"
             >
               <div>
                 <div className="w-11 h-11 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
@@ -94,7 +94,7 @@ export default function EducationPage() {
                   {edu.highlights.map((h, hIdx) => (
                     <span
                       key={hIdx}
-                      className="text-[10px] font-mono text-[#8E8B82] bg-[#06070B] px-2 py-0.5 rounded border border-[#23242B]"
+                      className="stat-box rounded text-[10px] font-mono text-[#8E8B82] px-2 py-0.5"
                     >
                       {h}
                     </span>
@@ -121,7 +121,7 @@ export default function EducationPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {courseworkPillars.map((pillar, idx) => (
-                <div key={idx} className="luxury-box p-7 flex flex-col justify-between">
+                <div key={idx} className="stat-box rounded-2xl p-7 flex flex-col justify-between">
                   <div>
                     <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
                       <BookOpen size={20} />
@@ -162,7 +162,7 @@ export default function EducationPage() {
             {certifications.map((cert, idx) => (
               <div
                 key={idx}
-                className="luxury-box p-6 sm:p-7 flex flex-col justify-between"
+                className="stat-box rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
               >
                 <div>
                   {/* Certificate frame: aspect-[29/20], object-contain, bg-[#0C0D13], no lightbox */}
@@ -215,7 +215,7 @@ export default function EducationPage() {
           </div>
 
           {/* CTA Bar */}
-          <div className="mt-16 luxury-box p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <div className="mt-16 stat-box rounded-2xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div className="space-y-1">
               <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
                 Interested in Reviewing Verified Academic Transcripts?

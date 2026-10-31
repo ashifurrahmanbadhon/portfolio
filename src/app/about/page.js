@@ -75,7 +75,7 @@ export default function AboutPage() {
 
       {/* Main Narrative & Profile Section: Bordered box, grid 1.32fr/.68fr, align start */}
       <section className="relative z-10 px-6 md:px-12 py-16 sm:py-20 max-w-7xl mx-auto">
-        <div className="border border-[#23242B] bg-[#0A0B10] rounded-2xl p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
+        <div className="stat-box rounded-2xl p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.32fr_0.68fr] gap-10 items-start shadow-xl">
           
           {/* Left Column: All existing about fields + focus chips (hairline chips, mono) */}
           <div className="space-y-6">
@@ -105,21 +105,21 @@ export default function AboutPage() {
               </p>
               <div className="flex flex-wrap gap-2.5">
                 {aboutData.focus1_title && (
-                  <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
+                  <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
                     {aboutData.focus1_title}
                   </span>
                 )}
                 {aboutData.focus2_title && (
-                  <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
+                  <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#F5F2EA] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
                     {aboutData.focus2_title}
                   </span>
                 )}
-                <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
+                <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
                   IEEE &amp; BNBC Standards
                 </span>
-                <span className="border border-[#23242B] bg-[#06070B] px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
+                <span className="stat-box px-3.5 py-1.5 rounded-full font-mono text-xs text-[#B9B5A9]">
                   ArcGIS &amp; QGIS
                 </span>
               </div>
@@ -145,7 +145,7 @@ export default function AboutPage() {
 
           {/* Right Column: profile_image at width 86%, aspect 3/4, centered with margin, top-aligned (≈ text-block height; no full-column stretch) */}
           <div className="flex justify-center w-full">
-            <div className="w-[86%] max-w-[340px] border border-[#23242B] bg-[#06070B] p-2 rounded-2xl shadow-xl group">
+            <div className="w-[86%] max-w-[340px] stat-box p-2 rounded-2xl shadow-xl group">
               <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#06070B]">
                 <Image
                   src={aboutData.profile_image || "/ashifur-about.jpg"}
@@ -189,7 +189,7 @@ export default function AboutPage() {
               return (
                 <div
                   key={idx}
-                  className="luxury-box p-7 flex flex-col justify-between"
+                  className="stat-box rounded-2xl p-7 flex flex-col justify-between"
                 >
                   <div>
                     <div className="w-11 h-11 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-5">
@@ -216,7 +216,7 @@ export default function AboutPage() {
 
       {/* CTA Bar */}
       <section className="relative z-10 px-6 md:px-12 py-16 max-w-5xl mx-auto">
-        <div className="luxury-box p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div className="stat-box rounded-2xl p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1.5">
             <h3 className="text-xl font-bold uppercase tracking-tight text-[#F5F2EA]">
               Have a Project in Mind?

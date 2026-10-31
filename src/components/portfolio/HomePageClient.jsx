@@ -151,7 +151,7 @@ export default function Home() {
 
           {/* Right Column: Photo in hairline frame + padding 8px, aspect 3/4, caption row */}
           <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-[380px] border border-[#23242B] bg-[#0A0B10] p-2 rounded-2xl shadow-2xl transition duration-300 hover:ring-1 hover:ring-[#F59E0B] hover:shadow-[0_0_30px_rgba(245,158,11,0.18)] group">
+            <div className="w-full max-w-[380px] stat-box p-2 rounded-2xl shadow-2xl group">
               <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-[#06070B]">
                 <Image
                   src={heroData.profile_image || "/ashifur-home.jpg"}
@@ -195,7 +195,7 @@ export default function Home() {
               const rawVal = String(h.metric_value || '').trim();
               const numMatch = rawVal.match(/^(\d+)(.*)$/);
               return (
-                <div key={i} className="p-6 sm:p-8 text-center flex flex-col justify-center">
+                <div key={i} className="stat-box border-0 p-6 sm:p-8 text-center flex flex-col justify-center">
                   <p className="text-3xl sm:text-4xl font-black text-[#F59E0B] font-mono tracking-tight">
                     {numMatch ? (
                       <CountUp to={parseInt(numMatch[1], 10)} suffix={numMatch[2]} />
@@ -256,7 +256,7 @@ export default function Home() {
               const Icon = resolveIcon(pillar.icon, Zap);
               return (
                 <Link key={pIdx} href="/about" className="block h-full">
-                  <div className="luxury-box p-6 h-full flex flex-col justify-between">
+                  <div className="stat-box rounded-2xl p-6 h-full flex flex-col justify-between">
                     <div>
                       <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
                         <Icon size={20} />
@@ -308,7 +308,7 @@ export default function Home() {
               {projectsData.slice(0, 3).map((proj, idx) => (
                 <div
                   key={proj.id || idx}
-                  className="luxury-box p-6 flex flex-col justify-between"
+                  className="stat-box rounded-2xl p-6 flex flex-col justify-between"
                 >
                   <div>
                     {proj.image_url && (
@@ -347,7 +347,7 @@ export default function Home() {
                     {(proj.tags || []).map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[10px] font-mono text-[#8E8B82] bg-[#06070B] px-2.5 py-1 rounded border border-[#23242B]"
+                        className="stat-box rounded text-[10px] font-mono text-[#8E8B82] px-2.5 py-1"
                       >
                         {tag}
                       </span>
@@ -387,7 +387,7 @@ export default function Home() {
               {experiences.slice(0, 2).map((exp, idx) => (
                 <div
                   key={idx}
-                  className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-start hover:bg-white/[0.02] transition"
+                  className="stat-box border-0 p-6 sm:p-8 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6 items-start"
                 >
                   <div>
                     <span className="font-mono text-xs text-[#F59E0B] font-semibold block">
@@ -442,7 +442,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {skillsData.map((cat, idx) => (
-                <div key={idx} className="luxury-box p-6 space-y-4">
+                <div key={idx} className="stat-box rounded-2xl p-6 space-y-4">
                   <div className="flex items-center gap-3 pb-3 border-b border-[#23242B]">
                     <span className="font-mono text-xs text-[#F59E0B] font-bold">
                       0{idx + 1} /
@@ -495,7 +495,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {educations && educations.length > 0 && (
-              <div className="luxury-box p-8 space-y-4">
+              <div className="stat-box rounded-2xl p-8 space-y-4">
                 <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
                   {educations[0].period || "Degree Completed"}
                 </span>
@@ -513,7 +513,7 @@ export default function Home() {
               </div>
             )}
 
-            <div className="luxury-box p-8 space-y-4">
+            <div className="stat-box rounded-2xl p-8 space-y-4">
               <span className="font-mono text-xs text-[#F59E0B] font-semibold uppercase tracking-wider">
                 Certifications &amp; Training
               </span>
@@ -555,7 +555,7 @@ export default function Home() {
               {services.map((srv, idx) => {
                 const Icon = resolveIcon(srv.icon, Zap);
                 return (
-                  <div key={srv.id || idx} className="luxury-box p-6 flex flex-col justify-between">
+                  <div key={srv.id || idx} className="stat-box rounded-2xl p-6 flex flex-col justify-between">
                     <div>
                       <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B] mb-4">
                         <Icon size={20} />
@@ -593,7 +593,7 @@ export default function Home() {
             {HOW_I_WORK_STEPS.map((step) => (
               <div
                 key={step.num}
-                className="luxury-box p-7 flex flex-col justify-between"
+                className="stat-box rounded-2xl p-7 flex flex-col justify-between"
               >
                 <div>
                   <div className="font-mono text-4xl sm:text-5xl font-black text-stroke-numeral mb-4">
@@ -619,7 +619,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="luxury-box p-10 sm:p-14 text-center space-y-6"
+          className="stat-box rounded-2xl p-10 sm:p-14 text-center space-y-6"
         >
           <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight max-w-2xl mx-auto leading-tight">
             {ctaData.title}

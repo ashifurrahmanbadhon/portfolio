@@ -34,7 +34,7 @@ export default function ExperiencePage() {
         <section className="relative z-10 border-b border-[#23242B] bg-[#0A0B10]">
           <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-[#23242B]">
             {experienceMetrics.map((ch, idx) => (
-              <div key={idx} className="p-4 flex flex-col justify-center">
+              <div key={idx} className="stat-box border-0 rounded-xl p-4 flex flex-col justify-center">
                 <p className="text-2xl sm:text-3xl font-black text-[#F59E0B] font-mono tracking-tight">{ch.metric}</p>
                 <p className="text-sm font-bold text-[#F5F2EA] mt-1.5 uppercase tracking-wide">{ch.label}</p>
                 {ch.subtext && <p className="text-xs text-[#8E8B82] font-mono mt-0.5">{ch.subtext}</p>}
@@ -60,7 +60,7 @@ export default function ExperiencePage() {
           {experiences.map((exp, idx) => (
             <div
               key={idx}
-              className="p-6 sm:p-10 grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-start hover:bg-white/[0.02] transition"
+              className="stat-box border-0 p-6 sm:p-10 grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-start"
             >
               {/* Left Col: Period (mono amber) + organization (faint) */}
               <div>
@@ -97,7 +97,7 @@ export default function ExperiencePage() {
                     {exp.tools.map((tool, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-[11px] font-mono text-[#8E8B82] bg-[#06070B] px-2.5 py-1 rounded border border-[#23242B]"
+                        className="stat-box rounded text-[11px] font-mono text-[#8E8B82] px-2.5 py-1"
                       >
                         {tool}
                       </span>
@@ -110,7 +110,7 @@ export default function ExperiencePage() {
         </div>
 
         {/* CTA Bar */}
-        <div className="mt-16 luxury-box p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div className="mt-16 stat-box rounded-2xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-1">
             <h3 className="text-lg font-bold uppercase tracking-tight text-[#F5F2EA]">
               Looking for Verified Verification Letters?
