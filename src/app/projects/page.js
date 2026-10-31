@@ -205,20 +205,23 @@ export default function ProjectsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`text-xs font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full whitespace-nowrap transition cursor-pointer font-semibold ${
-                  selectedCategory === cat
-                    ? 'bg-[#F59E0B] text-[#1A1202] font-bold shadow-[0_0_15px_rgba(245,158,11,0.35)]'
-                    : 'bg-[#0A0B10] text-[#B9B5A9] hover:text-[#F5F2EA] border border-[#23242B] hover:border-[#F59E0B]/50'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const active = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`stat-box text-xs font-mono uppercase tracking-wider px-3.5 py-1.5 whitespace-nowrap font-semibold transition cursor-pointer ${
+                    active
+                      ? 'text-[#F59E0B] border-[#F59E0B] shadow-[inset_0_0_0_1.5px_#F59E0B]'
+                      : 'text-[#B9B5A9] hover:text-[#F59E0B]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>

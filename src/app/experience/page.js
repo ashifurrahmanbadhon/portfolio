@@ -55,12 +55,12 @@ export default function ExperiencePage() {
           </p>
         </div>
 
-        {/* One bordered container, rows split by hairline */}
-        <div className="border border-[#23242B] bg-[#0A0B10] overflow-hidden divide-y divide-[#23242B] shadow-xl">
+        {/* Separate role boxes */}
+        <div className="flex flex-col gap-6">
           {experiences.map((exp, idx) => (
             <div
               key={idx}
-              className="stat-box border-0 p-6 sm:p-10 grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-start"
+              className="stat-box p-6 sm:p-10 grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-start"
             >
               {/* Left Col: Period (mono amber) + organization (faint) */}
               <div>
