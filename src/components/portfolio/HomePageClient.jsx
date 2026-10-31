@@ -85,6 +85,7 @@ export default function Home() {
     educations,
     certifications,
     services,
+    workPackages,
     contactData,
     homepageCta
   } = usePortfolio();
@@ -104,6 +105,10 @@ export default function Home() {
 
   const previewPillars = Array.isArray(aboutData?.pillars) && aboutData.pillars.length > 0
     ? aboutData.pillars.slice(0, 4)
+    : [];
+
+  const previewPackages = Array.isArray(workPackages) && workPackages.length > 0
+    ? workPackages.slice(0, 4)
     : [];
 
   return (
@@ -565,6 +570,68 @@ export default function Home() {
                   </div>
                 );
               })}
+            </div>
+          </motion.div>
+        </section>
+      )}
+
+      {/* 9B. SERVICE PACKAGES PREVIEW (Dynamic from CMS work_packages) */}
+      {previewPackages.length > 0 && (
+        <section className="relative z-10 px-6 md:px-12 py-16 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 26 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="mb-10">
+              <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+                Service Packages
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+              {previewPackages.map((pkg, idx) => {
+                const presetNum = String(pkg.sort_order || idx + 1).padStart(2, '0');
+                const rawDesc = (pkg.description || '').trim();
+                const truncatedDesc = rawDesc.length > 110 ? rawDesc.slice(0, 110).trim() + '…' : rawDesc;
+
+                return (
+                  <Link
+                    key={pkg.id || idx}
+                    href="/work"
+                    className="stat-box p-6 sm:p-7 flex flex-col justify-between group no-underline transition block"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between font-mono text-xs mb-3">
+                        <span className="text-[#F59E0B] font-bold tracking-wider">
+                          PRESET — {presetNum}
+                        </span>
+                        <span className="text-[#8E8B82] uppercase tracking-wider font-medium text-[11px]">
+                          {pkg.category || 'SERVICE'}
+                        </span>
+                      </div>
+
+                      <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#F5F2EA] mb-2 leading-tight group-hover:text-[#FBBF24] transition-colors">
+                        {pkg.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-[#B9B5A9] leading-relaxed line-clamp-1">
+                        {truncatedDesc}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="text-center">
+              <Link
+                href="/work"
+                className="stat-box inline-block py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
+              >
+                View All Packages &rarr;
+              </Link>
             </div>
           </motion.div>
         </section>
