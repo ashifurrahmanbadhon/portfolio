@@ -196,10 +196,10 @@ async function setup() {
       description: "Drafting industrial Single Line Diagrams (SLDs), substation layout designs, motor starter schematics, and accurate technical drawings."
     },
     {
-      icon: "Database",
-      title: "GIS Utility Mapping",
-      subtitle: "Spatial Data & Network Analysis",
-      description: "Spatial mapping of 11kV/0.4kV distribution feeders, electrical assets, transformers, and consumer load nodes using ArcGIS & QGIS geodatabases."
+      icon: "Cpu",
+      title: "AI & Emerging Technologies",
+      subtitle: "Intelligent Engineering Systems",
+      description: "Bridging core electrical engineering with artificial intelligence, automated reasoning, predictive analysis, and intelligent workflow systems."
     },
     {
       icon: "Briefcase",
@@ -208,10 +208,10 @@ async function setup() {
       description: "Preparing Bill of Quantities (BOQ), dynamic quotation engines, production capacity forecasting, and operational dashboards in advanced MS Excel."
     },
     {
-      icon: "Cpu",
-      title: "AI & Emerging Technologies",
-      subtitle: "Intelligent Engineering Systems",
-      description: "Bridging core electrical engineering with artificial intelligence, automated reasoning, predictive analysis, and intelligent workflow systems."
+      icon: "Database",
+      title: "GIS Utility Mapping",
+      subtitle: "Spatial Data & Network Analysis",
+      description: "Spatial mapping of 11kV/0.4kV distribution feeders, electrical assets, transformers, and consumer load nodes using ArcGIS & QGIS geodatabases."
     },
     {
       icon: "ShieldCheck",

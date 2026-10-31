@@ -20,7 +20,7 @@ import {
   DEFAULT_HOMEPAGE_CTA
 } from '@/lib/portfolioDefaults';
 
-const CACHE_KEY = 'portfolio_cms_cache_v4';
+const CACHE_KEY = 'portfolio_cms_cache_v5';
 let inMemorySessionCache = null;
 const PortfolioContext = createContext(null);
 
@@ -112,14 +112,24 @@ export function PortfolioProvider({ children }) {
     if (Array.isArray(data.experiences)) {
       const activeExperiences = data.experiences.filter(e => e.is_active !== 0 && e.is_active !== false);
       setExperiences(
-        activeExperiences.map((e) => ({
-          role: e.role,
-          organization: e.organization,
-          period: e.period,
-          location: e.location || 'Dhaka, Bangladesh',
-          points: Array.isArray(e.description_points) ? e.description_points : (e.points || []),
-          tools: Array.isArray(e.tools) ? e.tools : ['Power Systems', 'Engineering']
-        }))
+        activeExperiences.map((e) => {
+          const defaultExp = DEFAULT_EXPERIENCES.find(
+            (d) => d.role?.trim().toLowerCase() === e.role?.trim().toLowerCase()
+          );
+          const fallbackTools = defaultExp?.tools || (
+            (e.role || "").toLowerCase().includes("executive")
+              ? ["MS Excel", "Data Analytics", "Work Planning", "Operational Reporting"]
+              : ["Substation Maintenance", "Switchgear", "Transformer Inspection", "Single Line Diagrams"]
+          );
+          return {
+            role: e.role,
+            organization: e.organization,
+            period: e.period,
+            location: e.location || 'Dhaka, Bangladesh',
+            points: Array.isArray(e.description_points) ? e.description_points : (e.points || []),
+            tools: Array.isArray(e.tools) && e.tools.length > 0 ? e.tools : fallbackTools
+          };
+        })
       );
     }
 
