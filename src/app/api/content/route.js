@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server";
-import { getPortfolioContent, updatePortfolioSection } from "@/lib/db";
+import { getPortfolioContent, updatePortfolioSection, getContentVersion } from "@/lib/db";
 import { authenticateRequest } from "@/lib/auth";
 
-export const revalidate = 10;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-const CACHE_CONTROL_HEADER = "public, s-maxage=10, stale-while-revalidate=59";
+const CACHE_CONTROL_HEADER = "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
 
 export async function GET() {
   try {
     const data = await getPortfolioContent();
+    const version = String(data.content_version || data.site_settings?.content_version || 1);
     return NextResponse.json(data, {
       headers: {
         "Cache-Control": CACHE_CONTROL_HEADER,
-        "CDN-Cache-Control": CACHE_CONTROL_HEADER,
-        "Vercel-CDN-Cache-Control": CACHE_CONTROL_HEADER,
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store",
+        "X-Content-Version": version,
       },
     });
   } catch (error) {
@@ -23,14 +26,27 @@ export async function GET() {
 }
 
 export async function HEAD() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      "Cache-Control": CACHE_CONTROL_HEADER,
-      "CDN-Cache-Control": CACHE_CONTROL_HEADER,
-      "Vercel-CDN-Cache-Control": CACHE_CONTROL_HEADER,
-    },
-  });
+  try {
+    const version = String(await getContentVersion().catch(() => 1));
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        "Cache-Control": CACHE_CONTROL_HEADER,
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store",
+        "X-Content-Version": version,
+      },
+    });
+  } catch (_) {
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        "Cache-Control": CACHE_CONTROL_HEADER,
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store",
+      },
+    });
+  }
 }
 
 export async function PUT(req) {

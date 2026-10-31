@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { getPortfolioContent } from "@/lib/db";
 import { checkRateLimit } from "@/lib/rateLimit";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const FALLBACK_REPLY = "Chat is not configured yet — please reach me from the Contact page.";
 
 export async function POST(req) {

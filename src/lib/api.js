@@ -208,16 +208,17 @@ export const api = {
 
 
   // Portfolio Hub
-  async getPortfolioContent(forceRefresh = false) {
-    if (forceRefresh) {
-      cache.clear();
-      const res = await fetch(`${API_BASE}/api/content?_t=${Date.now()}`, {
-        headers: getAuthHeaders(),
-        cache: "no-store",
-      });
-      return res.json();
-    }
-    return cachedFetch(`${API_BASE}/api/content`, {}, 5000);
+  async getPortfolioContent() {
+    cache.clear();
+    const res = await fetch(`${API_BASE}/api/content?_t=${Date.now()}`, {
+      headers: {
+        ...getAuthHeaders(),
+        "Pragma": "no-cache",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+      },
+      cache: "no-store",
+    });
+    return res.json();
   },
 
   async savePortfolioSection(section, data) {
@@ -230,8 +231,8 @@ export const api = {
     const result = await res.json();
     if (result && result.success && typeof window !== "undefined") {
       try {
-        localStorage.removeItem("portfolio_cms_cache_v2");
-        localStorage.removeItem("admin_portfolio_cache_v2");
+        localStorage.removeItem("portfolio_cms_cache_v7");
+        localStorage.removeItem("portfolio_cms_placeholder_data");
         window.dispatchEvent(new Event("portfolio_content_updated"));
       } catch (_) {}
     }

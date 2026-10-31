@@ -108,6 +108,10 @@ function getSqliteDb() {
       if (certCols && certCols.length > 0 && !certCols.some((c) => c.name === "image_url")) {
         sqliteInstance.exec("ALTER TABLE certifications ADD COLUMN image_url TEXT;");
       }
+      const settingCols = sqliteInstance.prepare("PRAGMA table_info(site_settings)").all();
+      if (settingCols && settingCols.length > 0 && !settingCols.some((c) => c.name === "content_version")) {
+        sqliteInstance.exec("ALTER TABLE site_settings ADD COLUMN content_version INTEGER DEFAULT 1;");
+      }
       const allowedSocialCols = ['id', 'email', 'phone', 'whatsapp', 'linkedin', 'github', 'location', 'maps_url', 'updated_at'];
       const extraSocialCols = sqliteInstance.prepare("PRAGMA table_info(social_links)").all().filter(c => !allowedSocialCols.includes(c.name));
       for (const col of extraSocialCols) {
@@ -303,6 +307,7 @@ function initSqliteDbIfEmpty(db) {
         og_image_url TEXT,
         footer_brand TEXT,
         footer_copyright TEXT,
+        content_version INTEGER DEFAULT 1,
         updated_at TEXT
       );
       CREATE TABLE IF NOT EXISTS certifications (
@@ -681,14 +686,15 @@ export function invalidatePortfolioContentCache() {
   portfolioCacheExpiry = 0;
 }
 
+export async function getContentVersion() {
+  const row = await queryOne("SELECT content_version FROM site_settings WHERE id = 1");
+  return Number(row?.content_version) || 1;
+}
+
 // ==========================================
-// Portfolio Content Query (Full Structured Object - Parallelized & Cached)
+// Portfolio Content Query (Full Structured Object - Always Fresh & Parallelized)
 // ==========================================
 export async function getPortfolioContent() {
-  const now = Date.now();
-  if (portfolioCache && now < portfolioCacheExpiry) {
-    return portfolioCache;
-  }
 
   const [
     heroRes,
@@ -855,8 +861,11 @@ export async function getPortfolioContent() {
     )
   };
 
+  const contentVersionNum = Number(site_settings.content_version) || 1;
+
   const result = {
     success: true,
+    content_version: contentVersionNum,
     hero,
     about: aboutEnhanced,
     highlights: highlights || [],
@@ -875,7 +884,10 @@ export async function getPortfolioContent() {
     social_links,
     contact_channels,
     resume,
-    site_settings,
+    site_settings: {
+      ...site_settings,
+      content_version: contentVersionNum,
+    },
     site_texts,
     process_steps: processStepsData,
     page_headers,
@@ -883,8 +895,6 @@ export async function getPortfolioContent() {
     work_packages: workPackagesData,
   };
 
-  portfolioCache = result;
-  portfolioCacheExpiry = Date.now() + 15000; // 15-second cache
   return result;
 }
 
@@ -1593,6 +1603,16 @@ export async function updatePortfolioSection(section, data, user = "admin") {
 
     default:
       break;
+  }
+
+  // Auto version stamp: Increment content_version in site_settings on ANY content write
+  try {
+    await execute(
+      "UPDATE site_settings SET content_version = COALESCE(content_version, 0) + 1, updated_at = ? WHERE id = 1",
+      [now]
+    );
+  } catch (err) {
+    console.warn("Could not bump content_version:", err);
   }
 
   // Invalidate cache AFTER writes commit to ensure immediate freshness for next read

@@ -1,5 +1,8 @@
 import { getPortfolioContent } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateMetadata() {
   const content = await getPortfolioContent().catch(() => null);
   const header = content?.page_headers?.education;
