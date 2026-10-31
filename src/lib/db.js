@@ -72,6 +72,17 @@ function getSqliteDb() {
         for (const p of DEFAULT_WORK_PACKAGES) {
           stmt.run(p.category, p.title, p.description, p.deliverables, p.tags, p.sort_order, p.is_active);
         }
+      } else {
+        const hasDesignPkg = sqliteInstance.prepare("SELECT id FROM work_packages WHERE title = 'Design Services'").get();
+        if (!hasDesignPkg) {
+          const p8 = DEFAULT_WORK_PACKAGES.find((p) => p.title === "Design Services");
+          if (p8) {
+            sqliteInstance.prepare(`
+              INSERT INTO work_packages (category, title, description, deliverables, tags, sort_order, is_active)
+              VALUES (?, ?, ?, ?, ?, ?, ?)
+            `).run(p8.category, p8.title, p8.description, p8.deliverables, p8.tags, p8.sort_order, p8.is_active);
+          }
+        }
       }
       const certCols = sqliteInstance.prepare("PRAGMA table_info(certifications)").all();
       if (certCols && certCols.length > 0 && !certCols.some((c) => c.name === "image_url")) {
@@ -82,9 +93,9 @@ function getSqliteDb() {
       for (const col of extraSocialCols) {
         try {
           sqliteInstance.exec(`ALTER TABLE social_links DROP COLUMN "${col.name}";`);
-        } catch (_) {}
+        } catch (_) { }
       }
-    } catch (_) {}
+    } catch (_) { }
   }
   return sqliteInstance;
 }
@@ -399,7 +410,7 @@ function initSqliteDbIfEmpty(db) {
       if (adminCols && adminCols.length > 0 && !adminCols.some((c) => c.name === "avatar_position")) {
         db.exec("ALTER TABLE admins ADD COLUMN avatar_position TEXT DEFAULT '50% 50%'");
       }
-    } catch (_) {}
+    } catch (_) { }
   } catch (e) {
     console.error("initSqliteDbIfEmpty error:", e);
   }
@@ -711,10 +722,10 @@ export async function getPortfolioContent() {
   let aboutPrinciples = [];
   try {
     aboutPillars = JSON.parse(about.pillars_json || "[]");
-  } catch {}
+  } catch { }
   try {
     aboutPrinciples = JSON.parse(about.principles_json || "[]");
-  } catch {}
+  } catch { }
   const aboutEnhanced = {
     ...about,
     pillars: aboutPillars,
@@ -739,7 +750,7 @@ export async function getPortfolioContent() {
     let highlights = [];
     try {
       highlights = JSON.parse(ed.highlights_json || "[]");
-    } catch (_) {}
+    } catch (_) { }
     return { ...ed, highlights };
   });
 
@@ -776,7 +787,7 @@ export async function getPortfolioContent() {
     let courses = [];
     try {
       courses = JSON.parse(r.courses_json || "[]");
-    } catch {}
+    } catch { }
     return { ...r, courses };
   });
 
@@ -786,6 +797,30 @@ export async function getPortfolioContent() {
   }
 
   const homepage_cta = homepage_cta_res || {};
+
+  let workPackagesData = (work_packages_res && work_packages_res.length > 0) ? work_packages_res : DEFAULT_WORK_PACKAGES;
+  if (Array.isArray(workPackagesData) && workPackagesData.length > 0) {
+    const hasDesign = workPackagesData.some((p) => p.title === "Design Services");
+    if (!hasDesign) {
+      const p8 = DEFAULT_WORK_PACKAGES.find((p) => p.title === "Design Services");
+      if (p8) {
+        try {
+          await execute(
+            `INSERT INTO work_packages (category, title, description, deliverables, tags, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [p8.category, p8.title, p8.description, p8.deliverables, p8.tags, p8.sort_order, p8.is_active]
+          );
+          const refetched = await queryAll("SELECT * FROM work_packages WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => null);
+          if (refetched && refetched.length > 0) {
+            workPackagesData = refetched;
+          } else {
+            workPackagesData = [...workPackagesData, p8];
+          }
+        } catch (e) {
+          console.warn("Could not auto-insert Design Services:", e);
+        }
+      }
+    }
+  }
 
   const result = {
     success: true,
@@ -810,7 +845,7 @@ export async function getPortfolioContent() {
     site_settings,
     page_headers,
     homepage_cta,
-    work_packages: (work_packages_res && work_packages_res.length > 0) ? work_packages_res : DEFAULT_WORK_PACKAGES,
+    work_packages: workPackagesData,
   };
 
   portfolioCache = result;
@@ -1333,7 +1368,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
             INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
             VALUES (?, ?, ?, ?, ?)
           `).run(data.page_key, data.badge_text || "", data.title || "", data.highlight_word || "", data.description || "");
-        } catch (_) {}
+        } catch (_) { }
       } else if (typeof data === "object") {
         for (const [key, val] of Object.entries(data)) {
           if (val && typeof val === "object") {
@@ -1354,7 +1389,7 @@ export async function updatePortfolioSection(section, data, user = "admin") {
                 INSERT OR REPLACE INTO page_headers (page_key, badge_text, title, highlight_word, description)
                 VALUES (?, ?, ?, ?, ?)
               `).run(key, val.badge_text || "", val.title || "", val.highlight_word || "", val.description || "");
-            } catch (_) {}
+            } catch (_) { }
           }
         }
       }
@@ -1700,10 +1735,10 @@ export async function getUsers() {
       let sites = ["*"];
       try {
         perms = JSON.parse(u.permissions_json || '["*"]');
-      } catch {}
+      } catch { }
       try {
         sites = JSON.parse(u.assigned_websites_json || '["*"]');
-      } catch {}
+      } catch { }
       return { ...u, permissions: perms, websites: sites };
     }),
   };
@@ -1764,7 +1799,7 @@ export async function saveMediaFile({ filename, originalName, mimeType, fileSize
       INSERT OR REPLACE INTO media_files (filename, original_name, mime_type, file_size, data)
       VALUES (?, ?, ?, ?, ?)
     `).run(filename, originalName, mimeType, fileSize, data);
-  } catch (_) {}
+  } catch (_) { }
 
   // Trigger git push if media saved
   triggerGitSyncInBackground();

@@ -619,6 +619,16 @@ export const DEFAULT_WORK_PACKAGES = [
     tags: "n8n, Google Sheets, Auto Notifications",
     sort_order: 7,
     is_active: 1
+  },
+  {
+    id: 8,
+    category: "DESIGN",
+    title: "Design Services",
+    description: "All your everyday design needs in one place — emails people actually read, thumbnails that earn clicks, and posts that make your brand look serious.",
+    deliverables: "Email templates that look right in Gmail, Outlook & mobile\nYouTube thumbnails (1280×720) designed to earn the click\nFacebook & Instagram posts — feed + story sizes\nYour brand colors & logo used consistently everywhere",
+    tags: "HTML Email, YouTube Thumbnails, Social Posts",
+    sort_order: 8,
+    is_active: 1
   }
 ];
 
