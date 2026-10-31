@@ -109,7 +109,7 @@ export default function CertificationsManager({ certifications, setCertification
   };
 
   return (
-    <div className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+    <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-[#23242B] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -135,7 +135,7 @@ export default function CertificationsManager({ certifications, setCertification
         {list.map((item, idx) => (
           <div
             key={idx}
-            className="bg-[#06070B] border border-[#23242B] p-4 rounded-xl flex flex-col justify-between group relative transition hover:border-[#2a364f]"
+            className="stat-box bg-[#06070B] border border-[#23242B] p-4 flex flex-col justify-between group relative transition"
           >
             <div className="space-y-3">
               {(() => {

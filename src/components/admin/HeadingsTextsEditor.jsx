@@ -414,7 +414,7 @@ export default function HeadingsTextsEditor({
               {steps.map((step, idx) => (
                 <div
                   key={step.id || idx}
-                  className="p-5 rounded-2xl bg-[#06070B] border border-[#23242B] space-y-3 flex flex-col justify-between"
+                  className="stat-box p-5 bg-[#06070B] border border-[#23242B] space-y-3 flex flex-col justify-between"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">

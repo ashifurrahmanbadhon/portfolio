@@ -290,7 +290,10 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
             </button>
 
             {profileOpen && (
-              <div className="stat-box animate-dropdown absolute right-0 mt-2 w-64 bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs">
+              <div
+                className="animate-dropdown absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-24px)] bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs"
+                style={{ borderRadius: 0 }}
+              >
                 {/* Header Profile Badge */}
                 <div className="px-4 py-2.5 border-b border-[#23242B]">
                   <div className="flex items-center justify-between">
@@ -320,24 +323,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
                     </span>
                   </button>
 
-                  {/* 2. Change Password */}
-                  <button
-                    onClick={() => {
-                      setProfileOpen(false);
-                      setProfileModalOpen(true);
-                    }}
-                    className="stat-box w-full flex items-center justify-between px-4 py-2 text-[#B9B5A9] hover:text-[#FBBF24] border border-transparent transition-all cursor-pointer text-left"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <KeyRound className="w-3.5 h-3.5 text-[#F59E0B]" />
-                      <span className="font-medium">Change Password</span>
-                    </div>
-                    <span className="stat-box text-[10px] bg-[#0A0B10] text-[#8E8B82] border border-[#23242B] px-1.5 py-0.5 font-mono">
-                      Key
-                    </span>
-                  </button>
-
-                  {/* 3. Sign Out */}
+                  {/* 2. Sign Out */}
                   <button
                     onClick={() => {
                       setProfileOpen(false);
@@ -359,7 +345,8 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       {profileModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div
-            className="stat-box bg-[#0A0B10] border border-[#23242B] max-w-xl w-full shadow-2xl overflow-hidden max-h-[92dvh] flex flex-col"
+            className="bg-[#0A0B10] border border-[#23242B] max-w-xl w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+            style={{ borderRadius: 0 }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
