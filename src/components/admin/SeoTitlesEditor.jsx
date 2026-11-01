@@ -5,7 +5,7 @@ import { Globe, Save, ExternalLink } from "lucide-react";
 import SpotlightCard from "@/components/SpotlightCard";
 
 const PAGES_CONFIG = [
-  { key: "home", label: "Home Page", path: "/", defaultTitle: "Ashifur Rahman • Portfolio", defaultDesc: "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services." },
+  { key: "home", label: "Home Page", path: "/", defaultTitle: "Ashifur Rahman • Portfolio", defaultDesc: "Ashifur Rahman — Electrical & Electronic Engineer: power systems, automation & digital services — portfolio, projects, and service packages." },
   { key: "about", label: "About Ashifur", path: "/about", defaultTitle: "Ashifur Rahman • About", defaultDesc: "Electrical & Electronic Engineer passionate about technical solutions, substation design, spatial utility systems, and the transformative potential of Artificial Intelligence." },
   { key: "projects", label: "Engineering Projects", path: "/projects", defaultTitle: "Ashifur Rahman • Projects", defaultDesc: "Engineering projects by Ashifur Rahman: substation SLD & protection design, GIS power distribution mapping, solar PV simulations, and AI automations." },
   { key: "work", label: "Work & Packages", path: "/work", defaultTitle: "Work — Service Packages | Ashifur Rahman", defaultDesc: "Fixed-scope packages for businesses that want results without agency drama. Pick the one you need — every package clearly lists what is included before we start." },

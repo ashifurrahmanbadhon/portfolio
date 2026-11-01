@@ -534,7 +534,7 @@ export const DEFAULT_PAGE_HEADERS = {
     highlight_word: "Electrical & Electronic Engineer",
     description: "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
     seo_title: "Ashifur Rahman • Portfolio",
-    seo_description: "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services."
+    seo_description: "Ashifur Rahman — Electrical & Electronic Engineer: power systems, automation & digital services — portfolio, projects, and service packages."
   },
   about: {
     page_key: "about",

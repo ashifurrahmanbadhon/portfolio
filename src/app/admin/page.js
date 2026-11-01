@@ -2813,7 +2813,7 @@ function AdminConsoleContent() {
               <label className="block font-medium text-slate-300 mb-1.5">Meta Description (SEO)</label>
               <textarea
                 rows={2}
-                value={siteSettings.meta_description || "Official engineering portfolio of Ashifur Rahman. Electrical & Electronic Engineer."}
+                value={siteSettings.meta_description || "Ashifur Rahman — Electrical & Electronic Engineer: power systems, automation & digital services — portfolio, projects, and service packages."}
                 onChange={(e) => setSiteSettings({ ...siteSettings, meta_description: e.target.value })}
                 className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
               />

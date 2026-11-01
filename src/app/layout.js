@@ -25,7 +25,7 @@ export async function generateMetadata() {
   const description =
     homeHeader?.seo_description ||
     siteSettings?.meta_description ||
-    "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services.";
+    "Ashifur Rahman — Electrical & Electronic Engineer: power systems, automation & digital services — portfolio, projects, and service packages.";
   const ogImage =
     siteSettings?.og_image_url && siteSettings.og_image_url !== "/ashifur.jpeg"
       ? siteSettings.og_image_url
