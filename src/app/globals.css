@@ -722,3 +722,5 @@ select:focus {
 /* === ADMIN UNIFORM BOX HOVER === */
 .admin-shell :is([class*="bg-[#0A0B10]"], [class*="bg-[#06070B]"], .stat-box):not(.min-h-screen):not(header):not(aside):not(main):not(.live-preview-panel):not([data-live-simulation]) { transition: border-color 0.2s ease; }
 .admin-shell :is([class*="bg-[#0A0B10]"], [class*="bg-[#06070B]"], .stat-box):hover:not(:has(:hover)):not(.live-preview-panel):not([data-live-simulation]) { border-color: rgba(245, 158, 11, 0.55) !important; }
+/* === ADMIN UNIFORM BOX HOVER — CONTENT HOVER FOLLOW-UP === */
+.admin-shell :is([class*="bg-[#0A0B10]"], [class*="bg-[#06070B]"], .stat-box):hover:not(.min-h-screen):not(header):not(aside):not(main):not(.live-preview-panel):not([data-live-simulation]) { border-color: rgba(245, 158, 11, 0.55) !important; }
