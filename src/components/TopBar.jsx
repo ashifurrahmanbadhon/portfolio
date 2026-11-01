@@ -233,7 +233,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => setMobileOpen?.(true)}
-            className="lg:hidden p-1.5 rounded-lg bg-[#06070B] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] transition cursor-pointer shrink-0"
+            className="lg:hidden p-1.5 rounded-none bg-[#06070B] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] hover:border-[#F59E0B] transition cursor-pointer shrink-0"
             title="Open Navigation Menu"
           >
             <Menu className="w-4 h-4" />
@@ -270,9 +270,9 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
           <div className="relative">
             <button
               onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center gap-2 p-1 rounded-lg hover:bg-[#12131A] border border-transparent hover:border-[#23242B] transition cursor-pointer"
+              className="stat-box flex items-center gap-2 p-1 rounded-none border border-transparent hover:border-[#F59E0B] transition cursor-pointer"
             >
-              <div className="w-7 h-7 rounded-lg overflow-hidden bg-[#06070B] border border-[#23242B] text-[#F59E0B] text-xs font-bold font-mono flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-full overflow-hidden bg-[#06070B] border border-[#23242B] text-[#F59E0B] text-xs font-bold font-mono flex items-center justify-center shrink-0">
                 <Image
                   src={userAvatar || "/ashifur.jpeg"}
                   alt={displayName}

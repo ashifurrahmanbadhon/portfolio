@@ -724,11 +724,11 @@ function AdminConsoleContent() {
   return (
     <div className="space-y-6 pb-20">
       {/* Section Command Header */}
-      <div className="bg-[#0A0B10] border border-[#23242B] rounded-xl p-5 sm:p-6 shadow-sm">
+      <div className="bg-[#0A0B10] border border-[#23242B] rounded-none p-5 sm:p-6 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="p-1.5 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+              <span className="p-1.5 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
                 <CurrentIcon className="w-4 h-4" />
               </span>
               <h1 className="text-lg sm:text-xl font-bold text-[#F5F2EA] tracking-tight">
@@ -754,7 +754,7 @@ function AdminConsoleContent() {
             <button
               onClick={handleManualGitSync}
               disabled={gitSyncing}
-              className="px-3 py-1.5 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-none bg-[#12131A] hover:bg-[#1A1B22] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               title="Push changes to Git repository & deploy live on Vercel"
             >
               <Sparkles className={`w-3.5 h-3.5 text-[#F59E0B] ${gitSyncing ? "animate-spin" : ""}`} />
@@ -764,7 +764,7 @@ function AdminConsoleContent() {
             <button
               onClick={() => loadData(true)}
               disabled={loading}
-              className="px-3 py-1.5 rounded-lg bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-none bg-[#12131A] hover:bg-[#1A1B22] text-[#8E8B82] hover:text-[#F5F2EA] border border-[#23242B] text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               title="Refresh database records"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#F59E0B]" : ""}`} />
@@ -775,7 +775,7 @@ function AdminConsoleContent() {
               href={currentTabObj.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-mono font-medium transition flex items-center gap-1.5 group"
+              className="px-3 py-1.5 rounded-none bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-mono font-medium transition flex items-center gap-1.5 group"
             >
               <span>View Live</span>
               <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -786,8 +786,8 @@ function AdminConsoleContent() {
 
       {/* Initial Database Synchronization Skeleton Gate */}
       {!initialLoaded && loading ? (
-        <div className="bg-[#0A0B10] border border-[#23242B] rounded-2xl p-12 sm:p-16 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center shadow-lg shadow-amber-500/10">
+        <div className="bg-[#0A0B10] border border-[#23242B] rounded-none p-12 sm:p-16 flex flex-col items-center justify-center space-y-4">
+          <div className="w-12 h-12 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center shadow-lg shadow-amber-500/10">
             <RefreshCw className="w-5 h-5 text-[#F59E0B] animate-spin" />
           </div>
           <div className="text-center space-y-1">
@@ -810,17 +810,17 @@ function AdminConsoleContent() {
               <div className="space-y-6">
                 {/* Overview Metric Stat-Boxes */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                  <Link href="/admin?tab=projects" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
+                  <Link href="/admin?tab=projects" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Projects</div>
-                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{projects.length || 9}</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] transition-colors">{projects.length || 9}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Engineering cases</div>
                   </Link>
-                  <Link href="/admin?tab=work" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
+                  <Link href="/admin?tab=work" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Packages</div>
-                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{workPackages.length || 8}</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] transition-colors">{workPackages.length || 8}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Service presets</div>
                   </Link>
-                  <Link href="/admin?tab=inbox" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
+                  <Link href="/admin?tab=inbox" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Inquiries</div>
                     <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors flex items-center gap-1.5">
                       <span>{messages.length}</span>
@@ -830,19 +830,19 @@ function AdminConsoleContent() {
                     </div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Visitor messages</div>
                   </Link>
-                  <Link href="/admin?tab=skills" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
+                  <Link href="/admin?tab=skills" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Skills</div>
-                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{skills.length || 16}</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] transition-colors">{skills.length || 16}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Technical items</div>
                   </Link>
-                  <Link href="/admin?tab=experience" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
+                  <Link href="/admin?tab=experience" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Experience</div>
-                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{experiences.length || 2}</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] transition-colors">{experiences.length || 2}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Career positions</div>
                   </Link>
-                  <Link href="/admin?tab=education" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition group cursor-pointer block">
+                  <Link href="/admin?tab=education" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Education</div>
-                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] group-hover:text-[#F59E0B] transition-colors">{educations.length || 3}</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] transition-colors">{educations.length || 3}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Degrees & certs</div>
                   </Link>
                 </div>
@@ -975,7 +975,7 @@ function AdminConsoleContent() {
             {currentTab === "security" && (
               <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-6 sm:p-8 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                  <div className="p-2 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <div>
@@ -1005,22 +1005,22 @@ function AdminConsoleContent() {
             {currentTab === "system_settings" && (
               <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-6 sm:p-8 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                  <div className="p-2 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
                     <Sliders className="w-5 h-5" />
                   </div>
                   <div>
                     <h2 className="text-base font-bold text-[#F5F2EA]">System & Environment Settings</h2>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-[#B9B5A9] border border-[#23242B]">Production Active</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#12131A] text-[#B9B5A9] border border-[#23242B]">Production Active</span>
                   </div>
                 </div>
                 <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
                   System health, database parity between local SQLite development and Neon PostgreSQL production, and admin local cache controls.
                 </p>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <button onClick={() => loadData(true)} className="px-3.5 py-2 rounded-lg bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition cursor-pointer">
+                  <button onClick={() => loadData(true)} className="px-3.5 py-2 rounded-none bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition cursor-pointer">
                     Clear Cache & Force Re-sync
                   </button>
-                  <button onClick={handleManualGitSync} disabled={gitSyncing} className="px-3.5 py-2 rounded-lg bg-[#12131A] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer">
+                  <button onClick={handleManualGitSync} disabled={gitSyncing} className="px-3.5 py-2 rounded-none bg-[#12131A] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer">
                     {gitSyncing ? "Deploying..." : "Trigger Git Sync"}
                   </button>
                 </div>
@@ -1032,7 +1032,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "home" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none">
             <div className="flex items-center justify-between pb-4 border-b border-[#23242B] mb-6">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1047,7 +1047,7 @@ function AdminConsoleContent() {
               <button
                 onClick={() => handleSaveSection("hero", hero, "Hero section saved!")}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
+                className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>{saving ? "Saving..." : "Save Hero"}</span>
@@ -1061,7 +1061,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.name || ""}
                   onChange={(e) => setHero({ ...hero, name: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition font-medium"
                 />
               </div>
 
@@ -1071,7 +1071,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.title || ""}
                   onChange={(e) => setHero({ ...hero, title: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition font-medium"
                 />
               </div>
 
@@ -1081,7 +1081,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.badge_text || ""}
                   onChange={(e) => setHero({ ...hero, badge_text: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition"
                 />
               </div>
 
@@ -1091,7 +1091,7 @@ function AdminConsoleContent() {
                   rows={3}
                   value={hero.introduction || ""}
                   onChange={(e) => setHero({ ...hero, introduction: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
                 />
               </div>
 
@@ -1116,7 +1116,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={hero.spec_badge_title || ""}
                   onChange={(e) => setHero({ ...hero, spec_badge_title: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition"
                 />
               </div>
 
@@ -1128,14 +1128,14 @@ function AdminConsoleContent() {
                     value={hero.primary_btn_text || ""}
                     onChange={(e) => setHero({ ...hero, primary_btn_text: e.target.value })}
                     placeholder="Button text"
-                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                   />
                   <input
                     type="text"
                     value={hero.primary_btn_link || ""}
                     onChange={(e) => setHero({ ...hero, primary_btn_link: e.target.value })}
                     placeholder="/contact"
-                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
               </div>
@@ -1148,14 +1148,14 @@ function AdminConsoleContent() {
                     value={hero.secondary_btn_text || ""}
                     onChange={(e) => setHero({ ...hero, secondary_btn_text: e.target.value })}
                     placeholder="Download CV"
-                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                   />
                   <input
                     type="text"
                     value={hero.secondary_btn_link || ""}
                     onChange={(e) => setHero({ ...hero, secondary_btn_link: e.target.value })}
                     placeholder="/Ashifur_Rahman_CV.pdf"
-                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
               </div>
@@ -1163,7 +1163,7 @@ function AdminConsoleContent() {
           </SpotlightCard>
 
           {/* Highlights Metrics Cards */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#23242B]">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -1179,7 +1179,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("highlight");
                 }}
-                className="px-3 py-1.5 rounded-xl bg-[#F59E0B]/10 hover:bg-emerald-500/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
+                className="px-3 py-1.5 rounded-none bg-[#F59E0B]/10 hover:bg-emerald-500/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto self-end sm:self-auto"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add New Metric</span>
@@ -1190,7 +1190,7 @@ function AdminConsoleContent() {
               {highlights.map((item, idx) => (
                 <SpotlightCard
                   key={idx}
-                  className="bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 p-4 rounded-xl space-y-2 group relative transition"
+                  className="bg-[#06070B] border border-[#23242B] p-4 rounded-none space-y-2 group relative transition"
                 >
                   <div className="flex items-start justify-between">
                     <p className="text-xl font-extrabold text-[#F59E0B] font-mono">{item.metric_value}</p>
@@ -1242,7 +1242,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "about" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-6">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#23242B]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1257,7 +1257,7 @@ function AdminConsoleContent() {
             <button
               onClick={() => handleSaveSection("about", about, "About page updated successfully!")}
               disabled={saving}
-              className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
+              className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? "Saving..." : "Save About Page"}</span>
@@ -1271,7 +1271,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={about.subtitle || ""}
                 onChange={(e) => setAbout({ ...about, subtitle: e.target.value })}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition"
               />
             </div>
 
@@ -1281,7 +1281,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={about.title || ""}
                 onChange={(e) => setAbout({ ...about, title: e.target.value })}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition font-medium"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition font-medium"
               />
             </div>
 
@@ -1291,7 +1291,7 @@ function AdminConsoleContent() {
                 rows={3}
                 value={about.description1 || ""}
                 onChange={(e) => setAbout({ ...about, description1: e.target.value })}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
               />
             </div>
 
@@ -1301,7 +1301,7 @@ function AdminConsoleContent() {
                 rows={3}
                 value={about.description2 || ""}
                 onChange={(e) => setAbout({ ...about, description2: e.target.value })}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition resize-none leading-relaxed"
               />
             </div>
 
@@ -1321,7 +1321,7 @@ function AdminConsoleContent() {
             </div>
 
             {/* Core Focus Area 1 */}
-            <SpotlightCard className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-3">
+            <SpotlightCard className="p-4 rounded-none bg-[#06070B] border border-[#23242B] space-y-3">
               <div className="font-bold text-[#F59E0B] flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" /> Focus Pillar 1
               </div>
@@ -1331,7 +1331,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={about.focus1_title || ""}
                   onChange={(e) => setAbout({ ...about, focus1_title: e.target.value })}
-                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -1340,13 +1340,13 @@ function AdminConsoleContent() {
                   rows={2}
                   value={about.focus1_text || ""}
                   onChange={(e) => setAbout({ ...about, focus1_text: e.target.value })}
-                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none resize-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none"
                 />
               </div>
             </SpotlightCard>
 
             {/* Core Focus Area 2 */}
-            <SpotlightCard className="p-4 rounded-xl bg-[#06070B] border border-[#23242B] space-y-3">
+            <SpotlightCard className="p-4 rounded-none bg-[#06070B] border border-[#23242B] space-y-3">
               <div className="font-bold text-[#F59E0B] flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" /> Focus Pillar 2
               </div>
@@ -1356,7 +1356,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={about.focus2_title || ""}
                   onChange={(e) => setAbout({ ...about, focus2_title: e.target.value })}
-                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -1365,7 +1365,7 @@ function AdminConsoleContent() {
                   rows={2}
                   value={about.focus2_text || ""}
                   onChange={(e) => setAbout({ ...about, focus2_text: e.target.value })}
-                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-3 py-2 text-white outline-none resize-none"
+                  className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none"
                 />
               </div>
             </SpotlightCard>
@@ -1395,7 +1395,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "experience" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1421,7 +1421,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("experience");
                 }}
-                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Experience</span>
@@ -1431,14 +1431,14 @@ function AdminConsoleContent() {
 
           <div className="space-y-3">
             {experiences.length === 0 ? (
-              <div className="p-8 text-center bg-[#0A0B10] border border-[#23242B] rounded-2xl text-slate-400 text-xs">
+              <div className="p-8 text-center bg-[#0A0B10] border border-[#23242B] rounded-none text-slate-400 text-xs">
                 No experiences added yet. Click &quot;Add New Experience&quot; to create your first entry.
               </div>
             ) : (
               experiences.map((exp, idx) => (
                 <SpotlightCard
                   key={idx}
-                  className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl group relative space-y-3"
+                  className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-none group relative space-y-3"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#23242B] pb-3">
                     <div>
@@ -1446,7 +1446,7 @@ function AdminConsoleContent() {
                         <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                         <h3 className="text-sm sm:text-base font-bold text-white">{exp.role}</h3>
                         {exp.is_current ? (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
                             Present
                           </span>
                         ) : null}
@@ -1465,7 +1465,7 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(experiences, setExperiences, idx, -1, "experiences")}
                         disabled={idx === 0}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
+                        className="p-1.5 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
                         title="Move Up"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -1473,7 +1473,7 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(experiences, setExperiences, idx, 1, "experiences")}
                         disabled={idx === experiences.length - 1}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
+                        className="p-1.5 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400"
                         title="Move Down"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -1489,14 +1489,14 @@ function AdminConsoleContent() {
                           setEditingIndex(idx);
                           setModalType("experience");
                         }}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
+                        className="p-1.5 rounded-none bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                         title="Edit Experience"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => deleteItem(experiences, setExperiences, idx, "experiences", "experience entry")}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
+                        className="p-1.5 rounded-none bg-[#12131A] text-red-400 hover:bg-red-500/20"
                         title="Delete Experience"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1534,7 +1534,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "education" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1561,7 +1561,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("education");
                 }}
-                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Education</span>
@@ -1571,14 +1571,14 @@ function AdminConsoleContent() {
 
           <div className="space-y-3">
             {educations.length === 0 ? (
-              <div className="p-8 text-center bg-[#0A0B10] border border-[#23242B] rounded-2xl text-slate-400 text-xs">
+              <div className="p-8 text-center bg-[#0A0B10] border border-[#23242B] rounded-none text-slate-400 text-xs">
                 No education records yet. Click &quot;Add Education&quot; to begin.
               </div>
             ) : (
               educations.map((ed, idx) => (
                 <SpotlightCard
                   key={idx}
-                  className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl group relative space-y-2"
+                  className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-none group relative space-y-2"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#23242B] pb-3">
                     <div>
@@ -1586,7 +1586,7 @@ function AdminConsoleContent() {
                         <GraduationCap className="w-4 h-4 text-[#F59E0B]" />
                         <h3 className="text-sm sm:text-base font-bold text-white">{ed.degree}</h3>
                         {ed.badge_text && (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30">
                             {ed.badge_text}
                           </span>
                         )}
@@ -1605,14 +1605,14 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(educations, setEducations, idx, -1, "educations")}
                         disabled={idx === 0}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1.5 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => moveItem(educations, setEducations, idx, 1, "educations")}
                         disabled={idx === educations.length - 1}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1.5 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
                       </button>
@@ -1622,13 +1622,13 @@ function AdminConsoleContent() {
                           setEditingIndex(idx);
                           setModalType("education");
                         }}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
+                        className="p-1.5 rounded-none bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => deleteItem(educations, setEducations, idx, "educations", "education item")}
-                        className="p-1.5 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
+                        className="p-1.5 rounded-none bg-[#12131A] text-red-400 hover:bg-red-500/20"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -1664,7 +1664,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "skills" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1687,7 +1687,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("skill");
                 }}
-                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Skill</span>
@@ -1702,7 +1702,7 @@ function AdminConsoleContent() {
                 <button
                   key={cat}
                   onClick={() => setSkillCategoryFilter(cat)}
-                  className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-none font-medium transition cursor-pointer whitespace-nowrap ${
                     skillCategoryFilter === cat
                       ? "bg-emerald-500/20 text-[#FBBF24] border border-[#F59E0B]/30"
                       : "bg-[#0A0B10] text-slate-400 hover:text-white border border-[#23242B]"
@@ -1722,10 +1722,10 @@ function AdminConsoleContent() {
                 return (
                   <SpotlightCard
                     key={idx}
-                    className="bg-[#0A0B10] border border-[#23242B] p-4 rounded-xl space-y-3 group relative"
+                    className="bg-[#0A0B10] border border-[#23242B] p-4 rounded-none space-y-3 group relative"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-slate-400 border border-[#23242B]">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#12131A] text-slate-400 border border-[#23242B]">
                         {skill.category}
                       </span>
                       <div className="flex items-center gap-1.5">
@@ -1793,7 +1793,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "projects" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
             <div className="flex items-center justify-between gap-4 w-full">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1827,7 +1827,7 @@ function AdminConsoleContent() {
                   setEditingIndex(-1);
                   setModalType("project");
                 }}
-                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
+                className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add New Project</span>
@@ -1839,12 +1839,12 @@ function AdminConsoleContent() {
             {projects.map((proj, idx) => (
               <SpotlightCard
                 key={idx}
-                className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
+                className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-none space-y-3.5 group relative flex flex-col justify-between"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
+                      <span className="text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded-none border border-[#F59E0B]/20">
                         #{proj.project_number || String(idx + 1).padStart(2, "0")}
                       </span>
                       <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
@@ -1861,14 +1861,14 @@ function AdminConsoleContent() {
                       <button
                         onClick={() => moveItem(projects, setProjects, idx, -1, "projects")}
                         disabled={idx === 0}
-                        className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => moveItem(projects, setProjects, idx, 1, "projects")}
                         disabled={idx === projects.length - 1}
-                        className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
+                        className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
                       </button>
@@ -1887,20 +1887,20 @@ function AdminConsoleContent() {
                           setEditingIndex(idx);
                           setModalType("project");
                         }}
-                        className="p-1 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
+                        className="p-1 rounded-none bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => deleteItem(projects, setProjects, idx, "projects", "project")}
-                        className="p-1 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
+                        className="p-1 rounded-none bg-[#12131A] text-red-400 hover:bg-red-500/20"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
 
-                  <h3 className="text-sm font-bold text-white group-hover:text-[#FBBF24] transition">
+                  <h3 className="text-sm font-bold text-white transition">
                     {proj.title}
                   </h3>
 
@@ -1915,7 +1915,7 @@ function AdminConsoleContent() {
                       {proj.tags.map((tag, tIdx) => (
                         <span
                           key={tIdx}
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#06070B] text-slate-400 border border-[#23242B]"
+                          className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#06070B] text-slate-400 border border-[#23242B]"
                         >
                           {tag}
                         </span>
@@ -1973,7 +1973,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "work" && (
               <div className="space-y-6">
-                <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+                <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
                   <div className="flex items-center justify-between gap-4 w-full">
                     <div>
                       <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1999,7 +1999,7 @@ function AdminConsoleContent() {
                         setEditingIndex(-1);
                         setModalType("work_package");
                       }}
-                      className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
+                      className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0 ml-auto"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add New Package</span>
@@ -2011,12 +2011,12 @@ function AdminConsoleContent() {
                   {workPackages.map((pkg, idx) => (
                     <SpotlightCard
                       key={pkg.id || idx}
-                      className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-2xl space-y-3.5 group relative flex flex-col justify-between"
+                      className="bg-[#0A0B10] border border-[#23242B] p-5 rounded-none space-y-3.5 group relative flex flex-col justify-between"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
+                            <span className="text-xs font-mono font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded-none border border-[#F59E0B]/20">
                               #{String(pkg.sort_order || idx + 1).padStart(2, "0")}
                             </span>
                             <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
@@ -2033,7 +2033,7 @@ function AdminConsoleContent() {
                             <button
                               onClick={() => moveItem(workPackages, setWorkPackages, idx, -1, "work_packages")}
                               disabled={idx === 0}
-                              className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
+                              className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                               title="Move Up"
                             >
                               <ArrowUp className="w-3.5 h-3.5" />
@@ -2041,7 +2041,7 @@ function AdminConsoleContent() {
                             <button
                               onClick={() => moveItem(workPackages, setWorkPackages, idx, 1, "work_packages")}
                               disabled={idx === workPackages.length - 1}
-                              className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
+                              className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30"
                               title="Move Down"
                             >
                               <ArrowDown className="w-3.5 h-3.5" />
@@ -2056,14 +2056,14 @@ function AdminConsoleContent() {
                                 setEditingIndex(idx);
                                 setModalType("work_package");
                               }}
-                              className="p-1 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
+                              className="p-1 rounded-none bg-[#12131A] text-[#F59E0B] hover:bg-emerald-500/20"
                               title="Edit Package"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => deleteItem(workPackages, setWorkPackages, idx, "work_packages", "package")}
-                              className="p-1 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20"
+                              className="p-1 rounded-none bg-[#12131A] text-red-400 hover:bg-red-500/20"
                               title="Delete Package"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -2071,7 +2071,7 @@ function AdminConsoleContent() {
                           </div>
                         </div>
 
-                        <h3 className="text-sm font-bold text-white group-hover:text-[#FBBF24] transition">
+                        <h3 className="text-sm font-bold text-white transition">
                           {pkg.title}
                         </h3>
 
@@ -2093,7 +2093,7 @@ function AdminConsoleContent() {
                         {pkg.tags && (
                           <div className="flex flex-wrap gap-1.5 pt-2">
                             {(pkg.tags || "").split(',').map(t => t.trim()).filter(Boolean).map((t, tIdx) => (
-                              <span key={tIdx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#12131A] text-slate-400 border border-[#232A3B]">
+                              <span key={tIdx} className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#12131A] text-slate-400 border border-[#232A3B]">
                                 {t}
                               </span>
                             ))}
@@ -2112,7 +2112,7 @@ function AdminConsoleContent() {
             {currentTab === "contact" && (
               <div className="space-y-6">
 {/* Section A: Contact Details & Social Links */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-6">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-[#23242B]">
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -2132,7 +2132,7 @@ function AdminConsoleContent() {
                   }
                 }}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
+                className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>{saving ? "Saving..." : "Save Contact Info"}</span>
@@ -2156,7 +2156,7 @@ function AdminConsoleContent() {
                   type="email"
                   value={socialLinks.email || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, email: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -2176,7 +2176,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.phone || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, phone: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -2196,7 +2196,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.whatsapp || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, whatsapp: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -2216,7 +2216,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.location || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, location: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none"
                 />
               </div>
 
@@ -2236,7 +2236,7 @@ function AdminConsoleContent() {
                   type="text"
                   value={socialLinks.linkedin || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, linkedin: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
 
@@ -2257,14 +2257,14 @@ function AdminConsoleContent() {
                   value={socialLinks.github || ""}
                   onChange={(e) => setSocialLinks({ ...socialLinks, github: e.target.value })}
                   placeholder="https://github.com/ashifurrahmanbadhon"
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none font-mono"
                 />
               </div>
             </div>
           </SpotlightCard>
 
           {/* Section B: Resume / CV Management */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#23242B]">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -2279,7 +2279,7 @@ function AdminConsoleContent() {
               <button
                 onClick={() => handleSaveSection("resume", resume, "Resume link saved successfully!")}
                 disabled={saving}
-                className="px-4 py-1.5 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                className="px-4 py-1.5 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>Save Resume</span>
@@ -2312,7 +2312,7 @@ function AdminConsoleContent() {
                   value={resume.file_name || ""}
                   onChange={(e) => setResume({ ...resume, file_name: e.target.value })}
                   placeholder="Ashifur_Rahman_CV.pdf"
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2 text-white outline-none font-mono"
                 />
               </div>
             </div>
@@ -2325,7 +2325,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "inbox" && (
               <div className="space-y-6">
-                <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-5">
+                <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-5">
                   {/* Header and Bulk Action Toolbar */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#23242B]">
                     <div>
@@ -2370,7 +2370,7 @@ function AdminConsoleContent() {
                         <button
                           type="button"
                           onClick={selectAllMessages}
-                          className={`px-3 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-none border text-xs font-mono flex items-center gap-1.5 transition cursor-pointer ${
                             selectedMessages.length === messages.length && messages.length > 0
                               ? "bg-emerald-500/20 text-[#FBBF24] border-emerald-500/40"
                               : "bg-[#12131A] text-slate-300 hover:text-white border-[#23242B]"
@@ -2394,7 +2394,7 @@ function AdminConsoleContent() {
                           <button
                             type="button"
                             onClick={handleBulkMarkRead}
-                            className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-[#FBBF24] border border-[#F59E0B]/30 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
+                            className="px-3 py-1.5 rounded-none bg-emerald-500/15 hover:bg-emerald-500/25 text-[#FBBF24] border border-[#F59E0B]/30 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer"
                           >
                             <Check className="w-3.5 h-3.5" />
                             <span>Mark Read ({selectedMessages.length})</span>
@@ -2404,7 +2404,7 @@ function AdminConsoleContent() {
                             type="button"
                             onClick={handleBulkDeleteMessages}
                             disabled={deletingBulk}
-                            className="px-3.5 py-1.5 rounded-xl bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-mono font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+                            className="px-3.5 py-1.5 rounded-none bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-mono font-semibold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>{deletingBulk ? "Deleting..." : `Delete Selected (${selectedMessages.length})`}</span>
@@ -2417,7 +2417,7 @@ function AdminConsoleContent() {
                   {/* Messages Body */}
                   {messages.length === 0 ? (
                     <div className="py-16 text-center space-y-3">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B] flex items-center justify-center mx-auto">
+                      <div className="w-12 h-12 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B] flex items-center justify-center mx-auto">
                         <MessageSquare className="w-6 h-6" />
                       </div>
                       <p className="text-white font-medium text-sm">No Inquiries Received Yet</p>
@@ -2497,7 +2497,7 @@ function AdminConsoleContent() {
                                       showToast("Message marked as read", "success");
                                       fetchUnreadCount();
                                     }}
-                                    className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#F59E0B]/10 text-[#F59E0B] hover:bg-emerald-500/20 transition cursor-pointer"
+                                    className="px-2 py-0.5 rounded-none text-[10px] font-mono bg-[#F59E0B]/10 text-[#F59E0B] hover:bg-emerald-500/20 transition cursor-pointer"
                                   >
                                     Mark Read
                                   </button>
@@ -2506,7 +2506,7 @@ function AdminConsoleContent() {
                                 <button
                                   type="button"
                                   onClick={() => toggleExpandMessage(msg.id)}
-                                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer ${
+                                  className={`px-2.5 py-1 rounded-none text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer ${
                                     isExpanded
                                       ? "bg-emerald-500/20 text-[#FBBF24] border border-emerald-500/40"
                                       : "bg-[#12131A] text-slate-300 hover:text-white border border-[#23242B] hover:border-[#2a364f]"
@@ -2546,7 +2546,7 @@ function AdminConsoleContent() {
                                 Subject: <span className="text-white font-normal">{msg.subject}</span>
                               </p>
                             )}
-                            <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed bg-[#0c1018] p-3 rounded-xl border border-[#23242B]/70">
+                            <p className="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap leading-relaxed bg-[#0c1018] p-3 rounded-none border border-[#23242B]/70">
                               {msg.message}
                             </p>
 
@@ -2565,12 +2565,12 @@ function AdminConsoleContent() {
                                       {replies.map((r, rIdx) => (
                                         <div
                                           key={r.id || rIdx}
-                                          className="p-3.5 rounded-xl bg-[#0f1728] border border-blue-500/20 space-y-1.5"
+                                          className="p-3.5 rounded-none bg-[#0f1728] border border-blue-500/20 space-y-1.5"
                                         >
                                           <div className="flex items-center justify-between text-xs">
                                             <div className="flex items-center gap-2">
                                               <span className="font-semibold text-blue-300">Ashifur Rahman (Admin)</span>
-                                              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-none bg-blue-500/10 text-blue-400 border border-blue-500/20">
                                                 Email Sent
                                               </span>
                                             </div>
@@ -2588,7 +2588,7 @@ function AdminConsoleContent() {
                                 )}
 
                                 {/* Inline Reply Composer */}
-                                <div className="p-4 rounded-xl bg-[#0D121D] border border-[#F59E0B]/20 space-y-3">
+                                <div className="p-4 rounded-none bg-[#0D121D] border border-[#F59E0B]/20 space-y-3">
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       <Reply className="w-4 h-4 text-[#F59E0B]" />
@@ -2609,18 +2609,18 @@ function AdminConsoleContent() {
                                       setReplyDrafts((prev) => ({ ...prev, [msg.id]: e.target.value }))
                                     }
                                     placeholder={`Write your response to ${msg.name}... (Sent from onboarding@resend.dev, replies arrive in your Gmail)`}
-                                    className="w-full bg-[#080B11] border border-[#23242B] focus:border-[#F59E0B] focus:ring-1 focus:ring-emerald-500/30 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition resize-y font-sans"
+                                    className="w-full bg-[#080B11] border border-[#23242B] focus:border-[#F59E0B] focus:ring-1 focus:ring-emerald-500/30 rounded-none p-3 text-xs sm:text-sm text-white placeholder-slate-500 outline-none transition resize-y font-sans"
                                   />
 
                                   {replyError && (
-                                    <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400 flex items-center gap-2">
+                                    <div className="p-2.5 rounded-none bg-red-500/10 border border-red-500/30 text-xs text-red-400 flex items-center gap-2">
                                       <AlertCircle className="w-4 h-4 shrink-0" />
                                       <span>{replyError}</span>
                                     </div>
                                   )}
 
                                   {isSentSuccess && (
-                                    <div className="p-2.5 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-xs text-[#F59E0B] flex items-center gap-2">
+                                    <div className="p-2.5 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-xs text-[#F59E0B] flex items-center gap-2">
                                       <CheckCircle2 className="w-4 h-4 shrink-0" />
                                       <span>Reply sent successfully! It has been added to the thread above.</span>
                                     </div>
@@ -2635,7 +2635,7 @@ function AdminConsoleContent() {
                                       type="button"
                                       onClick={() => handleSendReply(msg.id)}
                                       disabled={!draftText.trim() || isSending}
-                                      className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs font-mono flex items-center gap-2 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-amber-500/20"
+                                      className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs font-mono flex items-center gap-2 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-amber-500/20"
                                     >
                                       {isSending ? (
                                         <>
@@ -2667,7 +2667,7 @@ function AdminConsoleContent() {
             {/* ============================================================== */}
             {currentTab === "settings" && (
               <div className="space-y-6">
-<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-6">
+<SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-[#23242B]">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -2682,7 +2682,7 @@ function AdminConsoleContent() {
             <button
               onClick={() => handleSaveSection("site_settings", siteSettings, "Site settings saved!")}
               disabled={saving}
-              className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
+              className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? "Saving..." : "Save Settings"}</span>
@@ -2696,7 +2696,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={siteSettings.site_title || "Ashifur Rahman | Engineering Portfolio"}
                 onChange={(e) => setSiteSettings({ ...siteSettings, site_title: e.target.value })}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none"
               />
             </div>
 
@@ -2706,7 +2706,7 @@ function AdminConsoleContent() {
                 type="text"
                 value={siteSettings.footer_brand || "Ashifur Rahman"}
                 onChange={(e) => setSiteSettings({ ...siteSettings, footer_brand: e.target.value })}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none"
               />
             </div>
 
@@ -2716,7 +2716,7 @@ function AdminConsoleContent() {
                 rows={2}
                 value={siteSettings.meta_description || "Official engineering portfolio of Ashifur Rahman. Electrical & Electronic Engineer."}
                 onChange={(e) => setSiteSettings({ ...siteSettings, meta_description: e.target.value })}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
               />
             </div>
           </div>
@@ -2757,7 +2757,7 @@ function AdminConsoleContent() {
       {/* ============================================================== */}
       {modalType && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[#0A0B10] border border-[#23242B] w-full max-w-xl rounded-2xl shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[#0A0B10] border border-[#23242B] w-full max-w-xl rounded-none shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
               <h3 className="text-base font-bold text-white capitalize">
@@ -2768,7 +2768,7 @@ function AdminConsoleContent() {
                   setModalType(null);
                   setEditingItem(null);
                 }}
-                className="p-1 rounded-lg hover:bg-[#1E2638] text-slate-400 hover:text-white"
+                className="p-1 rounded-none hover:bg-[#1E2638] text-slate-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2783,7 +2783,7 @@ function AdminConsoleContent() {
                     type="text"
                     value={editingItem.metric_value || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, metric_value: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none font-mono"
                   />
                 </div>
                 <div>
@@ -2792,7 +2792,7 @@ function AdminConsoleContent() {
                     type="text"
                     value={editingItem.metric_label || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, metric_label: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none"
                   />
                 </div>
                 <div>
@@ -2801,7 +2801,7 @@ function AdminConsoleContent() {
                     type="text"
                     value={editingItem.metric_subtext || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, metric_subtext: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none"
                   />
                 </div>
               </div>
@@ -2818,7 +2818,7 @@ function AdminConsoleContent() {
                       value={editingItem.role || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, role: e.target.value })}
                       placeholder="e.g. Executive Engineer"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                   <div>
@@ -2828,7 +2828,7 @@ function AdminConsoleContent() {
                       value={editingItem.organization || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, organization: e.target.value })}
                       placeholder="e.g. Energy Division"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2841,7 +2841,7 @@ function AdminConsoleContent() {
                       value={editingItem.period || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, period: e.target.value })}
                       placeholder="e.g. 2023 - Present"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                   <div>
@@ -2851,7 +2851,7 @@ function AdminConsoleContent() {
                       value={editingItem.location || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
                       placeholder="Dhaka, Bangladesh"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2885,7 +2885,7 @@ function AdminConsoleContent() {
                             setEditingItem({ ...editingItem, description_points: updated });
                           }}
                           placeholder={`Key responsibility point ${pIdx + 1}`}
-                          className="flex-1 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                          className="flex-1 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                         />
                         <button
                           type="button"
@@ -2914,7 +2914,7 @@ function AdminConsoleContent() {
                     value={editingItem.degree || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, degree: e.target.value })}
                     placeholder="e.g. B.Sc. in Electrical & Electronic Engineering"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                   />
                 </div>
 
@@ -2925,7 +2925,7 @@ function AdminConsoleContent() {
                     value={editingItem.institution || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, institution: e.target.value })}
                     placeholder="e.g. American International University-Bangladesh"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                   />
                 </div>
 
@@ -2937,7 +2937,7 @@ function AdminConsoleContent() {
                       value={editingItem.start_year || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, start_year: e.target.value })}
                       placeholder="2019"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                   <div>
@@ -2947,7 +2947,7 @@ function AdminConsoleContent() {
                       value={editingItem.end_year || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, end_year: e.target.value })}
                       placeholder="2023"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2960,7 +2960,7 @@ function AdminConsoleContent() {
                       value={editingItem.result || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, result: e.target.value })}
                       placeholder="CGPA 3.85 / 4.00"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -2970,7 +2970,7 @@ function AdminConsoleContent() {
                       value={editingItem.badge_text || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, badge_text: e.target.value })}
                       placeholder="Dean's List Honor"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -2981,7 +2981,7 @@ function AdminConsoleContent() {
                     rows={2}
                     value={editingItem.description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none"
                   />
                 </div>
               </div>
@@ -2997,7 +2997,7 @@ function AdminConsoleContent() {
                     value={editingItem.name || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
                     placeholder="e.g. AutoCAD Electrical"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2 text-white outline-none"
                   />
                 </div>
 
@@ -3008,7 +3008,7 @@ function AdminConsoleContent() {
                     value={editingItem.category || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
                     placeholder="Design & Simulation, GIS & Data Systems, etc."
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2 text-white outline-none"
                   />
                 </div>
 
@@ -3040,7 +3040,7 @@ function AdminConsoleContent() {
                       value={editingItem.category || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
                       placeholder="WEBSITE, AI, TRACKING, AUTOMATION"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono uppercase"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono uppercase"
                     />
                   </div>
                   <div className="col-span-2">
@@ -3050,7 +3050,7 @@ function AdminConsoleContent() {
                       value={editingItem.title || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                       placeholder="e.g. Business Website"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-bold"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-bold"
                     />
                   </div>
                 </div>
@@ -3062,7 +3062,7 @@ function AdminConsoleContent() {
                     value={editingItem.description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
                     placeholder="Brief description of the package"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
                   />
                 </div>
 
@@ -3075,7 +3075,7 @@ function AdminConsoleContent() {
                     value={editingItem.deliverables || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, deliverables: e.target.value })}
                     placeholder="Home, services, gallery & about pages&#10;Order / inquiry buttons connected to WhatsApp"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
                   />
                 </div>
 
@@ -3088,14 +3088,14 @@ function AdminConsoleContent() {
                     value={editingItem.tags || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, tags: e.target.value })}
                     placeholder="Next.js, CMS Admin, WhatsApp Orders"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
 
                 {/* Inquiry Modal Customization */}
                 <div className="pt-2 border-t border-[#23242B] space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] text-[#F59E0B] font-bold uppercase tracking-wider bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
+                    <span className="font-mono text-[10px] text-[#F59E0B] font-bold uppercase tracking-wider bg-[#F59E0B]/10 px-2 py-0.5 rounded-none border border-[#F59E0B]/20">
                       Inquiry Modal Configuration
                     </span>
                     <span className="text-[10px] text-slate-400">Customized inquiry fields for this package</span>
@@ -3109,7 +3109,7 @@ function AdminConsoleContent() {
                         value={editingItem.inquiry_field_label || ""}
                         onChange={(e) => setEditingItem({ ...editingItem, inquiry_field_label: e.target.value })}
                         placeholder="e.g. WHICH DESIGN DO YOU NEED?"
-                        className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono uppercase"
+                        className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono uppercase"
                       />
                     </div>
                     <div>
@@ -3119,7 +3119,7 @@ function AdminConsoleContent() {
                         value={editingItem.inquiry_field_placeholder || ""}
                         onChange={(e) => setEditingItem({ ...editingItem, inquiry_field_placeholder: e.target.value })}
                         placeholder="e.g. Email Template / YouTube Thumbnail"
-                        className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                        className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                       />
                     </div>
                   </div>
@@ -3133,7 +3133,7 @@ function AdminConsoleContent() {
                       value={editingItem.inquiry_template || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, inquiry_template: e.target.value })}
                       placeholder="e.g. Design type:&#10;Text / content:&#10;Quantity needed:"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-y leading-relaxed font-mono"
                     />
                   </div>
                 </div>
@@ -3145,7 +3145,7 @@ function AdminConsoleContent() {
                       type="number"
                       value={editingItem.sort_order || 1}
                       onChange={(e) => setEditingItem({ ...editingItem, sort_order: parseInt(e.target.value) || 1 })}
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -3156,7 +3156,7 @@ function AdminConsoleContent() {
                           type="checkbox"
                           checked={editingItem.is_active !== 0}
                           onChange={(e) => setEditingItem({ ...editingItem, is_active: e.target.checked ? 1 : 0 })}
-                          className="rounded bg-[#06070B] border-[#23242B] text-emerald-500 focus:ring-0"
+                          className="rounded-none bg-[#06070B] border-[#23242B] text-emerald-500 focus:ring-0"
                         />
                         Active (Visible on /work)
                       </label>
@@ -3176,7 +3176,7 @@ function AdminConsoleContent() {
                       value={editingItem.project_number || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, project_number: e.target.value })}
                       placeholder="01"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div className="col-span-2">
@@ -3186,7 +3186,7 @@ function AdminConsoleContent() {
                       value={editingItem.category || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
                       placeholder="Power Electronics, Substation GIS, etc."
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -3198,7 +3198,7 @@ function AdminConsoleContent() {
                     value={editingItem.title || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                     placeholder="Full project headline"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-medium"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-medium"
                   />
                 </div>
 
@@ -3209,7 +3209,7 @@ function AdminConsoleContent() {
                     value={editingItem.short_description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, short_description: e.target.value })}
                     placeholder="Brief description shown on cards"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
                   />
                 </div>
 
@@ -3220,7 +3220,7 @@ function AdminConsoleContent() {
                     value={editingItem.full_description || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, full_description: e.target.value })}
                     placeholder="Comprehensive project description, case study details, or implementation write-up"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-y leading-relaxed"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-y leading-relaxed"
                   />
                 </div>
 
@@ -3259,14 +3259,14 @@ function AdminConsoleContent() {
                           additional_images: [...cur, ""],
                         });
                       }}
-                      className="text-[#F59E0B] hover:text-[#FBBF24] flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-[#F59E0B]/10 border border-[#F59E0B]/20 hover:bg-emerald-500/20 transition cursor-pointer"
+                      className="text-[#F59E0B] hover:text-[#FBBF24] flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 hover:bg-emerald-500/20 transition cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Add Slide Image
                     </button>
                   </div>
 
                   {(!editingItem.additional_images || editingItem.additional_images.length === 0) && (
-                    <div className="text-center py-3 px-3 rounded-xl border border-dashed border-[#23242B] bg-[#06070B]/50 text-slate-400 text-xs">
+                    <div className="text-center py-3 px-3 rounded-none border border-dashed border-[#23242B] bg-[#06070B]/50 text-slate-400 text-xs">
                       No gallery slides added. The project card will display the main thumbnail only.
                     </div>
                   )}
@@ -3275,7 +3275,7 @@ function AdminConsoleContent() {
                     {(editingItem.additional_images || []).map((slideUrl, sIdx) => (
                       <div
                         key={sIdx}
-                        className="p-3 rounded-xl border border-[#23242B] bg-[#06070B] space-y-2.5"
+                        className="p-3 rounded-none border border-[#23242B] bg-[#06070B] space-y-2.5"
                       >
                         <div className="flex items-center justify-between text-xs pb-1 border-b border-[#23242B]/60">
                           <span className="font-mono font-bold text-[#F59E0B]">
@@ -3292,7 +3292,7 @@ function AdminConsoleContent() {
                                 arr[sIdx - 1] = tmp;
                                 setEditingItem({ ...editingItem, additional_images: arr });
                               }}
-                              className="p-1 rounded bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                              className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
                               title="Move Up"
                             >
                               <ArrowUp className="w-3 h-3" />
@@ -3307,7 +3307,7 @@ function AdminConsoleContent() {
                                 arr[sIdx + 1] = tmp;
                                 setEditingItem({ ...editingItem, additional_images: arr });
                               }}
-                              className="p-1 rounded bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                              className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
                               title="Move Down"
                             >
                               <ArrowDown className="w-3 h-3" />
@@ -3318,7 +3318,7 @@ function AdminConsoleContent() {
                                 const arr = editingItem.additional_images.filter((_, i) => i !== sIdx);
                                 setEditingItem({ ...editingItem, additional_images: arr });
                               }}
-                              className="p-1 rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 cursor-pointer ml-1"
+                              className="p-1 rounded-none bg-red-500/10 text-red-400 hover:bg-red-500/20 cursor-pointer ml-1"
                               title="Remove Slide"
                             >
                               <Trash2 className="w-3 h-3" />
@@ -3356,7 +3356,7 @@ function AdminConsoleContent() {
                       })
                     }
                     placeholder="MATLAB, Simulink, PCB Design"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
 
@@ -3368,7 +3368,7 @@ function AdminConsoleContent() {
                       value={editingItem.live_url || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, live_url: e.target.value })}
                       placeholder="https://..."
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -3378,7 +3378,7 @@ function AdminConsoleContent() {
                       value={editingItem.github_url || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, github_url: e.target.value })}
                       placeholder="https://github.com/..."
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                 </div>
@@ -3391,7 +3391,7 @@ function AdminConsoleContent() {
                       value={editingItem.project_date || ""}
                       onChange={(e) => setEditingItem({ ...editingItem, project_date: e.target.value })}
                       placeholder="e.g. 2026"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -3401,13 +3401,13 @@ function AdminConsoleContent() {
                       value={editingItem.sort_order !== undefined ? editingItem.sort_order : 1}
                       onChange={(e) => setEditingItem({ ...editingItem, sort_order: parseInt(e.target.value, 10) || 0 })}
                       placeholder="1"
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 transition">
+                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-none bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 transition">
                     <input
                       type="checkbox"
                       checked={Boolean(editingItem.is_published)}
@@ -3420,7 +3420,7 @@ function AdminConsoleContent() {
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 transition">
+                  <label className="flex items-center gap-2 cursor-pointer p-2.5 rounded-none bg-[#06070B] border border-[#23242B] hover:border-emerald-500/40 transition">
                     <input
                       type="checkbox"
                       checked={Boolean(editingItem.is_featured)}
@@ -3444,7 +3444,7 @@ function AdminConsoleContent() {
                   setModalType(null);
                   setEditingItem(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#12131A] text-slate-400 hover:text-white text-xs font-mono transition"
+                className="px-4 py-2 rounded-none bg-[#12131A] text-slate-400 hover:text-white text-xs font-mono transition"
               >
                 Cancel
               </button>
@@ -3508,7 +3508,7 @@ function AdminConsoleContent() {
                   setModalType(null);
                   setEditingItem(null);
                 }}
-                className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition cursor-pointer"
+                className="px-5 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Save Entry</span>

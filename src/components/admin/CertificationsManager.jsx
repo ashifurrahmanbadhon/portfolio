@@ -124,7 +124,7 @@ export default function CertificationsManager({ certifications, setCertification
         <button
           type="button"
           onClick={openAdd}
-          className="px-3 py-1.5 rounded-xl bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
+          className="px-3 py-1.5 rounded-none bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add New Certification</span>
@@ -135,17 +135,17 @@ export default function CertificationsManager({ certifications, setCertification
         {list.map((item, idx) => (
           <div
             key={idx}
-            className="stat-box bg-[#06070B] border border-[#23242B] p-4 flex flex-col justify-between group relative transition"
+            className="stat-box bg-[#06070B] border border-[#23242B] p-4 flex flex-col justify-between cursor-default relative"
           >
             <div className="space-y-3">
               {(() => {
                 const hasImg = Boolean(item.image_url && item.image_url.trim());
                 return (
-                  <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden bg-[#070A0F] border border-[#23242B] select-none group/adminimg">
+                  <div className="relative w-full aspect-[16/9] rounded-none overflow-hidden bg-[#070A0F] border border-[#23242B] select-none">
                     <img
                       src={hasImg ? item.image_url : "/certs/no-image.svg"}
                       alt={item.title || "Certificate"}
-                      className="w-full h-full object-cover pointer-events-none select-none transition-transform duration-300 group-hover/adminimg:scale-105"
+                      className="w-full h-full object-cover pointer-events-none select-none transition-transform duration-300"
                       onError={(e) => {
                         if (e.currentTarget.src !== "/certs/no-image.svg") {
                           e.currentTarget.src = "/certs/no-image.svg";
@@ -153,7 +153,7 @@ export default function CertificationsManager({ certifications, setCertification
                       }}
                     />
                     {!hasImg && (
-                      <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[9px] font-mono font-semibold bg-black/70 text-amber-300 border border-amber-500/30 backdrop-blur-sm">
+                      <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-none text-[9px] font-mono font-semibold bg-black/70 text-amber-300 border border-amber-500/30 backdrop-blur-sm">
                         No image
                       </span>
                     )}
@@ -162,7 +162,7 @@ export default function CertificationsManager({ certifications, setCertification
               })()}
 
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20">
                   {item.year || "Certified"}
                 </span>
 
@@ -191,7 +191,7 @@ export default function CertificationsManager({ certifications, setCertification
                 </div>
               </div>
 
-              <h4 className="text-xs font-bold text-white group-hover:text-[#F59E0B] transition">
+              <h4 className="text-xs font-bold text-white">
                 {item.title}
               </h4>
               {item.issuer && (
@@ -228,7 +228,7 @@ export default function CertificationsManager({ certifications, setCertification
           onClick={() => setModalOpen(false)}
         >
           <div
-            className="bg-[#0A0B10] border border-[#23242B] w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-6 space-y-4"
+            className="bg-[#0A0B10] border border-[#23242B] w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-none shadow-2xl p-6 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
@@ -238,7 +238,7 @@ export default function CertificationsManager({ certifications, setCertification
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg hover:bg-[#1E2638] text-slate-400 hover:text-white cursor-pointer"
+                className="p-1 rounded-none hover:bg-[#1E2638] text-slate-400 hover:text-white cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -253,7 +253,7 @@ export default function CertificationsManager({ certifications, setCertification
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   placeholder="e.g. Computer Aided Electrical Design (CAED) — Training"
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none"
                 />
               </div>
 
@@ -266,7 +266,7 @@ export default function CertificationsManager({ certifications, setCertification
                     value={form.issuer}
                     onChange={(e) => setForm({ ...form, issuer: e.target.value })}
                     placeholder="e.g. Technical Training Unit, IUBAT"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none"
                   />
                 </div>
 
@@ -277,7 +277,7 @@ export default function CertificationsManager({ certifications, setCertification
                     value={form.year}
                     onChange={(e) => setForm({ ...form, year: e.target.value })}
                     placeholder="e.g. 2021"
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none font-mono"
                   />
                 </div>
               </div>
@@ -302,7 +302,7 @@ export default function CertificationsManager({ certifications, setCertification
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="Description of the training or certification..."
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none resize-none leading-relaxed"
                 />
               </div>
 
@@ -310,14 +310,14 @@ export default function CertificationsManager({ certifications, setCertification
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#12131A] text-slate-300 hover:text-white border border-[#23242B] cursor-pointer"
+                  className="px-4 py-2 rounded-none bg-[#12131A] text-slate-300 hover:text-white border border-[#23242B] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold cursor-pointer disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Save Certification"}
                 </button>

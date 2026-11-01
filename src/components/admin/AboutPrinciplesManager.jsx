@@ -72,7 +72,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
   };
 
   return (
-    <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+    <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-[#23242B] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -87,7 +87,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
         <button
           type="button"
           onClick={openAdd}
-          className="px-3 py-1.5 rounded-xl bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
+          className="px-3 py-1.5 rounded-none bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0 ml-auto"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add New Principle</span>
@@ -98,7 +98,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
         {principles.map((pr, idx) => (
           <SpotlightCard
             key={idx}
-            className="bg-[#06070B] border border-[#23242B] p-4 rounded-xl space-y-2 group relative"
+            className="bg-[#06070B] border border-[#23242B] p-4 rounded-none space-y-2 cursor-default relative"
           >
             <div className="flex items-center justify-between">
               <span className="text-lg font-bold font-mono text-[#F59E0B]">
@@ -137,7 +137,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0A0B10] border border-[#23242B] w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
+          <div className="bg-[#0A0B10] border border-[#23242B] w-full max-w-md rounded-none shadow-2xl p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
               <h3 className="text-base font-bold text-white">
                 {editingIndex >= 0 ? "Edit Guiding Principle" : "Add Guiding Principle"}
@@ -145,7 +145,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg hover:bg-[#1E2638] text-slate-400 hover:text-white"
+                className="p-1 rounded-none hover:bg-[#1E2638] text-slate-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -159,7 +159,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
                     type="text"
                     value={form.number}
                     onChange={(e) => setForm({ ...form, number: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
                 <div className="col-span-2">
@@ -169,7 +169,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
                     required
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                   />
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
                   required
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
                 />
               </div>
 
@@ -189,14 +189,14 @@ export default function AboutPrinciplesManager({ about, setAbout, onSave, saving
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#12131A] text-slate-300 hover:text-white border border-[#23242B]"
+                  className="px-4 py-2 rounded-none bg-[#12131A] text-slate-300 hover:text-white border border-[#23242B]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold"
+                  className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold"
                 >
                   Save Principle
                 </button>

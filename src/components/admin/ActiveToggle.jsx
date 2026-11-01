@@ -13,7 +13,7 @@ export default function ActiveToggle({ isActive, onToggle, label = 'Item' }) {
         e.stopPropagation();
         onToggle();
       }}
-      className={`px-2 py-1 rounded-lg text-[10px] font-mono flex items-center gap-1.5 transition cursor-pointer select-none ${
+      className={`px-2 py-1 rounded-none text-[10px] font-mono flex items-center gap-1.5 transition cursor-pointer select-none ${
         active
           ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 shadow-xs'
           : 'bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25'

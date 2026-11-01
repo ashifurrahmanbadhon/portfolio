@@ -43,7 +43,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
   };
 
   return (
-    <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-5">
+    <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#23242B] gap-3">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -59,7 +59,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
+          className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
         >
           <Save className="w-4 h-4" />
           <span>{saving ? "Saving..." : "Save Headers"}</span>
@@ -75,7 +75,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
               key={pg.key}
               type="button"
               onClick={() => setActivePage(pg.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition cursor-pointer whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-none text-xs font-mono transition cursor-pointer whitespace-nowrap ${
                 isActive
                   ? "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 font-bold"
                   : "text-slate-400 hover:text-white hover:bg-[#12131A]"
@@ -96,7 +96,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
             value={currentHeader.badge_text || ""}
             onChange={(e) => handleChange("badge_text", e.target.value)}
             placeholder="e.g. TECHNICAL PROFICIENCY"
-            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
           />
         </div>
 
@@ -107,7 +107,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
             value={currentHeader.highlight_word || ""}
             onChange={(e) => handleChange("highlight_word", e.target.value)}
             placeholder="e.g. Engineering & AI"
-            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
           />
         </div>
 
@@ -118,7 +118,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
             value={currentHeader.title || ""}
             onChange={(e) => handleChange("title", e.target.value)}
             placeholder="e.g. About Ashifur Rahman —"
-            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
           />
         </div>
 
@@ -128,7 +128,7 @@ export default function PageHeadersManager({ pageHeaders, setPageHeaders, onSave
             rows={3}
             value={currentHeader.description || ""}
             onChange={(e) => handleChange("description", e.target.value)}
-            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
           />
         </div>
       </div>

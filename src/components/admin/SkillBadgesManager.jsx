@@ -57,7 +57,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
   };
 
   return (
-    <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+    <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-[#23242B] gap-4 w-full">
         <div>
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -75,12 +75,12 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
             value={newBadge}
             onChange={(e) => setNewBadge(e.target.value)}
             placeholder="Add new badge..."
-            className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-1.5 text-xs text-white outline-none"
+            className="bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-1.5 text-xs text-white outline-none"
           />
           <button
             type="submit"
             disabled={!newBadge.trim() || saving}
-            className="px-3 py-1.5 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1 transition cursor-pointer disabled:opacity-40"
+            className="px-3 py-1.5 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1 transition cursor-pointer disabled:opacity-40"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add New</span>
@@ -92,7 +92,7 @@ export default function SkillBadgesManager({ skillBadges, setSkillBadges, onSave
         {list.map((item, idx) => (
           <div
             key={idx}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#06070B] border border-[#23242B] hover:border-[#F59E0B]/40 text-xs text-slate-200 transition group"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-[#06070B] border border-[#23242B] text-xs text-slate-200"
           >
             <span className={item.is_active === 0 ? "line-through text-slate-500" : ""}>{item.name}</span>
             <ActiveToggle

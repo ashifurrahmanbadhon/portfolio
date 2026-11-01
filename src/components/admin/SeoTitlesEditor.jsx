@@ -52,7 +52,7 @@ export default function SeoTitlesEditor({ pageHeaders, setPageHeaders, onSave, s
 
   return (
     <div className="space-y-6">
-      <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+      <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -68,7 +68,7 @@ export default function SeoTitlesEditor({ pageHeaders, setPageHeaders, onSave, s
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="px-5 py-2.5 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
+            className="px-5 py-2.5 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? "Saving..." : "Save All SEO Titles"}</span>
@@ -86,11 +86,11 @@ export default function SeoTitlesEditor({ pageHeaders, setPageHeaders, onSave, s
           return (
             <SpotlightCard
               key={page.key}
-              className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl space-y-4 text-xs"
+              className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none space-y-4 text-xs"
             >
               <div className="flex items-center justify-between pb-3 border-b border-[#23242B]">
                 <div className="flex items-center gap-2 font-mono">
-                  <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
+                  <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2 py-0.5 rounded-none border border-[#F59E0B]/20">
                     {page.path}
                   </span>
                   <span className="text-white font-bold">{page.label}</span>
@@ -122,7 +122,7 @@ export default function SeoTitlesEditor({ pageHeaders, setPageHeaders, onSave, s
                       value={seoTitle}
                       onChange={(e) => handleFieldChange(page.key, "seo_title", e.target.value)}
                       placeholder={page.defaultTitle}
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-medium"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-medium"
                     />
                   </div>
 
@@ -138,13 +138,13 @@ export default function SeoTitlesEditor({ pageHeaders, setPageHeaders, onSave, s
                       value={seoDesc}
                       onChange={(e) => handleFieldChange(page.key, "seo_description", e.target.value)}
                       placeholder={page.defaultDesc}
-                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                      className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
                     />
                   </div>
                 </div>
 
                 {/* Right: Live SERP Snippet Preview */}
-                <div className="p-4 rounded-xl bg-[#202124] border border-[#303134] flex flex-col justify-between">
+                <div className="p-4 rounded-none bg-[#202124] border border-[#303134] flex flex-col justify-between">
                   <div>
                     <div className="flex items-center gap-1.5 mb-1.5 text-[11px] font-mono text-[#9AA0A6]">
                       <span className="text-[#81C995] font-semibold">{previewUrl}</span>

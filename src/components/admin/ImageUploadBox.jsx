@@ -549,7 +549,7 @@ export default function ImageUploadBox({
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      className={`p-4 sm:p-5 rounded-2xl bg-[#06070B] border transition-colors duration-150 flex flex-col sm:flex-row gap-4 sm:gap-5 items-stretch ${
+      className={`p-4 sm:p-5 rounded-none bg-[#06070B] border transition-colors duration-150 flex flex-col sm:flex-row gap-4 sm:gap-5 items-stretch ${
         isDragging ? "border-emerald-400 bg-[#F59E0B]/10" : "border-[#23242B] hover:border-[#27324A]"
       }`}
     >
@@ -561,7 +561,7 @@ export default function ImageUploadBox({
       >
         <div
           style={tileAspect}
-          className={`relative rounded-xl overflow-hidden border border-[#23242B] bg-[#070A0F] flex items-center justify-center transition select-none group/tile ${
+          className={`relative rounded-none overflow-hidden border border-[#23242B] bg-[#070A0F] flex items-center justify-center transition select-none group/tile ${
             !uploading && isImage && displayUrl ? "cursor-pointer" : ""
           }`}
           onClick={() => {
@@ -620,7 +620,7 @@ export default function ImageUploadBox({
                 e.stopPropagation();
                 handleOpenRepositionModal();
               }}
-              className="absolute top-2 right-2 z-20 p-1.5 rounded-lg bg-black/75 hover:bg-black text-slate-300 hover:text-[#F59E0B] border border-[#23242B] transition cursor-pointer shadow-md"
+              className="absolute top-2 right-2 z-20 p-1.5 rounded-none bg-black/75 hover:bg-black text-slate-300 hover:text-[#F59E0B] border border-[#23242B] transition cursor-pointer shadow-md"
               title="Reposition photo"
             >
               <Move className="w-3.5 h-3.5" />
@@ -640,7 +640,7 @@ export default function ImageUploadBox({
           {/* PDF Document Preview */}
           {displayUrl && isPdf && (
             <div className="p-4 flex flex-col items-center justify-center text-center space-y-1.5">
-              <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
+              <div className="p-2.5 rounded-none bg-red-500/10 border border-red-500/20 text-red-400">
                 <FileText className="w-7 h-7" />
               </div>
               <p className="font-bold text-white text-xs">PDF Document Loaded</p>
@@ -679,7 +679,7 @@ export default function ImageUploadBox({
               {/* Reposition Overlay Badge on Hover */}
               {!uploading && (
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/tile:opacity-100 transition-opacity duration-150 flex items-center justify-center gap-2 pointer-events-none">
-                  <span className="px-3 py-1.5 rounded-xl bg-black/90 text-[#FBBF24] border border-[#F59E0B]/40 text-xs font-mono font-bold flex items-center gap-1.5">
+                  <span className="px-3 py-1.5 rounded-none bg-black/90 text-[#FBBF24] border border-[#F59E0B]/40 text-xs font-mono font-bold flex items-center gap-1.5">
                     <Move className="w-3.5 h-3.5 text-[#F59E0B]" />
                     <span>Reposition Photo</span>
                   </span>
@@ -715,7 +715,7 @@ export default function ImageUploadBox({
           <button
             type="button"
             onClick={handlePickFileClick}
-            className="w-full bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-mono transition-colors duration-150 cursor-pointer active:scale-[0.99] select-none shadow-md shadow-amber-500/10"
+            className="w-full bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold py-2.5 px-4 rounded-none flex items-center justify-center gap-2 text-xs font-mono transition-colors duration-150 cursor-pointer active:scale-[0.99] select-none shadow-md shadow-amber-500/10"
           >
             <Upload className="w-4 h-4 text-slate-950 shrink-0" />
             <span className="whitespace-nowrap">
@@ -736,7 +736,7 @@ export default function ImageUploadBox({
                   setIsCropOpen(true);
                 }}
                 disabled={uploading}
-                className="bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-[#F59E0B] border border-[#23242B] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
+                className="bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-[#F59E0B] border border-[#23242B] py-2 px-3 rounded-none flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
                 title="Crop & Resize"
               >
                 <Scissors className="w-3.5 h-3.5 text-[#F59E0B] shrink-0" />
@@ -747,7 +747,7 @@ export default function ImageUploadBox({
                 type="button"
                 onClick={handleOpenRepositionModal}
                 disabled={uploading}
-                className="bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#23242B] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
+                className="bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white border border-[#23242B] py-2 px-3 rounded-none flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
                 title="Reposition photo"
               >
                 <Move className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -762,7 +762,7 @@ export default function ImageUploadBox({
               type="button"
               onClick={handleRemovePhoto}
               disabled={!displayUrl || uploading}
-              className="bg-[#12131A] hover:bg-red-500/20 disabled:opacity-40 text-red-400 border border-[#23242B] hover:border-red-500/30 py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
+              className="bg-[#12131A] hover:bg-red-500/20 disabled:opacity-40 text-red-400 border border-[#23242B] hover:border-red-500/30 py-2 px-3 rounded-none flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
               title="Remove / Clear"
             >
               <Trash2 className="w-3.5 h-3.5 shrink-0" />
@@ -773,7 +773,7 @@ export default function ImageUploadBox({
               type="button"
               onClick={handleResetToDefault}
               disabled={uploading}
-              className="bg-[#12131A] hover:bg-[#1E2638] disabled:opacity-40 text-slate-300 hover:text-white border border-[#23242B] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
+              className="bg-[#12131A] hover:bg-[#1E2638] disabled:opacity-40 text-slate-300 hover:text-white border border-[#23242B] py-2 px-3 rounded-none flex items-center justify-center gap-1.5 text-xs font-mono transition cursor-pointer select-none"
               title="Reset to default"
             >
               <RotateCcw className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -792,7 +792,7 @@ export default function ImageUploadBox({
             value={internalUrl}
             onChange={handleUrlInputChange}
             placeholder="https://... or /images/..."
-            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-xs text-white outline-none font-mono placeholder:text-slate-600 transition"
+            className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-xs text-white outline-none font-mono placeholder:text-slate-600 transition"
           />
         </div>
 
@@ -840,13 +840,13 @@ export default function ImageUploadBox({
           onClick={handleCloseRepositionModal}
         >
           <div
-            className="bg-[#0D121F] border border-[#23242B] rounded-2xl max-w-[420px] w-full shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
+            className="bg-[#0D121F] border border-[#23242B] rounded-none max-w-[420px] w-full shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="px-5 py-4 border-b border-[#23242B] flex items-center justify-between bg-[#111624] shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="p-2 rounded-xl bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 shrink-0">
+                <div className="p-2 rounded-none bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 shrink-0">
                   <Move className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
@@ -861,7 +861,7 @@ export default function ImageUploadBox({
               <button
                 type="button"
                 onClick={handleCloseRepositionModal}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#12131A] transition cursor-pointer shrink-0 ml-2"
+                className="p-1.5 rounded-none text-slate-400 hover:text-white hover:bg-[#12131A] transition cursor-pointer shrink-0 ml-2"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -871,7 +871,7 @@ export default function ImageUploadBox({
             <div className="p-5 space-y-4 flex-1 min-h-0 overflow-y-auto">
               <div className="flex items-center justify-between text-[11px] font-mono">
                 <span className="text-slate-300 font-medium">Pan position:</span>
-                <span className="px-2 py-0.5 rounded bg-[#12131A] text-[#FBBF24] border border-[#F59E0B]/30 font-bold">
+                <span className="px-2 py-0.5 rounded-none bg-[#12131A] text-[#FBBF24] border border-[#F59E0B]/30 font-bold">
                   {panX}% {panY}% {zoom > 1 ? `• ${Number(zoom).toFixed(2)}x` : ""}
                 </span>
               </div>
@@ -881,7 +881,7 @@ export default function ImageUploadBox({
                 onMouseDown={handleDragStart}
                 onTouchStart={handleDragStart}
                 style={getModalAspectStyle(previewAspect, aspectRatio)}
-                className={`relative rounded-2xl overflow-hidden bg-[#070A0F] border select-none transition-all ${
+                className={`relative rounded-none overflow-hidden bg-[#070A0F] border select-none transition-all ${
                   isDraggingPan
                     ? "border-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.35)] cursor-grabbing"
                     : "border-[#F59E0B]/40 hover:border-emerald-400 cursor-grab"
@@ -918,7 +918,7 @@ export default function ImageUploadBox({
               </div>
 
               {/* Zoom Slider Bar */}
-              <div className="p-3.5 rounded-xl bg-[#090D15] border border-[#23242B] space-y-2.5">
+              <div className="p-3.5 rounded-none bg-[#090D15] border border-[#23242B] space-y-2.5">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center gap-1.5 text-slate-300">
                     <ZoomIn className="w-3.5 h-3.5 text-[#F59E0B]" />
@@ -939,7 +939,7 @@ export default function ImageUploadBox({
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(1, Math.round((z - 0.05) * 100) / 100))}
-                    className="p-1.5 rounded-lg bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
+                    className="p-1.5 rounded-none bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
                     title="Zoom Out"
                   >
                     <ZoomOut className="w-3.5 h-3.5" />
@@ -951,12 +951,12 @@ export default function ImageUploadBox({
                     step="0.01"
                     value={zoom}
                     onChange={(e) => setZoom(parseFloat(e.target.value))}
-                    className="flex-1 accent-[#F59E0B] cursor-pointer h-1.5 bg-[#12131A] rounded-lg"
+                    className="flex-1 accent-[#F59E0B] cursor-pointer h-1.5 bg-[#12131A] rounded-none"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(2, Math.round((z + 0.05) * 100) / 100))}
-                    className="p-1.5 rounded-lg bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
+                    className="p-1.5 rounded-none bg-[#12131A] hover:bg-[#1E2638] text-slate-300 hover:text-white transition cursor-pointer"
                     title="Zoom In"
                   >
                     <ZoomIn className="w-3.5 h-3.5" />
@@ -970,14 +970,14 @@ export default function ImageUploadBox({
               <button
                 type="button"
                 onClick={handleCloseRepositionModal}
-                className="px-4 py-2 rounded-xl bg-[#12131A] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
+                className="px-4 py-2 rounded-none bg-[#12131A] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleApplyReposition}
-                className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20 cursor-pointer"
+                className="px-5 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Apply</span>
@@ -994,13 +994,13 @@ export default function ImageUploadBox({
           onClick={() => !isCroppingProcessing && setIsCropOpen(false)}
         >
           <div
-            className="bg-[#0D121F] border border-[#23242B] rounded-2xl max-w-[520px] w-full shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
+            className="bg-[#0D121F] border border-[#23242B] rounded-none max-w-[520px] w-full shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="px-5 py-4 border-b border-[#23242B] flex items-center justify-between bg-[#111624] shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="p-2 rounded-xl bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 shrink-0">
+                <div className="p-2 rounded-none bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 shrink-0">
                   <Scissors className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
@@ -1016,7 +1016,7 @@ export default function ImageUploadBox({
                 type="button"
                 disabled={isCroppingProcessing}
                 onClick={() => setIsCropOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#12131A] transition cursor-pointer shrink-0 ml-2"
+                className="p-1.5 rounded-none text-slate-400 hover:text-white hover:bg-[#12131A] transition cursor-pointer shrink-0 ml-2"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1041,7 +1041,7 @@ export default function ImageUploadBox({
                       key={preset.id}
                       type="button"
                       onClick={() => setCropAspect(preset.id)}
-                      className={`px-2 py-1.5 rounded-lg text-[11px] font-mono font-bold transition cursor-pointer border ${
+                      className={`px-2 py-1.5 rounded-none text-[11px] font-mono font-bold transition cursor-pointer border ${
                         cropAspect === preset.id
                           ? "bg-[#F59E0B] text-[#06070B] border-[#F59E0B]"
                           : "bg-[#12131A] text-slate-300 border-[#23242B] hover:border-slate-500"
@@ -1073,7 +1073,7 @@ export default function ImageUploadBox({
                   width: "100%",
                   margin: "0 auto",
                 }}
-                className={`relative rounded-2xl overflow-hidden bg-[#070A0F] border select-none transition-all flex items-center justify-center ${
+                className={`relative rounded-none overflow-hidden bg-[#070A0F] border select-none transition-all flex items-center justify-center ${
                   isDraggingCrop
                     ? "border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.35)] cursor-grabbing"
                     : "border-[#F59E0B]/40 hover:border-amber-400 cursor-grab"
@@ -1108,7 +1108,7 @@ export default function ImageUploadBox({
               </div>
 
               {/* Zoom Slider */}
-              <div className="p-3 rounded-xl bg-[#090D15] border border-[#23242B] space-y-2">
+              <div className="p-3 rounded-none bg-[#090D15] border border-[#23242B] space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center gap-1.5 text-slate-300">
                     <ZoomIn className="w-3.5 h-3.5 text-[#F59E0B]" />
@@ -1132,7 +1132,7 @@ export default function ImageUploadBox({
                   <button
                     type="button"
                     onClick={() => setCropZoom((z) => Math.max(1, Math.round((z - 0.1) * 10) / 10))}
-                    className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1E2638] text-slate-300 transition"
+                    className="p-1 rounded-none bg-[#12131A] hover:bg-[#1E2638] text-slate-300 transition"
                   >
                     <ZoomOut className="w-3.5 h-3.5" />
                   </button>
@@ -1143,12 +1143,12 @@ export default function ImageUploadBox({
                     step="0.05"
                     value={cropZoom}
                     onChange={(e) => setCropZoom(parseFloat(e.target.value))}
-                    className="flex-1 accent-[#F59E0B] cursor-pointer h-1.5 bg-[#12131A] rounded-lg"
+                    className="flex-1 accent-[#F59E0B] cursor-pointer h-1.5 bg-[#12131A] rounded-none"
                   />
                   <button
                     type="button"
                     onClick={() => setCropZoom((z) => Math.min(3, Math.round((z + 0.1) * 10) / 10))}
-                    className="p-1 rounded-lg bg-[#12131A] hover:bg-[#1E2638] text-slate-300 transition"
+                    className="p-1 rounded-none bg-[#12131A] hover:bg-[#1E2638] text-slate-300 transition"
                   >
                     <ZoomIn className="w-3.5 h-3.5" />
                   </button>
@@ -1172,7 +1172,7 @@ export default function ImageUploadBox({
                         key={opt.id}
                         type="button"
                         onClick={() => setResizePreset(opt.id)}
-                        className={`py-1 rounded-lg text-[10px] font-mono font-bold transition cursor-pointer border ${
+                        className={`py-1 rounded-none text-[10px] font-mono font-bold transition cursor-pointer border ${
                           resizePreset === opt.id
                             ? "bg-[#F59E0B] text-[#06070B] border-[#F59E0B]"
                             : "bg-[#12131A] text-slate-300 border-[#23242B]"
@@ -1196,7 +1196,7 @@ export default function ImageUploadBox({
                     step="1"
                     value={cropQuality}
                     onChange={(e) => setCropQuality(parseInt(e.target.value, 10))}
-                    className="w-full accent-[#F59E0B] cursor-pointer h-1.5 bg-[#12131A] rounded-lg mt-2"
+                    className="w-full accent-[#F59E0B] cursor-pointer h-1.5 bg-[#12131A] rounded-none mt-2"
                   />
                 </div>
               </div>
@@ -1208,7 +1208,7 @@ export default function ImageUploadBox({
                 type="button"
                 disabled={isCroppingProcessing}
                 onClick={() => setIsCropOpen(false)}
-                className="px-4 py-2 rounded-xl bg-[#12131A] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
+                className="px-4 py-2 rounded-none bg-[#12131A] hover:bg-[#1E2638] text-slate-300 text-xs font-semibold transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -1216,7 +1216,7 @@ export default function ImageUploadBox({
                 type="button"
                 disabled={isCroppingProcessing}
                 onClick={handleApplyCrop}
-                className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20 cursor-pointer disabled:opacity-50"
+                className="px-5 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20 cursor-pointer disabled:opacity-50"
               >
                 {isCroppingProcessing ? (
                   <span>Processing...</span>

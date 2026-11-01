@@ -61,7 +61,7 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
 
   return (
     <div className="space-y-6">
-      <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+      <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -77,7 +77,7 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="px-5 py-2.5 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
+            className="px-5 py-2.5 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? "Saving..." : "Save AI Chat"}</span>
@@ -89,7 +89,7 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
         {/* Left Column: Welcome Message & Chips Editor */}
         <div className="space-y-6">
           {/* Welcome Message Card */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl space-y-4 text-xs">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none space-y-4 text-xs">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 border-b border-[#23242B] pb-3">
               <Bot className="w-4 h-4 text-[#F59E0B]" />
               Welcome Greeting Message
@@ -104,13 +104,13 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
                 value={welcomeText}
                 onChange={(e) => setWelcomeText(e.target.value)}
                 placeholder={DEFAULT_WELCOME}
-                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
               />
             </div>
           </SpotlightCard>
 
           {/* Quick Suggestion Chips */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl space-y-4 text-xs">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none space-y-4 text-xs">
             <div className="flex items-center justify-between border-b border-[#23242B] pb-3">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -125,7 +125,7 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
               <button
                 type="button"
                 onClick={handleAddChip}
-                className="px-3 py-1.5 rounded-lg bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer shrink-0"
+                className="px-3 py-1.5 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer shrink-0"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Chip</span>
@@ -136,16 +136,16 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
               {chips.map((chip, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-xl bg-[#06070B] border border-[#23242B] space-y-2.5"
+                  className="p-3.5 rounded-none bg-[#06070B] border border-[#23242B] space-y-2.5"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[10px] text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
+                    <span className="font-mono text-[10px] text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2 py-0.5 rounded-none border border-[#F59E0B]/20">
                       CHIP #{idx + 1}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleDeleteChip(idx)}
-                      className="p-1 text-slate-500 hover:text-red-400 rounded transition cursor-pointer"
+                      className="p-1 text-slate-500 hover:text-red-400 rounded-none transition cursor-pointer"
                       title="Delete Chip"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -162,7 +162,7 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
                         value={chip.label || ""}
                         onChange={(e) => handleChipChange(idx, "label", e.target.value)}
                         placeholder="e.g. Skills?"
-                        className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-2.5 py-1.5 text-white outline-none font-bold"
+                        className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-2.5 py-1.5 text-white outline-none font-bold"
                       />
                     </div>
                     <div className="sm:col-span-2">
@@ -174,7 +174,7 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
                         value={chip.question || ""}
                         onChange={(e) => handleChipChange(idx, "question", e.target.value)}
                         placeholder="e.g. What are your core engineering software tools?"
-                        className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-lg px-2.5 py-1.5 text-white outline-none"
+                        className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-2.5 py-1.5 text-white outline-none"
                       />
                     </div>
                   </div>
@@ -191,7 +191,7 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
             <span className="text-emerald-400">● 24/7 Interactive</span>
           </div>
 
-          <div className="rounded-2xl border border-[#23242B] bg-[#0A0B10] shadow-2xl overflow-hidden flex flex-col h-[460px]">
+          <div className="rounded-none border border-[#23242B] bg-[#0A0B10] shadow-2xl overflow-hidden flex flex-col h-[460px]">
             {/* Header */}
             <div className="p-3.5 border-b border-[#23242B] bg-[#0E1017] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -223,14 +223,14 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
             {/* Messages Area Preview */}
             <div className="flex-1 p-4 space-y-3 overflow-y-auto text-xs">
               <div className="flex justify-start">
-                <div className="max-w-[90%] rounded-2xl rounded-bl-xs px-3.5 py-2.5 bg-[#111219] text-[#F5F2EA] border border-[#23242B] leading-relaxed">
+                <div className="max-w-[90%] rounded-none px-3.5 py-2.5 bg-[#111219] text-[#F5F2EA] border border-[#23242B] leading-relaxed">
                   {welcomeText}
                 </div>
               </div>
 
               {chips[0] && (
                 <div className="flex justify-end">
-                  <div className="max-w-[85%] rounded-2xl rounded-br-xs px-3.5 py-2 bg-[#F59E0B] text-[#1A1202] font-semibold">
+                  <div className="max-w-[85%] rounded-none px-3.5 py-2 bg-[#F59E0B] text-[#1A1202] font-semibold">
                     {chips[0].question}
                   </div>
                 </div>
@@ -239,10 +239,10 @@ export default function AiChatEditor({ siteTexts, setSiteTexts, onSave, saving }
 
             {/* Input Bar Preview */}
             <div className="p-3 border-t border-[#23242B] bg-[#06070B] flex items-center gap-2">
-              <div className="flex-1 px-3 py-1.5 rounded-xl bg-[#0A0B10] border border-[#23242B] text-slate-500 text-xs font-mono">
+              <div className="flex-1 px-3 py-1.5 rounded-none bg-[#0A0B10] border border-[#23242B] text-slate-500 text-xs font-mono">
                 Ask about substation, AutoCAD, GIS...
               </div>
-              <div className="p-2 rounded-xl bg-[#F59E0B] text-[#06070B]">
+              <div className="p-2 rounded-none bg-[#F59E0B] text-[#06070B]">
                 <Bot className="w-3.5 h-3.5" />
               </div>
             </div>

@@ -79,7 +79,7 @@ export default function HeadingsTextsEditor({
   return (
     <div className="space-y-6">
       {/* Top Banner & Main Save */}
-      <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-2xl">
+      <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-6 rounded-none">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -95,7 +95,7 @@ export default function HeadingsTextsEditor({
             type="button"
             onClick={handleSaveTexts}
             disabled={saving}
-            className="px-5 py-2.5 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
+            className="px-5 py-2.5 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? "Saving..." : "Save All Texts"}</span>
@@ -113,7 +113,7 @@ export default function HeadingsTextsEditor({
               key={tab.id}
               type="button"
               onClick={() => setActiveSubTab(tab.id)}
-              className={`px-3.5 py-1.5 rounded-lg transition cursor-pointer font-semibold ${
+              className={`px-3.5 py-1.5 rounded-none transition cursor-pointer font-semibold ${
                 activeSubTab === tab.id
                   ? "bg-[#F59E0B] text-[#06070B]"
                   : "bg-[#12131A] text-slate-400 hover:text-white border border-[#23242B]"
@@ -130,7 +130,7 @@ export default function HeadingsTextsEditor({
       {/* ============================================================== */}
       {activeSubTab === "homepage" && (
         <div className="space-y-4">
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-5 text-xs">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-5 text-xs">
             <h3 className="text-sm font-bold text-[#F5F2EA] uppercase tracking-wider font-mono border-b border-[#23242B] pb-2 text-[#F59E0B]">
               Homepage Section Headings &amp; Navigation Links
             </h3>
@@ -143,7 +143,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_featured_projects_heading || ""}
                   onChange={(e) => handleTextChange("home_featured_projects_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -152,7 +152,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_featured_projects_btn || ""}
                   onChange={(e) => handleTextChange("home_featured_projects_btn", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
 
@@ -163,7 +163,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_experience_heading || ""}
                   onChange={(e) => handleTextChange("home_experience_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -172,7 +172,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_experience_btn || ""}
                   onChange={(e) => handleTextChange("home_experience_btn", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
 
@@ -183,7 +183,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_skills_heading || ""}
                   onChange={(e) => handleTextChange("home_skills_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -192,7 +192,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_skills_btn || ""}
                   onChange={(e) => handleTextChange("home_skills_btn", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
 
@@ -203,7 +203,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_education_heading || ""}
                   onChange={(e) => handleTextChange("home_education_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -212,7 +212,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_education_btn || ""}
                   onChange={(e) => handleTextChange("home_education_btn", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
 
@@ -223,7 +223,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_services_heading || ""}
                   onChange={(e) => handleTextChange("home_services_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -232,7 +232,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_packages_heading || ""}
                   onChange={(e) => handleTextChange("home_packages_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
 
@@ -242,7 +242,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_packages_btn || ""}
                   onChange={(e) => handleTextChange("home_packages_btn", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -251,7 +251,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.home_how_i_work_heading || ""}
                   onChange={(e) => handleTextChange("home_how_i_work_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
             </div>
@@ -265,7 +265,7 @@ export default function HeadingsTextsEditor({
       {activeSubTab === "subpages" && (
         <div className="space-y-4 text-xs">
           {/* About Page */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-4">
             <h3 className="text-sm font-bold text-[#F59E0B] uppercase tracking-wider font-mono border-b border-[#23242B] pb-2">
               About Page Microcopy
             </h3>
@@ -276,7 +276,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.about_read_bio_btn || ""}
                   onChange={(e) => handleTextChange("about_read_bio_btn", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -285,7 +285,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.about_focus_heading || ""}
                   onChange={(e) => handleTextChange("about_focus_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -294,7 +294,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.about_domains_heading || ""}
                   onChange={(e) => handleTextChange("about_domains_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -303,14 +303,14 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.about_principles_heading || ""}
                   onChange={(e) => handleTextChange("about_principles_heading", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
             </div>
           </SpotlightCard>
 
           {/* Work Page Bottom CTA */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-4">
             <h3 className="text-sm font-bold text-[#F59E0B] uppercase tracking-wider font-mono border-b border-[#23242B] pb-2">
               Work Page Bottom CTA Block
             </h3>
@@ -321,7 +321,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.work_bottom_cta_title || ""}
                   onChange={(e) => handleTextChange("work_bottom_cta_title", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div>
@@ -330,7 +330,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.work_bottom_cta_btn || ""}
                   onChange={(e) => handleTextChange("work_bottom_cta_btn", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none"
                 />
               </div>
               <div className="md:col-span-2">
@@ -339,14 +339,14 @@ export default function HeadingsTextsEditor({
                   rows={2}
                   value={texts.work_bottom_cta_desc || ""}
                   onChange={(e) => handleTextChange("work_bottom_cta_desc", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
                 />
               </div>
             </div>
           </SpotlightCard>
 
           {/* Global Branding & Footer */}
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl space-y-4">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none space-y-4">
             <h3 className="text-sm font-bold text-[#F59E0B] uppercase tracking-wider font-mono border-b border-[#23242B] pb-2">
               Navbar &amp; Footer Strings
             </h3>
@@ -357,7 +357,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.nav_status_badge || ""}
                   onChange={(e) => handleTextChange("nav_status_badge", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                 />
               </div>
               <div>
@@ -366,7 +366,7 @@ export default function HeadingsTextsEditor({
                   type="text"
                   value={texts.footer_rights_text || ""}
                   onChange={(e) => handleTextChange("footer_rights_text", e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono uppercase"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono uppercase"
                 />
               </div>
             </div>
@@ -379,7 +379,7 @@ export default function HeadingsTextsEditor({
       {/* ============================================================== */}
       {activeSubTab === "process_steps" && (
         <div className="space-y-4">
-          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-2xl">
+          <SpotlightCard className="bg-[#0A0B10] border border-[#23242B] p-5 sm:p-7 rounded-none">
             <div className="flex items-center justify-between pb-4 border-b border-[#23242B] mb-5">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -402,7 +402,7 @@ export default function HeadingsTextsEditor({
                   });
                   setEditingStepIndex(-1);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
+                className="px-4 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer shrink-0"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Process Step</span>
@@ -419,7 +419,7 @@ export default function HeadingsTextsEditor({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 font-mono text-xs">
-                        <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2 py-0.5 rounded border border-[#F59E0B]/20">
+                        <span className="text-[#F59E0B] font-bold bg-[#F59E0B]/10 px-2 py-0.5 rounded-none border border-[#F59E0B]/20">
                           #{String(step.sort_order || idx + 1).padStart(2, "0")}
                         </span>
                         <span className="text-white font-bold">{step.title}</span>
@@ -435,7 +435,7 @@ export default function HeadingsTextsEditor({
                           type="button"
                           onClick={() => moveStep(idx, -1)}
                           disabled={idx === 0}
-                          className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                          className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
                           title="Move Up"
                         >
                           <ArrowUp className="w-3.5 h-3.5" />
@@ -444,7 +444,7 @@ export default function HeadingsTextsEditor({
                           type="button"
                           onClick={() => moveStep(idx, 1)}
                           disabled={idx === steps.length - 1}
-                          className="p-1 rounded-lg bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
+                          className="p-1 rounded-none bg-[#12131A] text-slate-400 hover:text-white disabled:opacity-30 cursor-pointer"
                           title="Move Down"
                         >
                           <ArrowDown className="w-3.5 h-3.5" />
@@ -455,7 +455,7 @@ export default function HeadingsTextsEditor({
                             setEditingStep({ ...step });
                             setEditingStepIndex(idx);
                           }}
-                          className="p-1 rounded-lg bg-[#12131A] text-[#F59E0B] hover:bg-amber-500/20 cursor-pointer"
+                          className="p-1 rounded-none bg-[#12131A] text-[#F59E0B] hover:bg-amber-500/20 cursor-pointer"
                           title="Edit Step"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
@@ -463,7 +463,7 @@ export default function HeadingsTextsEditor({
                         <button
                           type="button"
                           onClick={() => deleteStep(idx)}
-                          className="p-1 rounded-lg bg-[#12131A] text-red-400 hover:bg-red-500/20 cursor-pointer"
+                          className="p-1 rounded-none bg-[#12131A] text-red-400 hover:bg-red-500/20 cursor-pointer"
                           title="Delete Step"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -485,7 +485,7 @@ export default function HeadingsTextsEditor({
       {/* Inline Modal for Editing / Adding Step */}
       {editingStep && (
         <div className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#0A0B10] border border-[#23242B] rounded-2xl max-w-lg w-full p-6 space-y-4">
+          <div className="bg-[#0A0B10] border border-[#23242B] rounded-none max-w-lg w-full p-6 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#F59E0B]" />
               {editingStepIndex >= 0 ? `Edit Step #${editingStepIndex + 1}` : "Add Process Step"}
@@ -499,7 +499,7 @@ export default function HeadingsTextsEditor({
                   value={editingStep.title || ""}
                   onChange={(e) => setEditingStep({ ...editingStep, title: e.target.value })}
                   placeholder="e.g. Consult, Plan, Execute, Support"
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-bold"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-bold"
                 />
               </div>
 
@@ -510,7 +510,7 @@ export default function HeadingsTextsEditor({
                   value={editingStep.description || ""}
                   onChange={(e) => setEditingStep({ ...editingStep, description: e.target.value })}
                   placeholder="Detailed description of this step in your methodology..."
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none resize-none leading-relaxed"
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none resize-none leading-relaxed"
                 />
               </div>
 
@@ -521,7 +521,7 @@ export default function HeadingsTextsEditor({
                     type="number"
                     value={editingStep.sort_order || 1}
                     onChange={(e) => setEditingStep({ ...editingStep, sort_order: parseInt(e.target.value, 10) || 1 })}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-white outline-none font-mono"
+                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3 py-2 text-white outline-none font-mono"
                   />
                 </div>
               </div>
@@ -534,7 +534,7 @@ export default function HeadingsTextsEditor({
                   setEditingStep(null);
                   setEditingStepIndex(-1);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#12131A] text-slate-300 text-xs font-mono"
+                className="px-4 py-2 rounded-none bg-[#12131A] text-slate-300 text-xs font-mono"
               >
                 Cancel
               </button>
@@ -551,7 +551,7 @@ export default function HeadingsTextsEditor({
                   setEditingStep(null);
                   setEditingStepIndex(-1);
                 }}
-                className="px-5 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20"
+                className="px-5 py-2 rounded-none bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-500/20"
               >
                 <Check className="w-4 h-4" />
                 <span>Save Step</span>

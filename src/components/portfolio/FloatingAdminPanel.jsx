@@ -104,25 +104,25 @@ export default function FloatingAdminPanel() {
 
   return (
     <div ref={panelRef}>
-      {/* Trigger Pill at bottom-left */}
+      {/* Trigger Button at bottom-left (Stat-Box style) */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Admin Panel"
         aria-expanded={isOpen}
-        className="fixed bottom-[22px] left-[22px] z-40 flex items-center gap-2 h-11 px-4 rounded-full bg-[#0A0B10]/95 backdrop-blur-md border border-[#23242B] text-[#F5F2EA] hover:text-[#F59E0B] hover:border-[#F59E0B]/60 shadow-lg shadow-black/40 text-[13px] font-semibold transition-all duration-200 cursor-pointer"
+        className="fixed bottom-[22px] left-[22px] z-40 flex items-center gap-2 h-11 px-4 rounded-none bg-[#0A0B10]/95 backdrop-blur-md border border-[#23242B] text-[#F5F2EA] hover:text-[#F59E0B] hover:border-[#F59E0B] shadow-lg shadow-black/40 text-[13px] font-semibold transition-colors duration-150 cursor-pointer"
       >
         <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-pulse" />
         <Shield size={14} className="text-[#F59E0B]" />
         <span>Admin</span>
       </button>
 
-      {/* Popup Panel above pill */}
+      {/* Popup Panel above button (Stat-Box style) */}
       {isOpen && (
         <div
           role="dialog"
           aria-label="Admin Quick Links"
-          className="fixed bottom-[74px] left-[22px] z-40 w-[270px] max-w-[calc(100vw-44px)] bg-[#0A0B10] border border-[#23242B] rounded-2xl shadow-2xl p-3 space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="fixed bottom-[74px] left-[22px] z-40 w-[270px] max-w-[calc(100vw-44px)] bg-[#0A0B10] border border-[#23242B] rounded-none shadow-2xl p-3 space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-150"
         >
           {/* Header Row */}
           <div className="flex items-center justify-between px-2 py-1.5 border-b border-[#23242B] mb-1">
@@ -133,18 +133,18 @@ export default function FloatingAdminPanel() {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-lg text-[#8E8B82] hover:text-white hover:bg-white/5 transition cursor-pointer"
+              className="p-1 rounded-none text-[#8E8B82] hover:text-[#F59E0B] hover:border-[#F59E0B] border border-transparent transition-colors cursor-pointer"
               aria-label="Close admin panel"
             >
               <X size={15} />
             </button>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links (Stat-box row: amber border on hover, NO background fill) */}
           <Link
             href="/admin"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5 transition cursor-pointer"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-none border border-transparent hover:border-[#F59E0B] text-xs font-medium text-[#B9B5A9] hover:text-[#F59E0B] bg-transparent transition-colors cursor-pointer"
           >
             <LayoutDashboard size={15} className="text-[#F59E0B]" />
             <span>Admin Dashboard</span>
@@ -153,7 +153,7 @@ export default function FloatingAdminPanel() {
           <Link
             href="/settings"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#B9B5A9] hover:text-[#F59E0B] hover:bg-white/5 transition cursor-pointer"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-none border border-transparent hover:border-[#F59E0B] text-xs font-medium text-[#B9B5A9] hover:text-[#F59E0B] bg-transparent transition-colors cursor-pointer"
           >
             <Settings size={15} className="text-[#F59E0B]" />
             <span>Settings</span>
@@ -161,12 +161,12 @@ export default function FloatingAdminPanel() {
 
           <div className="border-t border-[#23242B] my-1 pt-1" />
 
-          {/* Log Out Button */}
+          {/* Log Out Button (Stat-box: radius 0, NO background fill) */}
           <button
             type="button"
             disabled={loggingOut}
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-rose-500/20 transition cursor-pointer disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-none text-xs font-semibold text-rose-400 hover:text-rose-300 border border-rose-500/20 hover:border-rose-400/50 bg-transparent transition-colors cursor-pointer disabled:opacity-50"
           >
             {loggingOut ? (
               <>
