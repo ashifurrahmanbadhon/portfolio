@@ -543,7 +543,7 @@ export const DEFAULT_PAGE_HEADERS = {
     highlight_word: "Engineering & AI",
     description: "Electrical & Electronic Engineer passionate about technical solutions, substation design, spatial utility systems, and the transformative potential of Artificial Intelligence.",
     seo_title: "Ashifur Rahman • About",
-    seo_description: "Electrical & Electronic Engineer passionate about technical solutions, substation design, spatial utility systems, and the transformative potential of Artificial Intelligence."
+    seo_description: "Electrical & Electronic Engineer passionate about substation design, spatial utility systems, and the transformative potential of Artificial Intelligence."
   },
   experience: {
     page_key: "experience",
@@ -561,7 +561,7 @@ export const DEFAULT_PAGE_HEADERS = {
     highlight_word: "Certifications",
     description: "Formal degree in Electrical & Electronic Engineering complemented by on-site utility training at DESCO and CAD and GIS training.",
     seo_title: "Ashifur Rahman • Education & Training",
-    seo_description: "EEE degree from IUBAT, on-site utility training at DESCO, and AutoCAD Electrical and GIS training — the education and professional development of Ashifur Rahman."
+    seo_description: "EEE degree from IUBAT, on-site utility training at DESCO, plus AutoCAD Electrical and GIS training — the education of Ashifur Rahman."
   },
   skills: {
     page_key: "skills",
@@ -579,7 +579,7 @@ export const DEFAULT_PAGE_HEADERS = {
     highlight_word: "Technical Projects",
     description: "Comprehensive engineering case studies spanning substation SLDs, GIS network mapping, solar converter hardware, and industrial power factor simulations.",
     seo_title: "Ashifur Rahman • Projects",
-    seo_description: "Engineering projects by Ashifur Rahman: substation SLD & protection design, GIS power distribution mapping, solar PV sizing, motor control schematics, and more."
+    seo_description: "Engineering projects by Ashifur Rahman: substation SLD & protection design, GIS power distribution mapping, solar PV sizing, and motor control schematics."
   },
   contact: {
     page_key: "contact",
@@ -597,7 +597,7 @@ export const DEFAULT_PAGE_HEADERS = {
     highlight_word: "Packages",
     description: "Fixed-scope packages for businesses that want results without agency drama. Pick the one you need — every package clearly lists what is included before we start.",
     seo_title: "Work — Service Packages | Ashifur Rahman",
-    seo_description: "Fixed-scope packages for businesses that want results without agency drama. Pick the one you need — every package clearly lists what is included before we start."
+    seo_description: "Digital services by Ashifur Rahman: business & portfolio websites, landing pages, AI chatbots, Meta Pixel tracking, n8n automation, and design services."
   }
 };
 

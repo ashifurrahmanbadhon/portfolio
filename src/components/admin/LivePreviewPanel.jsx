@@ -97,24 +97,26 @@ export default function LivePreviewPanel({
     const el = stageRef.current;
     if (!el || collapsed) return;
 
-    const rect = el.getBoundingClientRect();
-    const stageW = el.clientWidth || rect.width;
-    const stageH = el.clientHeight || rect.height;
+    // Accurately measure stage available space subtracting computed paddings
+    const computed = typeof window !== "undefined" ? window.getComputedStyle(el) : null;
+    const padX = computed ? (parseFloat(computed.paddingLeft) || 0) + (parseFloat(computed.paddingRight) || 0) : 24;
+    const padY = computed ? (parseFloat(computed.paddingTop) || 0) + (parseFloat(computed.paddingBottom) || 0) : 24;
 
-    if (stageW <= 0 || stageH <= 0) return;
+    const stageInnerW = Math.max(0, el.clientWidth - padX);
+    const stageInnerH = Math.max(0, el.clientHeight - padY);
 
-    // Desktop: logical 1440x900. Target 1464x924 (padding included), capped at 1
-    const sDesktopFit = Math.min(
-      1,
-      Math.min((stageW - 24) / 1440, (stageH - 24) / 900, stageW / 1464, stageH / 924)
-    );
+    if (stageInnerW <= 0 || stageInnerH <= 0) return;
+
+    // Reserve 8px safety clearance + 2px for preview frame border so right edge NEVER truncates
+    const availW = Math.max(0, stageInnerW - 10);
+    const availH = Math.max(0, stageInnerH - 10);
+
+    // Desktop: logical 1440x900. Capped at 1.
+    const sDesktopFit = Math.min(1, availW / 1440, availH / 900);
     setDesktopScale(Math.max(0.05, sDesktopFit));
 
-    // Mobile: logical 390x844. Target 414x868 (padding included), capped at 1
-    const sMobileFit = Math.min(
-      1,
-      Math.min((stageW - 24) / 390, (stageH - 24) / 844, stageW / 414, stageH / 868)
-    );
+    // Mobile: logical 390x844. Capped at 1.
+    const sMobileFit = Math.min(1, availW / 390, availH / 844);
     setMobileScale(Math.max(0.05, sMobileFit));
   }, [collapsed]);
 
@@ -306,8 +308,9 @@ export default function LivePreviewPanel({
                 /* DESKTOP VIEWPORT (1440x900 logical viewport scaled to fit stage) */
                 <div
                   style={{
-                    width: Math.round(1440 * desktopScale),
-                    height: Math.round(900 * desktopScale),
+                    width: Math.ceil(1440 * desktopScale) + 2,
+                    height: Math.ceil(900 * desktopScale) + 2,
+                    boxSizing: "border-box",
                   }}
                   className="live-preview-box border border-[#23242B] bg-[#06070B] shrink-0 relative overflow-hidden"
                 >
@@ -339,8 +342,8 @@ export default function LivePreviewPanel({
                 /* MOBILE VIEWPORT (Device Frame 390x844 scaled to stage) */
                 <div
                   style={{
-                    width: Math.round(390 * mobileScale),
-                    height: Math.round(844 * mobileScale),
+                    width: Math.ceil(390 * mobileScale),
+                    height: Math.ceil(844 * mobileScale),
                   }}
                   className="live-preview-box shrink-0 relative overflow-hidden"
                 >

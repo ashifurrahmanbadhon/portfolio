@@ -67,6 +67,7 @@ const HomepageCtaManager = dynamic(() => import("@/components/admin/HomepageCtaM
 const HeadingsTextsEditor = dynamic(() => import("@/components/admin/HeadingsTextsEditor"), { ssr: true });
 const SeoTitlesEditor = dynamic(() => import("@/components/admin/SeoTitlesEditor"), { ssr: true });
 const AiChatEditor = dynamic(() => import("@/components/admin/AiChatEditor"), { ssr: true });
+const AdminSecurityManager = dynamic(() => import("@/components/admin/AdminSecurityManager"), { ssr: true });
 
 import { DEFAULT_PROCESS_STEPS, DEFAULT_SITE_TEXTS } from "@/lib/portfolioDefaults";
 
@@ -973,30 +974,7 @@ function AdminConsoleContent() {
             {/* TAB: SECURITY & ACCESS CONTROL                                 */}
             {/* ============================================================== */}
             {currentTab === "security" && (
-              <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-6 sm:p-8 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-bold text-[#F5F2EA]">Security & Access Control</h2>
-                    <span className="stat-box text-[10px] font-mono px-2 py-0.5 bg-[#12131A] text-[#F59E0B] border border-[#23242B]">2FA Enforced</span>
-                  </div>
-                </div>
-                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
-                  Manage multi-factor authentication, active login sessions, emergency recovery codes, and administrator credentials.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-                  <div className="stat-box p-4 bg-[#06070B] border border-[#23242B] space-y-1">
-                    <div className="text-xs font-bold text-[#F5F2EA]">Two-Factor Authentication</div>
-                    <div className="text-[11px] text-[#8E8B82]">TOTP authenticator app + SMS OTP fallback + 8 emergency backup codes.</div>
-                  </div>
-                  <div className="stat-box p-4 bg-[#06070B] border border-[#23242B] space-y-1">
-                    <div className="text-xs font-bold text-[#F5F2EA]">Session Encryption</div>
-                    <div className="text-[11px] text-[#8E8B82]">SHA-256 password hashing + HttpOnly secure JWT tokens.</div>
-                  </div>
-                </div>
-              </div>
+              <AdminSecurityManager />
             )}
 
             {/* ============================================================== */}
