@@ -1,253 +1,89 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  User,
   Lock,
   Eye,
   EyeOff,
   LogIn,
   AlertCircle,
   Loader2,
-  MailCheck,
-  Send,
   ShieldCheck,
   ArrowLeft,
-  CheckCircle2,
-  Smartphone,
   KeyRound,
-  ShieldAlert,
-  RotateCw,
-  HelpCircle,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 import AnimatedLogo from "./AnimatedLogo";
 import SpotlightCard from "./SpotlightCard";
 import { useAuth } from "@/context/AuthContext";
-import { API_BASE } from "@/lib/api";
 
 export default function CentralLoginPanel() {
   const router = useRouter();
-  const { login, verify2FA, sendSmsOtp } = useAuth();
+  const { login, loginWithTotp } = useAuth();
 
-  // Active view: 'login' | '2fa' | 'forgot' | 'reset'
-  const [view, setView] = useState("login");
+  // Active door: 'password' | 'authenticator'
+  const [door, setDoor] = useState("password");
 
-  // Login form state
-  const [identifier, setIdentifier] = useState("admin");
+  // Password door state
+  const [identifier] = useState("admin");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [loginError, setLoginError] = useState("");
+  const [passwordSubmitting, setPasswordSubmitting] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
-  // 2FA Challenge state
-  const [twoFactorToken, setTwoFactorToken] = useState("");
-  const [maskedPhone, setMaskedPhone] = useState("******7284");
-  const [twoFactorMethod, setTwoFactorMethod] = useState("totp"); // 'totp' | 'recovery_code' | 'sms_otp'
-  const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [twoFactorSubmitting, setTwoFactorSubmitting] = useState(false);
-  const [twoFactorError, setTwoFactorError] = useState("");
-  const [smsSending, setSmsSending] = useState(false);
-  const [smsMessage, setSmsMessage] = useState("");
-  const [smsCooldown, setSmsCooldown] = useState(0);
-  const [showFallbackMenu, setShowFallbackMenu] = useState(false);
+  // Authenticator door state
+  const [code, setCode] = useState("");
+  const [codeSubmitting, setCodeSubmitting] = useState(false);
+  const [codeError, setCodeError] = useState("");
   const codeInputRef = useRef(null);
 
-  // SMS cooldown timer
+  // Focus code input when switching to authenticator door
   useEffect(() => {
-    let interval = null;
-    if (smsCooldown > 0) {
-      interval = setInterval(() => {
-        setSmsCooldown((prev) => (prev > 0 ? prev - 1 : 0));
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [smsCooldown]);
-
-  // Focus input when 2FA view opens or method changes
-  useEffect(() => {
-    if (view === "2fa" && codeInputRef.current) {
+    if (door === "authenticator" && codeInputRef.current) {
       setTimeout(() => {
         codeInputRef.current?.focus();
       }, 100);
     }
-  }, [view, twoFactorMethod]);
+  }, [door]);
 
-  // Forgot password form state
-  const [forgotIdentifier, setForgotIdentifier] = useState("");
-  const [forgotSubmitting, setForgotSubmitting] = useState(false);
-  const [forgotStatus, setForgotStatus] = useState(null);
-
-  // Reset password form state
-  const [resetToken, setResetToken] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [resetSubmitting, setResetSubmitting] = useState(false);
-  const [resetStatus, setResetStatus] = useState(null);
-
-  // Handle Login Submit
-  const handleLoginSubmit = async (e) => {
+  // Handle Password Door Submit
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    setLoginError("");
-    setSubmitting(true);
+    setPasswordError("");
+    setPasswordSubmitting(true);
 
-    const res = await login(identifier.trim() || "admin", password.trim(), remember);
-
-    if (res.requires_2fa) {
-      setSubmitting(false);
-      setTwoFactorToken(res.two_factor_token);
-      setMaskedPhone(res.masked_phone || "******7284");
-      setTwoFactorMethod("totp");
-      setTwoFactorCode("");
-      setTwoFactorError("");
-      setSmsMessage("");
-      setShowFallbackMenu(false);
-      setView("2fa");
-      return;
-    }
+    const res = await login(identifier, password.trim(), remember);
 
     if (!res.success) {
-      setLoginError(res.error || "Invalid password.");
-      setSubmitting(false);
+      setPasswordError(res.error || "Invalid username or password.");
+      setPasswordSubmitting(false);
     } else {
-      setSubmitting(false);
+      setPasswordSubmitting(false);
       router.push("/admin");
     }
   };
 
-  // Handle 2FA Verification Submit
-  const handleVerify2FASubmit = async (e) => {
+  // Handle Authenticator Door Submit
+  const handleAuthenticatorSubmit = async (e) => {
     e.preventDefault();
-    if (!twoFactorCode.trim()) {
-      setTwoFactorError("Please enter the verification code.");
+    if (!code.trim()) {
+      setCodeError("Please enter your 6-digit code or recovery code.");
       return;
     }
 
-    setTwoFactorError("");
-    setTwoFactorSubmitting(true);
+    setCodeError("");
+    setCodeSubmitting(true);
 
-    const res = await verify2FA(twoFactorToken, twoFactorCode.trim(), twoFactorMethod);
+    const res = await loginWithTotp(code.trim());
 
     if (!res.success) {
-      setTwoFactorError(res.error || "Verification failed. Please try again.");
-      setTwoFactorSubmitting(false);
+      setCodeError(res.error || "Invalid verification code.");
+      setCodeSubmitting(false);
     } else {
-      setTwoFactorSubmitting(false);
+      setCodeSubmitting(false);
       router.push("/admin");
-    }
-  };
-
-  // Handle Send SMS OTP Fallback
-  const handleSendSmsOtp = async () => {
-    if (smsCooldown > 0 || smsSending) return;
-
-    setSmsSending(true);
-    setTwoFactorError("");
-    setSmsMessage("");
-
-    const res = await sendSmsOtp(twoFactorToken);
-
-    if (res.success) {
-      setTwoFactorMethod("sms_otp");
-      setTwoFactorCode("");
-      setSmsMessage(res.message || `Code sent to ${maskedPhone}. Enter the 6 digits.`);
-      setSmsCooldown(60);
-      setShowFallbackMenu(false);
-    } else {
-      setTwoFactorError(res.error || "Could not dispatch SMS. Try again later.");
-    }
-
-    setSmsSending(false);
-  };
-
-  // Handle Forgot Password Submit
-  const handleForgotSubmit = async (e) => {
-    e.preventDefault();
-    setForgotStatus(null);
-    setForgotSubmitting(true);
-
-    try {
-      const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: forgotIdentifier.trim() }),
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setForgotStatus({
-          type: "success",
-          msg: "Password reset instructions issued!",
-          token: data.reset_token || "Token generated and active for 1 hour.",
-        });
-      } else {
-        setForgotStatus({
-          type: "error",
-          msg: data.error || "Failed to process recovery request.",
-        });
-      }
-    } catch (err) {
-      setForgotStatus({
-        type: "error",
-        msg: "Server connection error. Please verify the Python server is running.",
-      });
-    } finally {
-      setForgotSubmitting(false);
-    }
-  };
-
-  // Handle Reset Password Submit
-  const handleResetSubmit = async (e) => {
-    e.preventDefault();
-    setResetStatus(null);
-
-    if (newPassword !== confirmPassword) {
-      setResetStatus({
-        type: "error",
-        msg: "New password and confirmation password do not match.",
-      });
-      return;
-    }
-
-    setResetSubmitting(true);
-    try {
-      const res = await fetch(`${API_BASE}/api/auth/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: resetToken.trim(),
-          new_password: newPassword.trim(),
-        }),
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setResetStatus({
-          type: "success",
-          msg: "Password reset successfully! You can now log in.",
-        });
-        setTimeout(() => {
-          setView("login");
-          setPassword("");
-        }, 1800);
-      } else {
-        setResetStatus({
-          type: "error",
-          msg: data.error || "Invalid or expired recovery token.",
-        });
-      }
-    } catch (err) {
-      setResetStatus({
-        type: "error",
-        msg: "Server connection error. Please try again.",
-      });
-    } finally {
-      setResetSubmitting(false);
     }
   };
 
@@ -259,29 +95,69 @@ export default function CentralLoginPanel() {
 
       {/* Main Login Console Card with SpotlightCard effect */}
       <SpotlightCard
-        className="animate-fade-up bg-[#0A0B10] backdrop-blur-md border border-[#23242B] w-full max-w-sm p-7 sm:p-8 rounded-2xl shadow-2xl relative z-10"
+        className="animate-fade-up bg-[#0A0B10] backdrop-blur-md border border-[#23242B] w-full max-w-sm p-6 sm:p-8 rounded-none shadow-2xl relative z-10 stat-box"
         contentClassName="space-y-6"
       >
         {/* Branding */}
         <div className="text-center space-y-3">
-          <div className="flex justify-center mb-2">
-            <AnimatedLogo size={46} showText={false} />
+          <div className="flex justify-center mb-1">
+            <AnimatedLogo size={44} showText={false} />
           </div>
 
           <div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#F5F2EA]">ADMIN CONSOLE</h1>
-            <p className="text-xs text-[#8E8B82] font-medium mt-1">Portfolio Content Management System</p>
+            <h1 className="text-lg sm:text-xl font-black tracking-tight text-[#F5F2EA] font-sans">
+              ADMIN CONSOLE
+            </h1>
+            <p className="text-[11px] text-[#8E8B82] font-mono mt-0.5">
+              Portfolio Content Management System
+            </p>
           </div>
         </div>
 
-        {/* ========================================= */}
-        {/* VIEW 1: SIGN IN */}
-        {/* ========================================= */}
-        {view === "login" && (
-          <form onSubmit={handleLoginSubmit} className="space-y-4">
-            {/* Password Only */}
+        {/* ============================================================== */}
+        {/* DOOR SWITCH: [ Password ] [ Authenticator ] (Segmented Toggle) */}
+        {/* ============================================================== */}
+        <div className="grid grid-cols-2 p-1 bg-[#06070B] border border-[#23242B] rounded-none">
+          <button
+            type="button"
+            onClick={() => {
+              setDoor("password");
+              setPasswordError("");
+            }}
+            className={`py-2 text-xs font-mono font-bold transition flex items-center justify-center gap-1.5 rounded-none cursor-pointer ${
+              door === "password"
+                ? "bg-[#12131A] text-[#F59E0B] border border-[#F59E0B]/40 shadow-sm"
+                : "text-[#8E8B82] hover:text-[#F5F2EA] border border-transparent"
+            }`}
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>Password</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setDoor("authenticator");
+              setCodeError("");
+            }}
+            className={`py-2 text-xs font-mono font-bold transition flex items-center justify-center gap-1.5 rounded-none cursor-pointer ${
+              door === "authenticator"
+                ? "bg-[#12131A] text-[#F59E0B] border border-[#F59E0B]/40 shadow-sm"
+                : "text-[#8E8B82] hover:text-[#F5F2EA] border border-transparent"
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Authenticator</span>
+          </button>
+        </div>
+
+        {/* ============================================================== */}
+        {/* DOOR 1: PASSWORD LOGIN                                         */}
+        {/* ============================================================== */}
+        {door === "password" && (
+          <form onSubmit={handlePasswordSubmit} className="space-y-4 animate-fade-in">
             <div>
-              <label className="block text-xs font-medium text-[#B9B5A9] mb-1.5">
+              <label className="block text-[11px] font-mono text-[#8E8B82] mb-1.5 uppercase">
                 Admin Password
               </label>
               <div className="relative">
@@ -292,16 +168,19 @@ export default function CentralLoginPanel() {
                   type={showPassword ? "text" : "password"}
                   required
                   autoFocus
-                  autoComplete="new-password"
-                  placeholder="Enter admin password"
+                  autoComplete="current-password"
+                  placeholder="Enter administrator password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl pl-9 pr-10 py-2.5 text-xs text-[#F5F2EA] placeholder-[#8E8B82]/50 outline-none transition font-mono"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) setPasswordError("");
+                  }}
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none pl-9 pr-10 py-2.5 text-xs text-[#F5F2EA] placeholder-[#8E8B82]/50 outline-none transition font-mono"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8E8B82] hover:text-[#F5F2EA] transition"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#8E8B82] hover:text-[#F5F2EA] transition cursor-pointer"
                   title={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -309,472 +188,108 @@ export default function CentralLoginPanel() {
               </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            {/* Remember Me on Password Door */}
             <div className="flex items-center justify-between pt-0.5">
               <label className="flex items-center gap-2 cursor-pointer text-xs text-[#8E8B82] hover:text-[#B9B5A9] select-none">
                 <input
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded bg-[#06070B] border-[#23242B] text-[#F59E0B] focus:ring-0 cursor-pointer accent-[#F59E0B]"
+                  className="w-3.5 h-3.5 rounded-none bg-[#06070B] border-[#23242B] text-[#F59E0B] focus:ring-0 cursor-pointer accent-[#F59E0B]"
                 />
-                <span>Remember me</span>
+                <span className="font-mono text-[11px]">Remember this session</span>
               </label>
-
-              <button
-                type="button"
-                onClick={() => setView("forgot")}
-                className="text-[#F59E0B] hover:text-[#FBBF24] hover:underline text-[11px] transition font-mono"
-              >
-                Forgot Password?
-              </button>
             </div>
 
             {/* Error Banner */}
-            {loginError && (
-              <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/25 p-3 rounded-xl font-mono leading-relaxed flex items-start gap-2.5 animate-shake">
+            {passwordError && (
+              <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/25 p-3 rounded-none font-mono leading-relaxed flex items-start gap-2.5 animate-shake">
                 <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                <span className="flex-1">{loginError}</span>
+                <span className="flex-1">{passwordError}</span>
               </div>
             )}
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={submitting}
-              className="w-full py-2.5 rounded-xl font-bold bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-amber-500/20 interactive-btn cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
+              disabled={passwordSubmitting}
+              className="w-full py-2.5 rounded-none font-bold font-mono bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-amber-500/20 cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
             >
-              {submitting ? (
+              {passwordSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Authenticating...</span>
+                  <span>Verifying Password...</span>
                 </>
               ) : (
                 <>
                   <LogIn className="w-3.5 h-3.5" />
-                  <span>Sign In</span>
+                  <span>Sign In with Password</span>
                 </>
               )}
             </button>
           </form>
         )}
 
-        {/* ========================================= */}
-        {/* VIEW: TWO-FACTOR AUTHENTICATION (2FA)     */}
-        {/* ========================================= */}
-        {view === "2fa" && (
-          <div className="space-y-4 animate-fade-up">
-            {/* Header Badge & Title */}
-            <div className="text-center space-y-1.5 pb-1">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#F59E0B] mb-1 shadow-inner">
-                {twoFactorMethod === "totp" && <ShieldCheck className="w-6 h-6 animate-pulse" />}
-                {twoFactorMethod === "sms_otp" && <Smartphone className="w-6 h-6 text-sky-400 animate-pulse" />}
-                {twoFactorMethod === "recovery_code" && <KeyRound className="w-6 h-6 text-amber-400" />}
-              </div>
-              <h2 className="text-lg font-bold text-[#F5F2EA] tracking-tight">Two-Factor Authentication</h2>
-              <p className="text-xs text-[#8E8B82] leading-relaxed">
-                {twoFactorMethod === "totp" && "Enter the 6-digit code from your authenticator app."}
-                {twoFactorMethod === "sms_otp" && `Enter the 6-digit verification code sent to ${maskedPhone}.`}
-                {twoFactorMethod === "recovery_code" && "Enter one of your 8-character emergency backup recovery codes."}
-              </p>
-            </div>
-
-            <form onSubmit={handleVerify2FASubmit} className="space-y-3.5">
-              {/* Code Input */}
-              <div>
-                <div className="relative">
-                  <input
-                    ref={codeInputRef}
-                    type="text"
-                    required
-                    autoFocus
-                    autoComplete="one-time-code"
-                    inputMode={twoFactorMethod === "recovery_code" ? "text" : "numeric"}
-                    maxLength={twoFactorMethod === "recovery_code" ? 12 : 6}
-                    placeholder={twoFactorMethod === "recovery_code" ? "ABCD-1234" : "000000"}
-                    value={twoFactorCode}
-                    onChange={(e) => {
-                      const val = e.target.value.trim();
-                      if (twoFactorMethod === "recovery_code") {
-                        setTwoFactorCode(val.toUpperCase());
-                      } else {
-                        setTwoFactorCode(val.replace(/\D/g, "").slice(0, 6));
-                      }
-                      if (twoFactorError) setTwoFactorError("");
-                    }}
-                    className={`w-full bg-[#06070B] border ${
-                      twoFactorError ? "border-rose-500/60 focus:border-rose-500" : "border-[#23242B] focus:border-[#F59E0B]"
-                    } rounded-xl px-4 py-3 text-center text-xl tracking-[0.35em] text-[#F5F2EA] font-mono placeholder:tracking-normal placeholder:text-[#8E8B82]/50 outline-none transition shadow-inner font-bold`}
-                  />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[#8E8B82] mt-1.5 px-1 font-mono">
-                  <span>
-                    {twoFactorMethod === "recovery_code" ? "Single-use recovery format" : "Time-based one-time code"}
-                  </span>
-                  <span>
-                    {twoFactorCode.length}/{twoFactorMethod === "recovery_code" ? "9" : "6"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Success SMS banner */}
-              {smsMessage && (
-                <div className="text-xs text-sky-300 bg-sky-500/10 border border-sky-500/30 p-2.5 rounded-xl font-mono leading-relaxed flex items-center gap-2">
-                  <Smartphone className="w-4 h-4 text-sky-400 shrink-0" />
-                  <span className="flex-1">{smsMessage}</span>
-                </div>
-              )}
-
-              {/* Error Message */}
-              {twoFactorError && (
-                <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-xl font-mono leading-relaxed flex items-start gap-2 animate-shake">
-                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                  <span className="flex-1">{twoFactorError}</span>
-                </div>
-              )}
-
-              {/* Verify Button */}
-              <button
-                type="submit"
-                disabled={twoFactorSubmitting || !twoFactorCode.trim()}
-                className="w-full py-2.5 rounded-xl font-bold bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-amber-500/20 interactive-btn cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
-              >
-                {twoFactorSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Verifying Code...</span>
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Verify</span>
-                  </>
-                )}
-              </button>
-
-              {/* Fallback Drawer Trigger */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowFallbackMenu(!showFallbackMenu)}
-                  className="w-full text-center text-xs text-[#8E8B82] hover:text-[#F59E0B] transition flex items-center justify-center gap-1 font-medium py-1 cursor-pointer"
-                >
-                  <HelpCircle className="w-3.5 h-3.5 text-[#8E8B82]" />
-                  <span>Can’t access your authenticator?</span>
-                  {showFallbackMenu ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                </button>
-
-                {/* Collapsible Fallback Options */}
-                {showFallbackMenu && (
-                  <div className="mt-2.5 p-3 rounded-xl bg-[#06070B] border border-[#23242B] space-y-2 animate-fadeIn">
-                    <p className="text-[11px] text-[#8E8B82] mb-2">Alternative verification options:</p>
-
-                    {/* Option A: Send OTP to registered phone */}
-                    <button
-                      type="button"
-                      disabled={smsSending || smsCooldown > 0}
-                      onClick={handleSendSmsOtp}
-                      className="w-full text-left p-2.5 rounded-lg bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-sky-500/40 transition flex items-center justify-between group disabled:opacity-50 cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Smartphone className="w-4 h-4 text-sky-400 group-hover:scale-110 transition" />
-                        <div>
-                          <div className="text-xs font-semibold text-[#F5F2EA]">Send OTP to registered phone</div>
-                          <div className="text-[10px] text-[#8E8B82] font-mono">
-                            Sent to: <span className="text-sky-300 font-bold">{maskedPhone}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <span className="text-[11px] text-sky-400 font-mono font-medium">
-                        {smsSending ? "Sending..." : smsCooldown > 0 ? `${smsCooldown}s` : "Send SMS"}
-                      </span>
-                    </button>
-
-                    {/* Option B: Recovery Code */}
-                    {twoFactorMethod !== "recovery_code" ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTwoFactorMethod("recovery_code");
-                          setTwoFactorCode("");
-                          setTwoFactorError("");
-                          setShowFallbackMenu(false);
-                        }}
-                        className="w-full text-left p-2.5 rounded-lg bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 transition flex items-center justify-between group cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <KeyRound className="w-4 h-4 text-[#F59E0B] group-hover:scale-110 transition" />
-                          <div>
-                            <div className="text-xs font-semibold text-[#F5F2EA]">Use a recovery code</div>
-                            <div className="text-[10px] text-[#8E8B82] font-mono">Single-use emergency key</div>
-                          </div>
-                        </div>
-                        <span className="text-[11px] text-[#F59E0B] font-mono font-medium">Use Code</span>
-                      </button>
-                    ) : null}
-
-                    {/* Option C: Back to Authenticator App */}
-                    {twoFactorMethod !== "totp" ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTwoFactorMethod("totp");
-                          setTwoFactorCode("");
-                          setTwoFactorError("");
-                          setShowFallbackMenu(false);
-                        }}
-                        className="w-full text-left p-2.5 rounded-lg bg-[#0A0B10] hover:bg-[#12131A] border border-[#23242B] hover:border-[#F59E0B]/40 transition flex items-center justify-between group cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <ShieldCheck className="w-4 h-4 text-[#F59E0B] group-hover:scale-110 transition" />
-                          <div>
-                            <div className="text-xs font-semibold text-[#F5F2EA]">Use Authenticator App</div>
-                            <div className="text-[10px] text-[#8E8B82] font-mono">Google, Microsoft, Authy</div>
-                          </div>
-                        </div>
-                        <span className="text-[11px] text-[#F59E0B] font-mono font-medium">Select</span>
-                      </button>
-                    ) : null}
-                  </div>
-                )}
-              </div>
-
-              {/* Back to normal login */}
-              <div className="text-center pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setView("login");
-                    setTwoFactorCode("");
-                    setTwoFactorError("");
-                    setSmsMessage("");
-                    setShowFallbackMenu(false);
-                  }}
-                  className="text-xs text-[#8E8B82] hover:text-[#F5F2EA] transition font-mono flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Return to Sign In</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* ========================================= */}
-        {/* VIEW 2: FORGOT PASSWORD */}
-        {/* ========================================= */}
-        {view === "forgot" && (
-          <div className="space-y-4 animate-fadeIn">
-            <div className="text-left border-b border-[#23242B] pb-2.5">
-              <h2 className="text-xs font-bold text-[#F5F2EA] flex items-center gap-1.5">
-                <MailCheck className="w-3.5 h-3.5 text-[#F59E0B]" />
-                <span>Reset Password</span>
-              </h2>
-              <p className="text-[11px] text-[#8E8B82] mt-1">
-                Enter your email or username. A password reset token will be issued for your account.
-              </p>
-            </div>
-
-            <form onSubmit={handleForgotSubmit} className="space-y-3.5">
-              <div>
-                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">
-                  Email or Username
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#8E8B82]">
-                    <User className="w-4 h-4" />
-                  </span>
-                  <input
-                    type="text"
-                    required
-                    placeholder="admin@ashifurrahman.com"
-                    value={forgotIdentifier}
-                    onChange={(e) => setForgotIdentifier(e.target.value)}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-[#F5F2EA] outline-none transition font-mono placeholder-[#8E8B82]/50"
-                  />
-                </div>
-              </div>
-
-              {forgotStatus && forgotStatus.type === "success" && (
-                <div className="text-xs p-3.5 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#FBBF24] space-y-2.5 font-sans animate-pop">
-                  <div className="font-bold flex items-center gap-1.5 text-[#F59E0B]">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Reset instructions generated!</span>
-                  </div>
-                  <p className="text-[11px] text-[#B9B5A9] leading-relaxed">
-                    A recovery token was created for <strong>{forgotIdentifier}</strong>:
-                  </p>
-                  <div className="bg-[#06070B] p-2 rounded-lg border border-[#23242B] text-[11px] select-all break-all text-[#F5F2EA] font-mono">
-                    {forgotStatus.token}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setResetToken(forgotStatus.token);
-                      setView("reset");
-                    }}
-                    className="w-full mt-2 py-2 bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs rounded-xl transition interactive-btn cursor-pointer"
-                  >
-                    Set New Password Now →
-                  </button>
-                </div>
-              )}
-
-              {forgotStatus && forgotStatus.type === "error" && (
-                <div className="text-xs p-3 rounded-xl font-mono leading-relaxed bg-rose-500/10 border border-rose-500/20 text-rose-400 animate-shake">
-                  {forgotStatus.msg}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={forgotSubmitting}
-                className="w-full py-2.5 rounded-xl font-semibold bg-[#12131A] hover:bg-[#F59E0B] text-[#F59E0B] hover:text-[#06070B] border border-[#F59E0B]/30 transition text-xs flex items-center justify-center gap-1.5 interactive-btn disabled:opacity-75 cursor-pointer"
-              >
-                {forgotSubmitting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Sending...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Send Reset Instructions</span>
-                  </>
-                )}
-              </button>
-
-              <div className="flex items-center justify-between text-xs pt-1">
-                <button
-                  type="button"
-                  onClick={() => setView("reset")}
-                  className="text-[#F59E0B] hover:text-[#FBBF24] hover:underline text-[11px] font-mono"
-                >
-                  Have a reset token? Enter here →
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setView("login")}
-                  className="text-[#8E8B82] hover:text-[#F5F2EA] text-[11px] font-mono"
-                >
-                  ← Back to Sign In
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* ========================================= */}
-        {/* VIEW 3: RESET PASSWORD */}
-        {/* ========================================= */}
-        {view === "reset" && (
-          <div className="space-y-4 animate-fadeIn">
-            <div className="text-left border-b border-[#23242B] pb-2.5">
-              <h2 className="text-xs font-bold text-[#F5F2EA] flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#F59E0B]" />
-                <span>Set New Password</span>
-              </h2>
-              <p className="text-[11px] text-[#8E8B82] mt-1">
-                Paste the recovery token and choose your new administrator password.
-              </p>
-            </div>
-
-            <form onSubmit={handleResetSubmit} className="space-y-3">
-              <div>
-                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">Reset Token</label>
+        {/* ============================================================== */}
+        {/* DOOR 2: AUTHENTICATOR LOGIN (TOTP OR RECOVERY CODE)            */}
+        {/* ============================================================== */}
+        {door === "authenticator" && (
+          <form onSubmit={handleAuthenticatorSubmit} className="space-y-4 animate-fade-in">
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-mono text-[#8E8B82] uppercase">
+                6-Digit Token or Recovery Code
+              </label>
+              <div className="relative">
                 <input
+                  ref={codeInputRef}
                   type="text"
                   required
-                  placeholder="Paste token here"
-                  value={resetToken}
-                  onChange={(e) => setResetToken(e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-xs font-mono text-[#F5F2EA] outline-none placeholder-[#8E8B82]/50"
+                  autoFocus
+                  autoComplete="one-time-code"
+                  placeholder="000000"
+                  value={code}
+                  onChange={(e) => {
+                    setCode(e.target.value.trim().toUpperCase());
+                    if (codeError) setCodeError("");
+                  }}
+                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-4 py-3 text-center text-lg tracking-[0.25em] text-[#F5F2EA] font-mono font-bold outline-none transition placeholder:tracking-normal placeholder:text-[#8E8B82]/40"
                 />
               </div>
+              <p className="text-[10px] text-[#8E8B82] font-mono leading-relaxed pt-1">
+                Enter code from Google Authenticator, Microsoft Authenticator, or an emergency recovery code (e.g. XXXXX-XXXXX).
+              </p>
+            </div>
 
-              <div>
-                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">
-                  New Password (Min 8 chars)
-                </label>
-                <div className="relative">
-                  <input
-                    type={showNewPassword ? "text" : "password"}
-                    required
-                    minLength={8}
-                    placeholder="••••••••"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl pl-3 pr-9 py-2 text-xs text-[#F5F2EA] outline-none font-mono placeholder-[#8E8B82]/50"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#8E8B82] hover:text-[#F5F2EA]"
-                  >
-                    {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                  </button>
-                </div>
+            {/* Error Banner */}
+            {codeError && (
+              <div className="text-xs text-rose-300 bg-rose-500/10 border border-rose-500/25 p-3 rounded-none font-mono leading-relaxed flex items-start gap-2.5 animate-shake">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <span className="flex-1">{codeError}</span>
               </div>
+            )}
 
-              <div>
-                <label className="block text-xs font-medium text-[#B9B5A9] mb-1">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  minLength={8}
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-xl px-3 py-2 text-xs text-[#F5F2EA] outline-none font-mono placeholder-[#8E8B82]/50"
-                />
-              </div>
-
-              {resetStatus && (
-                <div
-                  className={`text-xs p-2.5 rounded-xl font-mono leading-relaxed ${
-                    resetStatus.type === "success"
-                      ? "bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#FBBF24]"
-                      : "bg-rose-500/10 border border-rose-500/20 text-rose-400"
-                  }`}
-                >
-                  {resetStatus.msg}
-                </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={codeSubmitting || !code.trim()}
+              className="w-full py-2.5 rounded-none font-bold font-mono bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] transition duration-150 flex items-center justify-center gap-2 text-xs shadow-md shadow-amber-500/20 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+            >
+              {codeSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Verifying Code...</span>
+                </>
+              ) : (
+                <>
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Verify & Sign In</span>
+                </>
               )}
-
-              <button
-                type="submit"
-                disabled={resetSubmitting}
-                className="w-full py-2.5 rounded-xl font-bold bg-[#F59E0B] text-[#06070B] hover:bg-[#FBBF24] transition text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-amber-500/20"
-              >
-                {resetSubmitting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Updating...</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Update Password</span>
-                  </>
-                )}
-              </button>
-
-              <div className="text-center pt-1">
-                <button
-                  type="button"
-                  onClick={() => setView("login")}
-                  className="text-xs text-[#8E8B82] hover:text-[#F5F2EA] font-mono cursor-pointer"
-                >
-                  ← Return to Sign In
-                </button>
-              </div>
-            </form>
-          </div>
+            </button>
+          </form>
         )}
 
-        {/* Minimal Public Link */}
+        {/* Public Link & Footer */}
         <div className="pt-4 border-t border-[#23242B] flex flex-col items-center gap-2 text-center">
           <Link
             href="/"
@@ -784,7 +299,7 @@ export default function CentralLoginPanel() {
             <span>Back to Public Website</span>
           </Link>
           <span className="text-[10px] text-[#8E8B82] font-mono">
-            🔒 Secure Multi-Website Session Protection
+            🔒 Independent Dual-Door Session Protection
           </span>
         </div>
       </SpotlightCard>

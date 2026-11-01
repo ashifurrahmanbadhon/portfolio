@@ -62,6 +62,23 @@ export function verifyTOTP(token, secret, window = 1) {
   return false;
 }
 
+export function verifyTOTPWithStep(token, secret, window = 1, lastAcceptedStep = 0) {
+  if (!token || !secret) return { valid: false, reason: "invalid" };
+  const cleanToken = token.trim();
+  const now = Date.now();
+  for (let errorWindow = -window; errorWindow <= window; errorWindow++) {
+    const checkTime = now + errorWindow * 30 * 1000;
+    if (generateTOTP(secret, checkTime) === cleanToken) {
+      const step = Math.floor(Math.floor(checkTime / 1000) / 30);
+      if (lastAcceptedStep && step <= Number(lastAcceptedStep)) {
+        return { valid: false, reason: "replay", step };
+      }
+      return { valid: true, step };
+    }
+  }
+  return { valid: false, reason: "invalid" };
+}
+
 /**
  * High-entropy recovery codes: 10 random bytes (80-bit entropy)
  * Formatted as XXXXX-XXXXX

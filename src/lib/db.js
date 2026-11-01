@@ -152,9 +152,22 @@ function initSqliteDbIfEmpty(db) {
         totp_created_at TEXT,
         failed_2fa_attempts INTEGER DEFAULT 0,
         locked_2fa_until TEXT,
+        last_totp_step INTEGER DEFAULT 0,
         avatar TEXT,
         avatar_position TEXT DEFAULT '50% 50%'
       );
+      CREATE TABLE IF NOT EXISTS admin_devices (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        admin_id INTEGER NOT NULL,
+        device_hash TEXT UNIQUE NOT NULL,
+        user_agent TEXT,
+        ip_first TEXT,
+        ip_last TEXT,
+        first_seen_at TEXT NOT NULL,
+        last_seen_at TEXT NOT NULL,
+        last_login_method TEXT
+      );
+      CREATE INDEX IF NOT EXISTS idx_admin_devices_hash ON admin_devices(device_hash);
       CREATE TABLE IF NOT EXISTS hero (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -551,6 +564,114 @@ export async function getAdminByIdentifier(identifier) {
 export async function getAdminById(id) {
   if (!id) return null;
   return await queryOne(`SELECT * FROM admins WHERE id = ? LIMIT 1`, [id]);
+}
+
+export async function getSingleAdmin() {
+  return await queryOne(`SELECT * FROM admins ORDER BY id ASC LIMIT 1`);
+}
+
+export function checkPasswordDoorLockout(admin, maxAttempts = 3) {
+  if (!admin) return { isLocked: false, message: "" };
+  if (!admin.is_active) {
+    return { isLocked: true, message: "This administrative account is disabled." };
+  }
+  if (admin.locked_until) {
+    const lockTime = new Date(admin.locked_until);
+    if (lockTime > new Date()) {
+      const remainingMins = Math.ceil((lockTime - new Date()) / 60000);
+      return {
+        isLocked: true,
+        message: `Password login is locked for ~${remainingMins} min — use Authenticator.`,
+      };
+    }
+  }
+  return { isLocked: false, message: "" };
+}
+
+export async function recordFailedPasswordAttempt(adminId, maxAttempts = 3, lockoutMinutes = 15) {
+  const admin = await getAdminById(adminId);
+  if (!admin) return { attempts: 1, isLocked: false };
+
+  const currentAttempts = (admin.failed_login_attempts || 0) + 1;
+  const now = new Date();
+  let lockedUntil = admin.locked_until;
+
+  if (currentAttempts >= maxAttempts) {
+    lockedUntil = new Date(now.getTime() + lockoutMinutes * 60000).toISOString();
+  }
+
+  await execute(`
+    UPDATE admins
+    SET failed_login_attempts = ?, locked_until = ?, updated_at = ?
+    WHERE id = ?
+  `, [currentAttempts, lockedUntil, now.toISOString(), adminId]);
+
+  return { attempts: currentAttempts, isLocked: currentAttempts >= maxAttempts };
+}
+
+export async function recordSuccessfulPasswordLogin(adminId) {
+  const now = new Date().toISOString();
+  await execute(`
+    UPDATE admins
+    SET failed_login_attempts = 0, locked_until = NULL, last_login_at = ?, updated_at = ?
+    WHERE id = ?
+  `, [now, now, adminId]);
+}
+
+export function checkAuthenticatorDoorLockout(admin, maxAttempts = 3) {
+  if (!admin) return { isLocked: false, message: "" };
+  if (!admin.is_active) {
+    return { isLocked: true, message: "This administrative account is disabled." };
+  }
+  if (admin.locked_2fa_until) {
+    const lockTime = new Date(admin.locked_2fa_until);
+    if (lockTime > new Date()) {
+      const remainingMins = Math.ceil((lockTime - new Date()) / 60000);
+      return {
+        isLocked: true,
+        message: `Authenticator login is locked for ~${remainingMins} min — use Password.`,
+      };
+    }
+  }
+  return { isLocked: false, message: "" };
+}
+
+export async function recordFailedAuthenticatorAttempt(adminId, maxAttempts = 3, lockoutMinutes = 15) {
+  const admin = await getAdminById(adminId);
+  if (!admin) return { attempts: 1, isLocked: false };
+
+  const currentAttempts = (admin.failed_2fa_attempts || 0) + 1;
+  const now = new Date();
+  let lockedUntil = admin.locked_2fa_until;
+
+  if (currentAttempts >= maxAttempts) {
+    lockedUntil = new Date(now.getTime() + lockoutMinutes * 60000).toISOString();
+  }
+
+  await execute(`
+    UPDATE admins
+    SET failed_2fa_attempts = ?, locked_2fa_until = ?, updated_at = ?
+    WHERE id = ?
+  `, [currentAttempts, lockedUntil, now.toISOString(), adminId]);
+
+  return { attempts: currentAttempts, isLocked: currentAttempts >= maxAttempts };
+}
+
+export async function recordSuccessfulAuthenticatorLogin(adminId, lastTotpStep = null) {
+  const now = new Date().toISOString();
+  if (lastTotpStep !== null && lastTotpStep !== undefined) {
+    await execute(`
+      UPDATE admins
+      SET failed_2fa_attempts = 0, locked_2fa_until = NULL, last_totp_step = ?, last_login_at = ?, updated_at = ?
+      WHERE id = ?
+    `, [lastTotpStep, now, now, adminId]);
+  } else {
+    await execute(`
+      UPDATE admins
+      SET failed_2fa_attempts = 0, locked_2fa_until = NULL, last_login_at = ?, updated_at = ?
+      WHERE id = ?
+    `, [now, now, adminId]);
+  }
 }
 
 export function checkAdminLockout(admin, maxAttempts = 5) {

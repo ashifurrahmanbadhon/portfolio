@@ -75,6 +75,15 @@ export const api = {
     return res.json();
   },
 
+  async loginTotp(code) {
+    const res = await fetch(`${API_BASE}/api/auth/login-totp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    });
+    return res.json();
+  },
+
   async verify2FA(two_factor_token, code, method = "totp") {
     const res = await fetch(`${API_BASE}/api/auth/verify-2fa`, {
       method: "POST",

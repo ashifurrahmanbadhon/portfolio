@@ -2,16 +2,17 @@ import { NextResponse } from "next/server";
 import {
   getAdminByIdentifier,
   verifyPassword,
-  checkAdminLockout,
-  recordFailedLogin,
-  recordSuccessfulLogin,
+  checkPasswordDoorLockout,
+  recordFailedPasswordAttempt,
+  recordSuccessfulPasswordLogin,
   addActivityLog,
 } from "@/lib/db";
-import { signToken, signChallengeToken } from "@/lib/auth";
+import { signToken } from "@/lib/auth";
+import { registerDeviceAndAlert } from "@/lib/deviceAlert";
 
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const identifier = (body.identifier || body.username || body.email || "admin").trim();
     const password = (body.password || "").trim();
     const rememberMe = body.remember ?? body.remember_me ?? false;
@@ -31,56 +32,59 @@ export async function POST(req) {
       );
     }
 
-    // Check Lockout
-    const { isLocked, message } = checkAdminLockout(admin);
-    if (isLocked) {
-      return NextResponse.json({ success: false, error: message }, { status: 403 });
+    // Check Password Door Lockout (3 consecutive failed attempts -> 15 min lock)
+    const lockout = checkPasswordDoorLockout(admin, 3);
+    if (lockout.isLocked) {
+      return NextResponse.json(
+        { success: false, error: lockout.message },
+        { status: 403 }
+      );
     }
 
-    // Check Password
+    // Verify Password
     const isValid = verifyPassword(password, admin.password_hash, admin.salt);
     if (!isValid) {
-      const attempts = await recordFailedLogin(admin.id);
+      const { attempts, isLocked: newlyLocked } = await recordFailedPasswordAttempt(admin.id, 3, 15);
       await addActivityLog(
-        "Failed Login Attempt",
-        `Invalid password for user: ${admin.username} (Attempt ${attempts})`,
+        "Failed Login Attempt (Password Door)",
+        `Invalid password for user: ${admin.username} (Failed attempts: ${attempts})`,
         "Central CMS",
         admin.username
       );
-      const remaining = Math.max(0, 5 - attempts);
+
+      const remaining = Math.max(0, 3 - attempts);
       const errorMsg =
-        remaining > 0
-          ? `Invalid username or password. (${remaining} attempt(s) remaining before temporary lockout)`
-          : "Account has been locked for 15 minutes due to too many failed attempts.";
-      return NextResponse.json({ success: false, error: errorMsg }, { status: 401 });
+        newlyLocked || remaining <= 0
+          ? "Password login is locked for ~15 min — use Authenticator."
+          : `Invalid username or password. (${remaining} attempt(s) remaining before password lockout)`;
+
+      return NextResponse.json(
+        { success: false, error: errorMsg },
+        { status: newlyLocked ? 403 : 401 }
+      );
     }
 
-    // Check if 2FA is active
-    if (admin.two_factor_enabled) {
-      const challengeToken = signChallengeToken(admin, rememberMe);
-      return NextResponse.json({
-        success: true,
-        requires_2fa: true,
-        challenge_token: challengeToken,
-        two_factor_token: challengeToken,
-        masked_phone: admin.phone ? `******${admin.phone.slice(-4)}` : "******7284",
-        user: {
-          id: admin.id,
-          username: admin.username,
-          phone: admin.phone || "",
-        },
-      });
-    }
-
-    // Direct Login Success
-    await recordSuccessfulLogin(admin.id);
+    // Password Door Success: session granted immediately (NO 2FA challenge)
+    await recordSuccessfulPasswordLogin(admin.id);
     const { token, exp } = signToken(admin, rememberMe);
-    await addActivityLog("Super Admin Login", "Authenticated successfully into Central CMS.", "Central CMS", admin.username);
+    await addActivityLog(
+      "Admin Login (Password Door)",
+      "Authenticated successfully via password into Central CMS.",
+      "Central CMS",
+      admin.username
+    );
 
-    return NextResponse.json({
+    // Register device and send security alert if unrecognized
+    const { deviceCookie } = await registerDeviceAndAlert(req, admin, "password");
+
+    const maxAge = rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60;
+    const isProd = process.env.NODE_ENV === "production";
+
+    const response = NextResponse.json({
       success: true,
       token,
       expires_at: exp,
+      login_method: "password",
       user: {
         id: admin.id,
         username: admin.username,
@@ -91,8 +95,33 @@ export async function POST(req) {
         avatar_position: admin.avatar_position || "50% 50%",
       },
     });
+
+    // Session cookie
+    response.cookies.set("cms_auth_token", token, {
+      path: "/",
+      httpOnly: false,
+      secure: isProd,
+      sameSite: "lax",
+      maxAge,
+    });
+
+    // Device identity cookie (if new device)
+    if (deviceCookie) {
+      response.cookies.set("pf_device", deviceCookie, {
+        path: "/",
+        httpOnly: true,
+        secure: isProd,
+        sameSite: "lax",
+        maxAge: 365 * 24 * 60 * 60,
+      });
+    }
+
+    return response;
   } catch (error) {
     console.error("POST /api/auth/login error:", error);
-    console.error(error); return NextResponse.json({ success: false, error: "Internal server error." }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Internal server error." },
+      { status: 500 }
+    );
   }
 }
