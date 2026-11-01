@@ -33,8 +33,8 @@ const BREADCRUMB_MAP = {
   seo: { group: "Site Content", tab: "SEO Titles" },
   inbox: { group: "Site Content", tab: "Inbox" },
   ai_chat: { group: "System", tab: "AI Chat" },
-  security: { group: "System", tab: "Security" },
-  system_settings: { group: "System", tab: "Settings" },
+  security: { group: "System", tab: "Security & System" },
+  system_settings: { group: "System", tab: "Security & System" },
 };
 
 function BreadcrumbDisplay() {

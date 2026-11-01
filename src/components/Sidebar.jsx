@@ -19,7 +19,6 @@ import {
   MessageSquare,
   Sparkles,
   ShieldCheck,
-  Settings,
   LogOut,
   ChevronsLeft,
   ChevronsRight,
@@ -117,8 +116,7 @@ function SidebarNavigation({ setMobileOpen, collapsed = false }) {
       group: "SYSTEM",
       items: [
         { name: "AI Chat", tab: "ai_chat", href: "/admin?tab=ai_chat", icon: Sparkles, badge: "Step 2" },
-        { name: "Security", tab: "security", href: "/admin?tab=security", icon: ShieldCheck },
-        { name: "Settings", tab: "system_settings", href: "/admin?tab=system_settings", icon: Settings },
+        { name: "Security & System", tab: "security", href: "/admin?tab=security", icon: ShieldCheck },
       ],
     },
   ];

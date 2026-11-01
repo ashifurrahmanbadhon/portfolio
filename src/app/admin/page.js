@@ -129,7 +129,6 @@ const VALID_SECTION_IDS = [
   "seo",
   "ai_chat",
   "security",
-  "system_settings",
 ];
 
 function AdminConsoleContent() {
@@ -273,6 +272,13 @@ function AdminConsoleContent() {
       if (timer) clearInterval(timer);
     };
   }, []);
+
+  // Redirect legacy ?tab=system_settings to ?tab=security
+  useEffect(() => {
+    if (currentTab === "system_settings") {
+      router.replace("/admin?tab=security");
+    }
+  }, [currentTab, router]);
 
   const fetchUnreadCount = async () => {
     try {
@@ -651,11 +657,10 @@ function AdminConsoleContent() {
     { id: "seo", label: "SEO Titles", pageNum: "Site Content", title: "SEO Titles & Metadata", subtitle: "Per-page SEO title templates, OpenGraph tags, and social cards (Step 2 Implementation)", icon: Globe, liveUrl: "/" },
     { id: "inbox", label: "Inbox", pageNum: "Site Content", title: "Inbound Messages & Visitor Inquiries", subtitle: `View, manage, mark, and delete ${messages.length} direct visitor inquiries submitted via /contact`, icon: MessageSquare, liveUrl: "/contact", badge: unreadContactCount, count: messages.length },
     { id: "ai_chat", label: "AI Chat", pageNum: "System", title: "AI Chat Assistant", subtitle: "Model cascade, system prompts, and token limits (Step 2 Implementation)", icon: Sparkles, liveUrl: "/" },
-    { id: "security", label: "Security", pageNum: "System", title: "Security & Access Control", subtitle: "Two-factor authentication, sessions, and recovery codes", icon: ShieldCheck, liveUrl: "/admin" },
-    { id: "system_settings", label: "Settings", pageNum: "System", title: "System Settings", subtitle: "Dual database parity, cache management, and sync operations", icon: Sliders, liveUrl: "/admin" },
+    { id: "security", label: "Security & System", pageNum: "System", title: "Security & System", subtitle: "Profile, two-factor authentication, devices, activity, and system operations", icon: ShieldCheck, liveUrl: "/admin" },
   ];
 
-  const currentTabObj = tabs.find((t) => t.id === currentTab) || tabs[0];
+  const currentTabObj = tabs.find((t) => t.id === (currentTab === "system_settings" ? "security" : currentTab)) || tabs[0];
   const CurrentIcon = currentTabObj.icon;
 
   const hasLiveRail = ["home", "about", "projects", "work", "experience", "skills", "education", "contact", "inbox", "settings"].includes(currentTab);
@@ -974,41 +979,42 @@ function AdminConsoleContent() {
             )}
 
             {/* ============================================================== */}
-            {/* TAB: SECURITY & ACCESS CONTROL                                 */}
+            {/* TAB: SECURITY & SYSTEM                                         */}
             {/* ============================================================== */}
-            {currentTab === "security" && (
+            {(currentTab === "security" || currentTab === "system_settings") && (
               <div className="space-y-6">
                 <AdminProfileForm />
                 <AdminSecurityManager />
                 <KnownDevicesManager />
                 <ActivityLogManager />
-              </div>
-            )}
 
-            {/* ============================================================== */}
-            {/* TAB: SYSTEM SETTINGS                                           */}
-            {/* ============================================================== */}
-            {currentTab === "system_settings" && (
-              <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-6 sm:p-8 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
-                    <Sliders className="w-5 h-5" />
+                {/* Section 5: System */}
+                <div className="space-y-3 pt-2">
+                  <div className="text-[11px] font-mono uppercase tracking-wider text-[#8E8B82] font-semibold px-0.5">
+                    System
                   </div>
-                  <div>
-                    <h2 className="text-base font-bold text-[#F5F2EA]">System & Environment Settings</h2>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#12131A] text-[#B9B5A9] border border-[#23242B]">Production Active</span>
+                  <div className="stat-box bg-[#0A0B10] border border-[#23242B] p-6 sm:p-8 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-none bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
+                        <Sliders className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-base font-bold text-[#F5F2EA]">System & Environment Settings</h2>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-none bg-[#12131A] text-[#B9B5A9] border border-[#23242B]">Production Active</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
+                      System health, database parity between local SQLite development and Neon PostgreSQL production, and admin local cache controls.
+                    </p>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <button onClick={() => loadData(true)} className="px-3.5 py-2 rounded-none bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition cursor-pointer">
+                        Clear Cache & Force Re-sync
+                      </button>
+                      <button onClick={handleManualGitSync} disabled={gitSyncing} className="px-3.5 py-2 rounded-none bg-[#12131A] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer">
+                        {gitSyncing ? "Deploying..." : "Trigger Git Sync"}
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <p className="text-xs text-[#B9B5A9] max-w-xl leading-relaxed">
-                  System health, database parity between local SQLite development and Neon PostgreSQL production, and admin local cache controls.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  <button onClick={() => loadData(true)} className="px-3.5 py-2 rounded-none bg-[#F59E0B] text-[#06070B] text-xs font-bold font-mono hover:bg-[#FBBF24] transition cursor-pointer">
-                    Clear Cache & Force Re-sync
-                  </button>
-                  <button onClick={handleManualGitSync} disabled={gitSyncing} className="px-3.5 py-2 rounded-none bg-[#12131A] text-[#F5F2EA] hover:text-[#F59E0B] border border-[#23242B] text-xs font-mono transition cursor-pointer">
-                    {gitSyncing ? "Deploying..." : "Trigger Git Sync"}
-                  </button>
                 </div>
               </div>
             )}
