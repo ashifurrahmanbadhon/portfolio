@@ -604,13 +604,21 @@ export default function Home() {
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="mb-8 sm:mb-10">
-              <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
-                {siteTexts?.home_packages_heading || "Digital Services"}
-              </h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 sm:mb-10 gap-4">
+              <div>
+                <h2 className="text-2xl sm:text-4xl font-black text-[#F5F2EA] uppercase tracking-tight">
+                  {siteTexts?.home_packages_heading || "Digital Services"}
+                </h2>
+              </div>
+              <Link
+                href="/work"
+                className="font-mono text-xs uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] font-bold flex items-center gap-1.5 group shrink-0"
+              >
+                {(siteTexts?.home_packages_btn || "View All Packages").replace(/\s*→\s*$/, "")} <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
+              </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 sm:mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {previewPackages.map((pkg, idx) => {
                 const presetNum = String(pkg.sort_order || idx + 1).padStart(2, '0');
                 const rawDesc = (pkg.description || '').trim();
@@ -643,15 +651,6 @@ export default function Home() {
                   </Link>
                 );
               })}
-            </div>
-
-            <div className="text-center">
-              <Link
-                href="/work"
-                className="stat-box inline-flex items-center justify-center min-h-[44px] py-3 px-8 text-xs font-mono font-bold uppercase tracking-wider text-[#F59E0B] hover:text-[#FBBF24] no-underline transition"
-              >
-                {siteTexts?.home_packages_btn || "View All Packages →"}
-              </Link>
             </div>
           </motion.div>
         </section>
