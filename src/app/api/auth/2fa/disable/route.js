@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
 import { getDb, verifyPassword, getAdminById, addActivityLog } from "@/lib/db";
 import { verifyTOTP } from "@/lib/totp";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req) {
   try {
@@ -40,6 +41,7 @@ export async function POST(req) {
 
     await db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
     await addActivityLog("Disabled Two-Factor Authentication", "2FA was disabled for admin account.", "Central CMS", user.sub);
+    await logActivity(req, user.uid, "2fa_disabled", "Disabled TOTP two-factor authentication");
 
     return NextResponse.json({ success: true, message: "Two-Factor Authentication disabled" });
   } catch (error) {

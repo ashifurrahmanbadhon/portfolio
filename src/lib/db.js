@@ -168,6 +168,16 @@ function initSqliteDbIfEmpty(db) {
         last_login_method TEXT
       );
       CREATE INDEX IF NOT EXISTS idx_admin_devices_hash ON admin_devices(device_hash);
+      CREATE TABLE IF NOT EXISTS activity_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        admin_id INTEGER,
+        event TEXT NOT NULL,
+        detail TEXT,
+        ip TEXT,
+        user_agent TEXT,
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_activity_log_created ON activity_log(created_at DESC);
       CREATE TABLE IF NOT EXISTS hero (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,

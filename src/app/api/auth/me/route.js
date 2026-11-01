@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
 import { getAdminById, updateAdminProfile } from "@/lib/db";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(req) {
   try {
@@ -45,6 +46,14 @@ export async function PUT(req) {
       currentPassword: body.current_password,
       newPassword: body.new_password,
     });
+
+    const changed = [];
+    if (body.email) changed.push("email");
+    if (body.new_password || body.newPassword) changed.push("password");
+    if (body.avatar || body.avatar_position) changed.push("photo");
+    if (body.full_name && !changed.includes("email")) changed.push("name");
+    await logActivity(req, user.uid, "profile_updated", changed.length > 0 ? changed.join(", ") : "profile");
+
     return NextResponse.json({ success: true, message: "Profile updated successfully" });
   } catch (error) {
     console.error("PUT /api/auth/me error:", error);

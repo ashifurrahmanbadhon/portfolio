@@ -235,14 +235,14 @@ export default function TopBar({ setMobileOpen, ...props }) {
             {/* Click-away backdrop to dismiss dropdown smoothly */}
             {profileOpen && (
               <div
-                className="fixed inset-0 z-40 bg-transparent cursor-default"
+                className="fixed inset-0 z-[60] bg-transparent cursor-default"
                 onClick={() => setProfileOpen(false)}
               />
             )}
 
-            {/* Dropdown Menu (Anchored under box, right-aligned) */}
+            {/* Dropdown Menu (Fixed anchored to viewport under profile box) */}
             {profileOpen && (
-              <div className="animate-dropdown absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-24px)] bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs rounded-none stat-box">
+              <div className="animate-dropdown fixed right-3 top-[64px] w-64 max-w-[calc(100vw-24px)] bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-[70] text-xs rounded-none stat-box">
                 {/* Header (keeps name + email, NO ROOT ADMIN badge) */}
                 <div className="px-4 py-2.5 border-b border-[#23242B]">
                   <p className="font-bold text-[#F5F2EA] truncate text-sm">{displayName}</p>

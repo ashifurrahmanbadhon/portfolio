@@ -261,10 +261,11 @@ export default function Sidebar({ mobileOpen, setMobileOpen, collapsed = false, 
               type="button"
               onClick={() => setCollapsed?.(!collapsed)}
               className="stat-box w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-mono text-[#8E8B82] hover:text-[#F5F2EA] border border-transparent hover:border-[#F59E0B] transition cursor-pointer rounded-none"
-              title="Minimize sidebar"
+              title="Collapse menu"
+              aria-label="Collapse menu"
             >
               <span className="font-semibold text-[11px] uppercase tracking-wider text-[#B9B5A9]">
-                Minimize
+                Menu
               </span>
               <ChevronsLeft className="w-4 h-4 text-[#F59E0B]" />
             </button>
@@ -273,7 +274,8 @@ export default function Sidebar({ mobileOpen, setMobileOpen, collapsed = false, 
               type="button"
               onClick={() => setCollapsed?.(!collapsed)}
               className="stat-box p-2 text-[#8E8B82] hover:text-[#F5F2EA] border border-transparent hover:border-[#F59E0B] transition cursor-pointer flex items-center justify-center rounded-none"
-              title="Expand sidebar"
+              title="Expand menu"
+              aria-label="Expand menu"
             >
               <ChevronsRight className="w-4 h-4 text-[#F59E0B]" />
             </button>

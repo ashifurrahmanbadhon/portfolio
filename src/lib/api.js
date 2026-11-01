@@ -152,6 +152,31 @@ export const api = {
     }, 15000);
   },
 
+  async getDevices() {
+    const res = await fetch(`${API_BASE}/api/admin/devices`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  async removeDevice(id) {
+    const res = await fetch(`${API_BASE}/api/admin/devices`, {
+      method: "DELETE",
+      headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    return res.json();
+  },
+
+  async getActivityLog() {
+    const res = await fetch(`${API_BASE}/api/admin/activity`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
   // Change History & Audit Logs
   async getHistory(params = {}) {
     const q = new URLSearchParams();

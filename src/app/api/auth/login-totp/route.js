@@ -12,6 +12,7 @@ import { signToken } from "@/lib/auth";
 import { verifyTOTPWithStep, verifyRecoveryCode } from "@/lib/totp";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { registerDeviceAndAlert } from "@/lib/deviceAlert";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req) {
   try {
@@ -75,6 +76,9 @@ export async function POST(req) {
     } else if (totpResult.reason === "replay") {
       // Code is valid cryptographically, but has already been used in this step
       const { attempts, isLocked: newlyLocked } = await recordFailedAuthenticatorAttempt(admin.id, 3, 15);
+      if (newlyLocked) {
+        await logActivity(req, admin.id, "authenticator_locked", "Door locked for ~15 min after 3 failed attempts");
+      }
       await addActivityLog(
         "Failed Authenticator Login (Replayed Code)",
         `Rejected previously used TOTP code for: ${admin.username} (Failed attempts: ${attempts})`,
@@ -121,6 +125,9 @@ export async function POST(req) {
     // If neither matched: record failed attempt & check lock
     if (!isValid) {
       const { attempts, isLocked: newlyLocked } = await recordFailedAuthenticatorAttempt(admin.id, 3, 15);
+      if (newlyLocked) {
+        await logActivity(req, admin.id, "authenticator_locked", "Door locked for ~15 min after 3 failed attempts");
+      }
       await addActivityLog(
         "Failed Authenticator Login",
         `Invalid authenticator/recovery code for: ${admin.username} (Failed attempts: ${attempts})`,

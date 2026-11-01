@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { updatePortfolioSection } from "@/lib/db";
 import { authenticateRequest } from "@/lib/auth";
+import { logActivity } from "@/lib/activity";
 
 export async function PUT(req, { params }) {
   try {
@@ -13,6 +14,7 @@ export async function PUT(req, { params }) {
     const data = await req.json();
 
     const result = await updatePortfolioSection(section, data, user.sub);
+    await logActivity(req, user.uid, "content_updated", section);
     return NextResponse.json(result);
   } catch (error) {
     console.error(`PUT /api/admin/${params?.section} error:`, error);

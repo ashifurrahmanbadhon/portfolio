@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
 import { verifyTOTP, generateRecoveryCodes, hashRecoveryCode } from "@/lib/totp";
 import { getDb, getAdminById, verifyPassword, addActivityLog } from "@/lib/db";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req) {
   try {
@@ -67,6 +68,7 @@ export async function POST(req) {
     }
 
     await addActivityLog("Enabled Two-Factor Authentication", "2FA activated with Google Authenticator.", "Central CMS", user.sub);
+    await logActivity(req, user.uid, "2fa_enabled", "Enabled TOTP two-factor authentication");
 
     return NextResponse.json({
       success: true,

@@ -69,6 +69,8 @@ const SeoTitlesEditor = dynamic(() => import("@/components/admin/SeoTitlesEditor
 const AiChatEditor = dynamic(() => import("@/components/admin/AiChatEditor"), { ssr: true });
 const AdminProfileForm = dynamic(() => import("@/components/admin/AdminProfileForm"), { ssr: true });
 const AdminSecurityManager = dynamic(() => import("@/components/admin/AdminSecurityManager"), { ssr: true });
+const KnownDevicesManager = dynamic(() => import("@/components/admin/KnownDevicesManager"), { ssr: true });
+const ActivityLogManager = dynamic(() => import("@/components/admin/ActivityLogManager"), { ssr: true });
 
 import { DEFAULT_PROCESS_STEPS, DEFAULT_SITE_TEXTS } from "@/lib/portfolioDefaults";
 
@@ -978,6 +980,8 @@ function AdminConsoleContent() {
               <div className="space-y-6">
                 <AdminProfileForm />
                 <AdminSecurityManager />
+                <KnownDevicesManager />
+                <ActivityLogManager />
               </div>
             )}
 

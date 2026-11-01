@@ -9,6 +9,7 @@ import {
 } from "@/lib/db";
 import { signToken } from "@/lib/auth";
 import { registerDeviceAndAlert } from "@/lib/deviceAlert";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req) {
   try {
@@ -52,6 +53,9 @@ export async function POST(req) {
         admin.username
       );
 
+      if (newlyLocked) {
+        await logActivity(req, admin.id, "password_locked", "Door locked for ~15 min after 3 failed attempts");
+      }
       const remaining = Math.max(0, 3 - attempts);
       const errorMsg =
         newlyLocked || remaining <= 0

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
 import { getDb, verifyPassword, getAdminById, addActivityLog } from "@/lib/db";
 import { generateRecoveryCodes, hashRecoveryCode } from "@/lib/totp";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req) {
   try {
@@ -32,6 +33,7 @@ export async function POST(req) {
     }
 
     await addActivityLog("Regenerated 2FA Recovery Codes", "New backup codes generated.", "Central CMS", user.sub);
+    await logActivity(req, user.uid, "recovery_codes_regenerated", "Regenerated 8 emergency backup recovery codes");
 
     return NextResponse.json({ success: true, recovery_codes: recoveryCodes });
   } catch (error) {

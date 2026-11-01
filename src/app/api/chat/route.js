@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPortfolioContent } from "@/lib/db";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { CV_TEXT } from "@/lib/cvKnowledge";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -36,20 +37,27 @@ export async function POST(req) {
       return NextResponse.json({ reply: FALLBACK_REPLY }, { status: 200 });
     }
 
-    // 4. Build context ONLY from the verified portfolio content source
+    // 4. Build context ONLY from the verified portfolio content source + full CV
     const content = await getPortfolioContent();
     const hero = content.hero || {};
     const about = content.about || {};
+    const highlights = content.highlights || [];
     const experiences = content.experiences || [];
+    const experienceMetrics = content.experience_metrics || [];
     const educations = content.educations || [];
+    const courseworkPillars = content.coursework_pillars || [];
     const certifications = content.certifications || [];
     const skills = content.skills || [];
     const softwareTools = content.software_tools || [];
+    const skillBadges = content.skill_badges || [];
     const services = content.services || [];
     const workPackages = content.work_packages || [];
     const projects = content.projects || [];
+    const projectMethodologies = content.project_methodologies || [];
+    const processSteps = content.process_steps || [];
     const social = content.social_links || {};
     const contactChannels = content.contact_channels || [];
+    const homepageCta = content.homepage_cta || {};
 
     const contextText = `
 PORTFOLIO DATA FOR ASHIFUR RAHMAN:
@@ -63,18 +71,28 @@ Phone/WhatsApp: ${social.phone || "+880 1521 417284"}
 LinkedIn: ${social.linkedin || "https://www.linkedin.com/in/ashifurrahmanbadhon"}
 GitHub: ${social.github || "https://github.com/ashifurrahmanbadhon"}
 
+HIGHLIGHTS:
+${highlights.map(h => `- ${h.metric_value || h.metric || ""} ${h.metric_label || h.label || ""}: ${h.metric_subtext || h.subtext || ""}`).join("\n")}
+
 ABOUT:
 ${about.title || ""}
 ${about.description1 || ""}
 ${about.description2 || ""}
 Focus areas: ${about.focus1_title || ""}, ${about.focus2_title || ""}
 Engineering Pillars: ${(about.pillars || []).map(p => `${p.title}: ${p.description || p.subtitle}`).join("; ")}
+Engineering Principles: ${(about.principles || []).map(pr => `${pr.number || ""} ${pr.title}: ${pr.description}`).join("; ")}
 
 EXPERIENCE:
 ${experiences.map(e => `- Role: ${e.role} at ${e.organization} (${e.period}, ${e.location}). Points: ${(e.description_points || []).join(" ")}`).join("\n")}
 
+EXPERIENCE METRICS:
+${experienceMetrics.map(m => `- ${m.metric}: ${m.label} (${m.subtext})`).join("\n")}
+
 EDUCATION:
 ${educations.map(ed => `- ${ed.degree} from ${ed.institution} (${ed.period || `${ed.start_year}-${ed.end_year}`}, Result: ${ed.result || ed.badge_text || "Completed"}). ${ed.description || ""}`).join("\n")}
+
+COURSEWORK & CURRICULUM PILLARS:
+${courseworkPillars.map(cp => `- ${cp.title}: ${(cp.courses || []).join(", ")}`).join("\n")}
 
 CERTIFICATIONS:
 ${certifications.map(c => `- ${c.title} by ${c.issuer || ""} (${c.year || ""}): ${c.description || ""}`).join("\n")}
@@ -82,6 +100,7 @@ ${certifications.map(c => `- ${c.title} by ${c.issuer || ""} (${c.year || ""}): 
 SKILLS:
 ${skills.map(s => `${s.name} (${s.category}, ${s.level}%)`).join(", ")}
 Software Tools: ${softwareTools.map(t => (typeof t === 'object' ? t.name : t)).join(", ")}
+Skill Badges: ${skillBadges.map(b => (typeof b === 'object' ? b.name : b)).join(", ")}
 
 SERVICES OFFERED:
 ${services.map(s => `- ${s.title}: ${s.description}`).join("\n")}
@@ -90,10 +109,22 @@ WORK & SERVICE PACKAGES:
 ${workPackages.map(wp => `- Package: ${wp.title} (${wp.category}) — ${wp.description}. Deliverables: ${(wp.deliverables || "").replace(/\n/g, "; ")}`).join("\n")}
 
 PROJECTS:
-${projects.map(p => `- Project #${p.project_number || p.id}: ${p.title} (${p.category}). ${p.short_description || p.full_description || ""}. Tags: ${(p.tags || []).join(", ")}`).join("\n")}
+${projects.map(p => `- Project #${p.project_number || p.id}: ${p.title} (${p.category}). Summary: ${p.short_description || ""}. Details: ${p.full_description || ""}. Tags: ${(p.tags || []).join(", ")}`).join("\n")}
+
+PROJECT METHODOLOGY:
+${projectMethodologies.map(pm => `- Step ${pm.step_number || ""}: ${pm.title} — ${pm.description}`).join("\n")}
+
+CLIENT ENGAGEMENT & PROCESS STEPS:
+${processSteps.map((ps, i) => `- Step ${ps.sort_order || i + 1} (${ps.title}): ${ps.description}`).join("\n")}
+
+HOMEPAGE COLLABORATION CALLOUT:
+${homepageCta.title || ""} — ${homepageCta.description || ""} (Badge: ${homepageCta.badge_text || ""}, Action: ${homepageCta.primary_btn_text || ""} -> ${homepageCta.primary_btn_link || ""})
 
 CONTACT CHANNELS:
 ${contactChannels.map(ch => `${ch.label}: ${ch.value}`).join(", ")}
+
+FULL CV / RESUME:
+${CV_TEXT}
 `.trim();
 
     const systemPrompt = `You are the AI Assistant on Ashifur Rahman's official portfolio.

@@ -95,11 +95,15 @@ export function verifyChallengeToken(token) {
 }
 
 export function authenticateRequest(req) {
-  const authHeader = req.headers.get("Authorization") || "";
-  if (!authHeader.startsWith("Bearer ")) {
-    return null;
+  let token = "";
+  const authHeader = req.headers?.get?.("Authorization") || "";
+  if (authHeader.startsWith("Bearer ")) {
+    token = authHeader.substring(7).trim();
+  } else if (req.cookies?.get?.("cms_auth_token")?.value) {
+    token = req.cookies.get("cms_auth_token").value;
+  } else if (req.cookies?.get?.("token")?.value) {
+    token = req.cookies.get("token").value;
   }
-  const token = authHeader.substring(7).trim();
   if (!token) return null;
   return verifyToken(token);
 }

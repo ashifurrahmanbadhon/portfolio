@@ -1,7 +1,8 @@
 import crypto from "crypto";
 import { queryOne, execute } from "@/lib/db";
+import { logActivity } from "@/lib/activity";
 
-function parseUserAgentSummary(ua = "") {
+export function parseUserAgentSummary(ua = "") {
   if (!ua) return "Unknown Browser / OS";
 
   let os = "Unknown OS";
@@ -48,6 +49,7 @@ export async function registerDeviceAndAlert(req, admin, method = "password") {
            WHERE device_hash = ?`,
           [now, rawIp, method, deviceHash]
         );
+        await logActivity(req, admin.id, "login", `${method} (known device)`);
         return { isNewDevice: false, deviceCookie: null };
       }
     }
@@ -62,6 +64,8 @@ export async function registerDeviceAndAlert(req, admin, method = "password") {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [admin.id, newDeviceHash, userAgent, rawIp, rawIp, now, now, method]
     );
+
+    await logActivity(req, admin.id, "login", `${method} (new device)`);
 
     // Send New Device Alert Email via Resend
     const resendApiKey = process.env.RESEND_API_KEY;
