@@ -165,7 +165,7 @@ export default function TopBar({ setMobileOpen, ...props }) {
   return (
     <>
       <header className="h-14 px-4 sm:px-6 border-b border-[#23242B] bg-[#0A0B10] sticky top-0 z-40 flex items-center justify-between gap-3">
-        {/* Left: Mobile hamburger menu & Profile Box & breadcrumb title */}
+        {/* Left: Mobile hamburger menu & breadcrumb title */}
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => setMobileOpen?.(true)}
@@ -175,8 +175,35 @@ export default function TopBar({ setMobileOpen, ...props }) {
             <Menu className="w-4 h-4" />
           </button>
 
-          {/* Profile box sits on the LEFT side of the TopBar (first element before breadcrumb) */}
-          <div className="relative shrink-0">
+          <Suspense fallback={<div className="text-xs font-mono text-[#8E8B82]">Overview / Dashboard</div>}>
+            <BreadcrumbDisplay />
+          </Suspense>
+        </div>
+
+        {/* Click-away backdrop to dismiss dropdown smoothly */}
+        {profileOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-transparent cursor-default"
+            onClick={() => setProfileOpen(false)}
+          />
+        )}
+
+        {/* Right: Live status pill, presence pill, profile box LAST (corner) */}
+        <div className="flex items-center gap-3 relative z-50 shrink-0">
+          {/* Live Status Pill */}
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>Production Live</span>
+          </div>
+
+          {/* Presence Pill */}
+          <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+            <span>Ashifur · online</span>
+          </div>
+
+          {/* Profile box sits on the extreme RIGHT corner */}
+          <div className="relative">
             <button
               type="button"
               onClick={() => setProfileOpen(!profileOpen)}
@@ -213,9 +240,9 @@ export default function TopBar({ setMobileOpen, ...props }) {
               />
             )}
 
-            {/* Dropdown Menu (Left-aligned) */}
+            {/* Dropdown Menu (Anchored under box, right-aligned) */}
             {profileOpen && (
-              <div className="animate-dropdown absolute left-0 top-full mt-2 w-64 max-w-[calc(100vw-24px)] bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs rounded-none stat-box">
+              <div className="animate-dropdown absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-24px)] bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs rounded-none stat-box">
                 {/* Header (keeps name + email, NO ROOT ADMIN badge) */}
                 <div className="px-4 py-2.5 border-b border-[#23242B]">
                   <p className="font-bold text-[#F5F2EA] truncate text-sm">{displayName}</p>
@@ -258,25 +285,6 @@ export default function TopBar({ setMobileOpen, ...props }) {
                 </div>
               </div>
             )}
-          </div>
-
-          <Suspense fallback={<div className="text-xs font-mono text-[#8E8B82]">Overview / Dashboard</div>}>
-            <BreadcrumbDisplay />
-          </Suspense>
-        </div>
-
-        {/* Right: Live status pill + presence pill ONLY */}
-        <div className="flex items-center gap-3 relative z-30">
-          {/* Live Status Pill */}
-          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            <span>Production Live</span>
-          </div>
-
-          {/* Presence Pill */}
-          <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-            <span>Ashifur · online</span>
           </div>
         </div>
       </header>

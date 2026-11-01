@@ -375,22 +375,6 @@ ${codes.map((c, i) => `${i + 1}. ${c}`).join("\n")}
         </div>
       </div>
 
-      {/* Security Architecture Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-        <div className="stat-box p-4 bg-[#06070B] border border-[#23242B] space-y-1">
-          <div className="text-xs font-bold text-[#F5F2EA]">Multi-Factor Protocol</div>
-          <div className="text-[11px] text-[#8E8B82] leading-relaxed">
-            RFC 6238 TOTP algorithm (SHA-1, 6 digits, 30s period) + cryptographic salted SHA-256 emergency backup codes.
-          </div>
-        </div>
-        <div className="stat-box p-4 bg-[#06070B] border border-[#23242B] space-y-1">
-          <div className="text-xs font-bold text-[#F5F2EA]">Session Encryption</div>
-          <div className="text-[11px] text-[#8E8B82] leading-relaxed">
-            SHA-256 password hashing with dedicated salt + HttpOnly secure JWT tokens for tamper-proof admin authorization.
-          </div>
-        </div>
-      </div>
-
       {/* ============================================================== */}
       {/* MODAL 1: SETUP 2FA (POST /api/auth/2fa/setup & enable)          */}
       {/* ============================================================== */}

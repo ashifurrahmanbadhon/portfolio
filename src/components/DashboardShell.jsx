@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
@@ -16,6 +16,26 @@ function ShellContent({ children }) {
   const { isAuthenticated, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Restore collapsed state from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("cms_sidebar_collapsed");
+      if (saved !== null) {
+        setCollapsed(saved === "true");
+      }
+    } catch (_) {}
+  }, []);
+
+  const handleToggleCollapse = () => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("cms_sidebar_collapsed", String(next));
+      } catch (_) {}
+      return next;
+    });
+  };
 
   // Public portfolio routes that do not require admin CMS authentication
   const publicRoutes = ["/", "/about", "/experience", "/projects", "/skills", "/education", "/contact", "/work"];
@@ -51,9 +71,15 @@ function ShellContent({ children }) {
       <Sidebar
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
+        collapsed={collapsed}
+        setCollapsed={handleToggleCollapse}
       />
 
-      <div className="lg:pl-[248px] flex-1 flex flex-col min-w-0 transition-all duration-200">
+      <div
+        className={`${
+          collapsed ? "lg:pl-[64px]" : "lg:pl-[248px]"
+        } flex-1 flex flex-col min-w-0 transition-all duration-200`}
+      >
         <TopBar
           setMobileOpen={setMobileOpen}
         />
