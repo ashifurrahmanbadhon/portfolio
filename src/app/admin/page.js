@@ -67,6 +67,7 @@ const HomepageCtaManager = dynamic(() => import("@/components/admin/HomepageCtaM
 const HeadingsTextsEditor = dynamic(() => import("@/components/admin/HeadingsTextsEditor"), { ssr: true });
 const SeoTitlesEditor = dynamic(() => import("@/components/admin/SeoTitlesEditor"), { ssr: true });
 const AiChatEditor = dynamic(() => import("@/components/admin/AiChatEditor"), { ssr: true });
+const AdminProfileForm = dynamic(() => import("@/components/admin/AdminProfileForm"), { ssr: true });
 const AdminSecurityManager = dynamic(() => import("@/components/admin/AdminSecurityManager"), { ssr: true });
 
 import { DEFAULT_PROCESS_STEPS, DEFAULT_SITE_TEXTS } from "@/lib/portfolioDefaults";
@@ -974,7 +975,10 @@ function AdminConsoleContent() {
             {/* TAB: SECURITY & ACCESS CONTROL                                 */}
             {/* ============================================================== */}
             {currentTab === "security" && (
-              <AdminSecurityManager />
+              <div className="space-y-6">
+                <AdminProfileForm />
+                <AdminSecurityManager />
+              </div>
             )}
 
             {/* ============================================================== */}

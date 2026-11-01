@@ -1,24 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   Menu,
   ChevronDown,
-  User,
-  ShieldCheck,
   LogOut,
-  KeyRound,
-  Key,
-  Mail,
   X,
   Check,
-  Eye,
-  EyeOff,
   Camera,
-  Upload,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "./Toast";
@@ -59,41 +51,31 @@ function BreadcrumbDisplay() {
   );
 }
 
-export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
-  const pathname = usePathname();
+export default function TopBar({ setMobileOpen, ...props }) {
   const { user, logout, updateUser } = useAuth();
   const { showToast } = useToast();
 
   const [profileOpen, setProfileOpen] = useState(false);
 
-  // Admin Profile & Security Modal state
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
-  const [editName, setEditName] = useState(user?.full_name || "Ashifur Rahman");
-  const [editEmail, setEditEmail] = useState(user?.email || "ashifur.badhon@gmail.com");
+  // Photo-only modal state
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [editAvatar, setEditAvatar] = useState(user?.avatar || "/ashifur.jpeg");
-  const [currentPw, setCurrentPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [formError, setFormError] = useState("");
+  const [editAvatarPosition, setEditAvatarPosition] = useState(user?.avatar_position || "50% 50%");
+  const [savingPhoto, setSavingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState("");
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarProgress, setAvatarProgress] = useState(0);
 
   const displayName = user?.full_name || user?.username || "Ashifur Rahman";
   const displayEmail = user?.email || "ashifur.badhon@gmail.com";
   const userAvatar = user?.avatar || "/ashifur.jpeg";
 
-  const [editAvatarPosition, setEditAvatarPosition] = useState(user?.avatar_position || "50% 50%");
-  const [avatarUploading, setAvatarUploading] = useState(false);
-  const [avatarProgress, setAvatarProgress] = useState(0);
-
   useEffect(() => {
     if (user) {
-      if (user.full_name) setEditName(user.full_name);
-      if (user.email) setEditEmail(user.email);
       if (user.avatar) setEditAvatar(user.avatar);
       if (user.avatar_position) setEditAvatarPosition(user.avatar_position);
     }
-  }, [user, profileModalOpen]);
+  }, [user, photoModalOpen]);
 
   // Background upload of avatar with 1024x1024 WebP downscaling
   const executeAvatarUpload = async (file) => {
@@ -123,7 +105,7 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
       try {
         const { dataUrl } = await downscalePhotoToWebP(file);
         if (dataUrl) setEditAvatar(dataUrl);
-      } catch (_) { }
+      } catch (_) {}
     } finally {
       setTimeout(() => {
         setAvatarUploading(false);
@@ -139,35 +121,9 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
     if (e.target) e.target.value = "";
   };
 
-  const handleToggle = () => {
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      if (setMobileOpen) setMobileOpen((prev) => !prev);
-    } else {
-      if (setCollapsed) setCollapsed((prev) => !prev);
-    }
-  };
-
-  const handleSaveProfile = async (e) => {
-    e?.preventDefault();
-    setFormError("");
-
-    if (!editEmail || !editEmail.includes("@")) {
-      setFormError("Please enter a valid email address.");
-      return;
-    }
-
-    if (newPw) {
-      if (newPw.length < 6) {
-        setFormError("New password must be at least 6 characters.");
-        return;
-      }
-      if (newPw !== confirmPw) {
-        setFormError("New password and confirm password do not match.");
-        return;
-      }
-    }
-
-    setSavingProfile(true);
+  const handleSavePhoto = async () => {
+    setSavingPhoto(true);
+    setPhotoError("");
 
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("cms_auth_token") || "" : "";
@@ -178,58 +134,38 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
           Authorization: token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify({
-          full_name: editName.trim() || "Ashifur Rahman",
-          email: editEmail.trim(),
           avatar: editAvatar || "/ashifur.jpeg",
           avatar_position: editAvatarPosition || "50% 50%",
-          current_password: currentPw || undefined,
-          new_password: newPw || undefined,
         }),
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to update profile.");
+        throw new Error(data.error || "Failed to update profile photo.");
       }
 
       if (updateUser) {
         updateUser({
-          full_name: editName.trim() || "Ashifur Rahman",
-          email: editEmail.trim(),
           avatar: editAvatar || "/ashifur.jpeg",
           avatar_position: editAvatarPosition || "50% 50%",
         });
       }
 
-      if (newPw) {
-        try {
-          localStorage.setItem("cms_admin_pw", newPw);
-        } catch (e) { }
-      }
-
-      setSavingProfile(false);
-      setProfileModalOpen(false);
-      setCurrentPw("");
-      setNewPw("");
-      setConfirmPw("");
+      setSavingPhoto(false);
+      setPhotoModalOpen(false);
       if (showToast) {
-        showToast(
-          newPw
-            ? "Super Admin profile and password updated successfully!"
-            : "Super Admin profile photo and details saved successfully!",
-          "success"
-        );
+        showToast("Profile photo updated successfully!", "success");
       }
     } catch (err) {
-      setSavingProfile(false);
-      setFormError(err.message || "Failed to update profile. Please try again.");
+      setSavingPhoto(false);
+      setPhotoError(err.message || "Failed to update profile photo.");
     }
   };
 
   return (
     <>
       <header className="h-14 px-4 sm:px-6 border-b border-[#23242B] bg-[#0A0B10] sticky top-0 z-40 flex items-center justify-between gap-3">
-        {/* Left: Mobile hamburger menu & breadcrumb title */}
+        {/* Left: Mobile hamburger menu & Profile Box & breadcrumb title */}
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => setMobileOpen?.(true)}
@@ -239,92 +175,77 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
             <Menu className="w-4 h-4" />
           </button>
 
-          <Suspense fallback={<div className="text-xs font-mono text-[#8E8B82]">Overview / Dashboard</div>}>
-            <BreadcrumbDisplay />
-          </Suspense>
-        </div>
-
-        {/* Click-away backdrop to dismiss dropdown smoothly */}
-        {profileOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-transparent cursor-default"
-            onClick={() => setProfileOpen(false)}
-          />
-        )}
-
-        {/* Right: Live status pill, presence pill, admin profile */}
-        <div className="flex items-center gap-3 relative z-50">
-          {/* Live Status Pill */}
-          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            <span>Production Live</span>
-          </div>
-
-          {/* Presence Pill */}
-          <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-            <span>Ashifur · online</span>
-          </div>
-
-          {/* Super Admin Profile Dropdown */}
-          <div className="relative">
+          {/* Profile box sits on the LEFT side of the TopBar (first element before breadcrumb) */}
+          <div className="relative shrink-0">
             <button
+              type="button"
               onClick={() => setProfileOpen(!profileOpen)}
-              className="stat-box flex items-center gap-2 p-1 rounded-none border border-transparent hover:border-[#F59E0B] transition cursor-pointer"
+              className="stat-box flex items-center gap-2 px-2.5 py-1.5 rounded-none bg-[#06070B] border border-[#23242B] hover:border-[#F59E0B] transition cursor-pointer"
             >
-              <div className="w-7 h-7 rounded-full overflow-hidden bg-[#06070B] border border-[#23242B] text-[#F59E0B] text-xs font-bold font-mono flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-[#06070B] border border-[#23242B] text-[#F59E0B] text-xs font-bold font-mono flex items-center justify-center shrink-0">
                 <Image
                   src={userAvatar || "/ashifur.jpeg"}
                   alt={displayName}
-                  width={28}
-                  height={28}
+                  width={32}
+                  height={32}
                   unoptimized
-                  style={parsePhotoPosition(editAvatarPosition).style}
+                  style={parsePhotoPosition(user?.avatar_position || "50% 50%").style}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="hidden lg:block text-left">
-                <p className="text-xs font-semibold text-[#F5F2EA] leading-tight">{displayName}</p>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-semibold text-[#F5F2EA] leading-tight truncate max-w-[130px]">
+                  {displayName}
+                </p>
               </div>
-              <ChevronDown className={`w-3.5 h-3.5 text-[#8E8B82] transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-[#8E8B82] transition-transform duration-200 ${
+                  profileOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
+            {/* Click-away backdrop to dismiss dropdown smoothly */}
             {profileOpen && (
               <div
-                className="animate-dropdown absolute right-0 top-full mt-2 w-64 max-w-[calc(100vw-24px)] bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs"
-                style={{ borderRadius: 0 }}
-              >
-                {/* Header Profile Badge */}
+                className="fixed inset-0 z-40 bg-transparent cursor-default"
+                onClick={() => setProfileOpen(false)}
+              />
+            )}
+
+            {/* Dropdown Menu (Left-aligned) */}
+            {profileOpen && (
+              <div className="animate-dropdown absolute left-0 top-full mt-2 w-64 max-w-[calc(100vw-24px)] bg-[#0A0B10] border border-[#23242B] shadow-2xl py-2 z-50 text-xs rounded-none stat-box">
+                {/* Header (keeps name + email, NO ROOT ADMIN badge) */}
                 <div className="px-4 py-2.5 border-b border-[#23242B]">
-                  <div className="flex items-center justify-between">
-                    <p className="font-bold text-[#F5F2EA] truncate text-sm">{displayName}</p>
-                    <span className="stat-box text-[9px] bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/30 font-mono px-1.5 py-0.5 font-semibold">
-                      ROOT ADMIN
-                    </span>
-                  </div>
+                  <p className="font-bold text-[#F5F2EA] truncate text-sm">{displayName}</p>
                   <p className="text-[11px] text-[#8E8B82] font-mono truncate mt-0.5">{displayEmail}</p>
                 </div>
 
                 <div className="py-1">
-                  {/* 1. Edit Profile */}
+                  {/* 1. Change Photo */}
                   <button
+                    type="button"
                     onClick={() => {
                       setProfileOpen(false);
-                      setProfileModalOpen(true);
+                      setEditAvatar(user?.avatar || "/ashifur.jpeg");
+                      setEditAvatarPosition(user?.avatar_position || "50% 50%");
+                      setPhotoModalOpen(true);
                     }}
-                    className="stat-box w-full flex items-center justify-between px-4 py-2 text-[#B9B5A9] hover:text-[#FBBF24] border border-transparent transition-all cursor-pointer text-left"
+                    className="stat-box w-full flex items-center justify-between px-4 py-2 text-[#B9B5A9] hover:text-[#FBBF24] border border-transparent hover:border-[#F59E0B] transition cursor-pointer text-left"
                   >
                     <div className="flex items-center gap-2.5">
-                      <User className="w-3.5 h-3.5 text-[#F59E0B]" />
-                      <span className="font-medium">Edit Profile</span>
+                      <Camera className="w-3.5 h-3.5 text-[#F59E0B]" />
+                      <span className="font-medium">Change Photo</span>
                     </div>
-                    <span className="stat-box text-[10px] bg-[#0A0B10] text-[#8E8B82] border border-[#23242B] px-1.5 py-0.5 font-mono">
-                      Edit
+                    <span className="stat-box text-[10px] bg-[#06070B] text-[#8E8B82] border border-[#23242B] px-1.5 py-0.5 font-mono">
+                      Photo
                     </span>
                   </button>
 
                   {/* 2. Sign Out */}
                   <button
+                    type="button"
                     onClick={() => {
                       setProfileOpen(false);
                       logout();
@@ -338,202 +259,122 @@ export default function TopBar({ setMobileOpen, setCollapsed, collapsed }) {
               </div>
             )}
           </div>
+
+          <Suspense fallback={<div className="text-xs font-mono text-[#8E8B82]">Overview / Dashboard</div>}>
+            <BreadcrumbDisplay />
+          </Suspense>
+        </div>
+
+        {/* Right: Live status pill + presence pill ONLY */}
+        <div className="flex items-center gap-3 relative z-30">
+          {/* Live Status Pill */}
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>Production Live</span>
+          </div>
+
+          {/* Presence Pill */}
+          <div className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#12131A] border border-[#23242B] text-[11px] font-mono text-[#8E8B82]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+            <span>Ashifur · online</span>
+          </div>
         </div>
       </header>
 
-      {/* Admin Profile & Password Security Modal */}
-      {profileModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+      {/* Change Photo Modal */}
+      {photoModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fade-in">
           <div
-            className="bg-[#0A0B10] border border-[#23242B] max-w-xl w-full shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
-            style={{ borderRadius: 0 }}
+            className="bg-[#0A0B10] border border-[#23242B] max-w-md w-full shadow-2xl overflow-hidden rounded-none flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-[#23242B] flex items-center justify-between bg-[#06070B] shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="p-1.5 bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-[#F59E0B]">
-                  <User className="w-4 h-4" />
+                  <Camera className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-[#F5F2EA] leading-tight">Super Admin Profile</h3>
-                  <p className="text-[10px] text-[#8E8B82] font-mono">Manage email address & security credentials</p>
+                  <h3 className="text-sm font-bold text-[#F5F2EA] leading-tight">Change Profile Photo</h3>
+                  <p className="text-[10px] text-[#8E8B82] font-mono">Upload, reposition, and crop administrator avatar</p>
                 </div>
               </div>
               <button
-                onClick={() => setProfileModalOpen(false)}
+                type="button"
+                onClick={() => setPhotoModalOpen(false)}
                 className="stat-box p-1.5 text-[#8E8B82] hover:text-[#F5F2EA] border border-transparent transition cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Scrollable Middle: Avatar & Form Fields */}
-            <form id="admin-profile-form" onSubmit={handleSaveProfile} className="flex-1 min-h-0 overflow-y-auto">
-              {/* Profile Avatar & Super Admin Badge */}
-              <div className="p-5 border-b border-[#23242B] bg-[#06070B]/50 space-y-4">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-[#F5F2EA] truncate">{displayName}</h4>
-                  <span className="stat-box text-[9px] bg-[#F59E0B]/15 text-[#FBBF24] border border-[#F59E0B]/30 px-1.5 py-0.5 font-mono font-semibold">
-                    ACTIVE
-                  </span>
-                  <span className="text-[11px] text-[#8E8B82] font-mono truncate ml-auto">{displayEmail}</span>
+            {/* Modal Body */}
+            <div className="p-5 space-y-4">
+              {photoError && (
+                <div className="stat-box p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono">
+                  {photoError}
                 </div>
+              )}
 
-                <ImageUploadBox
-                  value={editAvatar || userAvatar || "/ashifur.jpeg"}
-                  type="image"
-                  label="Super Admin Profile Photo"
-                  description="Profile photo displayed across the administration console"
-                  previewAspect="1/1"
-                  aspectRatio="square"
-                  positionValue={editAvatarPosition || "50% 50%"}
-                  onPositionChange={(pos) => setEditAvatarPosition(pos)}
-                  defaultValue="/ashifur.jpeg"
-                  defaultPosition="50% 50%"
-                  uploading={avatarUploading}
-                  uploadProgress={avatarProgress}
-                  onPickFile={() => document.getElementById("admin-avatar-file-input")?.click()}
-                  onReset={() => {
-                    setEditAvatar("/ashifur.jpeg");
-                    setEditAvatarPosition("50% 50%");
-                    if (showToast) showToast("Avatar reset to default!", "info");
-                  }}
-                  urlValue={editAvatar || ""}
-                  onUrlChange={(url) => setEditAvatar(url)}
-                  onUrlApply={(url) => {
-                    if (url) {
-                      setEditAvatar(url);
-                    }
-                  }}
-                >
-                  <input
-                    id="admin-avatar-file-input"
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoSelected}
-                    className="hidden"
-                  />
-                </ImageUploadBox>
-              </div>
+              <ImageUploadBox
+                value={editAvatar || userAvatar || "/ashifur.jpeg"}
+                type="image"
+                label="Administrator Profile Photo"
+                description="Square avatar photo displayed across admin console and top bar"
+                previewAspect="1/1"
+                aspectRatio="square"
+                positionValue={editAvatarPosition || "50% 50%"}
+                onPositionChange={(pos) => setEditAvatarPosition(pos)}
+                defaultValue="/ashifur.jpeg"
+                defaultPosition="50% 50%"
+                uploading={avatarUploading}
+                uploadProgress={avatarProgress}
+                onPickFile={() => document.getElementById("admin-photo-modal-file-input")?.click()}
+                onReset={() => {
+                  setEditAvatar("/ashifur.jpeg");
+                  setEditAvatarPosition("50% 50%");
+                  if (showToast) showToast("Avatar reset to default!", "info");
+                }}
+                urlValue={editAvatar || ""}
+                onUrlChange={(url) => setEditAvatar(url)}
+                onUrlApply={(url) => {
+                  if (url) setEditAvatar(url);
+                }}
+              >
+                <input
+                  id="admin-photo-modal-file-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoSelected}
+                  className="hidden"
+                />
+              </ImageUploadBox>
+            </div>
 
-              {/* Form Body */}
-              <div className="p-5 space-y-4">
-                {formError && (
-                  <div className="stat-box p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono">
-                    {formError}
-                  </div>
-                )}
-
-                {/* Name */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-mono text-[#8E8B82] flex items-center gap-1.5 uppercase">
-                    <User className="w-3.5 h-3.5 text-[#8E8B82]" />
-                    <span>Admin Full Name</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition"
-                    placeholder="Full Name"
-                    required
-                  />
-                </div>
-
-                {/* Email Address */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-mono text-[#8E8B82] flex items-center gap-1.5 uppercase">
-                    <Mail className="w-3.5 h-3.5 text-[#F59E0B]" />
-                    <span>Super Admin Email</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={editEmail}
-                    onChange={(e) => setEditEmail(e.target.value)}
-                    className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
-                    placeholder="ashifur.badhon@gmail.com"
-                    required
-                  />
-                </div>
-
-                {/* Password Section Divider */}
-                <div className="pt-2 border-t border-[#23242B]">
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-[11px] font-mono text-[#8E8B82] flex items-center gap-1.5 uppercase font-semibold">
-                      <Key className="w-3.5 h-3.5 text-[#F59E0B]" />
-                      <span>Change Admin Password</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="text-[10px] text-[#8E8B82] hover:text-[#F5F2EA] font-mono flex items-center gap-1 cursor-pointer transition"
-                    >
-                      {showPassword ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                      <span>{showPassword ? "Hide" : "Show"}</span>
-                    </button>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    <div>
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        value={currentPw}
-                        onChange={(e) => setCurrentPw(e.target.value)}
-                        className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
-                        placeholder="Current Password (optional for super admin)"
-                      />
-                    </div>
-                    <div>
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        value={newPw}
-                        onChange={(e) => setNewPw(e.target.value)}
-                        className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
-                        placeholder="New Password (min. 6 characters)"
-                      />
-                    </div>
-                    <div>
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        value={confirmPw}
-                        onChange={(e) => setConfirmPw(e.target.value)}
-                        className="stat-box w-full px-3 py-2 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] text-xs text-[#F5F2EA] placeholder-[#555] outline-none transition font-mono"
-                        placeholder="Confirm New Password"
-                      />
-                    </div>
-                    <p className="text-[10px] text-[#8E8B82] font-mono">
-                      Leave password fields blank if you only want to update the email address.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </form>
-
-            {/* Action Buttons Footer */}
+            {/* Modal Footer */}
             <div className="px-5 py-3.5 border-t border-[#23242B] bg-[#06070B] flex items-center justify-end gap-2.5 shrink-0">
               <button
                 type="button"
-                onClick={() => setProfileModalOpen(false)}
-                className="stat-box px-3.5 py-2 text-xs font-mono text-[#8E8B82] hover:text-[#F5F2EA] transition cursor-pointer"
+                onClick={() => setPhotoModalOpen(false)}
+                className="stat-box px-3.5 py-2 text-xs font-mono text-[#8E8B82] hover:text-[#F5F2EA] transition cursor-pointer rounded-none border border-transparent"
               >
                 Cancel
               </button>
               <button
-                type="submit"
-                form="admin-profile-form"
-                disabled={savingProfile}
-                className="stat-box px-4 py-2 bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs font-mono transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                type="button"
+                disabled={savingPhoto || avatarUploading}
+                onClick={handleSavePhoto}
+                className="stat-box px-4 py-2 bg-[#F59E0B] hover:bg-[#FBBF24] text-[#06070B] font-bold text-xs font-mono transition cursor-pointer flex items-center gap-1.5 rounded-none disabled:opacity-50"
               >
-                {savingProfile ? (
+                {savingPhoto ? (
                   <>
-                    <span className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    <span>Saving...</span>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Saving Photo...</span>
                   </>
                 ) : (
                   <>
                     <Check className="w-3.5 h-3.5" />
-                    <span>Save Changes</span>
+                    <span>Save Photo</span>
                   </>
                 )}
               </button>
