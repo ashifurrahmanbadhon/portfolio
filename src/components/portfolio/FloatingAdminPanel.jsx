@@ -151,7 +151,7 @@ export default function FloatingAdminPanel() {
           </Link>
 
           <Link
-            href="/settings"
+            href="/admin?tab=settings"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-2.5 px-3 py-2 rounded-none border border-transparent hover:border-[#F59E0B] text-xs font-medium text-[#B9B5A9] hover:text-[#F59E0B] bg-transparent transition-colors cursor-pointer"
           >

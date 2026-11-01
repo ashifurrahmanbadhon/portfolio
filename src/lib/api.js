@@ -84,15 +84,6 @@ export const api = {
     return res.json();
   },
 
-  async verify2FA(two_factor_token, code, method = "totp") {
-    const res = await fetch(`${API_BASE}/api/auth/verify-2fa`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ two_factor_token, challenge_token: two_factor_token, code, method, is_recovery: method === "recovery" }),
-    });
-    return res.json();
-  },
-
   async sendSmsOtp(two_factor_token) {
     const res = await fetch(`${API_BASE}/api/auth/2fa/send-sms-otp`, {
       method: "POST",
@@ -176,70 +167,6 @@ export const api = {
     });
     return res.json();
   },
-
-  // Change History & Audit Logs
-  async getHistory(params = {}) {
-    const q = new URLSearchParams();
-    if (params.category && params.category !== "all") q.set("category", params.category);
-    if (params.search) q.set("search", params.search);
-    if (params.limit) q.set("limit", params.limit);
-    const queryString = q.toString() ? `?${q.toString()}` : "";
-    const res = await fetch(`${API_BASE}/api/admin/history${queryString}`, {
-      headers: getAuthHeaders(),
-    });
-    return res.json();
-  },
-
-  async logActivity(action, details = "", website_name = "Central CMS") {
-    const res = await fetch(`${API_BASE}/api/admin/history/log`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ action, details, website_name }),
-    });
-    return res.json();
-  },
-
-  // Central Dashboard & Websites
-  async getCentralDashboard() {
-    return cachedFetch(`${API_BASE}/api/admin/central/dashboard`, {
-      headers: getAuthHeaders(),
-    }, 20000);
-  },
-
-  async getWebsites() {
-    return cachedFetch(`${API_BASE}/api/admin/websites`, {
-      headers: getAuthHeaders(),
-    }, 20000);
-  },
-
-  async pingWebsite(id) {
-    const res = await fetch(`${API_BASE}/api/admin/websites/${id}/ping`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-    });
-    return res.json();
-  },
-
-  async saveWebsite(id, data) {
-    cache.clear();
-    const url = id ? `${API_BASE}/api/admin/websites/${id}` : `${API_BASE}/api/admin/websites`;
-    const res = await fetch(url, {
-      method: id ? "PUT" : "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  },
-
-  async deleteWebsite(id) {
-    cache.clear();
-    const res = await fetch(`${API_BASE}/api/admin/websites/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-    });
-    return res.json();
-  },
-
 
   // Portfolio Hub
   async getPortfolioContent() {
@@ -349,30 +276,6 @@ export const api = {
     const res = await fetch(`${API_BASE}/api/admin/presence`, {
       method: "POST",
       headers: getAuthHeaders(),
-    });
-    return res.json();
-  },
-
-  // Roles & Users
-  async getUsers() {
-    return cachedFetch(`${API_BASE}/api/admin/users`, {
-      headers: getAuthHeaders(),
-    }, 20000);
-  },
-
-  // System Settings
-  async getSystemSettings() {
-    return cachedFetch(`${API_BASE}/api/admin/system-settings`, {
-      headers: getAuthHeaders(),
-    }, 20000);
-  },
-
-  async saveSystemSettings(category, data) {
-    cache.clear();
-    const res = await fetch(`${API_BASE}/api/admin/system-settings`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ category, ...data }),
     });
     return res.json();
   },

@@ -3,10 +3,5 @@ Allow: /
 Disallow: /admin
 Disallow: /login
 Disallow: /api/
-Disallow: /settings
-Disallow: /history
-Disallow: /websites
-Disallow: /roles
-Disallow: /portfolio
 
 Sitemap: https://ashifurrahman.vercel.app/sitemap.xml

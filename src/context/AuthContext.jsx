@@ -10,7 +10,6 @@ const AuthContext = createContext({
   isAuthenticated: false,
   login: async () => {},
   loginWithTotp: async () => {},
-  verify2FA: async () => {},
   sendSmsOtp: async () => {},
   logout: () => {},
   updateUser: () => {},
@@ -184,46 +183,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const verify2FA = async (twoFactorToken, code, method = "totp") => {
-    try {
-      const res = await api.verify2FA(twoFactorToken, code, method);
-      if (res && (res.token || res.success)) {
-        const authToken = res.token;
-        const authUser = res.user || {
-          username: "admin",
-          full_name: "Ashifur Rahman",
-          role: "super_admin",
-          title: "Electrical & Electronic Engineer",
-          email: "ashifur.badhon@gmail.com",
-        };
-
-        setToken(authToken);
-        setUser(authUser);
-
-        localStorage.setItem("cms_auth_token", authToken);
-        localStorage.setItem("cms_auth_user", JSON.stringify(authUser));
-        try {
-          document.cookie = `cms_auth_token=${authToken}; path=/; max-age=${90 * 24 * 60 * 60}; SameSite=Lax`;
-        } catch (_) {}
-        if (res.expires_at) {
-          localStorage.setItem("cms_auth_exp", res.expires_at.toString());
-        }
-
-        return { success: true, user: authUser };
-      } else {
-        return {
-          success: false,
-          error: res?.error || "Invalid 2FA verification code.",
-        };
-      }
-    } catch (err) {
-      return {
-        success: false,
-        error: "2FA verification request failed. Please check server connection.",
-      };
-    }
-  };
-
   const sendSmsOtp = async (twoFactorToken) => {
     try {
       const res = await api.sendSmsOtp(twoFactorToken);
@@ -292,7 +251,6 @@ export function AuthProvider({ children }) {
         isAuthenticated: !!token,
         login,
         loginWithTotp,
-        verify2FA,
         sendSmsOtp,
         logout,
         updateUser,

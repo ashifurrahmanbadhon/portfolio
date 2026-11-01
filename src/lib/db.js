@@ -395,23 +395,6 @@ function initSqliteDbIfEmpty(db) {
         secondary_btn_text TEXT,
         secondary_btn_link TEXT
       );
-      CREATE TABLE IF NOT EXISTS websites (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        slug TEXT UNIQUE,
-        url TEXT,
-        cms_url TEXT,
-        description TEXT,
-        website_type TEXT,
-        cms_type TEXT,
-        status TEXT,
-        connection_status TEXT,
-        logo TEXT,
-        api_key TEXT,
-        settings_json TEXT,
-        created_at TEXT,
-        updated_at TEXT
-      );
       CREATE TABLE IF NOT EXISTS password_resets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         admin_id INTEGER,
@@ -429,15 +412,6 @@ function initSqliteDbIfEmpty(db) {
         message TEXT,
         ip_address TEXT,
         is_read INTEGER DEFAULT 0,
-        created_at TEXT
-      );
-      CREATE TABLE IF NOT EXISTS activity_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        website_id INTEGER,
-        website_name TEXT,
-        action TEXT,
-        details TEXT,
-        user TEXT,
         created_at TEXT
       );
       CREATE TABLE IF NOT EXISTS admin_presence (
@@ -544,18 +518,10 @@ export function verifyPassword(password, storedHash, salt) {
 }
 
 // ==========================================
-// Activity Logging Helper
+// Activity Logging Helper (Retired - active logging in src/lib/activity.js)
 // ==========================================
-export async function addActivityLog(action, details = "", websiteName = "Central CMS", user = "admin", websiteId = null) {
-  try {
-    const now = new Date().toISOString();
-    await execute(`
-      INSERT INTO activity_logs (website_id, website_name, action, details, "user", created_at)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `, [websiteId, websiteName, action, details, user, now]);
-  } catch (err) {
-    console.error("Failed to log activity:", err);
-  }
+export async function addActivityLog() {
+  // Legacy activity_logs table dropped; active admin actions are logged via logActivity in src/lib/activity.js
 }
 
 // ==========================================
@@ -1823,81 +1789,6 @@ export async function updatePortfolioSection(section, data, user = "admin") {
 
 
 // ==========================================
-// Central Websites & Multi-Site Directory
-// ==========================================
-export async function getWebsites() {
-  return (await queryAll("SELECT * FROM websites ORDER BY id ASC")) || [];
-}
-
-export async function saveWebsite(id, data, user = "admin") {
-  const now = new Date().toISOString();
-
-  if (id) {
-    await execute(`
-      UPDATE websites SET
-        name = COALESCE(?, name),
-        slug = COALESCE(?, slug),
-        url = COALESCE(?, url),
-        cms_url = COALESCE(?, cms_url),
-        description = COALESCE(?, description),
-        website_type = COALESCE(?, website_type),
-        cms_type = COALESCE(?, cms_type),
-        status = COALESCE(?, status),
-        connection_status = COALESCE(?, connection_status),
-        logo = COALESCE(?, logo),
-        api_key = COALESCE(?, api_key),
-        updated_at = ?
-      WHERE id = ?
-    `, [
-      data.name ?? null,
-      data.slug ?? null,
-      data.url ?? null,
-      data.cms_url ?? null,
-      data.description ?? null,
-      data.website_type ?? null,
-      data.cms_type ?? null,
-      data.status ?? null,
-      data.connection_status ?? null,
-      data.logo ?? null,
-      data.api_key ?? null,
-      now,
-      id,
-    ]);
-    await addActivityLog("Updated Website Registration", `Modified website: ${data.name || id}`, data.name || "Websites", user, id);
-  } else {
-    await execute(`
-      INSERT INTO websites (
-        name, slug, url, cms_url, description, website_type, cms_type,
-        status, connection_status, logo, api_key, settings_json, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', ?, ?)
-    `, [
-      data.name || "New Website",
-      data.slug || `site-${Date.now()}`,
-      data.url || "https://example.com",
-      data.cms_url || "",
-      data.description || "",
-      data.website_type || "Web Application",
-      data.cms_type || "Built-in Central CMS",
-      data.status || "active",
-      data.connection_status || "connected",
-      data.logo || "/globe.svg",
-      data.api_key || `key_${Date.now()}`,
-      now,
-      now,
-    ]);
-    await addActivityLog("Registered New Website", `Connected website: ${data.name}`, data.name, user);
-  }
-  return { success: true };
-}
-
-export async function deleteWebsite(id, user = "admin") {
-  const site = await queryOne("SELECT name FROM websites WHERE id = ?", [id]);
-  await execute("DELETE FROM websites WHERE id = ?", [id]);
-  await addActivityLog("Disconnected Website", `Removed site: ${site?.name || id}`, "Websites", user, id);
-  return { success: true };
-}
-
-// ==========================================
 // Admin Presence & Online State
 // ==========================================
 export async function isAdminOnline() {
@@ -1991,116 +1882,6 @@ export async function countUnreadContactMessages() {
     console.error("countUnreadContactMessages error:", err);
     return 0;
   }
-}
-
-// ==========================================
-// Activity & Audit Logs
-// ==========================================
-export async function getActivityLogs({ limit = 50, category = "all", search = "" } = {}) {
-  let query = "SELECT * FROM activity_logs";
-  const params = [];
-  const where = [];
-
-  if (category && category !== "all") {
-    where.push("website_name LIKE ?");
-    params.push(`%${category}%`);
-  }
-  if (search) {
-    where.push(`(action LIKE ? OR details LIKE ? OR "user" LIKE ?)`);
-    params.push(`%${search}%`, `%${search}%`, `%${search}%`);
-  }
-
-  if (where.length > 0) {
-    query += " WHERE " + where.join(" AND ");
-  }
-  query += " ORDER BY id DESC LIMIT ?";
-  params.push(Number(limit) || 50);
-
-  return (await queryAll(query, params)) || [];
-}
-
-// ==========================================
-// Central Dashboard Overview & Metrics
-// ==========================================
-export async function getCentralDashboard() {
-  const projRow = await queryOne("SELECT COUNT(*) as count FROM projects");
-  const skillsRow = await queryOne("SELECT COUNT(*) as count FROM skills");
-  const sitesRow = await queryOne("SELECT COUNT(*) as count FROM websites");
-  const unreadRow = await queryOne("SELECT COUNT(*) as count FROM contact_messages WHERE is_read = 0");
-
-  const totalProjects = Number(projRow?.count || 0);
-  const totalSkills = Number(skillsRow?.count || 0);
-  const totalWebsites = Number(sitesRow?.count || 0);
-  const unreadMessages = Number(unreadRow?.count || 0);
-
-  const recentLogs = (await queryAll("SELECT * FROM activity_logs ORDER BY id DESC LIMIT 5")) || [];
-  const websites = (await queryAll("SELECT * FROM websites ORDER BY id ASC")) || [];
-
-  return {
-    success: true,
-    stats: {
-      totalProjects,
-      totalSkills,
-      totalWebsites,
-      unreadMessages,
-    },
-    websites,
-    recentLogs,
-  };
-}
-
-// ==========================================
-// System Settings
-// ==========================================
-export async function getSystemSettings() {
-  const rows = (await queryAll("SELECT * FROM central_system_settings")) || [];
-  const result = {};
-  for (const r of rows) {
-    try {
-      result[r.category] = JSON.parse(r.settings_json);
-    } catch {
-      result[r.category] = {};
-    }
-  }
-  return { success: true, settings: result };
-}
-
-export async function saveSystemSettings(category, data, user = "admin") {
-  const now = new Date().toISOString();
-  const jsonStr = JSON.stringify(data);
-  await execute(`
-    INSERT INTO central_system_settings (category, settings_json, updated_at)
-    VALUES (?, ?, ?)
-    ON CONFLICT(category) DO UPDATE SET
-      settings_json = excluded.settings_json,
-      updated_at = excluded.updated_at
-  `, [category, jsonStr, now]);
-  await addActivityLog("Updated System Settings", `Modified category: ${category}`, "Central CMS", user);
-  return { success: true };
-}
-
-// ==========================================
-// User Accounts & Roles
-// ==========================================
-export async function getUsers() {
-  const rows =
-    (await queryAll(
-      "SELECT id, username, email, full_name, role, is_active, last_login_at, permissions_json, assigned_websites_json, two_factor_enabled, created_at FROM admins"
-    )) || [];
-  return {
-    success: true,
-    users: rows.map((u) => {
-      let perms = ["*"];
-      let sites = ["*"];
-      try {
-        perms = JSON.parse(u.permissions_json || '["*"]');
-      } catch { }
-      try {
-        sites = JSON.parse(u.assigned_websites_json || '["*"]');
-      } catch { }
-      return { ...u, permissions: perms, websites: sites };
-    }),
-  };
 }
 
 // ==========================================
