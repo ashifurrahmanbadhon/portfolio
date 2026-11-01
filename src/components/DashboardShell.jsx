@@ -84,7 +84,7 @@ function ShellContent({ children }) {
           setMobileOpen={setMobileOpen}
         />
 
-        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl 2xl:max-w-[1536px] w-full mx-auto overflow-x-hidden">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl 2xl:max-w-[1536px] w-full mx-auto overflow-x-clip">
           {children}
         </main>
       </div>
