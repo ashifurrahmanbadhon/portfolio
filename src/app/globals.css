@@ -506,7 +506,7 @@ select:focus {
 
 /* 2. Static non-interactive boxes get cursor: default and NO hover effects / transitions */
 .admin-shell .stat-box:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]),
-.admin-shell div:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]):not([role="switch"]):not(input):not(textarea):not(select),
+.admin-shell div:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]):not([role="switch"]):not(input):not(textarea):not(select):not(.live-preview-panel):not([data-live-simulation]):not([data-preview-frame]):not([data-preview-frame] *),
 .admin-shell section,
 .admin-shell article {
   cursor: default;
@@ -515,7 +515,7 @@ select:focus {
 .admin-shell .stat-box:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]):hover,
 .admin-shell [class*="bg-[#0A0B10]"]:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]):hover,
 .admin-shell [class*="bg-[#06070B]"]:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]):hover,
-.admin-shell div[class*="border-[#23242B]"]:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]):hover {
+.admin-shell div[class*="border-[#23242B]"]:not(button):not(a):not([role="button"]):not([data-sortable]):not([draggable]):not(.live-preview-panel):not([data-live-simulation]):not([data-preview-frame]):not([data-preview-frame] *):hover {
   border-color: #23242B !important;
   box-shadow: none !important;
   transform: none !important;
@@ -661,9 +661,9 @@ select:focus {
 }
 
 .admin-shell .live-preview-panel:hover,
-.admin-shell .live-preview-panel *:hover,
+.admin-shell .live-preview-panel *:not([data-preview-frame]):not([data-preview-frame] *):hover,
 .admin-shell [data-live-simulation]:hover,
-.admin-shell [data-live-simulation] *:hover {
+.admin-shell [data-live-simulation] *:not([data-preview-frame]):not([data-preview-frame] *):hover {
   border-color: #23242B !important;
   box-shadow: none !important;
   transform: none;
@@ -689,7 +689,10 @@ select:focus {
 .admin-shell [data-preview-frame="mobile"],
 .admin-shell [data-preview-frame="mobile"]:hover,
 .admin-shell .live-preview-panel [data-preview-frame="mobile"],
-.admin-shell .live-preview-panel [data-preview-frame="mobile"]:hover {
+.admin-shell .live-preview-panel [data-preview-frame="mobile"]:hover,
+.admin-shell div[data-preview-frame="mobile"]:hover,
+.admin-shell div[data-preview-frame="mobile"][class*="border-[#23242B]"]:hover,
+.admin-shell .live-preview-panel div[data-preview-frame="mobile"][class*="border-[#23242B]"]:hover {
   transform: scale(var(--mobile-scale, 1)) !important;
   transform-origin: top left !important;
   box-shadow: none !important;

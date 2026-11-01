@@ -131,8 +131,8 @@ function LivePreviewPanel({
     const sDesktopFit = Math.min(1, availW / 1440, availH / 900);
     setDesktopScale(Math.max(0.05, sDesktopFit));
 
-    // Mobile: logical 390x844. Capped at 1.
-    const sMobileFit = Math.min(1, availW / 390, availH / 844);
+    // Mobile: logical 390x844 with 3px device border (outer: 396x850, inner screen: 390x844). Capped at 1.
+    const sMobileFit = Math.min(1, availW / 396, availH / 850);
     setMobileScale(Math.max(0.05, sMobileFit));
   }, [collapsed]);
 
@@ -355,19 +355,21 @@ function LivePreviewPanel({
                   </div>
                 </div>
               ) : (
-                /* MOBILE VIEWPORT (Device Frame 390x844 scaled to stage) */
+                /* MOBILE VIEWPORT (Device Frame 396x850 with 390x844 inner content scaled to stage) */
                 <div
                   style={{
-                    width: Math.ceil(390 * mobileScale),
-                    height: Math.ceil(844 * mobileScale),
+                    width: Math.ceil(396 * mobileScale),
+                    height: Math.ceil(850 * mobileScale),
+                    "--mobile-scale": mobileScale,
                   }}
                   className="live-preview-box shrink-0 relative overflow-hidden"
                 >
                   <div
                     data-preview-frame="mobile"
                     style={{
-                      width: 390,
-                      height: 844,
+                      width: 396,
+                      height: 850,
+                      boxSizing: "border-box",
                       "--mobile-scale": mobileScale,
                       transform: `scale(${mobileScale})`,
                       transformOrigin: "top left",
@@ -379,7 +381,7 @@ function LivePreviewPanel({
                       <div className="w-16 h-2.5 bg-black rounded-full" />
                     </div>
 
-                    {/* Iframe */}
+                    {/* Iframe: exact 390px content width matching real mobile viewport */}
                     <iframe
                       key={`mobile-${iframeKey}-${cleanUrl}`}
                       ref={iframeRef}
