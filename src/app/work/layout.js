@@ -11,7 +11,10 @@ export async function generateMetadata() {
   const description =
     header?.seo_description ||
     "Fixed-scope packages for businesses that want results without agency drama. Pick the one you need — every package clearly lists what is included before we start.";
-  const ogImage = siteSettings?.og_image_url || "/ashifur.jpeg";
+  const ogImage =
+    siteSettings?.og_image_url && siteSettings.og_image_url !== "/ashifur.jpeg"
+      ? siteSettings.og_image_url
+      : "https://ashifurrahman.vercel.app/og-image.jpg";
 
   return {
     title,

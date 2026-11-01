@@ -11,7 +11,10 @@ export async function generateMetadata() {
   const description =
     header?.seo_description ||
     "Electrical & Electronic Engineer passionate about technical solutions, substation design, spatial utility systems, and the transformative potential of Artificial Intelligence.";
-  const ogImage = siteSettings?.og_image_url || "/ashifur.jpeg";
+  const ogImage =
+    siteSettings?.og_image_url && siteSettings.og_image_url !== "/ashifur.jpeg"
+      ? siteSettings.og_image_url
+      : "https://ashifurrahman.vercel.app/og-image.jpg";
 
   return {
     title,

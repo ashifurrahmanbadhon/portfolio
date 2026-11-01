@@ -11,7 +11,10 @@ export async function generateMetadata() {
   const description =
     header?.seo_description ||
     "Contact Ashifur Rahman for engineering, technology, and AI opportunities — email, WhatsApp, LinkedIn, and GitHub.";
-  const ogImage = siteSettings?.og_image_url || "/ashifur.jpeg";
+  const ogImage =
+    siteSettings?.og_image_url && siteSettings.og_image_url !== "/ashifur.jpeg"
+      ? siteSettings.og_image_url
+      : "https://ashifurrahman.vercel.app/og-image.jpg";
 
   return {
     title,

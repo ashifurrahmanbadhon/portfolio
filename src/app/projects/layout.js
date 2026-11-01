@@ -11,7 +11,10 @@ export async function generateMetadata() {
   const description =
     header?.seo_description ||
     "Engineering projects by Ashifur Rahman: substation SLD & protection design, GIS power distribution mapping, solar PV simulations, and AI automations.";
-  const ogImage = siteSettings?.og_image_url || "/ashifur.jpeg";
+  const ogImage =
+    siteSettings?.og_image_url && siteSettings.og_image_url !== "/ashifur.jpeg"
+      ? siteSettings.og_image_url
+      : "https://ashifurrahman.vercel.app/og-image.jpg";
 
   return {
     title,

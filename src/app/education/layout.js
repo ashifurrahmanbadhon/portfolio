@@ -11,7 +11,10 @@ export async function generateMetadata() {
   const description =
     header?.seo_description ||
     "EEE degree from IUBAT, on-site utility training at DESCO, and AutoCAD Electrical and GIS training — the academic and professional credentials of Ashifur Rahman.";
-  const ogImage = siteSettings?.og_image_url || "/ashifur.jpeg";
+  const ogImage =
+    siteSettings?.og_image_url && siteSettings.og_image_url !== "/ashifur.jpeg"
+      ? siteSettings.og_image_url
+      : "https://ashifurrahman.vercel.app/og-image.jpg";
 
   return {
     title,

@@ -13,7 +13,10 @@ export async function generateMetadata() {
     homeHeader?.seo_description ||
     siteSettings?.meta_description ||
     "Ashifur Rahman — Electrical & Electronic Engineer: portfolio, projects, and engineering services.";
-  const ogImage = siteSettings?.og_image_url || "/ashifur.jpeg";
+  const ogImage =
+    siteSettings?.og_image_url && siteSettings.og_image_url !== "/ashifur.jpeg"
+      ? siteSettings.og_image_url
+      : "https://ashifurrahman.vercel.app/og-image.jpg";
 
   return {
     title,
