@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -555,6 +555,93 @@ function AdminConsoleContent() {
     }
   };
 
+  // Optimistically merge saved section data into state and admin cache without a full database refetch
+  const mergeSavedSectionToState = (section, data) => {
+    const items = data && data.items !== undefined ? data.items : data;
+    switch (section) {
+      case "hero":
+        if (data) setHero((prev) => ({ ...prev, ...data }));
+        break;
+      case "about":
+        if (data) setAbout((prev) => ({ ...prev, ...data }));
+        break;
+      case "highlights":
+        if (Array.isArray(items)) setHighlights(items);
+        break;
+      case "experiences":
+        if (Array.isArray(items)) setExperiences(items);
+        break;
+      case "educations":
+        if (Array.isArray(items)) setEducations(items);
+        break;
+      case "skills":
+        if (Array.isArray(items)) setSkills(items);
+        break;
+      case "projects":
+        if (Array.isArray(items)) setProjects(items);
+        break;
+      case "work_packages":
+        if (Array.isArray(items)) setWorkPackages(items);
+        break;
+      case "social_links":
+        if (data) setSocialLinks((prev) => ({ ...prev, ...data }));
+        break;
+      case "contact_channels":
+        if (Array.isArray(items)) setContactChannels(items);
+        break;
+      case "resume":
+        if (data) setResume((prev) => ({ ...prev, ...data }));
+        break;
+      case "site_settings":
+        if (data) setSiteSettings((prev) => ({ ...prev, ...data }));
+        break;
+      case "experience_metrics":
+        if (Array.isArray(items)) setExperienceMetrics(items);
+        break;
+      case "coursework_pillars":
+        if (Array.isArray(items)) setCourseworkPillars(items);
+        break;
+      case "certifications":
+        if (Array.isArray(items)) setCertifications(items);
+        break;
+      case "software_tools":
+        if (Array.isArray(items)) setSoftwareTools(items);
+        break;
+      case "skill_badges":
+        if (Array.isArray(items)) setSkillBadges(items);
+        break;
+      case "project_methodologies":
+        if (Array.isArray(items)) setProjectMethodologies(items);
+        break;
+      case "page_headers":
+        if (data) setPageHeaders((prev) => ({ ...prev, ...data }));
+        break;
+      case "homepage_cta":
+        if (data) setHomepageCta((prev) => ({ ...prev, ...data }));
+        break;
+      case "process_steps":
+        if (Array.isArray(items)) setProcessSteps(items);
+        break;
+      case "site_texts":
+        if (data) setSiteTexts((prev) => ({ ...prev, ...data }));
+        break;
+      default:
+        break;
+    }
+
+    // Keep admin localStorage cache in sync
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(ADMIN_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          parsed[section] = items;
+          localStorage.setItem(ADMIN_CACHE_KEY, JSON.stringify(parsed));
+        }
+      } catch (_) {}
+    }
+  };
+
   // Generic section saver with automatic session recovery and dual-DB sync
   const handleSaveSection = async (section, data, successMsg) => {
     setSaving(true);
@@ -569,7 +656,7 @@ function AdminConsoleContent() {
 
       if (res && res.success) {
         showToast(successMsg || `${section.toUpperCase()} saved to Database & synced live!`, "success");
-        await loadData(true);
+        mergeSavedSectionToState(section, data);
       } else {
         showToast(res?.error || "Save error occurred", "error");
       }
@@ -705,7 +792,7 @@ function AdminConsoleContent() {
 
   const railSavedOnly = currentTab === "inbox";
 
-  const railGetDraftData = () => {
+  const railGetDraftData = useCallback(() => {
     switch (currentTab) {
       case "home":
         return { hero, cta: homepageCta };
@@ -728,7 +815,27 @@ function AdminConsoleContent() {
       default:
         return undefined;
     }
-  };
+  }, [
+    currentTab,
+    hero,
+    homepageCta,
+    about,
+    experiences,
+    experienceMetrics,
+    educations,
+    courseworkPillars,
+    certifications,
+    skills,
+    softwareTools,
+    skillBadges,
+    projects,
+    projectMethodologies,
+    workPackages,
+    socialLinks,
+    contactChannels,
+    pageHeaders,
+    resume,
+  ]);
 
   return (
     <div className="space-y-6 pb-20">

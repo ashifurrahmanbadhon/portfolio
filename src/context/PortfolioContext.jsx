@@ -26,8 +26,15 @@ import {
 const PLACEHOLDER_KEY = 'portfolio_cms_placeholder_data';
 const PortfolioContext = createContext(null);
 
+// Module-level in-memory cache for instant zero-latency repeat views and client transitions
+let inMemoryContentCache = null;
+
 export function PortfolioProvider({ children }) {
-  const currentVersionRef = React.useRef(null);
+  const currentVersionRef = React.useRef(
+    inMemoryContentCache
+      ? Number(inMemoryContentCache.content_version || inMemoryContentCache.site_settings?.content_version) || 1
+      : null
+  );
   const isFetchingRef = React.useRef(false);
   const [heroData, setHeroData] = useState(DEFAULT_HERO);
   const [aboutData, setAboutData] = useState(DEFAULT_ABOUT);
@@ -52,11 +59,12 @@ export function PortfolioProvider({ children }) {
   const [homepageCta, setHomepageCta] = useState(DEFAULT_HOMEPAGE_CTA);
   const [resumeUrl, setResumeUrl] = useState('/Ashifur_Rahman_CV.pdf');
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(() => inMemoryContentCache !== null);
 
   // Apply parsed JSON content into react states cleanly
   const applyContentData = useCallback((data) => {
     if (!data || typeof data !== 'object') return;
+    inMemoryContentCache = data;
 
     if (data.hero && data.hero.name) {
       setHeroData((prev) => ({ ...prev, ...data.hero }));
@@ -312,25 +320,37 @@ export function PortfolioProvider({ children }) {
     }
   }, [fetchFreshContent]);
 
-  // Instant hydration from placeholder on mount + ALWAYS fetch fresh DB content on same load
+  // Instant hydration from in-memory cache or placeholder on mount + background revalidation
   useEffect(() => {
-    // 1. Placeholder hydration for instant initial paint (zero blank loading screen)
-    if (typeof window !== 'undefined') {
+    // 1. In-memory or localStorage cache for instant initial paint (stale-while-revalidate)
+    if (inMemoryContentCache) {
+      applyContentData(inMemoryContentCache);
+      setIsLoaded(true);
+      if (inMemoryContentCache.content_version || inMemoryContentCache.site_settings?.content_version) {
+        currentVersionRef.current = Number(inMemoryContentCache.content_version || inMemoryContentCache.site_settings?.content_version);
+      }
+      checkVersionAndRefresh();
+    } else if (typeof window !== 'undefined') {
       try {
         const cached = localStorage.getItem(PLACEHOLDER_KEY);
         if (cached) {
           const parsed = JSON.parse(cached);
+          inMemoryContentCache = parsed;
           applyContentData(parsed);
           setIsLoaded(true);
           if (parsed.content_version || parsed.site_settings?.content_version) {
             currentVersionRef.current = Number(parsed.content_version || parsed.site_settings?.content_version);
           }
+          checkVersionAndRefresh();
+        } else {
+          fetchFreshContent();
         }
-      } catch (_) {}
+      } catch (_) {
+        fetchFreshContent();
+      }
+    } else {
+      fetchFreshContent();
     }
-
-    // 2. ALWAYS fetch fresh DB content on mount
-    fetchFreshContent();
 
     // 3. Auto refetch on window focus and on visibilitychange (tab becomes visible)
     const handleFocus = () => {

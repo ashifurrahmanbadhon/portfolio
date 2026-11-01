@@ -54,7 +54,7 @@ function ProjectCardSlider({ proj }) {
           fill
           className="object-cover group-hover:scale-[1.055] transition duration-500"
           style={photoStyle}
-          unoptimized
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
     );
@@ -112,7 +112,7 @@ function ProjectCardSlider({ proj }) {
               fill
               className="object-cover group-hover:scale-[1.055] transition duration-500"
               style={photoStyle}
-              unoptimized
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         ))}

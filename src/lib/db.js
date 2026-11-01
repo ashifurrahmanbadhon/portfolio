@@ -826,54 +826,119 @@ export async function getContentVersion() {
 // Portfolio Content Query (Full Structured Object - Always Fresh & Parallelized)
 // ==========================================
 export async function getPortfolioContent() {
+  let heroRes, aboutRes, highlights, expRows, eduRows, skills, skill_badges,
+    projRows, services, social_links_res, contact_channels_res, resumeRes,
+    site_settings_res, certifications, experience_metrics, cwRows,
+    software_tools, project_methodologies, phRows, homepage_cta_res,
+    work_packages_res, process_steps_res;
 
-  const [
-    heroRes,
-    aboutRes,
-    highlights,
-    expRows,
-    eduRows,
-    skills,
-    skill_badges,
-    projRows,
-    services,
-    social_links_res,
-    contact_channels_res,
-    resumeRes,
-    site_settings_res,
-    certifications,
-    experience_metrics,
-    cwRows,
-    software_tools,
-    project_methodologies,
-    phRows,
-    homepage_cta_res,
-    work_packages_res,
-    process_steps_res
-  ] = await Promise.all([
-    queryOne("SELECT * FROM hero WHERE id = 1"),
-    queryOne("SELECT * FROM about WHERE id = 1"),
-    queryAll("SELECT * FROM highlights ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM experiences ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM projects ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM services ORDER BY sort_order ASC, id ASC"),
-    queryOne("SELECT * FROM social_links WHERE id = 1"),
-    queryAll("SELECT * FROM contact_channels ORDER BY sort_order ASC, id ASC").catch(() => []),
-    queryOne("SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1"),
-    queryOne("SELECT * FROM site_settings WHERE id = 1"),
-    queryAll("SELECT * FROM certifications ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM experience_metrics ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM coursework_pillars ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM software_tools ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC"),
-    queryAll("SELECT * FROM page_headers"),
-    queryOne("SELECT * FROM homepage_cta WHERE id = 1"),
-    queryAll("SELECT * FROM work_packages WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => []),
-    queryAll("SELECT * FROM process_steps WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => [])
-  ]);
+  let batched = false;
+  if (neonSql && typeof neonSql.transaction === "function") {
+    try {
+      const queries = [
+        "SELECT * FROM hero WHERE id = 1",
+        "SELECT * FROM about WHERE id = 1",
+        "SELECT * FROM highlights ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM experiences ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM educations ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC",
+        "SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM projects ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM services ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM social_links WHERE id = 1",
+        "SELECT * FROM contact_channels ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1",
+        "SELECT * FROM site_settings WHERE id = 1",
+        "SELECT * FROM certifications ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM experience_metrics ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM coursework_pillars ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM software_tools ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM page_headers",
+        "SELECT * FROM homepage_cta WHERE id = 1",
+        "SELECT * FROM work_packages WHERE is_active = 1 ORDER BY sort_order ASC, id ASC",
+        "SELECT * FROM process_steps WHERE is_active = 1 ORDER BY sort_order ASC, id ASC",
+      ];
+      const results = await neonSql.transaction(queries.map((q) => neonSql.query(q)));
+      if (Array.isArray(results) && results.length === 22) {
+        heroRes = results[0]?.[0] || null;
+        aboutRes = results[1]?.[0] || null;
+        highlights = results[2] || [];
+        expRows = results[3] || [];
+        eduRows = results[4] || [];
+        skills = results[5] || [];
+        skill_badges = results[6] || [];
+        projRows = results[7] || [];
+        services = results[8] || [];
+        social_links_res = results[9]?.[0] || null;
+        contact_channels_res = results[10] || [];
+        resumeRes = results[11]?.[0] || null;
+        site_settings_res = results[12]?.[0] || null;
+        certifications = results[13] || [];
+        experience_metrics = results[14] || [];
+        cwRows = results[15] || [];
+        software_tools = results[16] || [];
+        project_methodologies = results[17] || [];
+        phRows = results[18] || [];
+        homepage_cta_res = results[19]?.[0] || null;
+        work_packages_res = results[20] || [];
+        process_steps_res = results[21] || [];
+        batched = true;
+      }
+    } catch (err) {
+      console.warn("Neon batched transaction fallback to Promise.all:", err);
+    }
+  }
+
+  if (!batched) {
+    [
+      heroRes,
+      aboutRes,
+      highlights,
+      expRows,
+      eduRows,
+      skills,
+      skill_badges,
+      projRows,
+      services,
+      social_links_res,
+      contact_channels_res,
+      resumeRes,
+      site_settings_res,
+      certifications,
+      experience_metrics,
+      cwRows,
+      software_tools,
+      project_methodologies,
+      phRows,
+      homepage_cta_res,
+      work_packages_res,
+      process_steps_res
+    ] = await Promise.all([
+      queryOne("SELECT * FROM hero WHERE id = 1"),
+      queryOne("SELECT * FROM about WHERE id = 1"),
+      queryAll("SELECT * FROM highlights ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM experiences ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM educations ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM skills ORDER BY category ASC, sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM skill_badges ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM projects ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM services ORDER BY sort_order ASC, id ASC"),
+      queryOne("SELECT * FROM social_links WHERE id = 1"),
+      queryAll("SELECT * FROM contact_channels ORDER BY sort_order ASC, id ASC").catch(() => []),
+      queryOne("SELECT * FROM resumes WHERE is_active = 1 ORDER BY id DESC LIMIT 1"),
+      queryOne("SELECT * FROM site_settings WHERE id = 1"),
+      queryAll("SELECT * FROM certifications ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM experience_metrics ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM coursework_pillars ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM software_tools ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM project_methodologies ORDER BY sort_order ASC, id ASC"),
+      queryAll("SELECT * FROM page_headers"),
+      queryOne("SELECT * FROM homepage_cta WHERE id = 1"),
+      queryAll("SELECT * FROM work_packages WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => []),
+      queryAll("SELECT * FROM process_steps WHERE is_active = 1 ORDER BY sort_order ASC, id ASC").catch(() => [])
+    ]);
+  }
 
   const hero = heroRes || {};
   const about = aboutRes || {};

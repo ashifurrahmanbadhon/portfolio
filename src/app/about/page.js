@@ -153,8 +153,8 @@ export default function AboutPage() {
                   fill
                   className="object-cover group-hover:scale-[1.055] transition duration-500"
                   style={parsePhotoPosition(aboutData.profile_position || "center 12%").style}
+                  sizes="(max-width: 640px) 86vw, 340px"
                   priority
-                  unoptimized
                 />
               </div>
 

@@ -15,7 +15,7 @@ import {
  * Flat, lightweight live simulation preview panel with Desktop / Mobile viewport toggle,
  * traffic light browser chrome, auto-scaling fitted frames, and bidirectional draft synchronization.
  */
-export default function LivePreviewPanel({
+function LivePreviewPanel({
   url = "/",
   draftSection = "",
   getDraftData = null,
@@ -29,11 +29,25 @@ export default function LivePreviewPanel({
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
   const [iframeKey, setIframeKey] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [iframeActive, setIframeActive] = useState(false);
   const iframeRef = useRef(null);
   const stageRef = useRef(null);
   const [mobileScale, setMobileScale] = useState(null);
   const [desktopScale, setDesktopScale] = useState(null);
   const debounceTimerRef = useRef(null);
+  const getDraftDataRef = useRef(getDraftData);
+
+  useEffect(() => {
+    getDraftDataRef.current = getDraftData;
+  }, [getDraftData]);
+
+  // Lazy activate iframe: render shell first, initialize iframe src after shell mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIframeActive(true);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Clean URL for open-in-new-tab link (no cms_preview param)
   const cleanUrl = url.split("?")[0] || "/";
@@ -43,24 +57,26 @@ export default function LivePreviewPanel({
     ? url
     : url + (url.includes("?") ? "&" : "?") + "cms_preview=1";
 
-  // Dispatch draft payload to iframe
+  // Dispatch draft payload to iframe using latest ref without recreating on keystroke
   const sendDraft = useCallback(() => {
-    if (savedOnly || !getDraftData || !iframeRef.current?.contentWindow) return;
+    if (savedOnly || !getDraftDataRef.current || !iframeRef.current?.contentWindow) return;
 
     try {
-      const data = getDraftData();
-      iframeRef.current.contentWindow.postMessage(
-        {
-          type: "CMS_PREVIEW_DRAFT",
-          section: draftSection,
-          data,
-        },
-        window.location.origin
-      );
+      const data = getDraftDataRef.current();
+      if (data) {
+        iframeRef.current.contentWindow.postMessage(
+          {
+            type: "CMS_PREVIEW_DRAFT",
+            section: draftSection,
+            data,
+          },
+          window.location.origin
+        );
+      }
     } catch (_) {}
-  }, [savedOnly, getDraftData, draftSection]);
+  }, [savedOnly, draftSection]);
 
-  // Debounced send when draft data dependencies change
+  // Clean 300ms debounce when form data changes
   useEffect(() => {
     if (savedOnly || !getDraftData) return;
 
@@ -72,7 +88,7 @@ export default function LivePreviewPanel({
     return () => {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     };
-  }, [sendDraft, savedOnly, getDraftData]);
+  }, [getDraftData, sendDraft, savedOnly]);
 
   // Listen for CMS_PREVIEW_READY from iframe
   useEffect(() => {
@@ -327,7 +343,7 @@ export default function LivePreviewPanel({
                     <iframe
                       key={`desktop-${iframeKey}-${cleanUrl}`}
                       ref={iframeRef}
-                      src={previewUrl}
+                      src={iframeActive ? previewUrl : undefined}
                       title="Live preview"
                       sandbox="allow-same-origin allow-scripts"
                       onLoad={() => {
@@ -367,7 +383,7 @@ export default function LivePreviewPanel({
                     <iframe
                       key={`mobile-${iframeKey}-${cleanUrl}`}
                       ref={iframeRef}
-                      src={previewUrl}
+                      src={iframeActive ? previewUrl : undefined}
                       title="Live preview (Mobile)"
                       sandbox="allow-same-origin allow-scripts"
                       onLoad={() => {
@@ -376,7 +392,6 @@ export default function LivePreviewPanel({
                       }}
                       className="w-full flex-1 border-0 bg-[#06070B]"
                     />
-
                     {/* Bottom Home Indicator */}
                     <div className="w-full h-3.5 bg-[#06070B] flex items-center justify-center shrink-0 border-t border-[#23242B]/50">
                       <div className="w-24 h-1 bg-[#23242B] rounded-full" />
@@ -391,3 +406,5 @@ export default function LivePreviewPanel({
     </div>
   );
 }
+
+export default React.memo(LivePreviewPanel);
