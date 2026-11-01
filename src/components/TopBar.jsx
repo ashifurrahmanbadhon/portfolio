@@ -11,6 +11,7 @@ import {
   Check,
   Camera,
   Loader2,
+  ExternalLink,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "./Toast";
@@ -201,6 +202,18 @@ export default function TopBar({ setMobileOpen, ...props }) {
             <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
             <span>Ashifur · online</span>
           </div>
+
+          {/* Visit Website Button */}
+          <a
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="stat-box inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-none bg-[#12131A] border border-[#23242B] text-xs font-mono text-[#8E8B82] hover:text-[#F59E0B] hover:border-[#F59E0B] transition cursor-pointer shrink-0"
+            title="Visit Website"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Visit Website</span>
+          </a>
 
           {/* Profile box sits on the extreme RIGHT corner */}
           <div className="relative">
