@@ -1082,6 +1082,9 @@ export async function updatePortfolioSection(section, data, user = "admin") {
           secondary_btn_link = COALESCE(?, secondary_btn_link),
           spec_badge_label = COALESCE(?, spec_badge_label),
           spec_badge_title = COALESCE(?, spec_badge_title),
+          typewriter_line2 = COALESCE(?, typewriter_line2),
+          typewriter_line3 = COALESCE(?, typewriter_line3),
+          typewriter_line4 = COALESCE(?, typewriter_line4),
           updated_at = ?
         WHERE id = 1
       `, [
@@ -1097,6 +1100,9 @@ export async function updatePortfolioSection(section, data, user = "admin") {
         data.secondary_btn_link ?? null,
         data.spec_badge_label ?? null,
         data.spec_badge_title ?? null,
+        data.typewriter_line2 ?? null,
+        data.typewriter_line3 ?? null,
+        data.typewriter_line4 ?? null,
         now,
       ]);
       await addActivityLog("Updated Hero Section", "Modified Hero headline, bio, or profile photo.", "Portfolio", user, 1);

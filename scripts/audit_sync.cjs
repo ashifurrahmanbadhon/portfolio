@@ -27,7 +27,7 @@ async function runDriftAudit() {
 
   let mismatches = 0;
   const sectionsToCheck = [
-    { table: 'hero', keyField: 'id', keyValue: 1, fields: ['name', 'title', 'badge_text', 'profile_image', 'profile_position'] },
+    { table: 'hero', keyField: 'id', keyValue: 1, fields: ['name', 'title', 'badge_text', 'profile_image', 'profile_position', 'typewriter_line2', 'typewriter_line3', 'typewriter_line4'] },
     { table: 'about', keyField: 'id', keyValue: 1, fields: ['title', 'subtitle', 'profile_image', 'profile_position'] },
     { table: 'social_links', keyField: 'id', keyValue: 1, fields: ['email', 'linkedin', 'github'] },
     { table: 'site_settings', keyField: 'id', keyValue: 1, fields: ['site_title', 'footer_brand'] },

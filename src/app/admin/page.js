@@ -78,6 +78,9 @@ import { DEFAULT_PROCESS_STEPS, DEFAULT_SITE_TEXTS } from "@/lib/portfolioDefaul
 const DEFAULT_HERO = {
   name: "ASHIFUR RAHMAN",
   title: "Electrical & Electronic Engineer",
+  typewriter_line2: "n8n Automation Specialist",
+  typewriter_line3: "AI Chatbot Developer",
+  typewriter_line4: "Meta Pixel, GA4 & GTM Specialist",
   badge_text: "Available for Engineering, Technology & AI Opportunities",
   introduction:
     "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
@@ -1172,7 +1175,74 @@ function AdminConsoleContent() {
                   onChange={(e) => setHero({ ...hero, title: e.target.value })}
                   className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition font-medium"
                 />
-                <p className="text-[10px] text-[#8E8B82] mt-1 font-mono">Primary title in the homepage hero typewriter rotation.</p>
+                <p className="text-[10px] text-[#8E8B82] mt-1 font-mono">Primary title (Line 1) in the homepage hero typewriter rotation.</p>
+              </div>
+
+              {/* Typewriter Rotating Roles (4-Line Sequence) */}
+              <div className="md:col-span-2 bg-[#06070B] border border-[#23242B] p-4 sm:p-5 space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#23242B] pb-2.5 gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-pulse" />
+                    <span className="text-xs font-mono font-bold uppercase text-[#F59E0B] tracking-wider">
+                      Hero Typewriter Rotation Lines (4-Line Loop)
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono text-[#8E8B82]">
+                    ~70ms type • ~1800ms hold • ~35ms delete
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#B9B5A9] leading-relaxed">
+                  The rotating headline under your name transitions smoothly through these 4 professional titles with an amber terminal cursor:
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+                  <div>
+                    <label className="block font-mono text-[11px] text-[#8E8B82] mb-1">
+                      Line 1 (Primary Headline / Role above)
+                    </label>
+                    <input
+                      type="text"
+                      disabled
+                      value={hero.title || "Electrical & Electronic Engineer"}
+                      className="w-full bg-[#12131A] border border-[#23242B] px-3 py-2 text-[#F59E0B] font-mono cursor-not-allowed opacity-90 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-mono text-[11px] text-[#8E8B82] mb-1">
+                      Line 2 (Rotation Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={hero.typewriter_line2 || ""}
+                      onChange={(e) => setHero({ ...hero, typewriter_line2: e.target.value })}
+                      placeholder="n8n Automation Specialist"
+                      className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] px-3 py-2 text-white font-mono outline-none text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-mono text-[11px] text-[#8E8B82] mb-1">
+                      Line 3 (Rotation Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={hero.typewriter_line3 || ""}
+                      onChange={(e) => setHero({ ...hero, typewriter_line3: e.target.value })}
+                      placeholder="AI Chatbot Developer"
+                      className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] px-3 py-2 text-white font-mono outline-none text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-mono text-[11px] text-[#8E8B82] mb-1">
+                      Line 4 (Rotation Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={hero.typewriter_line4 || ""}
+                      onChange={(e) => setHero({ ...hero, typewriter_line4: e.target.value })}
+                      placeholder="Meta Pixel, GA4 & GTM Specialist"
+                      className="w-full bg-[#0A0B10] border border-[#23242B] focus:border-[#F59E0B] px-3 py-2 text-white font-mono outline-none text-xs"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="md:col-span-2">

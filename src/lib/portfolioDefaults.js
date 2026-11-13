@@ -1,6 +1,9 @@
 export const DEFAULT_HERO = {
   name: "ASHIFUR RAHMAN",
   title: "Electrical & Electronic Engineer",
+  typewriter_line2: "n8n Automation Specialist",
+  typewriter_line3: "AI Chatbot Developer",
+  typewriter_line4: "Meta Pixel, GA4 & GTM Specialist",
   badge_text: "Available for Engineering, Technology & AI Opportunities",
   introduction: "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
   profile_image: "/ashifur-home.jpg",

@@ -74,13 +74,13 @@ const HOW_I_WORK_STEPS = [
   }
 ];
 
-function HeroTypewriter({ initialTitle }) {
+function HeroTypewriter({ initialTitle, line2, line3, line4 }) {
   const titles = React.useMemo(() => [
     initialTitle || "Electrical & Electronic Engineer",
-    "n8n Automation Specialist",
-    "AI Chatbot Developer",
-    "Meta Pixel, GA4 & GTM Specialist",
-  ], [initialTitle]);
+    line2 || "n8n Automation Specialist",
+    line3 || "AI Chatbot Developer",
+    line4 || "Meta Pixel, GA4 & GTM Specialist",
+  ], [initialTitle, line2, line3, line4]);
 
   const titlesRef = React.useRef(titles);
   titlesRef.current = titles;
@@ -218,7 +218,12 @@ export default function Home() {
               <span className="block text-stroke-hero">{lastName}</span>
             </h1>
 
-            <HeroTypewriter initialTitle={heroData?.title} />
+            <HeroTypewriter
+              initialTitle={heroData?.title}
+              line2={heroData?.typewriter_line2}
+              line3={heroData?.typewriter_line3}
+              line4={heroData?.typewriter_line4}
+            />
 
             {heroData.introduction && (
               <p className="text-[#B9B5A9] text-sm sm:text-lg max-w-xl leading-relaxed mt-4 sm:mt-6">
