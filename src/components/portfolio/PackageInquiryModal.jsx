@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
+import { event } from '@/lib/gtag';
 
 const PACKAGE_CONFIGS = {
   "Business Website": {
@@ -159,6 +160,9 @@ export default function PackageInquiryModal({ pkg, cardIndex = 0, isOpen, onClos
 
       const data = await res.json();
       if (res.ok && data.success) {
+        try {
+          event('lead_submit', { method: 'package_inquiry' });
+        } catch (_) {}
         setSubmitted(true);
       } else {
         setError(data.error || 'Failed to submit inquiry. Please try again.');

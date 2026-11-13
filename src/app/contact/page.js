@@ -10,6 +10,7 @@ import {
 import PortfolioLayout from '@/components/portfolio/PortfolioLayout';
 import PageHeader from '@/components/portfolio/PageHeader';
 import { usePortfolio } from '@/context/PortfolioContext';
+import { event } from '@/lib/gtag';
 
 export default function ContactPage() {
   const { contactData, contactChannels, pageHeaders, isPreview } = usePortfolio();
@@ -52,11 +53,16 @@ export default function ContactPage() {
     }
     setSubmitting(true);
     try {
-      await fetch('/api/contact', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+      if (res.ok) {
+        try {
+          event('lead_submit', { method: 'contact_form' });
+        } catch (_) {}
+      }
     } catch {
       // Continue to mailto fallback
     } finally {

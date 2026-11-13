@@ -1,3 +1,5 @@
+import { event } from './gtag';
+
 /**
  * Triggers an instant, direct file download of the CV with zero latency without navigating away.
  */
@@ -5,6 +7,10 @@ export function triggerCvDownload(e, customUrl) {
   if (e && typeof e.preventDefault === 'function') {
     e.preventDefault();
   }
+
+  try {
+    event('cv_download');
+  } catch (_) {}
 
   const fileName = 'Ashifur_Rahman_CV.pdf';
   const targetUrl = (customUrl && customUrl !== '/resume.pdf') ? customUrl : '/Ashifur_Rahman_CV.pdf';

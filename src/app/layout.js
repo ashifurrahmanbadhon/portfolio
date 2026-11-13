@@ -1,8 +1,13 @@
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
+import { Suspense } from "react";
 import "./globals.css";
 import DashboardShell from "@/components/DashboardShell";
+import GoogleAnalyticsTracker from "@/components/GoogleAnalyticsTracker";
 import { getPortfolioContent } from "@/lib/db";
 import { Analytics } from "@vercel/analytics/next";
+
+const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 const interTight = Inter_Tight({
   variable: "--font-sans",
@@ -67,6 +72,31 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
         className="min-h-full bg-[#06070B] text-[#F5F2EA] selection:bg-[#F59E0B] selection:text-[#1A1202]"
       >
+        {gaId && (
+          <>
+            <Script
+              strategy="afterInteractive"
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+            />
+            <Script
+              id="google-analytics"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${gaId}', {
+                    send_page_view: false
+                  });
+                `,
+              }}
+            />
+            <Suspense fallback={null}>
+              <GoogleAnalyticsTracker />
+            </Suspense>
+          </>
+        )}
         <DashboardShell>{children}</DashboardShell>
         <Analytics />
       </body>

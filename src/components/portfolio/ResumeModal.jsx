@@ -3,6 +3,7 @@
 import React from 'react';
 import { X, FileText, Download, ExternalLink, Mail } from 'lucide-react';
 import { triggerCvDownload } from '@/lib/downloadCv';
+import { event } from '@/lib/gtag';
 
 export default function ResumeModal({ isOpen, onClose, resumeUrl = '/Ashifur_Rahman_CV.pdf' }) {
   if (!isOpen) return null;
@@ -40,6 +41,9 @@ export default function ResumeModal({ isOpen, onClose, resumeUrl = '/Ashifur_Rah
             href={resumeUrl}
             target="_blank"
             rel="noreferrer"
+            onClick={() => {
+              try { event('cv_download'); } catch (_) {}
+            }}
             className="stat-box text-[#F5F2EA] w-full py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
           >
             <ExternalLink size={15} className="text-[#F59E0B]" /> View CV in Browser Tab
