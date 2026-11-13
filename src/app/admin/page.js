@@ -1172,6 +1172,7 @@ function AdminConsoleContent() {
                   onChange={(e) => setHero({ ...hero, title: e.target.value })}
                   className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-3.5 py-2.5 text-white outline-none transition font-medium"
                 />
+                <p className="text-[10px] text-[#8E8B82] mt-1 font-mono">Primary title in the homepage hero typewriter rotation.</p>
               </div>
 
               <div className="md:col-span-2">

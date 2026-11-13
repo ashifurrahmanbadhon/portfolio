@@ -17,52 +17,15 @@ const NAV_ITEMS = [
   { name: 'Contact', href: '/contact' },
 ];
 
-function TypewriterBadge({ targetText = 'OPEN FOR WORK' }) {
-  const [displayText, setDisplayText] = useState('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setDisplayText(targetText);
-      return;
-    }
-
-    let timer;
-    let charIndex = 0;
-
-    const startTyping = () => {
-      charIndex = 0;
-      setDisplayText('');
-
-      const typeNext = () => {
-        if (charIndex < targetText.length) {
-          charIndex++;
-          setDisplayText(targetText.slice(0, charIndex));
-          timer = setTimeout(typeNext, 115);
-        } else {
-          // Hold for 1.9s, then clear at once and repeat
-          timer = setTimeout(() => {
-            setDisplayText('');
-            timer = setTimeout(startTyping, 250);
-          }, 1900);
-        }
-      };
-
-      timer = setTimeout(typeNext, 115);
-    };
-
-    startTyping();
-
-    return () => clearTimeout(timer);
-  }, [targetText]);
-
+function StatusBadge({ targetText = 'OPEN FOR WORK' }) {
   return (
-    <div className="flex items-center justify-end min-w-[160px] text-right font-mono text-xs tracking-wider text-[#F59E0B]">
+    <div className="flex items-center justify-end text-right font-mono text-xs tracking-wider text-[#F59E0B]">
       <span className="w-2 h-2 rounded-full bg-[#F59E0B] mr-2 shrink-0 animate-pulse" />
-      <span>{displayText}</span>
-      <span className="ml-1 inline-block w-1.5 h-3 bg-[#F59E0B] animate-pulse" />
+      <span>{targetText}</span>
     </div>
   );
 }
+const TypewriterBadge = StatusBadge;
 
 export default function PortfolioNavbar() {
   const { siteTexts } = usePortfolio();

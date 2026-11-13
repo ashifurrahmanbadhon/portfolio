@@ -74,6 +74,79 @@ const HOW_I_WORK_STEPS = [
   }
 ];
 
+function HeroTypewriter({ initialTitle }) {
+  const titles = React.useMemo(() => [
+    initialTitle || "Electrical & Electronic Engineer",
+    "n8n Automation Specialist",
+    "AI Chatbot Developer",
+    "Meta Pixel, GA4 & GTM Specialist",
+  ], [initialTitle]);
+
+  const titlesRef = React.useRef(titles);
+  titlesRef.current = titles;
+
+  const [displayText, setDisplayText] = React.useState(titles[0]);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+
+    let isCancelled = false;
+    let timeoutId = null;
+    let titleIndex = 0;
+    let charIndex = titlesRef.current[0]?.length || 0;
+    let isDeleting = true;
+
+    const step = () => {
+      if (isCancelled) return;
+      const currentList = titlesRef.current || [];
+      const currentTitle = currentList[titleIndex] || "";
+
+      if (!isDeleting) {
+        if (charIndex < currentTitle.length) {
+          charIndex++;
+          setDisplayText(currentTitle.slice(0, charIndex));
+          timeoutId = setTimeout(step, 70);
+        } else {
+          isDeleting = true;
+          timeoutId = setTimeout(step, 1800);
+        }
+      } else {
+        if (charIndex > 0) {
+          charIndex--;
+          setDisplayText(currentTitle.slice(0, charIndex));
+          timeoutId = setTimeout(step, 35);
+        } else {
+          isDeleting = false;
+          titleIndex = (titleIndex + 1) % currentList.length;
+          timeoutId = setTimeout(step, 350);
+        }
+      }
+    };
+
+    // Hold the initial title briefly before starting the deletion/rotation
+    timeoutId = setTimeout(step, 1500);
+
+    return () => {
+      isCancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
+
+  return (
+    <p className="font-mono text-sm sm:text-base md:text-lg uppercase tracking-wider sm:tracking-widest text-[#F59E0B] font-bold mt-4 min-h-[1.75rem] sm:min-h-[2rem] flex items-center flex-wrap">
+      <span>{displayText}</span>
+      {mounted && (
+        <span
+          className="inline-block w-2 sm:w-2.5 h-[0.9em] bg-[#F59E0B] ml-1.5 align-middle animate-pulse"
+          style={{ animationDuration: '0.8s' }}
+          aria-hidden="true"
+        />
+      )}
+    </p>
+  );
+}
+
 export default function Home() {
   const {
     heroData,
@@ -145,11 +218,7 @@ export default function Home() {
               <span className="block text-stroke-hero">{lastName}</span>
             </h1>
 
-            {heroData.title && (
-              <p className="font-mono text-xs sm:text-sm uppercase tracking-widest text-[#F59E0B] font-semibold mt-4">
-                {heroData.title}
-              </p>
-            )}
+            <HeroTypewriter initialTitle={heroData?.title} />
 
             {heroData.introduction && (
               <p className="text-[#B9B5A9] text-sm sm:text-lg max-w-xl leading-relaxed mt-4 sm:mt-6">
