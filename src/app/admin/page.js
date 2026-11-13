@@ -739,7 +739,7 @@ function AdminConsoleContent() {
     { id: "projects", label: "Engineering Projects", pageNum: "Page 3", title: "Engineering Projects & Case Studies", subtitle: `Manage ${projects.length} featured engineering case studies and simulations`, icon: FolderGit2, liveUrl: "/projects", count: projects.length },
     { id: "work", label: "Work Packages", pageNum: "Page 4", title: "Work & Service Packages", subtitle: `Manage ${workPackages.length} fixed-scope service packages displayed on /work`, icon: Layers, liveUrl: "/work", count: workPackages.length },
     { id: "experience", label: "Work Experience", pageNum: "Page 5", title: "Work Experience & Field Operations", subtitle: `Manage ${experiences.length} professional positions and high-voltage field roles`, icon: Briefcase, liveUrl: "/experience", count: experiences.length },
-    { id: "skills", label: "Technical Skills", pageNum: "Page 6", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across 4 engineering domains`, icon: Cpu, liveUrl: "/skills", count: skills.length },
+    { id: "skills", label: "Technical Skills", pageNum: "Page 6", title: "Technical Skills Matrix & Software Tools", subtitle: `Manage ${skills.length} technical skills across ${new Set(skills.map((s) => s.category)).size || 6} categories`, icon: Cpu, liveUrl: "/skills", count: skills.length },
     { id: "education", label: "Academic Education", pageNum: "Page 7", title: "Academic Background & Certifications", subtitle: `Manage ${educations.length} accredited degrees, certifications, and coursework`, icon: GraduationCap, liveUrl: "/education", count: educations.length },
     { id: "contact", label: "Contact Info", pageNum: "Page 8", title: "Contact Hub & Communication Channels", subtitle: "Update email, phone, WhatsApp, office location, and social media channels", icon: Mail, liveUrl: "/contact" },
     { id: "settings", label: "Page Headers & Settings", pageNum: "Global", title: "Page Headers & Global Settings", subtitle: "Update SEO meta descriptions, page banner titles, and collaboration CTA", icon: Sliders, liveUrl: "/" },
@@ -951,7 +951,7 @@ function AdminConsoleContent() {
                   </Link>
                   <Link href="/admin?tab=skills" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">
                     <div className="text-[10px] font-mono text-[#8E8B82] uppercase mb-1">Skills</div>
-                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] transition-colors">{skills.length || 16}</div>
+                    <div className="text-2xl font-bold font-mono text-[#F5F2EA] transition-colors">{skills.length || 30}</div>
                     <div className="text-[10px] text-[#8E8B82] mt-1">Technical items</div>
                   </Link>
                   <Link href="/admin?tab=experience" className="stat-box bg-[#0A0B10] border border-[#23242B] p-4 transition cursor-pointer block">

@@ -7,7 +7,7 @@ export const DEFAULT_HERO = {
   badge_text: "Available for Engineering, Technology & AI Opportunities",
   introduction: "Electrical & Electronic Engineer with expertise in technical solutions, strategic management, data-driven decision-making, and emerging AI technologies.",
   profile_image: "/ashifur-home.jpg",
-  profile_position: "center 15%",
+  profile_position: "0% 0%",
   primary_btn_text: "Contact Me",
   primary_btn_link: "/contact",
   secondary_btn_text: "Download CV",
@@ -22,7 +22,7 @@ export const DEFAULT_ABOUT = {
   description1: "Electrical & Electronic Engineering graduate with professional experience in engineering, technical design, AutoCAD Electrical, GIS, and power system analysis. Currently expanding expertise in Artificial Intelligence.",
   description2: "Combine engineering knowledge with AI to develop smarter, practical, technology-driven solutions and grow as an innovative technology professional.",
   profile_image: "/ashifur-about.jpg",
-  profile_position: "center 12%",
+  profile_position: "0% 0%",
   focus1_title: "Energy Systems & Digital Innovation",
   focus1_text: "Focus Area",
   focus2_title: "AutoCAD & GIS",
@@ -125,44 +125,69 @@ export const DEFAULT_EXPERIENCE_METRICS = [
 
 export const DEFAULT_SKILLS = [
   {
-    category: "Electrical Engineering",
-    icon: "Zap",
-    items: [
-      { name: "Substation Design & SLD Drafting", level: 90, icon: "Zap" },
-      { name: "Switchgear & Circuit Breakers", level: 85, icon: "Zap" },
-      { name: "Transformer Maintenance & Testing", level: 82, icon: "Zap" },
-      { name: "Load Calculation & Cable Sizing", level: 88, icon: "Zap" },
-      { name: "Power Factor Improvement (PFI)", level: 84, icon: "Zap" }
-    ]
-  },
-  {
-    category: "Software & Design Tools",
-    icon: "Monitor",
-    items: [
-      { name: "AutoCAD Electrical", level: 92, icon: "Monitor" },
-      { name: "ArcGIS / QGIS Mapping", level: 82, icon: "Monitor" },
-      { name: "ETAP (Power Simulation)", level: 78, icon: "Monitor" },
-      { name: "MATLAB & Simulink", level: 75, icon: "Monitor" },
-      { name: "Advanced MS Excel & BOQ Engines", level: 95, icon: "Monitor" }
-    ]
-  },
-  {
-    category: "Data & Artificial Intelligence",
+    category: "AI & Automation",
     icon: "Cpu",
     items: [
-      { name: "Python for Data Analysis", level: 78, icon: "Cpu" },
-      { name: "Machine Learning Concepts", level: 72, icon: "Cpu" },
-      { name: "Predictive Analytics & Forecasting", level: 80, icon: "Cpu" },
-      { name: "Prompt Engineering & LLM APIs", level: 85, icon: "Cpu" }
+      { name: "n8n Automation", level: 92, icon: "Cpu" },
+      { name: "AI Chatbot Development", level: 88, icon: "Cpu" },
+      { name: "API Integration", level: 90, icon: "Cpu" },
+      { name: "AI Tools & Generative AI", level: 82, icon: "Cpu" },
+      { name: "Prompt Engineering", level: 85, icon: "Cpu" },
+      { name: "AI-based Automation", level: 78, icon: "Cpu" },
+      { name: "Data Management & Reporting", level: 88, icon: "Cpu" }
     ]
   },
   {
-    category: "Professional & Management",
-    icon: "Briefcase",
+    category: "Digital Marketing & Tracking",
+    icon: "Monitor",
     items: [
-      { name: "Technical Sales & Negotiation", level: 88, icon: "Briefcase" },
-      { name: "Project Scheduling & Execution", level: 84, icon: "Briefcase" },
-      { name: "Safety Standards (IEEE, BNBC)", level: 90, icon: "Briefcase" }
+      { name: "Meta Pixel", level: 90, icon: "Monitor" },
+      { name: "Google Tag Manager", level: 88, icon: "Monitor" },
+      { name: "GA4 (Google Analytics 4)", level: 85, icon: "Monitor" },
+      { name: "Meta Conversions API", level: 85, icon: "Monitor" },
+      { name: "Digital Marketing", level: 82, icon: "Monitor" }
+    ]
+  },
+  {
+    category: "Web Development",
+    icon: "Monitor",
+    items: [
+      { name: "Next.js & React Development", level: 80, icon: "Monitor" },
+      { name: "TypeScript & JavaScript", level: 82, icon: "Monitor" },
+      { name: "Tailwind CSS", level: 85, icon: "Monitor" },
+      { name: "HTML5 & CSS3", level: 88, icon: "Monitor" },
+      { name: "Responsive Web Design", level: 88, icon: "Monitor" }
+    ]
+  },
+  {
+    category: "Design & Simulation",
+    icon: "Monitor",
+    items: [
+      { name: "AutoCAD (Electrical/2D)", level: 90, icon: "Monitor" },
+      { name: "MATLAB / Simulink", level: 85, icon: "Monitor" },
+      { name: "ETAP (Power System)", level: 80, icon: "Monitor" },
+      { name: "PSNA / PVSyst", level: 75, icon: "Monitor" },
+      { name: "SOLIDWORKS (3D Modeling)", level: 70, icon: "Monitor" }
+    ]
+  },
+  {
+    category: "GIS & Data Systems",
+    icon: "Database",
+    items: [
+      { name: "GIS (ArcGIS / QGIS)", level: 85, icon: "Database" },
+      { name: "MS Excel (Advanced)", level: 90, icon: "Database" },
+      { name: "Network Asset Mapping", level: 80, icon: "Database" },
+      { name: "Sales & Cost Modeling", level: 85, icon: "Database" }
+    ]
+  },
+  {
+    category: "Power Systems",
+    icon: "Zap",
+    items: [
+      { name: "Substation Layout & Operations", level: 88, icon: "Zap" },
+      { name: "Single Line Diagrams (SLD)", level: 92, icon: "Zap" },
+      { name: "Switchgear & Relay Coordination", level: 82, icon: "Zap" },
+      { name: "Power Distribution & BOQ", level: 86, icon: "Zap" }
     ]
   }
 ];
