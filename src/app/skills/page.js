@@ -89,10 +89,10 @@ export default function SkillsPage() {
           <div className="stat-box group p-6 sm:p-10 space-y-6 shadow-xl mb-16">
             <div>
               <h3 className="text-xl font-bold uppercase tracking-tight text-[#F5F2EA]">
-                Engineering Software &amp; Tool Stack
+                Engineering Tools &amp; Expertise
               </h3>
               <p className="text-xs text-[#B9B5A9] mt-1">
-                Industry-standard engineering applications utilized for simulation, network layout, spatial mapping, and analytics.
+                Industry-standard engineering software and expertise utilized for simulation, network layout, spatial mapping, protection, and analytics.
               </p>
             </div>
 
