@@ -68,7 +68,13 @@ async function runDriftAudit() {
   }
 
   // Check row counts for list tables
-  const listTables = ['experiences', 'educations', 'skills', 'projects', 'services', 'certifications', 'contact_channels', 'work_packages'];
+  const listTables = [
+    'experiences', 'educations', 'skills', 'projects', 'services',
+    'certifications', 'contact_channels', 'work_packages',
+    'software_tools', 'skill_badges', 'resumes', 'process_steps',
+    'project_methodologies', 'experience_metrics', 'coursework_pillars',
+    'page_headers'
+  ];
   console.log("\n--- List Tables Count Check ---");
   for (const table of listTables) {
     try {
