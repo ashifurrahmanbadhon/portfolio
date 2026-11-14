@@ -128,15 +128,6 @@ export const api = {
     return res.json();
   },
 
-  async regenerateRecoveryCodes(password = "", code = "") {
-    const res = await fetch(`${API_BASE}/api/auth/2fa/regenerate-recovery-codes`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ password, code }),
-    });
-    return res.json();
-  },
-
   async getMe() {
     return cachedFetch(`${API_BASE}/api/auth/me`, {
       headers: getAuthHeaders(),

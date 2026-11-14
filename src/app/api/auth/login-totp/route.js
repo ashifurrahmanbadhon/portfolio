@@ -4,12 +4,10 @@ import {
   checkAuthenticatorDoorLockout,
   recordFailedAuthenticatorAttempt,
   recordSuccessfulAuthenticatorLogin,
-  queryAll,
-  execute,
   addActivityLog,
 } from "@/lib/db";
 import { signToken } from "@/lib/auth";
-import { verifyTOTPWithStep, verifyRecoveryCode } from "@/lib/totp";
+import { verifyTOTPWithStep } from "@/lib/totp";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { registerDeviceAndAlert } from "@/lib/deviceAlert";
 import { logActivity } from "@/lib/activity";
@@ -59,7 +57,6 @@ export async function POST(req) {
     let isValid = false;
     let loginMethod = "authenticator";
     let matchedTimeStep = null;
-    const now = new Date().toISOString();
 
     // 1. Try TOTP with Anti-Replay check
     const totpResult = verifyTOTPWithStep(
@@ -96,33 +93,9 @@ export async function POST(req) {
         { success: false, error: errorMsg },
         { status: newlyLocked ? 403 : 401 }
       );
-    } else {
-      // 2. If not a valid TOTP, check if it matches an unused emergency recovery code
-      const allCodes = (await queryAll(
-        "SELECT id, code_hash FROM admin_recovery_codes WHERE admin_id = ? AND used = 0",
-        [admin.id]
-      )) || [];
-
-      let matchedRecoveryId = null;
-      for (const rc of allCodes) {
-        if (verifyRecoveryCode(rawCode, rc.code_hash)) {
-          matchedRecoveryId = rc.id;
-          break;
-        }
-      }
-
-      if (matchedRecoveryId) {
-        isValid = true;
-        loginMethod = "recovery_code";
-        // Mark recovery code used immediately
-        await execute(
-          "UPDATE admin_recovery_codes SET used = 1, used_at = ? WHERE id = ?",
-          [now, matchedRecoveryId]
-        );
-      }
     }
 
-    // If neither matched: record failed attempt & check lock
+    // If not matched: record failed attempt & check lock
     if (!isValid) {
       const { attempts, isLocked: newlyLocked } = await recordFailedAuthenticatorAttempt(admin.id, 3, 15);
       if (newlyLocked) {
@@ -130,7 +103,7 @@ export async function POST(req) {
       }
       await addActivityLog(
         "Failed Authenticator Login",
-        `Invalid authenticator/recovery code for: ${admin.username} (Failed attempts: ${attempts})`,
+        `Invalid authenticator code for: ${admin.username} (Failed attempts: ${attempts})`,
         "Central CMS",
         admin.username
       );
@@ -139,7 +112,7 @@ export async function POST(req) {
       const errorMsg =
         newlyLocked || remaining <= 0
           ? "Authenticator login is locked for ~15 min — use Password."
-          : `Invalid authenticator or recovery code. (${remaining} attempt(s) remaining before authenticator lockout)`;
+          : `Invalid authenticator code. (${remaining} attempt(s) remaining before authenticator lockout)`;
 
       return NextResponse.json(
         { success: false, error: errorMsg },
@@ -152,7 +125,7 @@ export async function POST(req) {
     const { token, exp } = signToken(admin, false);
     await addActivityLog(
       "Admin Login (Authenticator Door)",
-      `Authenticated successfully via ${loginMethod === "recovery_code" ? "Emergency Recovery Code" : "Authenticator App (TOTP)"} into Central CMS.`,
+      "Authenticated successfully via Authenticator App (TOTP) into Central CMS.",
       "Central CMS",
       admin.username
     );

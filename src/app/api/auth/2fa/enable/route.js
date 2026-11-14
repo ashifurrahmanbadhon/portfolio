@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
-import { verifyTOTP, generateRecoveryCodes, hashRecoveryCode } from "@/lib/totp";
+import { verifyTOTP } from "@/lib/totp";
 import { getDb, getAdminById, verifyPassword, addActivityLog } from "@/lib/db";
 import { logActivity } from "@/lib/activity";
 
@@ -47,7 +47,6 @@ export async function POST(req) {
     }
 
     const db = getDb();
-    const recoveryCodes = generateRecoveryCodes(8);
     const now = new Date().toISOString();
 
     await db.prepare(`
@@ -56,24 +55,12 @@ export async function POST(req) {
       WHERE id = ?
     `).run(setup_token, now, now, user.uid);
 
-    // Save salted recovery codes
-    await db.prepare("DELETE FROM admin_recovery_codes WHERE admin_id = ?").run(user.uid);
-    const insertCode = db.prepare(`
-      INSERT INTO admin_recovery_codes (admin_id, code_hash, used, created_at)
-      VALUES (?, ?, 0, ?)
-    `);
-    for (const rc of recoveryCodes) {
-      const saltedHash = hashRecoveryCode(rc);
-      await insertCode.run(user.uid, saltedHash, now);
-    }
-
     await addActivityLog("Enabled Two-Factor Authentication", "2FA activated with Google Authenticator.", "Central CMS", user.sub);
     await logActivity(req, user.uid, "2fa_enabled", "Enabled TOTP two-factor authentication");
 
     return NextResponse.json({
       success: true,
       message: "Two-Factor Authentication enabled successfully",
-      recovery_codes: recoveryCodes,
     });
   } catch (error) {
     console.error("2FA enable error:", error);

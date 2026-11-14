@@ -34,16 +34,17 @@ export default function CentralLoginPanel() {
   const [passwordError, setPasswordError] = useState("");
 
   // Authenticator door state
+  const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [code, setCode] = useState("");
   const [codeSubmitting, setCodeSubmitting] = useState(false);
   const [codeError, setCodeError] = useState("");
-  const codeInputRef = useRef(null);
+  const digitRefs = useRef([]);
 
-  // Focus code input when switching to authenticator door
+  // Focus first code input when switching to authenticator door
   useEffect(() => {
-    if (door === "authenticator" && codeInputRef.current) {
+    if (door === "authenticator") {
       setTimeout(() => {
-        codeInputRef.current?.focus();
+        digitRefs.current[0]?.focus();
       }, 100);
     }
   }, [door]);
@@ -65,18 +66,101 @@ export default function CentralLoginPanel() {
     }
   };
 
+  // Digit box inputs handlers
+  const handleDigitChange = (index, e) => {
+    const rawVal = e.target.value;
+    const cleanDigits = rawVal.replace(/\D/g, "");
+
+    // Case 1: Pasted or autofilled multiple digits into this box
+    if (cleanDigits.length > 1) {
+      const newDigits = [...digits];
+      const startIdx = cleanDigits.length >= 6 ? 0 : index;
+      for (let i = 0; i < cleanDigits.length && startIdx + i < 6; i++) {
+        newDigits[startIdx + i] = cleanDigits[i];
+      }
+      setDigits(newDigits);
+      const joined = newDigits.join("");
+      setCode(joined);
+      if (codeError) setCodeError("");
+      const focusTarget = Math.min(5, startIdx + cleanDigits.length);
+      digitRefs.current[focusTarget]?.focus();
+      return;
+    }
+
+    // Case 2: Single digit typed or replaced
+    const newDigits = [...digits];
+    newDigits[index] = cleanDigits.slice(-1);
+    setDigits(newDigits);
+    const joined = newDigits.join("");
+    setCode(joined);
+    if (codeError) setCodeError("");
+
+    if (cleanDigits && index < 5) {
+      digitRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleDigitKeyDown = (index, e) => {
+    if (e.key === "Backspace") {
+      if (digits[index]) {
+        // Current box has a value: clear it
+        const newDigits = [...digits];
+        newDigits[index] = "";
+        setDigits(newDigits);
+        setCode(newDigits.join(""));
+      } else if (index > 0) {
+        // Current box is empty: step back to previous box, clear it, and focus
+        e.preventDefault();
+        const newDigits = [...digits];
+        newDigits[index - 1] = "";
+        setDigits(newDigits);
+        setCode(newDigits.join(""));
+        digitRefs.current[index - 1]?.focus();
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      e.preventDefault();
+      digitRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < 5) {
+      e.preventDefault();
+      digitRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = (e.clipboardData || window.clipboardData)?.getData("text") || "";
+    const cleanDigits = pastedData.replace(/\D/g, "").slice(0, 6);
+    if (!cleanDigits) return;
+
+    const newDigits = ["", "", "", "", "", ""];
+    for (let i = 0; i < cleanDigits.length; i++) {
+      newDigits[i] = cleanDigits[i];
+    }
+    setDigits(newDigits);
+    setCode(newDigits.join(""));
+    if (codeError) setCodeError("");
+
+    const targetIdx = Math.min(5, cleanDigits.length);
+    digitRefs.current[targetIdx]?.focus();
+  };
+
   // Handle Authenticator Door Submit
   const handleAuthenticatorSubmit = async (e) => {
     e.preventDefault();
-    if (!code.trim()) {
-      setCodeError("Please enter your 6-digit code or recovery code.");
+    const trimmed = (code || digits.join("")).trim();
+    if (!trimmed) {
+      setCodeError("Please enter your 6-digit authenticator code.");
+      return;
+    }
+    if (trimmed.length < 6) {
+      setCodeError("Please enter the full 6-digit code.");
       return;
     }
 
     setCodeError("");
     setCodeSubmitting(true);
 
-    const res = await loginWithTotp(code.trim());
+    const res = await loginWithTotp(trimmed);
 
     if (!res.success) {
       setCodeError(res.error || "Invalid verification code.");
@@ -231,32 +315,36 @@ export default function CentralLoginPanel() {
         )}
 
         {/* ============================================================== */}
-        {/* DOOR 2: AUTHENTICATOR LOGIN (TOTP OR RECOVERY CODE)            */}
+        {/* DOOR 2: AUTHENTICATOR LOGIN (TOTP)                             */}
         {/* ============================================================== */}
         {door === "authenticator" && (
           <form onSubmit={handleAuthenticatorSubmit} className="space-y-4 animate-fade-in">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label className="block text-[11px] font-mono text-[#8E8B82] uppercase">
-                6-Digit Token or Recovery Code
+                6-Digit Authenticator Code
               </label>
-              <div className="relative">
-                <input
-                  ref={codeInputRef}
-                  type="text"
-                  required
-                  autoFocus
-                  autoComplete="one-time-code"
-                  placeholder="000000"
-                  value={code}
-                  onChange={(e) => {
-                    setCode(e.target.value.trim().toUpperCase());
-                    if (codeError) setCodeError("");
-                  }}
-                  className="w-full bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none px-4 py-3 text-center text-lg tracking-[0.25em] text-[#F5F2EA] font-mono font-bold outline-none transition placeholder:tracking-normal placeholder:text-[#8E8B82]/40"
-                />
+              <div className="flex items-center justify-between gap-1.5 sm:gap-2" onPaste={handlePaste}>
+                {digits.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => (digitRefs.current[idx] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete={idx === 0 ? "one-time-code" : "off"}
+                    autoFocus={idx === 0}
+                    maxLength={6}
+                    value={digit}
+                    onChange={(e) => handleDigitChange(idx, e)}
+                    onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                    onFocus={(e) => e.target.select()}
+                    onClick={(e) => e.target.select()}
+                    className="w-11 h-12 sm:w-12 sm:h-12 bg-[#06070B] border border-[#23242B] focus:border-[#F59E0B] rounded-none font-mono font-bold text-[#F5F2EA] text-center text-lg sm:text-xl outline-none transition select-all"
+                  />
+                ))}
               </div>
               <p className="text-[10px] text-[#8E8B82] font-mono leading-relaxed pt-1">
-                Enter code from Google Authenticator, Microsoft Authenticator, or an emergency recovery code (e.g. XXXXX-XXXXX).
+                Enter the 6-digit code from Google Authenticator or Microsoft Authenticator.
               </p>
             </div>
 
