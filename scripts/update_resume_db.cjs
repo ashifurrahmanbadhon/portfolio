@@ -7,9 +7,9 @@ const sqlite = new DatabaseSync('portfolio.db');
 
 async function updateResumes() {
   const now = new Date().toISOString();
-  const size = 297855;
+  const size = 298703;
   const fileName = 'Ashifur_Rahman_CV.pdf';
-  const fileUrl = '/resume.pdf';
+  const fileUrl = '/Ashifur_Rahman_CV.pdf';
 
   // 1. SQLite
   sqlite.prepare(`
